@@ -1,12 +1,12 @@
 /**
  * Generic Form View
- * @module    WebCore
- * @namespace WebCore.Views
+ * @module    Torso
+ * @namespace Torso.Views
  * @class     Form
  * @constructor
  * @author ariel.wexler@vecna.com
  */
-WebCore.Views.Form = WebCore.View.extend({
+Torso.Views.Form = Torso.View.extend({
   /**
    * Validation error hash
    * @private
@@ -63,7 +63,7 @@ WebCore.Views.Form = WebCore.View.extend({
    * Override to add more functionality
    * @method initialize
    * @param args {Object} - options argument
-   * @param args.model       {WebCore.Models.Form} - requires a form model for binding
+   * @param args.model       {Torso.Models.Form} - requires a form model for binding
    * @param [args.template]  {HTML Template} - overrides the template used by this view
    * @param [args.events]    {Events Hash} - merge + override the events hash used by this view
    * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
@@ -74,7 +74,7 @@ WebCore.Views.Form = WebCore.View.extend({
 
     /* Listen to model validation callbacks */
     this.feedbackModel = new Backbone.Model();
-    this.model = this.model || (new WebCore.Models.Form());
+    this.model = this.model || (new Torso.Models.Form());
     this.listenTo(this.model, 'validated:valid', this.valid);
     this.listenTo(this.model, 'validated:invalid', this.invalid);
 
@@ -191,7 +191,7 @@ WebCore.Views.Form = WebCore.View.extend({
    */
   dispose: function() {
     this.unstickit();
-    WebCore.Views.Form.__super__.dispose.apply(this, arguments);
+    Torso.Views.Form.__super__.dispose.apply(this, arguments);
   },
 
   /**

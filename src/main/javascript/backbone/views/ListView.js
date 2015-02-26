@@ -1,13 +1,13 @@
 /**
  * Generic List View.
  * More info at 'Webotics --> Backbone Standards --> List View' on the wiki
- * @module    Web Core
- * @namespace WebCore.Views
+ * @module    Torso
+ * @namespace Torso.Views
  * @class     List
  * @constructor
  * @author ariel.wexler@vecna.com, kent.willis@vecna.com
  */
-WebCore.Views.List = WebCore.View.extend((function() {
+Torso.Views.List = Torso.View.extend((function() {
 
   var removeChildView, addChildView;
 
@@ -217,7 +217,7 @@ WebCore.Views.List = WebCore.View.extend((function() {
         models = this.modelsToRender();
 
       // Trigger a refresh if any DOM elements are out of expected order
-      _.each(models, WebCore.$.proxy(function(model, i) {
+      _.each(models, Torso.$.proxy(function(model, i) {
         childView = this._childViews[model.id];
         if (childView) {
           if (currentChildren[i] !== childView.el) {

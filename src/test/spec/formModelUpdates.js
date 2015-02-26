@@ -9,9 +9,9 @@ describe('A Form Model, as object models are updated,', function() {
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
-      TestModel = require(testPath + '/TestModel')(env.window.WebCore),
-      TestModel2 = require(testPath + '/TestModel2')(env.window.WebCore),
-      FormModel = env.window.WebCore.Models.Form;
+      TestModel = require(testPath + '/TestModel')(env.window.Torso),
+      TestModel2 = require(testPath + '/TestModel2')(env.window.Torso),
+      FormModel = env.window.Torso.Models.Form;
       testModel = new TestModel();
       testModel2 = new TestModel2();
       done();

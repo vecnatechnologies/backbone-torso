@@ -1,6 +1,6 @@
 
-module.exports = function(WebCore) {
-  return WebCore.View.extend({
+module.exports = function(Torso) {
+  return Torso.View.extend({
     className: 'testView',
     template: require('./validation-test-template'),
     clicked: 0,

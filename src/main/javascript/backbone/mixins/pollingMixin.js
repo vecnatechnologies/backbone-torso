@@ -3,8 +3,8 @@
  *
  * The polling functionality should only be used for collections and for models that are not
  * part of any collections. It should not be used for a model that is a part of a collection.
- * @module    Web Core
- * @namespace WebCore.Mixins
+ * @module    Torso
+ * @namespace Torso.Mixins
  * @class  PollingMixin
  * @author ariel.wexler@vecna.com
  */
@@ -42,7 +42,7 @@
       } else {
         this._pollStarted = true;
         this._poll();
-        this.pollTimeoutId = window.setInterval(WebCore.$.proxy(function() {
+        this.pollTimeoutId = window.setInterval(Torso.$.proxy(function() {
           this._poll();
         }, this), this._pollInterval);
       }
@@ -77,7 +77,7 @@
   };
 
   // Add the mixin to both models and collections.
-  _.extend(WebCore.Collection.prototype, pollingMixin);
-  _.extend(WebCore.Model.prototype, pollingMixin);
-  _.extend(WebCore.NestedModel.prototype, pollingMixin);
+  _.extend(Torso.Collection.prototype, pollingMixin);
+  _.extend(Torso.Model.prototype, pollingMixin);
+  _.extend(Torso.NestedModel.prototype, pollingMixin);
 })();

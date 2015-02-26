@@ -1,6 +1,6 @@
-module.exports = function(WebCore, _) {
+module.exports = function(Torso, _) {
 
-  var NestedExampleFormView = WebCore.Views.Form.extend({
+  var NestedExampleFormView = Torso.Views.Form.extend({
     template: require('./binding-nested-test-template'),
     fields: {
       'userId': {type: 'text'},

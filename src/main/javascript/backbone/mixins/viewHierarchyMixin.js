@@ -4,12 +4,12 @@
  * - creation of private collections for views
  * - cleanup methods for safe disposal of UI + events
  *
- * @module    Web Core
- * @namespace WebCore.Mixins.View
+ * @module    Torso
+ * @namespace Torso.Mixins.View
  * @class  ViewMixin
  * @author ariel.wexler@vecna.com
  */
-WebCore.Mixins.View = {
+Torso.Mixins.View = {
   _GUID: null,
   _childViews: null,
   tabInfo: null,
@@ -39,7 +39,7 @@ WebCore.Mixins.View = {
    */
   generateGUID: function() {
     if (this._GUID === null) {
-      this._GUID = WebCore.GUIDManager.generate(this);
+      this._GUID = Torso.GUIDManager.generate(this);
     }
   },
 
@@ -63,10 +63,10 @@ WebCore.Mixins.View = {
   /**
    * Hotswap rendering system reroute method.
    * @method templateRender
-   * See WebCore.TemplateRenderer#render for params
+   * See Torso.TemplateRenderer#render for params
    */
   templateRender: function(el, template, context, opts) {
-    WebCore.TemplateRenderer.render(el, template, context, opts);
+    Torso.TemplateRenderer.render(el, template, context, opts);
   },
 
   /**
@@ -153,4 +153,4 @@ WebCore.Mixins.View = {
   }
 };
 
-_.extend(WebCore.View.prototype, WebCore.Mixins.View);
+_.extend(Torso.View.prototype, Torso.Mixins.View);

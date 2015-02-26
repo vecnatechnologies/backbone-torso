@@ -2,12 +2,12 @@
  * Loading logic to be mixed into Backbone Collections.
  * Requires collectionRegistrationMixin.js to be imported first
  *
- * @module    Web Core
- * @namespace WebCore.Mixins.Collection
+ * @module    Torso
+ * @namespace Torso.Mixins.Collection
  * @class  LoadingMixin
  * @author kent.willis@vecna.com
  */
-_.extend(WebCore.Collection.prototype, (function(base) {
+_.extend(Torso.Collection.prototype, (function(base) {
 
   var loadingMixin,
     baseSuper = base.super || function() {};
@@ -62,7 +62,7 @@ _.extend(WebCore.Collection.prototype, (function(base) {
     collection._loadWrapper = function(fetchMethod, options) {
       loading = true;
       collection.trigger('load-begin');
-      return WebCore.$.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
+      return Torso.$.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
         collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
       }).fail(function(jqXHR, textStatus, errorThrown) {
         collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
@@ -85,10 +85,10 @@ _.extend(WebCore.Collection.prototype, (function(base) {
     super: function(args) {
       baseSuper.call(this, args);
       loadingMixin(this, {
-        loadedOnceDeferred: new WebCore.$.Deferred(),
+        loadedOnceDeferred: new Torso.$.Deferred(),
         loadedOnce: false,
         loading: false
       });
     }
   };
-})(WebCore.Collection.prototype));
+})(Torso.Collection.prototype));

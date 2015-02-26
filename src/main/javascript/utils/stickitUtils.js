@@ -1,4 +1,4 @@
-WebCore.Stickit.addHandler({
+Torso.Stickit.addHandler({
   selector: 'input[type="radio"]',
   events: ['change'],
   update: function($el, val) {

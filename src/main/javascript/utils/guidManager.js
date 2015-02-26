@@ -2,13 +2,13 @@
  * A static object responsible for tracking and creating
  * unique GUIDs when asked.  These GUIDs can be used for anything.
  *
- * @module    Web Core
- * @namespace WebCore
+ * @module    Torso
+ * @namespace Torso
  * @class     GUIDManager
  * @static
  * @author    ariel.wexler@vecna.com
  */
-WebCore.GUIDManager = {
+Torso.GUIDManager = {
   /**
    * The next GUID numeral
    * @property _current

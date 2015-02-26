@@ -3,12 +3,12 @@
  * - safe disposal methods for memory + event management
  * - special functional overrides to support ID registration for different views
  *
- * @module    Web Core
- * @namespace WebCore.Mixins.Collection
+ * @module    Torso
+ * @namespace Torso.Mixins.Collection
  * @class  RegistrationMixin and CacheMixin
  * @author ariel.wexler@vecna.com, kent.willis@vecna.com
  */
-_.extend(WebCore.Collection.prototype, (function(base) {
+_.extend(Torso.Collection.prototype, (function(base) {
 
   var cacheMixin, createRequesterCollectionClass,
     baseSuper = base.super || function() {};
@@ -52,7 +52,7 @@ _.extend(WebCore.Collection.prototype, (function(base) {
             if (myTrackedIds && myTrackedIds.length) {
               return parentInstance.fetchByIds({idsToFetch: myTrackedIds, setOptions: {remove: false}});
             } else {
-              return WebCore.$.Deferred().resolve().promise();
+              return Torso.$.Deferred().resolve().promise();
             }
           });
         };
@@ -269,7 +269,7 @@ _.extend(WebCore.Collection.prototype, (function(base) {
         } else {
           idsToFetch = requestedIds;
         }
-        return WebCore.$.ajax({
+        return Torso.$.ajax({
             type:'POST',
             url: collection.url + '/ids',
             contentType: 'application/json; charset=utf-8',
@@ -380,4 +380,4 @@ _.extend(WebCore.Collection.prototype, (function(base) {
       return this.constructor(this);
     }
   };
-})(WebCore.Collection.prototype));
+})(Torso.Collection.prototype));

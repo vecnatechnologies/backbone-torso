@@ -11,7 +11,7 @@ describe("A Form Model's Validation", function() {
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
-      FormModel = env.window.WebCore.Models.Form;
+      FormModel = env.window.Torso.Models.Form;
       done();
     });
   });

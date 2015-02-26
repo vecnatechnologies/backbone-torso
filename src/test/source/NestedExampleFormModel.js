@@ -1,6 +1,6 @@
-module.exports = function(WebCore, _) {
+module.exports = function(Torso, _) {
 
-  var NestedExampleFormModel = WebCore.Models.Form.extend({
+  var NestedExampleFormModel = Torso.Models.Form.extend({
     defaults: {
       userId: 0,
       userAddrs: [

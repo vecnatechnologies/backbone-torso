@@ -1,6 +1,6 @@
-module.exports = function(WebCore, _) {
+module.exports = function(Torso, _) {
 
-  var UpdateProfileFormView = WebCore.Views.Form.extend({
+  var UpdateProfileFormView = Torso.Views.Form.extend({
     template: require('./binding-test-template'),
 
     events: {

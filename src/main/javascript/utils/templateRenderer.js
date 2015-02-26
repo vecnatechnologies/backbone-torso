@@ -2,13 +2,13 @@
  * Static Template Engine.
  * All template renders should be piped through this method.
  *
- * @module    Web Core
- * @namespace WebCore
- * @class     TemplateRenderer
+ * @module    Torso
+ * @namespace Torso
+ * @class     Torso
  * @static
  * @author    ariel.wexler@vecna.com
  */
-WebCore.TemplateRenderer = {
+Torso.TemplateRenderer = {
   /**
    * Performs efficient re-rendering of a template.
    * @method render
@@ -27,7 +27,7 @@ WebCore.TemplateRenderer = {
     if (opts.force) {
       el.html(newHTML);
     } else {
-      newDOM = WebCore.$('<' + el.prop('tagName') + '>' + newHTML + '</' + el.prop('tagName') + '>');
+      newDOM = Torso.$('<' + el.prop('tagName') + '>' + newHTML + '</' + el.prop('tagName') + '>');
       _.each(el.get(0).attributes, function(attrib) {
         newDOM.attr(attrib.name, attrib.value);
       });
@@ -72,7 +72,7 @@ WebCore.TemplateRenderer = {
     newTag = newDOM.prop('tagName');
     currTag = currentDOM.prop('tagName');
     if (newTag !== currTag) {
-      replacementDOM = WebCore.$('<' + newTag + '>' + newDOM.html() + '</' + newTag + '>');
+      replacementDOM = Torso.$('<' + newTag + '>' + newDOM.html() + '</' + newTag + '>');
       currentDOM.replaceWith(replacementDOM);
       currentDOM = replacementDOM;
     }
@@ -114,8 +114,8 @@ WebCore.TemplateRenderer = {
     // Perform a recursive hotswap for all children elements
     for (i = 0; i < currChildren.length; i++) {
       skip = false;
-      newElem = WebCore.$(newChildren[i]);
-      currElem = WebCore.$(currChildren[i]);
+      newElem = Torso.$(newChildren[i]);
+      currElem = Torso.$(currChildren[i]);
       if (ignoreElements) {
         for (ignoreIdx = 0; ignoreIdx < ignoreElementsLen; ignoreIdx++) {
           if (currElem.is(ignoreElements[ignoreIdx])) {

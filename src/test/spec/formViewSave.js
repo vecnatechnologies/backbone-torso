@@ -11,10 +11,10 @@ describe('A Form View saving', function() {
       env = environment;
       $ = env.window.$;
       _ = env.window._;
-      TestModel = require(testPath + '/TestModel')(env.window.WebCore),
-      FormModel = env.window.WebCore.Models.Form;
+      TestModel = require(testPath + '/TestModel')(env.window.Torso),
+      FormModel = env.window.Torso.Models.Form;
       testModel = new TestModel();
-      FormView = env.window.WebCore.Views.Form;
+      FormView = env.window.Torso.Views.Form;
       done();
     });
   });

@@ -30,7 +30,7 @@ module.exports = function() {
         resolve({
           window: window,
           routes: require(testPath + '/mockjax')(window.$)
-        })
+        });
       }
     });
   });

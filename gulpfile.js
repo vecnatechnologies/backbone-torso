@@ -23,7 +23,7 @@
 
   gulp.task('compressed-scripts', function () {
     return gulp.src(buildPaths.app + '/**/*.js')
-      .pipe($.concatUtil('webcore.js'))
+      .pipe($.concatUtil('torso.js'))
       .pipe($.concatUtil.header('(function(root, factory) {\n' +
           'if (typeof define === "function" && define.amd) {\n' +
             'define(["underscore", "jquery", "backbone", "handlebars", "backbone-nested", "backbone-stickit", "backbone-validation"], function(_, $, Backbone, Handlebars) {\n' +
@@ -35,12 +35,12 @@
               'require("backbone-validation");' +
               'module.exports = factory(root, {}, require("underscore"), null, require("backbone"), require("handlebars"));\n' +
           '} else {\n' +
-            'root.WebCore = root.WC = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Backbone, root.Handlebars);\n' +
+            'root.Torso = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Backbone, root.Handlebars);\n' +
           '};\n' +
-        '}(this, function(root, WebCore, _, $, Backbone, Handlebars) {\n' +
+        '}(this, function(root, Torso, _, $, Backbone, Handlebars) {\n' +
           '"use strict;"\n'))
-      .pipe($.concatUtil.footer('\nreturn WebCore;\n}));\n'))
-      .pipe($.uglify())
+      .pipe($.concatUtil.footer('\nreturn Torso;\n}));\n'))
+      //.pipe($.uglify())
       .pipe(gulp.dest(buildPaths.dist));
   });
 
@@ -58,7 +58,7 @@
                      'node_modules/backbone.stickit/backbone.stickit.js',
                      'node_modules/handlebars/dist/handlebars.js',
                      'node_modules/jquery-mockjax/jquery.mockjax.js',
-                     buildPaths.dist + '/webcore.js'])
+                     buildPaths.dist + '/torso.js'])
                .pipe($.concatUtil('testEnv.js'))
                .pipe(gulp.dest(buildPaths.testEnv));
   });

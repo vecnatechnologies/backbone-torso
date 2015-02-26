@@ -1,5 +1,5 @@
-module.exports = function(WebCore) {
-  return WebCore.NestedModel.extend({
+module.exports = function(Torso) {
+  return Torso.NestedModel.extend({
 
     urlRoot: '/test2',
 

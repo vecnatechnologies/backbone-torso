@@ -1,6 +1,6 @@
-module.exports = function(WebCore, _) {
+module.exports = function(Torso, _) {
 
-  var UpdateProfileFormModel = WebCore.Models.Form.extend({
+  var UpdateProfileFormModel = Torso.Models.Form.extend({
     defaults: {
       fullName: '',
       email: '',

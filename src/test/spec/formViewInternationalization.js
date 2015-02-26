@@ -16,10 +16,10 @@ describe("A Form View's internationalization", function() {
       _ = env.window._;
 
       /* Example Form Model */
-      UpdateProfileFormModel = require(testPath + '/UpdateProfileFormModel')(env.window.WebCore, _);
+      UpdateProfileFormModel = require(testPath + '/UpdateProfileFormModel')(env.window.Torso, _);
 
       /* Example form view */
-      UpdateProfileFormView = require(testPath + '/UpdateProfileFormView')(env.window.WebCore, _);
+      UpdateProfileFormView = require(testPath + '/UpdateProfileFormView')(env.window.Torso, _);
 
       /* Create basic model and view */
       model = new UpdateProfileFormModel();

@@ -1,12 +1,12 @@
 /**
  * Generic Form Model
- * @module    WebCore
- * @namespace WebCore.Models
+ * @module    Torso
+ * @namespace Torso.Models
  * @class     Form
  * @constructor
  * @author kent.willis@vecna.com
  */
-WebCore.Models.Form = WebCore.NestedModel.extend({
+Torso.Models.Form = Torso.NestedModel.extend({
   /**
    * @private
    * @property _computed
@@ -200,7 +200,7 @@ WebCore.Models.Form = WebCore.NestedModel.extend({
    */
   save: function(options) {
     var notTrackingResponse,
-      promise = new WebCore.$.Deferred();
+      promise = new Torso.$.Deferred();
     options = options || {};
     _.defaults(options, {
       rollback: true,
@@ -283,7 +283,7 @@ WebCore.Models.Form = WebCore.NestedModel.extend({
         }
       };
       this.trigger('save-fail', notTrackingResponse);
-      return (new WebCore.$.Deferred()).reject(notTrackingResponse).promise();
+      return (new Torso.$.Deferred()).reject(notTrackingResponse).promise();
     }
   },
 
@@ -404,7 +404,7 @@ WebCore.Models.Form = WebCore.NestedModel.extend({
     } else {
       return val;
     }
-    return WebCore.$.extend(true, seed, val);
+    return Torso.$.extend(true, seed, val);
   },
 
   /**
@@ -707,4 +707,4 @@ WebCore.Models.Form = WebCore.NestedModel.extend({
   }
 });
 
-_.extend(WebCore.Models.Form.prototype, WebCore.Mixins.Validation);
+_.extend(Torso.Models.Form.prototype, Torso.Mixins.Validation);
