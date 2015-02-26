@@ -1,10 +1,10 @@
-var targetPath = '../../../target',
-  testPath = targetPath + '/test',
+var distPath = '../../../dist',
+  testPath = distPath + '/test',
   spyOnBackbone = require('./backboneSpy');
 
 describe("A Form View's two-way binding", function() {
   var model, view, UpdateProfileFormModel, UpdateProfileFormView,
-      init, $, _, env;
+    $, _, env;
 
   /**
    * Sets up test view
@@ -118,19 +118,19 @@ describe("A Form View's two-way binding", function() {
   });
 
   it("can update model attributes on change of DOM checkbox inputs", function() {
-    expect(model.get('schedule')).toEqual([]);
+    expect(_.isEqual(model.get('schedule'), [])).toBe(true);
     view.$el.find('#schedule-M').click().change();
-    expect(model.get('schedule')).toEqual(['M']);
+    expect(_.isEqual(model.get('schedule'), ['M'])).toBe(true);
     view.$el.find('#schedule-W').click().change();
-    expect(model.get('schedule')).toEqual(['M', 'W']);
+    expect(_.isEqual(model.get('schedule'), ['M', 'W'])).toBe(true);
     view.$el.find('#schedule-F').click().change();
-    expect(model.get('schedule')).toEqual(['M', 'W', 'F']);
+    expect(_.isEqual(model.get('schedule'), ['M', 'W', 'F'])).toBe(true);
     view.$el.find('#schedule-M').click().change();
-    expect(model.get('schedule')).toEqual(['W', 'F']);
+    expect(_.isEqual(model.get('schedule'), ['W', 'F'])).toBe(true);
     view.$el.find('#schedule-F').click().change();
-    expect(model.get('schedule')).toEqual(['W']);
+    expect(_.isEqual(model.get('schedule'), ['W'])).toBe(true);
     view.$el.find('#schedule-T').click().change();
-    expect(model.get('schedule')).toEqual(['T', 'W']);
+    expect(_.isEqual(model.get('schedule'), ['T', 'W'])).toBe(true);
   });
 
   it("can update model attributes on change of DOM select dropdown inputs", function() {

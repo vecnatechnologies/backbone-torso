@@ -198,7 +198,6 @@ WebCore.Views.Form = WebCore.View.extend({
    * Selects all data-model references in this view's DOM, and creates stickit bindings
    * @method _generateStickitBindings
    * @private
-   * @modifies this.bindings
    */
   _generateStickitBindings: function() {
     var self = this;
@@ -458,7 +457,7 @@ WebCore.Views.Form = WebCore.View.extend({
    * Returns all elements on the page that match the feedback mapping
    * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
    * @param dest {String} the string of the data-feedback
-   * @returns {jQuery array} all elements on the page that match the feedback mapping
+   * @return {jQuery array} all elements on the page that match the feedback mapping
    * @private
    * @method _getFeedbackDestinations
    */
@@ -482,7 +481,7 @@ WebCore.Views.Form = WebCore.View.extend({
    * if the appropriate element exist on the page
    * @param whenMap the collection of "when"'s for a given feedback
    * @param indexMap map from variable names to values when substituting array notation
-   * @returns the events that were generated
+   * @return the events that were generated
    * @private
    * @method _generateWhenEvents
    */

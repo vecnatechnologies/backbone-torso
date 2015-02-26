@@ -1,5 +1,5 @@
-var targetPath = '../../../target',
-  testPath = targetPath + '/test',
+var distPath = '../../../dist',
+  testPath = distPath + '/test',
   Handlebars = require('handlebars'),
   spyOnBackbone = require('./backboneSpy');
 

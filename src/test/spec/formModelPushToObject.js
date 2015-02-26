@@ -1,5 +1,5 @@
-var targetPath = '../../../target',
-  testPath = targetPath + '/test',
+var distPath = '../../../dist',
+  testPath = distPath + '/test',
   spyOnBackbone = require('./backboneSpy');
 
 describe('A Form Model when it pushes new data to Object Models', function() {

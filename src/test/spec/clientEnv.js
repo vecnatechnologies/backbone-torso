@@ -1,5 +1,5 @@
-var targetPath = '../../../target',
-  testPath = targetPath + '/test',
+var distPath = '../../../dist',
+  testPath = distPath + '/test',
   jsdom = require('jsdom'),
   Promise = require('promise'),
   handlebars = require('handlebars');

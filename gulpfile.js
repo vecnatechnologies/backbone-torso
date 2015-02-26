@@ -11,10 +11,9 @@
     app: 'src/main/javascript',
     test: 'src/test/spec',
     testSrc: 'src/test/source',
-    testEnv: 'target/test',
-    dist: 'target/compressed',
-    docs: 'target/jsdocs',
-    jsDep: 'target/js-dependencies'
+    testEnv: 'dist/test',
+    dist: 'dist/compressed',
+    docs: 'dist/jsdocs'
   };
 
   onError = function(err) {
@@ -56,13 +55,12 @@
                      'node_modules/underscore/underscore-min.js',
                      'node_modules/backbone/backbone-min.js',
                      'node_modules/backbone-nested/backbone-nested.js',
-                     buildPaths.jsDep + '/source/backbone.stickit.js',
-                     buildPaths.jsDep + '/source/backbone-validation.js',
+                     'node_modules/backbone.stickit/backbone.stickit.js',
                      'node_modules/handlebars/dist/handlebars.js',
                      'node_modules/jquery-mockjax/jquery.mockjax.js',
                      buildPaths.dist + '/webcore.js'])
                .pipe($.concatUtil('testEnv.js'))
-               .pipe(gulp.dest(buildPaths.testEnv))
+               .pipe(gulp.dest(buildPaths.testEnv));
   });
 
   gulp.task('move-test', function() {
