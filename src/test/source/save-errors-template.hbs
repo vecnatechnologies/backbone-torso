@@ -1,0 +1,33 @@
+<fieldset>
+  {{#if formErrors}}
+    <div class="alert error">
+      <i class="icon-warning-sign"></i>
+      <b>Error!</b>
+      <span>There are invalid form entries.</span>
+      <br/>
+      <ul class="form-errors">
+        {{#each formErrors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+
+  {{#if formSuccess}}
+    <div class="alert success">
+      <i class="icon-ok-sign"></i>
+      <b>Success!</b>
+      <span>Your profile has been updated.</span>
+    </div>
+  {{/if}}
+
+  <span class="control-group">
+    <label {{label 'fullName'}}>Full Name</label>
+    <input type="text" {{bindModel 'fullName'}}>
+    <div class="tooltip" {{feedback 'onValidate:fullName'}}></div>
+  </span>
+
+  <br/>
+  <button type="submit" class="submit primary">Save</button>
+
+</fieldset>

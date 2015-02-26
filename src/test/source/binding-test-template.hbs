@@ -1,0 +1,90 @@
+<fieldset>
+  {{#if formErrors}}
+    <div class="alert error">
+      <i class="icon-warning-sign"></i>
+      <b>Error!</b>
+      <span>There are invalid form entries.</span>
+      <br/>
+      <ul>
+        {{#each formErrors}}
+          <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  {{/if}}
+
+  {{#if formSuccess}}
+    <div class="alert success">
+      <i class="icon-ok-sign"></i>
+      <b>Success!</b>
+      <span>Your profile has been updated.</span>
+    </div>
+  {{/if}}
+
+  <span class="control-group">
+    <label {{label 'fullName'}}>Full Name</label>
+    <input type="text" {{bindModel 'fullName'}}>
+    <div class="tooltip" {{feedback 'fullName-error'}}></div>
+  </span>
+
+  <span class="control-group">
+    <label {{label 'email'}}>Email</label>
+    <input type="text" {{bindModel 'email'}}>
+    <div class="tooltip" {{feedback 'email-error'}}></div>
+  </span>
+
+  <span class="control-group">
+    <label {{label 'shortBio'}}>Short Biography</label>
+    <textarea {{bindModel 'shortBio'}}></textarea>
+    <div class="tooltip" {{feedback 'shortBio-error'}}></div>
+  </span>
+
+  <div class="form-question">Gender</div>
+  <div class="btn-group">
+    <input type="radio" {{bindModel 'gender' value='male'}}>
+    <label class="btn" {{label 'gender' value='male'}}>&nbsp;Male</label>
+    <input type="radio" {{bindModel 'gender' value='female'}}>
+    <label class="btn" {{label 'gender' value='female'}}>&nbsp;Female</label>
+  </div>
+  <div class="tooltip" {{feedback 'gender-error'}}></div>
+
+  <div class="form-question">Schedule</div>
+  <div class="tooltip" {{feedback 'schedule-error'}}></div>
+  <div class="btn-group">
+    {{#each weekdays}}
+      <input type="checkbox" {{bindModel 'schedule' value=this}}>
+      <label class="btn" {{label 'schedule' value=this}}>&nbsp;{{this}}</label>
+    {{/each}}
+  </div>
+  </br>
+
+  <div class="form-question">
+     {{#each model.dates}}
+       <label>Dates</label>
+       <input type="text" {{bindModel 'dates[x].date' x=@index}}/>
+       <span {{feedback 'my-date-feedback[x]-error' x=@index}}></span><br/>
+       <div class="btn-group">
+         {{#each levels}}
+           <input type="text" {{bindModel 'dates[x].levels[y]' x=@../index y=@index}}/>
+           <span {{feedback 'my-date-levels[x][y]-error' x=@../index y=@index}}></span><br/>
+         {{/each}}
+       </div>
+     {{/each}}
+   </span><br/><br/>
+
+  <span class="control-group">
+    <label {{label 'ranking'}}>Ranking</label>
+    <select data-placeholder="Select a Ranking" {{bindModel 'ranking'}}>
+      <option value=""></option>
+      <option value="cadet">Cadet</option>
+      <option value="lieutenant">Lieutenant</option>
+      <option value="captain">Captain</option>
+      <option value="admiral">Admiral</option>
+    </select>
+  </span>
+  <br/>
+
+  <br/>
+  <button type="submit" class="submit primary">Save</button>
+
+</fieldset>

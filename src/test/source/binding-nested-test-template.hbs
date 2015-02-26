@@ -1,0 +1,13 @@
+<fieldset>
+  <span class="control-group" id="user-id">
+    <label for="email">Address</label>
+    {{#each userAddrs}}
+      <input type="text" name="user-addrs" id="user-addrs[{{@index}}].street">
+      <div id="user-addrs[{{@index}}].street-error"></div>
+    {{/each}}
+  </span>
+
+  <br/>
+  <button type="submit" class="submit primary">Save</button>
+
+</fieldset>
