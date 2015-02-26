@@ -1,2 +1,2 @@
 # backbone-torso
-The Opinionated Backbone Framework
+A holistic approach to Backbone applications
