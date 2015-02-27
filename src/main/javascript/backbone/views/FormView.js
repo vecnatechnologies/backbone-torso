@@ -20,21 +20,9 @@ Torso.Views.Form = Torso.View.extend({
    * @type Boolean
    **/
   /**
-   * Prevalidation error hash
-   * @private
-   * @property _prevalidation
-   * @type Object
-   **/
-  /**
    * Stickit bindings hash local backup
    * @private
    * @property _bindings
-   * @type Object
-   */
-  /**
-   * Backbone events hash local backup
-   * @private
-   * @property _events
    * @type Object
    */
   /**
@@ -70,6 +58,8 @@ Torso.Views.Form = Torso.View.extend({
    * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
    */
   initialize: function(args) {
+    this.super();
+
     args = args || {};
 
     /* Listen to model validation callbacks */
@@ -86,11 +76,9 @@ Torso.Views.Form = Torso.View.extend({
     this.fields = _.extend({}, this.fields || {}, args.fields || {});
     this._errors = [];
     this._success = false;
-    this._prevalidation = {};
+    this._feedbackEvents = [];
     // this._bindings is a snapshot of the original bindings
     this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
-    // this._events is a snapshot of the original events - this.events can/will be augmented heavily
-    this._events = _.extend({}, this.events || {}, args.events || {});
 
     /* Render */
     this.render();
@@ -120,14 +108,21 @@ Torso.Views.Form = Torso.View.extend({
     /* Actually render the template */
     var context = this.prepare();
     this.templateRender(this.$el, this.template, context);
+    this.delegateEvents();
+    this.plug();
+  },
 
+  /**
+   * Override the delegate events and wrap our custom additions
+   * @method delegateEvents
+   */
+  delegateEvents: function() {
     /* DOM event bindings and plugins */
     this._generateStickitBindings();
     this.stickit();
+    Torso.View.prototype.delegateEvents.call(this);
     this._generateFeedbackBindings();
-    this.delegateEvents();
     this._generateFeedbackModelCallbacks();
-    this.plug();
   },
 
   /**
@@ -364,20 +359,19 @@ Torso.Views.Form = Torso.View.extend({
    * @method _generateFeedbackBindings
    */
   _generateFeedbackBindings: function() {
-    var self = this,
-        collate = {};
-    this.events = _.extend({}, this._events);
-    _.each(this.events, function(callback, eventKey) {
-      // If the "callback" clause is a string, assume it's a view method
-      if (_.isString(callback)) {
-        callback = self[callback];
-      }
-      self._collateEvents(collate, eventKey, { fn: callback });
-    });
+    var self = this;
+
+    // Cleanup previous "on" events
+    for (var i = 0; i < this._feedbackEvents.length; i++) {
+      this.off(null, this._feedbackEvents[i]);
+    }
+    this._feedbackEvents = [];
+
     // For each feedback configuration
     _.each(this.feedback, function(declaration) {
       var destinations = self._getFeedbackDestinations(declaration.to),
         destIndexTokens = self._getAllIndexTokens(declaration.to);
+
       // Iterate over all destinations
       _.each(destinations, function(dest) {
         var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
@@ -413,44 +407,35 @@ Torso.Views.Form = Torso.View.extend({
         // Iterate over all "when" clauses
         whenEvents = self._generateWhenEvents(declaration.when, indexMap);
         _.each(whenEvents, function(eventKey) {
-          self._collateEvents(collate, eventKey, bindInfo);
+          var invokeThen = function(evt) {
+            var i, args, result;
+            args = [evt];
+            newState = {};
+            args.push(bindInfo.indices);
+            result = bindInfo.fn.apply(self, args);
+            self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
+          };
+          var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+          var match = eventKey.match(delegateEventSplitter);
+          self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
+        });
+        // Special "on" listeners
+        _.each(declaration.when.on, function(eventKey) {
+          var invokeThen = function() {
+            var result,
+                args = [{
+                  args: arguments,
+                  type: eventKey
+                }];
+            args.push(bindInfo.indices);
+            result = bindInfo.fn.apply(self, args);
+            self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
+          };
+          self.on(eventKey, invokeThen, self);
+          self._feedbackEvents.push(invokeThen);
         });
       });
     });
-    // Bind collated and wrapped functions
-    _.each(collate, function(bindInfo, eventKey) {
-      this.events[eventKey] = function(evt) {
-        var i, args, result, thisBindInfo;
-        for (i = 0; i < bindInfo.length; i++) {
-          thisBindInfo = bindInfo[i];
-          args = [evt];
-          newState = {};
-          if (thisBindInfo.feedbackModelField) {
-            args.push(thisBindInfo.indices);
-            result = thisBindInfo.fn.apply(self, args);
-            self._processFeedbackThenResult(result, thisBindInfo.feedbackModelField);
-          } else {
-            thisBindInfo.fn.apply(self, args);
-          }
-        }
-      };
-    }, self);
-  },
-
-  /**
-   * @method _collateEvents
-   * @private
-   * @param collate {Object} The object reference that will be collating events
-   * @param eventKey {String} The event key in the "collate" hash
-   * @param bindInfo {Object} The event binding information later used for event invokation
-   */
-  _collateEvents: function(collate, eventKey, bindInfo) {
-    // Collate "then functions" for each "when event"
-    if (collate[eventKey]) {
-      collate[eventKey].push(bindInfo);
-    } else {
-      collate[eventKey] = [bindInfo];
-    }
   },
 
   /**
@@ -491,25 +476,27 @@ Torso.Views.Form = Torso.View.extend({
     _.each(whenMap, function(whenEvents, whenField) {
       var substitutedWhenField,
           qualifiedFields = [whenField],
-      useAtNotation = (whenField.charAt(0) === '@');
+          useAtNotation = (whenField.charAt(0) === '@');
 
-      if (useAtNotation) {
-        whenField = whenField.substring(1);
-        // substitute indices in to "when" placeholders
-        // [] -> to all, [0] -> to specific, [x] -> [x's value]
-        substitutedWhenField = self._substituteIndicesUsingMap(whenField, indexMap);
-        qualifiedFields = _.flatten(self._generateSubAttributes(substitutedWhenField, self.model));
-      }
-      // For each qualified field
-      _.each(qualifiedFields, function(qualifiedField) {
-        _.each(whenEvents, function(eventType) {
-          var backboneEvent = eventType + ' ' + qualifiedField;
-          if (useAtNotation) {
-            backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
-          }
-          events.push(backboneEvent);
+      if (whenField !== 'on') {
+        if (useAtNotation) {
+          whenField = whenField.substring(1);
+          // substitute indices in to "when" placeholders
+          // [] -> to all, [0] -> to specific, [x] -> [x's value]
+          substitutedWhenField = self._substituteIndicesUsingMap(whenField, indexMap);
+          qualifiedFields = _.flatten(self._generateSubAttributes(substitutedWhenField, self.model));
+        }
+        // For each qualified field
+        _.each(qualifiedFields, function(qualifiedField) {
+          _.each(whenEvents, function(eventType) {
+            var backboneEvent = eventType + ' ' + qualifiedField;
+            if (useAtNotation) {
+              backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
+            }
+            events.push(backboneEvent);
+          });
         });
-      });
+      }
     });
     return events;
   },
