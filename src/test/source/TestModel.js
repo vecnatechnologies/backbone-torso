@@ -1,5 +1,5 @@
-module.exports = function(Torso) {
-  return Torso.NestedModel.extend({
+module.exports = function(TorsoNestedModel) {
+  return TorsoNestedModel.extend({
 
     urlRoot: '/tests',
 

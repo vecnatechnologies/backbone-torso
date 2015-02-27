@@ -1,4 +1,23 @@
-(function(Handlebars) {
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['handlebars'], factory);
+  } else if (typeof exports === 'object') {
+    factory(require('handlebars'));
+  } else {
+    factory(root.Handlebars);
+  };
+}(this, function(Handlebars) {
+  'use strict;'
+
+  /**
+   * Extensions to handlebars helpers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     handlebarsUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
   var FEEDBACK_KEY = 'feedback',
       MODEL_KEY = 'model';
 
@@ -120,4 +139,4 @@
       return field;
     }
   });
-})(Handlebars);
+}));

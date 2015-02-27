@@ -1,6 +1,6 @@
 
-module.exports = function(Torso) {
-  return Torso.View.extend({
+module.exports = function(TorsoView) {
+  return TorsoView.extend({
     className: 'testView',
     template: require('./validation-test-template'),
     clicked: 0,

@@ -1,6 +1,6 @@
-module.exports = function(Torso, _) {
+module.exports = function(TorsoFormView, _) {
 
-  var NestedExampleFormView = Torso.Views.Form.extend({
+  var NestedExampleFormView = TorsoFormView.extend({
     template: require('./binding-nested-test-template'),
     fields: {
       'userId': {type: 'text'},
