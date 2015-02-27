@@ -1,4 +1,4 @@
-Torso.Stickit.addHandler({
+Backbone.Stickit.addHandler({
   selector: 'input[type="radio"]',
   events: ['change'],
   update: function($el, val) {
