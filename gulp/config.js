@@ -11,7 +11,8 @@
     testSrc: srcTest + '/source',
     testEnv: dest + '/test',
     dist: dest + '/compressed',
-    docs: dest + '/jsdocs'
+    docs: dest + '/jsdocs',
+    dest: dest
   };
 
 })();

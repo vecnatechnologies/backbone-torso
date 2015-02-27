@@ -1,6 +1,6 @@
-module.exports = function(Torso, _) {
+module.exports = function(FormView, _) {
 
-  var UpdateProfileFormView = Torso.Views.Form.extend({
+  var UpdateProfileFormView = FormView.extend({
     template: require('./binding-test-template'),
 
     events: {

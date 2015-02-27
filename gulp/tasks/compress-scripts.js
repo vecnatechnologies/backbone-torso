@@ -6,24 +6,28 @@
       config = require('../config');
 
   gulp.task('compressed-scripts', function () {
-    return gulp.src(config.app + '/**/*.js')
+    return gulp.src([config.app + '/torso.js', config.app + '/utils/**/*.js', config.app + '/backbone/mixins/**/*.js'])
       .pipe($.concatUtil('torso.js'))
-      .pipe($.concatUtil.header('(function(root, factory) {\n' +
-          'if (typeof define === "function" && define.amd) {\n' +
-            'define(["underscore", "jquery", "backbone", "handlebars", "backbone-nested", "backbone-stickit", "backbone-validation"], function(_, $, Backbone, Handlebars) {\n' +
-              'return factory(root, {}, _, $, Backbone, Handlebars);\n' +
-            '});\n' +
-          '} else if (typeof exports === "object") {\n' +
-              'require("backbone-nested");' +
-              'require("backbone-epoxy");' +
-              'require("backbone-validation");' +
-              'module.exports = factory(root, {}, require("underscore"), null, require("backbone"), require("handlebars"));\n' +
-          '} else {\n' +
-            'root.Torso = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Backbone, root.Handlebars);\n' +
-          '};\n' +
-        '}(this, function(root, Torso, _, $, Backbone, Handlebars) {\n' +
-          '"use strict;"\n'))
-      .pipe($.concatUtil.footer('\nreturn Torso;\n}));\n'))
+      .pipe($.concatUtil.header('' +
+        '(function(root, factory) {\n' +
+        '  if (typeof define === "function" && define.amd) {\n' +
+        '    define(["underscore", "jquery", "backbone", "backbone-nested", "backbone-stickit", "backbone-validation"],\n' +
+        '           function(_, $, Backbone) {\n' +
+        '      return factory(root, _, $, Backbone);\n' +
+        '    });\n' +
+        '  } else if (typeof exports === "object") {\n' +
+        '      require("backbone-nested");\n' +
+        '      require("backbone-stickit");\n' +
+        '      require("backbone-validation");\n' +
+        '      module.exports = factory(root, require("underscore"), require("jquery"), require("backbone"));\n' +
+        '  } else {\n' +
+        '    root.Torso = factory(root, root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Backbone);\n' +
+        '  };\n' +
+        '}(this, function(root, _, $, Backbone) {\n' +
+        '  "use strict;"\n'))
+      .pipe($.concatUtil.footer('\n' +
+        '  return Torso;\n' +
+        '}));\n'))
       //.pipe($.uglify())
       .pipe(gulp.dest(config.dist));
   });

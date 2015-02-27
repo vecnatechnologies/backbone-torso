@@ -13,7 +13,10 @@
                      'node_modules/backbone.stickit/backbone.stickit.js',
                      'node_modules/handlebars/dist/handlebars.js',
                      'node_modules/jquery-mockjax/jquery.mockjax.js',
-                     config.dist + '/torso.js'])
+                     config.dist + '/torso.js',
+                     config.dist + '/backbone-validation.js',
+                     config.dist + '/backbone/models/FormModel.js',
+                     config.dist + '/backbone/views/FormView.js'])
                .pipe($.concatUtil('testEnv.js'))
                .pipe(gulp.dest(config.testEnv));
   });
