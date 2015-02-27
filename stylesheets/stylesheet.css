@@ -209,10 +209,10 @@ dl p {
 }
 
 hr {
-  height: 1px;
+  height: 2px;
   margin-bottom: 5px;
   border: none;
-  background: url('../images/bg_hr.png') repeat-x center;
+  background: #dde;
 }
 
 table {
@@ -403,5 +403,27 @@ Small Device Styles
     max-width: 480px;
     font-size: 11px;
   }
+}
 
+.more-about {
+  text-shadow: none;
+}
+
+.push-right {
+  text-align: right;
+}
+
+.learn-more {
+  background: rgb(100, 200, 100);
+  color: #141;
+  text-shadow: 0px 1px 1px rgba(255,255,255,0.6);
+  font-size: 18px;
+  padding: 10px 25px;
+  border-radius: 5px;
+  line-height: 45px;
+  cursor: pointer;
+}
+
+.learn-more:hover {
+  text-decoration: none;
 }
