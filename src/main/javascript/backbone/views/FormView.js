@@ -17,7 +17,7 @@
      * @constructor
      * @author ariel.wexler@vecna.com
      */
-    FormView = Torso.View.extend({
+    TorsoFormView = Torso.View.extend({
       /**
        * Validation error hash
        * @private
@@ -31,21 +31,9 @@
        * @type Boolean
        **/
       /**
-       * Prevalidation error hash
-       * @private
-       * @property _prevalidation
-       * @type Object
-       **/
-      /**
        * Stickit bindings hash local backup
        * @private
        * @property _bindings
-       * @type Object
-       */
-      /**
-       * Backbone events hash local backup
-       * @private
-       * @property _events
        * @type Object
        */
       /**
@@ -81,6 +69,8 @@
        * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
        */
       initialize: function(args) {
+        this.super();
+
         args = args || {};
 
         /* Listen to model validation callbacks */
@@ -97,11 +87,9 @@
         this.fields = _.extend({}, this.fields || {}, args.fields || {});
         this._errors = [];
         this._success = false;
-        this._prevalidation = {};
+        this._feedbackEvents = [];
         // this._bindings is a snapshot of the original bindings
         this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
-        // this._events is a snapshot of the original events - this.events can/will be augmented heavily
-        this._events = _.extend({}, this.events || {}, args.events || {});
 
         /* Render */
         this.render();
@@ -131,14 +119,21 @@
         /* Actually render the template */
         var context = this.prepare();
         this.templateRender(this.$el, this.template, context);
+        this.delegateEvents();
+        this.plug();
+      },
 
+      /**
+       * Override the delegate events and wrap our custom additions
+       * @method delegateEvents
+       */
+      delegateEvents: function() {
         /* DOM event bindings and plugins */
         this._generateStickitBindings();
         this.stickit();
+        Torso.View.prototype.delegateEvents.call(this);
         this._generateFeedbackBindings();
-        this.delegateEvents();
         this._generateFeedbackModelCallbacks();
-        this.plug();
       },
 
       /**
@@ -202,7 +197,7 @@
        */
       dispose: function() {
         this.unstickit();
-        FormView.__super__.dispose.apply(this, arguments);
+        TorsoFormView.__super__.dispose.apply(this, arguments);
       },
 
       /**
@@ -258,106 +253,6 @@
                 }
               });
             };
-          })(attr));
-        });
-        _.each(self.feedbackModel.attributes, function(value, attr) {
-          self.feedbackModel.trigger('change:' + attr);
-        });
-      },
-
-      /**
-       * @method _getFieldOptions
-       * @param attr {String} An attribute of the model
-       * @return {Object} Any settings that are associates with that attribute
-       */
-      _getFieldOptions: function(attr) {
-        attr = this._stripAllAttribute(attr);
-        return this.fields[attr] || {};
-      },
-
-      /**
-       * Returns an array of all the values and variables used within the array notations in a string
-       * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
-       * This does not handle or return any "open" array notations: []
-       * @private
-       * @method _getAllIndexTokens
-       */
-      _getAllIndexTokens: function(attr) {
-        return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
-          var token = arrayNotation.substring(1, arrayNotation.length - 1);
-          if (!isNaN(token)) {
-            result.push(parseInt(token, 10));
-          } else {
-            result.push(token);
-          }
-          return result;
-        }, []);
-      },
-
-      /**
-       * Replaces all array notations with open array notations.
-       * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
-       * @private
-       * @method _stripAllAttribute
-       */
-      _stripAllAttribute: function(attr) {
-        attr = attr.replace(/\[.+?\]/g, function() {
-          return '[]';
-        });
-        return attr;
-      },
-
-      /**
-       * Takes a map from variable name to value to be replaced and processes a string with them.
-       * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
-       * @private
-       * @method _substituteIndicesUsingMap
-       */
-      _substituteIndicesUsingMap : function(dest, indexMap) {
-        var newIndex;
-        return dest.replace(/\[.?\]/g, function(arrayNotation) {
-          if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
-            return arrayNotation;
-          } else {
-            newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
-            return '[' + (newIndex === undefined ? '' : newIndex) + ']';
-          }
-        });
-      },
-
-      /**
-       * Processes the result of the then method. Adds to the feedback model.
-       * @param result {Object} the result of the then method
-       * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
-       * @private
-       * @method _processFeedbackThenResult
-       */
-      _processFeedbackThenResult: function(result, feedbackModelField) {
-        var newState,
-          oldState = this.feedbackModel.get(feedbackModelField);
-        newState = $.extend({}, oldState, result);
-        this.feedbackModel.set(feedbackModelField, newState, {silent: true});
-        this.feedbackModel.trigger('change:' + feedbackModelField);
-      },
-
-      /**
-       * @method _generateModelFieldBinding
-       * @param field {String} A specific model field
-       * @param options {Object} Additional heavior options for the bindings
-       * @param [options.modelFormat] {Object} The function called before setting model values
-       * @param [options.viewFormat] {Object} The function called before setting view values
-       * @private
-       * @return {<Stickit Binding Hash>}
-       */
-      _generateModelFieldBinding: function(field, options) {
-        var indices = this._getAllIndexTokens(field);
-        return {
-          observe: field,
-          onSet: function(value) {
-            var params = [value];
-            params.push(indices);
-            params = _.flatten(params);
-            return options.modelFormat ? options.modelFormat.apply(this, params) : value;
           },
           onGet: function(value) {
             var params = [value];
@@ -375,20 +270,19 @@
        * @method _generateFeedbackBindings
        */
       _generateFeedbackBindings: function() {
-        var self = this,
-            collate = {};
-        this.events = _.extend({}, this._events);
-        _.each(this.events, function(callback, eventKey) {
-          // If the "callback" clause is a string, assume it's a view method
-          if (_.isString(callback)) {
-            callback = self[callback];
-          }
-          self._collateEvents(collate, eventKey, { fn: callback });
-        });
+        var self = this;
+
+        // Cleanup previous "on" events
+        for (var i = 0; i < this._feedbackEvents.length; i++) {
+          this.off(null, this._feedbackEvents[i]);
+        }
+        this._feedbackEvents = [];
+
         // For each feedback configuration
         _.each(this.feedback, function(declaration) {
           var destinations = self._getFeedbackDestinations(declaration.to),
             destIndexTokens = self._getAllIndexTokens(declaration.to);
+
           // Iterate over all destinations
           _.each(destinations, function(dest) {
             var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
@@ -414,6 +308,7 @@
               args.shift();
               then = self[method].apply(self, args);
             }
+          },
 
             // track the indices for binding
             bindInfo = {
@@ -424,44 +319,35 @@
             // Iterate over all "when" clauses
             whenEvents = self._generateWhenEvents(declaration.when, indexMap);
             _.each(whenEvents, function(eventKey) {
-              self._collateEvents(collate, eventKey, bindInfo);
+              var invokeThen = function(evt) {
+                var i, args, result;
+                args = [evt];
+                newState = {};
+                args.push(bindInfo.indices);
+                result = bindInfo.fn.apply(self, args);
+                self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
+              };
+              var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+              var match = eventKey.match(delegateEventSplitter);
+              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
+            });
+            // Special "on" listeners
+            _.each(declaration.when.on, function(eventKey) {
+              var invokeThen = function() {
+                var result,
+                    args = [{
+                      args: arguments,
+                      type: eventKey
+                    }];
+                args.push(bindInfo.indices);
+                result = bindInfo.fn.apply(self, args);
+                self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
+              };
+              self.on(eventKey, invokeThen, self);
+              self._feedbackEvents.push(invokeThen);
             });
           });
         });
-        // Bind collated and wrapped functions
-        _.each(collate, function(bindInfo, eventKey) {
-          this.events[eventKey] = function(evt) {
-            var i, args, result, thisBindInfo;
-            for (i = 0; i < bindInfo.length; i++) {
-              thisBindInfo = bindInfo[i];
-              args = [evt];
-              newState = {};
-              if (thisBindInfo.feedbackModelField) {
-                args.push(thisBindInfo.indices);
-                result = thisBindInfo.fn.apply(self, args);
-                self._processFeedbackThenResult(result, thisBindInfo.feedbackModelField);
-              } else {
-                thisBindInfo.fn.apply(self, args);
-              }
-            }
-          };
-        }, self);
-      },
-
-      /**
-       * @method _collateEvents
-       * @private
-       * @param collate {Object} The object reference that will be collating events
-       * @param eventKey {String} The event key in the "collate" hash
-       * @param bindInfo {Object} The event binding information later used for event invokation
-       */
-      _collateEvents: function(collate, eventKey, bindInfo) {
-        // Collate "then functions" for each "when event"
-        if (collate[eventKey]) {
-          collate[eventKey].push(bindInfo);
-        } else {
-          collate[eventKey] = [bindInfo];
-        }
       },
 
       /**
@@ -502,25 +388,27 @@
         _.each(whenMap, function(whenEvents, whenField) {
           var substitutedWhenField,
               qualifiedFields = [whenField],
-          useAtNotation = (whenField.charAt(0) === '@');
+              useAtNotation = (whenField.charAt(0) === '@');
 
-          if (useAtNotation) {
-            whenField = whenField.substring(1);
-            // substitute indices in to "when" placeholders
-            // [] -> to all, [0] -> to specific, [x] -> [x's value]
-            substitutedWhenField = self._substituteIndicesUsingMap(whenField, indexMap);
-            qualifiedFields = _.flatten(self._generateSubAttributes(substitutedWhenField, self.model));
-          }
-          // For each qualified field
-          _.each(qualifiedFields, function(qualifiedField) {
-            _.each(whenEvents, function(eventType) {
-              var backboneEvent = eventType + ' ' + qualifiedField;
-              if (useAtNotation) {
-                backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
-              }
-              events.push(backboneEvent);
+          if (whenField !== 'on') {
+            if (useAtNotation) {
+              whenField = whenField.substring(1);
+              // substitute indices in to "when" placeholders
+              // [] -> to all, [0] -> to specific, [x] -> [x's value]
+              substitutedWhenField = self._substituteIndicesUsingMap(whenField, indexMap);
+              qualifiedFields = _.flatten(self._generateSubAttributes(substitutedWhenField, self.model));
+            }
+            // For each qualified field
+            _.each(qualifiedFields, function(qualifiedField) {
+              _.each(whenEvents, function(eventType) {
+                var backboneEvent = eventType + ' ' + qualifiedField;
+                if (useAtNotation) {
+                  backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
+                }
+                events.push(backboneEvent);
+              });
             });
-          });
+          }
         });
         return events;
       },
@@ -557,7 +445,7 @@
       }
     });
 
-    Torso.Views.Form = FormView;
-    return FormView;
+    Torso.Views.Form = TorsoFormView;
+    return TorsoFormView;
   })
 );
