@@ -4,7 +4,6 @@
   /*
   gulpfile.js
   ===========
-  Stolen from: https://github.com/greypants/gulp-starter
 
   Rather than manage one giant configuration file responsible
   for creating multiple tasks, each task has been broken out into

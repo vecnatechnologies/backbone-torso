@@ -2,7 +2,7 @@
     if (typeof define === "function" && define.amd) {
       define(["torso", "formModel", "underscore", "jquery"], factory);
     } else if (typeof exports === "object") {
-      factory(require("torso"), require("formModel"), require("underscore"), module.exports);
+      factory(require("torso"), require("FormModel"), require("underscore"), require('jquery'), module.exports);
     } else {
       factory(root.Torso, root.Torso.Models.Form, root._, (root.jQuery || root.Zepto || root.ender || root.$), {});
     };

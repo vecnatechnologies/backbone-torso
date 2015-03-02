@@ -5,6 +5,7 @@
      bundleLogger
      ------------
      Provides gulp style logs to the bundle method in browserify.js
+     TODO (JTY): Figure out what to do with this file.
   */
 
   var gutil = require('gulp-util'),
