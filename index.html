@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/highlights/sunburst.css">
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/font-awesome.min.css">
 
     <title>Backbone-torso</title>
   </head>
@@ -36,11 +37,77 @@
           What is Backbone-torso?
         </h3>
         <hr/>
-        <p>Backbone provides many convenient tools for building Single Page Applications (SPAs) out of the box, and we absolutely love using it!  However, the bare Backbone library could use some love in areas such as response forms, data validation tools, polling collections, and sub-view management.  Beyond Torso's handy-dandy utility classes, there are some opinionated design philosophies that we've adopted to make reliable and maintainable Backbone apps. </p>
+        <p>Backbone provides many convenient tools for building Single Page Applications (SPAs) out of the box, and we absolutely love using it!  However, the bare Backbone library could use some love in areas such as response forms, data validation tools, polling collections, and sub-view management.  Beyond Torso's handy-dandy utility modules, there are some opinionated design philosophies that we've adopted to make reliable and maintainable Backbone apps. </p>
 
+        <!-- DESIGN PHILOSOPHY -->
         <h3>
-          <a id="get-started" class="anchor" href="#get-started" aria-hidden="true"></a>
-          Design Philosophy
+          <a id="philosophy" class="anchor" href="#philosophy" aria-hidden="true"></a>
+          Philosophy
+        </h3>
+        <hr/>
+        <p>This is text about the design philosophy. [[TODO]]</p>
+<pre><code class="javascript">var basicView = Torso.View.extend({
+  events: {'click .list-item': 'handler'},
+  initialize: function() {...},
+  prepare: function() {...},
+  render: function() {...},
+  handler: function(evt) {...}
+});</code></pre>
+        <p>And maybe some more text.</p>
+        <div class="push-right">
+          <a class="learn-more"><i class="fa fa-book"></i> Philosophy</a>
+        </div>
+
+        <!-- MODULES -->
+        <h3>
+          <a id="modules" class="anchor" href="#modules" aria-hidden="true"></a>
+          Modules
+        </h3>
+        <hr/>
+        <p>Torso provides modules that provide convenient interfaces for common web functionality.
+        Some modules are:</p>
+        <ul class="large-links">
+          <li><a href="modules/polling-mixin">Polling mixin</a>
+          <p>Setup periodic polling models or collections.</p>
+<pre><code class="javascript">var users = new Torso.PollingCollection({
+  model: UserModel,
+  url: '/users'
+});
+// Start periodic 5-second polling
+users.startPolling(5000);
+// Stop polling
+users.stopPolling();
+</code></pre>
+          </li>
+
+          <li><a href="modules/list-view">List View</a>
+          <p>Effectively manage a list of sub-views using backbone collections.</p>
+<pre><code class="javascript">var ingredientsView = new Torso.ListView({
+  collection: ingedientsCollection,
+  childView: SingleIngredientView
+});
+</code></pre></li>
+          <li><a href="modules/cache-collection">Caching Collection</a>
+            <p>Minimize traffic with the cache collection system.</p>
+<pre><code class="javascript">var userCache = new Torso.CacheCollection();
+var firstFiveUsers = userCache.createPrivateCollection('widget A');
+var bestFiveUsers = userCache.createPrivateCollection('widget B');
+pc1.trackIds([1, 2, 3, 4, 5]);
+pc2.trackIds([100, 15, 2, 44, 3]);
+userCache.fetch();
+// Fetches [1, 2, 3, 4, 5, 15, 44, 100]
+// No duplicate request for '2' and '3'
+</code></pre></li>
+          <li><a href="modules/forms.html">Interactive Forms</a></li>
+        </ul>
+        <div class="push-right">
+          <a class="learn-more"><i class="fa fa-cubes"></i> Modules</a>
+        </div>
+
+        <!-- Examples -->
+        <h3>
+          <a id="examples" class="anchor" href="#examples" aria-hidden="true"></a>
+          Examples
         </h3>
         <hr/>
         <p>This is text about the design philosophy.</p>
@@ -51,12 +118,13 @@
 });</code></pre>
         <p>And maybe some more text.</p>
         <div class="push-right">
-          <a class="learn-more">Design Philosophy</a>
+          <a class="learn-more"><i class="fa fa-file-text-o"></i> Examples</a>
         </div>
 
+        <!-- AUTHORS & CONTRIBUTORS -->
         <h3>
           <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"></a>
-          Authors and Contributors
+          Authors &amp; Contributors
         </h3>
         <hr/>
         <p>Project creators:<br/>
@@ -80,6 +148,6 @@
     <!-- SCRIPTS -->
     <script type="text/javascript" src="javascripts/jquery.js"></script>
     <script type="text/javascript" src="javascripts/highlight.js"></script>
-    <script type="text/javascript" src="javascripts/main.js"></script>
+    <script type="text/javascript" src="javascripts/codify.js"></script>
   </body>
 </html>

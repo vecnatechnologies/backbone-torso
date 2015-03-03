@@ -78,6 +78,7 @@ h2 {
 }
 
 h3 {
+  margin-top: 35px;
   font-size: 24px;
 }
 
@@ -165,9 +166,10 @@ code.hljs {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
 
-  border-radius: 3px;
+  border-radius: 0px;
   padding: 0.9em;
   line-height: 1.4em;
+  margin-bottom: 12px;
 }
 
 blockquote {
@@ -210,6 +212,7 @@ dl p {
 
 hr {
   height: 2px;
+  margin-top: -13px;
   margin-bottom: 5px;
   border: none;
   background: #dde;
@@ -418,12 +421,69 @@ Small Device Styles
   color: #141;
   text-shadow: 0px 1px 1px rgba(255,255,255,0.6);
   font-size: 18px;
-  padding: 10px 25px;
+  padding: 10px;
   border-radius: 5px;
-  line-height: 45px;
+  line-height: 18px;
   cursor: pointer;
+  width: 130px;
+  display: inline-block;
+  text-align: center;
 }
 
 .learn-more:hover {
+  background: rgb(120, 230, 120);
   text-decoration: none;
+}
+
+ul.large-links > li > a {
+  font-size: 20px;
+}
+
+ul.large-links > li {
+  margin-bottom: 30px;
+}
+
+.code-type {
+  padding: 5px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0px 1px 0px #000;
+}
+
+.code-type.hbs, .code-type.html {
+  background: #d93;
+}
+
+.code-type.javascript {
+  background: #a5a;
+}
+
+.code-type.demo {
+  background: #4b4;
+}
+.demo-area {
+  border: 1px dashed #666;
+  border-top: 0px;
+}
+
+.code-type.demo:before{
+  content: "RESULT";
+}
+
+.code-type.hbs:before{
+  content: "HANDLEBARS";
+}
+
+.code-type.html:before{
+  content: "HTML";
+}
+
+.code-type.javascript:before{
+  content: "JAVASCRIPT";
+}
+
+p b {
+  font-weight: bold;
+  color: #009;
 }

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Backbone-torso : A Holistic Approach to Backbone Applications">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/highlights/sunburst.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="../stylesheets/font-awesome.min.css">
+
+    <title>Backbone-torso</title>
+  </head>
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/vecnatechnologies/backbone-torso">View on GitHub</a>
+
+          <h1 id="project_title">Backbone-torso</h1>
+          <h2 id="project_tagline">A Holistic Approach to Backbone Applications</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/vecnatechnologies/backbone-torso/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/vecnatechnologies/backbone-torso/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>
+          <a id="form-basics" class="anchor" href="#welcome-to-torso" aria-hidden="true"></a>
+          Torso Forms
+        </h3>
+        <hr/>
+        <p>Making a basic form using standard Backbone practice is quite easy!  However, making
+          interactive forms with real-time validation that can modify many persisted objects can
+          quickly become more challenging.  Torso forms provide a standard practice and workflow
+          for producing configurable and maintainable forms.</p>
+        <ul>
+          <li><a href="#basic-form">Basic Form</a></li>
+          <li><a href="#two-way-databinding">Two-Way Databinding</a></li>
+          <li><a href="#model-assembly">Model Assembly</a></li>
+          <li><a href="#formatting">Formatting</a></li>
+          <li><a href="#validation">Validation</a></li>
+          <li><a href="#server-errors">Server Errors</a></li>
+        </ul>
+
+        <!-- BASIC FORM -->
+        <h3>
+          <a id="basic-form" class="anchor" href="#basic-form" aria-hidden="true"></a>
+          Basic Form
+        </h3>
+        <hr/>
+        <p>The following example is a basic backbone form that gives an name input, gender
+          input, and submit button.</p>
+        <div class="code-type html"></div>
+<pre><code class="html" for="basic-form">&lt;form&gt;
+  Name:
+  &lt;input type="text" name="name"/&gt;&lt;br/&gt;
+  Gender:
+  &lt;input type="radio" name="gender" value="male"/&gt;male
+  &lt;input type="radio" name="gender" value="female"/&gt;female&lt;br/&gt;
+  &lt;!-- submit button --&gt;
+  &lt;input type="submit" value="Submit"/&gt;
+&lt;/form&gt;</code></pre>
+        <div class="code-type javascript"></div>
+<pre><code class="javascript" for="basic-form">var BasicFormView = Backbone.View.extend({
+  template: compiledTemplate,
+  events: {
+    'click [type="submit"]': 'submit'
+  },
+  render: function() {
+    this.$el.html(this.template());
+    this.delegateEvents();
+  },
+  submit: function() {
+    alert('BASIC FORM SUBMITTED!');
+    this.render();
+    return false;
+  }
+});
+var formView = new BasicFormView({el: $container});
+formView.render();</code></pre>
+        <div class="code-type demo"></div>
+        <div class="demo-area" for="basic-form"></div>
+        <p>Although this demo works fine, notice that there is a strange behavior on submission.
+          When we press submit, the render method is called.  When we re-render, the input elements all
+          lose their state!  This goes against the Torso design philosophy of state-free DOM.  If the submit
+          button were to run validation before submission and provide user feedback, the render call would
+          blow away all inputs.  In short, we must find a way to save the form state.</p>
+
+        <!-- TWO-WAY DATABINDING -->
+        <h3>
+          <a id="two-way-databinding" class="anchor" href="#two-way-databinding" aria-hidden="true"></a>
+          Two-Way Databinding
+        </h3>
+        <hr/>
+        <p>Torso provides a FormView module that allows two-way binding.  The two-way binding
+          implementation uses Backbone.Stickit behind the scenes.  As mentioned in the previous section,
+          our goal is to have a saved form state.  The easiest way to do this is to map a single field
+          in the DOM to a single field in a "hidden" data model.  Don't worry, we've setup most of this
+          for you!  Just be sure to annotate your input fields with <b>data-model</b> attributes for
+          the FormView to behave properly.
+        </p>
+        <div class="code-type html"></div>
+<pre><code class="html" for="two-way-bind-form">&lt;form&gt;
+  Name:
+  &lt;input type="text" data-model="name" name="name"/&gt;&lt;br/&gt;
+  Gender:
+  &lt;input type="radio" data-model="gender"
+         name="gender" value="male"/&gt;male
+  &lt;input type="radio" data-model="gender"
+         name="gender" value="female"/&gt;female&lt;br/&gt;
+  &lt;!-- submit button --&gt;
+  &lt;input type="submit" value="Submit"/&gt;
+&lt;/form&gt;</code></pre>
+
+     <p>The <b>data-model</b> attributes will make the Torso FormView store data in the view
+      instance.  Using <b>this.model</b>, you may access the "hidden" data which is by default
+      stored in a Torso FormModel object.  This FormModel reference manages the two-way databinding
+      information.  The code below displays the stored data on submit.</p>
+        <div class="code-type javascript"></div>
+<pre><code class="javascript" for="two-way-bind-form">/* >>> usage of Torso FormView <<< */
+var BasicFormView = Torso.Views.Form.extend({
+  template: compiledTemplate,
+  events: {
+    'click [type="submit"]': 'submit'
+  },
+  render: function() {
+    this.$el.html(this.template());
+    this.delegateEvents();
+  },
+  submit: function() {
+    /* >>> access to FormModel data <<< */
+    alert('TWO-WAY-BOUND FORM SUBMITTED!\n'
+      + JSON.stringify(this.model.toJSON()));
+    this.render();
+    return false;
+  }
+});
+var formView = new BasicFormView({el: $container});
+formView.render();</code></pre>
+        <div class="code-type demo"></div>
+        <div class="demo-area" for="two-way-bind-form"></div>
+        <p>Notice that in this demo, the input field values do not vanish on re-render.  This is
+          thanks to the hidden data-model that repopulates the fields if the DOM is blown away.
+          The binding is invoked in the "delegateEvents" method which was overriden by the
+          Torso FormView.  Backbone's delegateEvents method is invoked from within the overriden
+          delegateEvents method.</p>
+
+        <!-- MODEL ASSEMBLY -->
+        <h3>
+          <a id="model-assembly" class="anchor" href="#model-assembly" aria-hidden="true"></a>
+          Model Assembly
+        </h3>
+        <hr/>
+        <p>This is model assembly.</p>
+<pre><code class="javascript">//Javascript Here</code></pre>
+        <div class="demo-area">
+        </div>
+
+        <!-- Formatting -->
+        <h3>
+          <a id="formatting" class="anchor" href="#formatting" aria-hidden="true"></a>
+          Formatting
+        </h3>
+        <hr/>
+        <p>This is formatting.</p>
+<pre><code class="javascript">//Javascript Here</code></pre>
+        <div class="demo-area">
+        </div>
+
+        <!-- Validation -->
+        <h3>
+          <a id="validation" class="anchor" href="#validation" aria-hidden="true"></a>
+          Validation
+        </h3>
+        <hr/>
+        <p>This is validation.</p>
+<pre><code class="javascript">//Javascript Here</code></pre>
+        <div class="demo-area">
+        </div>
+
+        <!-- Server Errors -->
+        <h3>
+          <a id="server-errors" class="anchor" href="#server-errors" aria-hidden="true"></a>
+          Server Errors
+        </h3>
+        <hr/>
+        <p>This is server-errors.</p>
+<pre><code class="javascript">//Javascript Here</code></pre>
+        <div class="demo-area">
+        </div>
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Backbone-torso maintained by <a href="https://github.com/vecnatechnologies">vecnatechnologies</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script type="text/javascript" src="../javascripts/underscore.js"></script>
+    <script type="text/javascript" src="../javascripts/jquery.js"></script>
+    <script type="text/javascript" src="../javascripts/backbone.js"></script>
+    <script type="text/javascript" src="../javascripts/handlebars.js"></script>
+    <script type="text/javascript" src="../javascripts/stickit.js"></script>
+    <script type="text/javascript" src="../javascripts/nested.js"></script>
+    <script type="text/javascript" src="../javascripts/torso.js"></script>
+
+    <script type="text/javascript" src="../javascripts/highlight.js"></script>
+    <script type="text/javascript" src="../javascripts/codify.js"></script>
+    <script type="text/javascript" src="../javascripts/inject-demo-areas.js"></script>
+  </body>
+</html>
