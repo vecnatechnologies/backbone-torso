@@ -31,9 +31,11 @@ module.exports = function() {
           reject(error)
         }
 
-        window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {
-          handlebars.registerHelper(helperName, helperFunction);
-        });
+        // if (window.Handlebars) {
+        //   window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {
+        //     handlebars.registerHelper(helperName, helperFunction);
+        //   });
+        // }
 
         resolve({
           window: window,

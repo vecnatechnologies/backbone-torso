@@ -2,8 +2,7 @@ var rootPath = '../../..',
   distPath = rootPath + '/dist',
   testPath = distPath + '/test',
   jsdom = require('jsdom'),
-  Promise = require('promise'),
-  handlebars = require('handlebars');
+  Promise = require('promise');
 
 /**
  * @method [Anonymous]
@@ -11,12 +10,11 @@ var rootPath = '../../..',
  * The promise resolves with a window parameter and a routes parameter. The window is the virtual dom window
  * and the routes is a map from unique key to mockjax entry
  */
-module.exports = function() {
+module.exports = function(testImport) {
   return new Promise(function(resolve, reject) {
     jsdom.env({
       html: '<html><body></body></html>',
-      scripts: [__dirname + '/' + testPath + '/testCommonJsEnv.js',
-                __dirname + '/' + rootPath + '/node_modules/jquery-mockjax/jquery.mockjax.js'],
+      scripts: [__dirname + '/' + testPath + '/browserified' + testImport + '.js'],
       features: {
         FetchExternalResources   : ['script'],
         ProcessExternalResources : ['script'],
@@ -33,13 +31,8 @@ module.exports = function() {
           reject(error)
         }
 
-        window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {
-          handlebars.registerHelper(helperName, helperFunction);
-        });
-
         resolve({
-          window: window,
-          routes: require(testPath + '/mockjax')(window.$)
+          window: window
         });
       }
     });

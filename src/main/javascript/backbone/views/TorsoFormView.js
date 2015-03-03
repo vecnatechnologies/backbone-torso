@@ -1,12 +1,14 @@
 (function(root, factory) {
     if (typeof define === "function" && define.amd) {
-      define(["torso", "formModel", "underscore", "jquery"], factory);
+      define(["underscore", "jquery", "../models/TorsoFormModel"], factory);
     } else if (typeof exports === "object") {
-      factory(require("torso"), require("FormModel"), require("underscore"), require('jquery'), module.exports);
+      module.exports = factory(require("underscore"), require('jquery'), require("./TorsoView"), require("../models/TorsoFormModel"));
     } else {
-      factory(root.Torso, root.Torso.Models.Form, root._, (root.jQuery || root.Zepto || root.ender || root.$), {});
+      root.Torso = root.Torso || {};
+      root.Torso.Views = root.Torso.Views || {};
+      root.Torso.Views.View = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.Views.View, root.Torso.Models.Form);
     };
-  }(this, function(Torso, TorsoFormModel, _, $, FormView) {
+  }(this, function(_, $, TorsoView, TorsoFormModel) {
     "use strict;"
 
     /**
@@ -17,7 +19,7 @@
      * @constructor
      * @author ariel.wexler@vecna.com
      */
-    TorsoFormView = Torso.View.extend({
+    var TorsoFormView = TorsoView.extend({
       /**
        * Validation error hash
        * @private
@@ -131,7 +133,7 @@
         /* DOM event bindings and plugins */
         this._generateStickitBindings();
         this.stickit();
-        Torso.View.prototype.delegateEvents.call(this);
+        TorsoView.prototype.delegateEvents.call(this);
         this._generateFeedbackBindings();
         this._generateFeedbackModelCallbacks();
       },
@@ -197,7 +199,7 @@
        */
       dispose: function() {
         this.unstickit();
-        TorsoFormView.__super__.dispose.apply(this, arguments);
+        TorsoViews.Form.__super__.dispose.apply(this, arguments);
       },
 
       /**
@@ -253,6 +255,106 @@
                 }
               });
             };
+          })(attr));
+        });
+        _.each(self.feedbackModel.attributes, function(value, attr) {
+          self.feedbackModel.trigger('change:' + attr);
+        });
+      },
+
+      /**
+       * @method _getFieldOptions
+       * @param attr {String} An attribute of the model
+       * @return {Object} Any settings that are associates with that attribute
+       */
+      _getFieldOptions: function(attr) {
+        attr = this._stripAllAttribute(attr);
+        return this.fields[attr] || {};
+      },
+
+      /**
+       * Returns an array of all the values and variables used within the array notations in a string
+       * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
+       * This does not handle or return any "open" array notations: []
+       * @private
+       * @method _getAllIndexTokens
+       */
+      _getAllIndexTokens: function(attr) {
+        return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
+          var token = arrayNotation.substring(1, arrayNotation.length - 1);
+          if (!isNaN(token)) {
+            result.push(parseInt(token, 10));
+          } else {
+            result.push(token);
+          }
+          return result;
+        }, []);
+      },
+
+      /**
+       * Replaces all array notations with open array notations.
+       * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
+       * @private
+       * @method _stripAllAttribute
+       */
+      _stripAllAttribute: function(attr) {
+        attr = attr.replace(/\[.+?\]/g, function() {
+          return '[]';
+        });
+        return attr;
+      },
+
+      /**
+       * Takes a map from variable name to value to be replaced and processes a string with them.
+       * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+       * @private
+       * @method _substituteIndicesUsingMap
+       */
+      _substituteIndicesUsingMap : function(dest, indexMap) {
+        var newIndex;
+        return dest.replace(/\[.?\]/g, function(arrayNotation) {
+          if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
+            return arrayNotation;
+          } else {
+            newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
+            return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          }
+        });
+      },
+
+      /**
+       * Processes the result of the then method. Adds to the feedback model.
+       * @param result {Object} the result of the then method
+       * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
+       * @private
+       * @method _processFeedbackThenResult
+       */
+      _processFeedbackThenResult: function(result, feedbackModelField) {
+        var newState,
+          oldState = this.feedbackModel.get(feedbackModelField);
+        newState = $.extend({}, oldState, result);
+        this.feedbackModel.set(feedbackModelField, newState, {silent: true});
+        this.feedbackModel.trigger('change:' + feedbackModelField);
+      },
+
+      /**
+       * @method _generateModelFieldBinding
+       * @param field {String} A specific model field
+       * @param options {Object} Additional heavior options for the bindings
+       * @param [options.modelFormat] {Object} The function called before setting model values
+       * @param [options.viewFormat] {Object} The function called before setting view values
+       * @private
+       * @return {<Stickit Binding Hash>}
+       */
+      _generateModelFieldBinding: function(field, options) {
+        var indices = this._getAllIndexTokens(field);
+        return {
+          observe: field,
+          onSet: function(value) {
+            var params = [value];
+            params.push(indices);
+            params = _.flatten(params);
+            return options.modelFormat ? options.modelFormat.apply(this, params) : value;
           },
           onGet: function(value) {
             var params = [value];
@@ -308,7 +410,6 @@
               args.shift();
               then = self[method].apply(self, args);
             }
-          },
 
             // track the indices for binding
             bindInfo = {
@@ -445,7 +546,6 @@
       }
     });
 
-    Torso.Views.Form = TorsoFormView;
     return TorsoFormView;
   })
 );

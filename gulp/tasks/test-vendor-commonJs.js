@@ -2,14 +2,21 @@
   'use strict';
 
   var gulp = require('gulp'),
+      path = require('path'),
       $ = require('gulp-load-plugins')(),
       config = require('../config');
 
   gulp.task('test-vendor-commonJs', ['copy-js', 'move-test'], function() {
-    return gulp.src([config.testSrc + '/setupCommonJs.js'])
-               .pipe($.browserify({ transform: ['requireify']}))
-               .pipe($.rename('testCommonJsEnv.js'))
-               .pipe(gulp.dest(config.testEnv));
+    return gulp.src([config.app + '/**/*.js'])
+               .pipe($.tap(function (file, through) {
+                  file.contents = Buffer.concat([
+                    new Buffer('require("./' + path.relative(config.app, file.path) + '");')
+                  ]);
+                }))
+               .pipe($.browserify({
+                  transform: ['requireify']
+                }))
+               .pipe(gulp.dest(config.testEnv + '/browserified/'));
   });
 
 })();

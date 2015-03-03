@@ -3,7 +3,7 @@
       define(['backbone', 'backbone-nested'], factory);
     } else if (typeof exports === 'object') {
       require('backbone-nested');
-      module.exports = factory(require('backbone'), {});
+      module.exports = factory(require('backbone'));
     } else {
       root.Torso = root.Torso || {};
       root.Torso.Models = root.Torso.Models || {};
