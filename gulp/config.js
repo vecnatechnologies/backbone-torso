@@ -6,6 +6,7 @@
       srcTest = src + '/test';
 
   module.exports = {
+    root: __dirname.replace('/gulp', ''),
     app: src + '/main/javascript',
     test: srcTest + '/spec',
     testSrc: srcTest + '/source',

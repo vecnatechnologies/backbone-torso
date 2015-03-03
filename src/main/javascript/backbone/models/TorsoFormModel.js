@@ -1,13 +1,15 @@
 (function(root, factory) {
-    if (typeof define === "function" && define.amd) {
-      define(["torso", "underscore", "jquery"], factory);
-    } else if (typeof exports === "object") {
-      factory(require("torso"), require("underscore"), module.exports);
+    if (typeof define === 'function' && define.amd) {
+      define(['underscore', 'jquery', './TorsoNestedModel', '../mixins/torsoValidation'], factory);
+    } else if (typeof exports === 'object') {
+      module.exports = factory(require('underscore'), require('jquery'), require('./TorsoNestedModel'), require('../mixins/torsoValidation'));
     } else {
-      factory(root.Torso, root._, (root.jQuery || root.Zepto || root.ender || root.$), {});
-    };
-  }(this, function(Torso, _, $, FormModel) {
-    "use strict;"
+      root.Torso = root.Torso || {};
+      root.Torso.Models = root.Torso.Models || {};
+      root.Torso.Models.Form = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.Models.Nested, root.Torso.validation);
+    }
+  }(this, function(_, $, TorsoNestedModel, torsoValidation) {
+    'use strict;'
 
     /**
      * Generic Form Model
@@ -17,7 +19,7 @@
      * @constructor
      * @author kent.willis@vecna.com
      */
-    FormModel = Torso.NestedModel.extend({
+    var TorsoFormModel = TorsoNestedModel.extend({
       /**
        * @private
        * @property _computed
@@ -718,9 +720,8 @@
       }
     });
 
-    _.extend(FormModel.prototype, Backbone.Validation.mixin);
+    _.extend(TorsoFormModel.prototype, torsoValidation.mixin);
 
-    Torso.Models.Form = FormModel;
-    return FormModel;
+    return TorsoFormModel;
   })
 );

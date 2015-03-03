@@ -3,6 +3,6 @@
 
   var gulp = require('gulp');
 
-  gulp.task('build', ['compressed-scripts', 'yuidoc', 'move-test', 'test-vendor', 'templates', 'test']);
+  gulp.task('build', ['copy-js', 'yuidoc', 'move-test', 'test-vendor', 'templates', 'test']);
 
 })();

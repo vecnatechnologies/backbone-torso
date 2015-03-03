@@ -1,18 +1,12 @@
-  var Torso = {};
-  Torso.$ = $;
-  Torso.Mixins = {};
-
-  /* Custom Torso Model/View/Collection to be extended and customized in the future. */
-  Torso.NestedModel = Backbone.NestedModel.extend({});
-  Torso.Model = Backbone.Model.extend({});
-  Torso.View = Backbone.View.extend({});
-  Torso.Collection = Backbone.Collection.extend({});
-
-  /* Holds any Torso classes */
-  Torso.Views = {};
-  Torso.Models = {};
-  Torso.Collections = {};
-  Torso.Services = {};
-
-  /* Holds Torso Events */
-  Torso.Events = _.extend({}, Backbone.Events);
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['./backbone/models/TorsoNestedModel', './backbone/mixins/torsoValidation'], function() {
+      return {};
+    });
+  } else if (typeof exports === 'object') {
+    root.$ = require('jquery');
+    factory(require('./backbone/models/TorsoNestedModel'), require('./backbone/mixins/torsoValidation'), module.exports);
+  } else {
+    root.Torso = root.Torso || {};
+  }
+}(this));

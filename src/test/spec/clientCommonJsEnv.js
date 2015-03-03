@@ -1,4 +1,5 @@
-var distPath = '../../../dist',
+var rootPath = '../../..',
+  distPath = rootPath + '/dist',
   testPath = distPath + '/test',
   jsdom = require('jsdom'),
   Promise = require('promise'),
@@ -14,7 +15,8 @@ module.exports = function() {
   return new Promise(function(resolve, reject) {
     jsdom.env({
       html: '<html><body></body></html>',
-      scripts: [__dirname + '/' + testPath + '/testEnv.js'],
+      scripts: [__dirname + '/' + testPath + '/testCommonJsEnv.js',
+                __dirname + '/' + rootPath + '/node_modules/jquery-mockjax/jquery.mockjax.js'],
       features: {
         FetchExternalResources   : ['script'],
         ProcessExternalResources : ['script'],
