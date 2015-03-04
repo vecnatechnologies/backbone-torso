@@ -5,7 +5,7 @@
       $ = require('gulp-load-plugins')(),
       config = require('../config');
 
-  gulp.task('templates', function(){
+  gulp.task('test-templates', ['clean'], function(){
     return gulp.src(config.testSrc + '/**/*.hbs')
       .pipe($.handlebars())
       .pipe($.wrap('var Handlebars = require("handlebars"); module.exports = Handlebars.template(<%= contents %>);'))

@@ -1,14 +1,24 @@
-/**
- * Periodic Polling Object to be mixed into Backbone Collections and Models.
- *
- * The polling functionality should only be used for collections and for models that are not
- * part of any collections. It should not be used for a model that is a part of a collection.
- * @module    Torso
- * @namespace Torso.Mixins
- * @class  PollingMixin
- * @author ariel.wexler@vecna.com
- */
-(function() {
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('jquery'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.polling = factory((root.jQuery || root.Zepto || root.ender || root.$));
+  };
+}(this, function($) {
+  /**
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  polling
+   * @author ariel.wexler@vecna.com
+   */
   var pollingMixin = {
     /**
      * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
@@ -42,7 +52,7 @@
       } else {
         this._pollStarted = true;
         this._poll();
-        this.pollTimeoutId = window.setInterval(Torso.$.proxy(function() {
+        this.pollTimeoutId = window.setInterval($.proxy(function() {
           this._poll();
         }, this), this._pollInterval);
       }
@@ -76,8 +86,5 @@
     }
   };
 
-  // Add the mixin to both models and collections.
-  _.extend(Torso.Collection.prototype, pollingMixin);
-  _.extend(Torso.Model.prototype, pollingMixin);
-  _.extend(Torso.NestedModel.prototype, pollingMixin);
-})();
+  return pollingMixin;
+}));

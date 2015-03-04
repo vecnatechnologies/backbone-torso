@@ -6,7 +6,7 @@
       $ = require('gulp-load-plugins')(),
       config = require('../config');
 
-  gulp.task('test-vendor-commonJs', ['copy-js', 'move-test'], function() {
+  gulp.task('test-vendor-commonJs', ['clean'], function() {
     return gulp.src([config.app + '/**/*.js'])
                .pipe($.tap(function (file, through) {
                   file.contents = Buffer.concat([

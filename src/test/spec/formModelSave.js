@@ -9,8 +9,8 @@ describe('A Form Model saving', function() {
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
-      TestModel = require(testPath + '/TestModel')(env.window.Torso),
-      TestModel2 = require(testPath + '/TestModel2')(env.window.Torso),
+      TestModel = require(testPath + '/TestModel')(env.window.Torso.Models.Nested),
+      TestModel2 = require(testPath + '/TestModel2')(env.window.Torso.Models.Nested),
       FormModel = env.window.Torso.Models.Form;
       testModel = new TestModel();
       testModel2 = new TestModel2();

@@ -2,12 +2,11 @@
   'use strict';
 
   var gulp = require('gulp'),
-      $ = require('gulp-load-plugins')(),
+      del = require('del'),
       config = require('../config');
 
-  gulp.task('clean', function () {
-    return gulp.src(config.dest)
-      .pipe($.clean());
+  gulp.task('clean', function (callback) {
+    del(config.dest, callback);
   });
 
 })();

@@ -5,7 +5,7 @@
       $ = require('gulp-load-plugins')(),
       config = require('../config');
 
-  gulp.task('yuidoc', function () {
+  gulp.task('doc', ['clean'], function () {
     return gulp.src(config.app + '/**/*.js')
       .pipe($.yuidoc())
       .pipe(gulp.dest(config.docs))

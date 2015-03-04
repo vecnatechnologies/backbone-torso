@@ -16,10 +16,10 @@ describe("A Form View's nested two-way binding", function() {
       _ = env.window._;
 
       /* Example Form Model */
-      NestedExampleFormModel = require(testPath + '/NestedExampleFormModel')(env.window.Torso, _);
+      NestedExampleFormModel = require(testPath + '/NestedExampleFormModel')(env.window.Torso.Models.Form, _);
 
       /* Example form view */
-      NestedExampleFormView = require(testPath + '/NestedExampleFormView')(env.window.Torso, _);
+      NestedExampleFormView = require(testPath + '/NestedExampleFormView')(env.window.Torso.Views.Form, _);
 
       /* Create basic model and view */
       model = new NestedExampleFormModel();

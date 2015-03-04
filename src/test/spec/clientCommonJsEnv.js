@@ -1,14 +1,14 @@
 var rootPath = '../../..',
-  distPath = rootPath + '/dist',
-  testPath = distPath + '/test',
-  jsdom = require('jsdom'),
-  Promise = require('promise');
+    distPath = rootPath + '/dist',
+    testPath = distPath + '/test',
+    jsdom = require('jsdom'),
+    Promise = require('promise'),
+    argv = require('minimist')(process.argv);
 
 /**
  * @method [Anonymous]
  * @return a promise that resolves when the environment is set up.
- * The promise resolves with a window parameter and a routes parameter. The window is the virtual dom window
- * and the routes is a map from unique key to mockjax entry
+ * The promise resolves with the window parameter. The window is the virtual dom window.
  */
 module.exports = function(testImport) {
   return new Promise(function(resolve, reject) {
@@ -22,7 +22,9 @@ module.exports = function(testImport) {
         QuerySelector            : false
       },
       done: function(error, window) {
-        //jsdom.getVirtualConsole(window).sendTo(console); /* uncomment to see window's console */
+        if (argv.v) {
+          jsdom.getVirtualConsole(window).sendTo(console);
+        }
 
         if (error) {
           console.log("Error loading environment: ");
@@ -31,9 +33,7 @@ module.exports = function(testImport) {
           reject(error)
         }
 
-        resolve({
-          window: window
-        });
+        resolve(window);
       }
     });
   });

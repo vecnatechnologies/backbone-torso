@@ -1,8 +1,9 @@
 var distPath = '../../../dist',
-  testPath = distPath + '/test',
-  jsdom = require('jsdom'),
-  Promise = require('promise'),
-  handlebars = require('handlebars');
+    testPath = distPath + '/test',
+    jsdom = require('jsdom'),
+    Promise = require('promise'),
+    handlebars = require('handlebars'),
+    argv = require('minimist')(process.argv);
 
 /**
  * @method [Anonymous]
@@ -22,7 +23,9 @@ module.exports = function() {
         QuerySelector            : false
       },
       done: function(error, window) {
-        //jsdom.getVirtualConsole(window).sendTo(console); /* uncomment to see window's console */
+        if (argv.v) {
+          jsdom.getVirtualConsole(window).sendTo(console);
+        }
 
         if (error) {
           console.log("Error loading environment: ");
@@ -31,11 +34,11 @@ module.exports = function() {
           reject(error)
         }
 
-        // if (window.Handlebars) {
-        //   window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {
-        //     handlebars.registerHelper(helperName, helperFunction);
-        //   });
-        // }
+        // This sync is needed because TestView.js imports a compiled .hbs file outside of the window's scope so it uses a different
+        // Set of handlebars helpers.
+        window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {
+          handlebars.registerHelper(helperName, helperFunction);
+        });
 
         resolve({
           window: window,
