@@ -2,10 +2,12 @@
   'use strict';
 
   var gulp = require('gulp'),
-      config = require('../config');
+      config = require('../config'),
+      copy = function () {
+        return gulp.src([config.app + '/**/*.js'])
+          .pipe(gulp.dest(config.dist));
+      };
 
-  gulp.task('copy', ['clean'], function () {
-    return gulp.src([config.app + '/**/*.js'])
-      .pipe(gulp.dest(config.dist));
-  });
+  gulp.task('copy', copy);
+  gulp.task('copy:clean', ['clean'], copy);
 })();
