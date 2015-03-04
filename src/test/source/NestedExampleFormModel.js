@@ -1,6 +1,6 @@
-module.exports = function(Torso, _) {
+module.exports = function(TorsoFormModel, _) {
 
-  var NestedExampleFormModel = Torso.Models.Form.extend({
+  var NestedExampleFormModel = TorsoFormModel.extend({
     defaults: {
       userId: 0,
       userAddrs: [

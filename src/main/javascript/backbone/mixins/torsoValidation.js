@@ -1,5 +1,16 @@
-Backbone.Validation = (function(_){
-  'use strict';
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', '../models/TorsoNestedModel'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('../models/TorsoNestedModel'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.validation = factory(root._, root.Torso.Models.Nested);
+    root.Torso.Mixins.validation = root.Torso.validation.mixin;
+  };
+}(this, function(_, TorsoNestedModel) {
+  'use strict;'
 
   // Default options
   // ---------------
@@ -83,10 +94,18 @@ Backbone.Validation = (function(_){
     return into;
   };
 
-  // Validation
+  // TorsoValidation
   // ----------
 
-  var Validation = (function(){
+  /**
+   * Validation object containing validation mixin.
+   *
+   * @module    Torso
+   * @namespace Torso
+   * @class  validation
+   * @author ariel.wexler@vecna.com
+   */
+  var TorsoValidation = (function(){
 
     // Returns an object with undefined properties for all
     // attributes on the model that has defined one or more
@@ -188,9 +207,9 @@ Backbone.Validation = (function(_){
       }
     };
 
-    // Is this model a nested backbone model
-    var isBackboneNested = function(model) {
-      return Backbone.NestedModel && model instanceof Backbone.NestedModel;
+    // Is this model a nested torso model
+    var isTorsoNestedModel = function(model) {
+      return TorsoNestedModel && model instanceof TorsoNestedModel;
     };
 
     // Is the attribute using dot notation or array notation: foo.bar or foo[] or foo[1]
@@ -331,7 +350,7 @@ Backbone.Validation = (function(_){
           var self = this,
               result = {},
               error;
-          if (_.isUndefined(value) && isBackboneNested(this)) {
+          if (_.isUndefined(value) && isTorsoNestedModel(this)) {
             value = this.get(attr);
           }
           if (_.isObject(attr)) {
@@ -365,7 +384,7 @@ Backbone.Validation = (function(_){
             // Loop through all attributes
             _.each(attrs, function (attr) {
               var value;
-              if (isBackboneNested(this)) {
+              if (isTorsoNestedModel(this)) {
                 value = this.get(attr);
               } else {
                 value = flatten(this.attributes)[attr];
@@ -546,7 +565,7 @@ Backbone.Validation = (function(_){
   // Callbacks
   // ---------
 
-  var defaultCallbacks = Validation.callbacks = {
+  var defaultCallbacks = TorsoValidation.callbacks = {
 
     // Gets called when a previously invalid field in the
     // view becomes valid. Removes any error message.
@@ -571,7 +590,7 @@ Backbone.Validation = (function(_){
   // Patterns
   // --------
 
-  var defaultPatterns = Validation.patterns = {
+  var defaultPatterns = TorsoValidation.patterns = {
     // Matches any digit(s) (i.e. 0-9)
     digits: /^\d+$/,
 
@@ -591,7 +610,7 @@ Backbone.Validation = (function(_){
 
   // Error message for the build in validators.
   // {x} gets swapped out with arguments form the validator.
-  var defaultMessages = Validation.messages = {
+  var defaultMessages = TorsoValidation.messages = {
     required: '{0} is required',
     acceptance: '{0} must be accepted',
     min: '{0} must be greater than or equal to {1}',
@@ -621,7 +640,7 @@ Backbone.Validation = (function(_){
   //     Backbone.Validation.configure({
   //       labelFormatter: 'label'
   //     });
-  var defaultLabelFormatters = Validation.labelFormatters = {
+  var defaultLabelFormatters = TorsoValidation.labelFormatters = {
 
     // Returns the attribute name with applying any formatting
     none: function(attrName) {
@@ -656,7 +675,7 @@ Backbone.Validation = (function(_){
   // Message Formatters
   // ------------------
 
-  var defaultMessageFormatters = Validation.messageFormatters = {
+  var defaultMessageFormatters = TorsoValidation.messageFormatters = {
     none: function() {
       var args = Array.prototype.slice.call(arguments),
         text = args.shift();
@@ -668,7 +687,7 @@ Backbone.Validation = (function(_){
 
   // AttributeLoaders
 
-  var defaultAttributeLoaders = Validation.attributeLoaders = {
+  var defaultAttributeLoaders = TorsoValidation.attributeLoaders = {
     inputNames: function (view) {
       var attrs = [];
       if (view) {
@@ -687,7 +706,7 @@ Backbone.Validation = (function(_){
   // Built in validators
   // -------------------
 
-  var defaultValidators = Validation.validators = (function(){
+  var defaultValidators = TorsoValidation.validators = (function(){
     // Use native trim when defined
     var trim = String.prototype.trim ?
       function(text) {
@@ -847,5 +866,5 @@ Backbone.Validation = (function(_){
     };
   }());
 
-  return Validation;
-}(_));
+  return TorsoValidation;
+}));

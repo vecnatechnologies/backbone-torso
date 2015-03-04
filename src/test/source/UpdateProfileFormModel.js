@@ -1,6 +1,6 @@
-module.exports = function(Torso, _) {
+module.exports = function(TorsoFormModel, _) {
 
-  var UpdateProfileFormModel = Torso.Models.Form.extend({
+  var UpdateProfileFormModel = TorsoFormModel.extend({
     defaults: {
       fullName: '',
       email: '',

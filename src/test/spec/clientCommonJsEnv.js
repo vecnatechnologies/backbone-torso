@@ -1,21 +1,20 @@
-var distPath = '../../../dist',
+var rootPath = '../../..',
+    distPath = rootPath + '/dist',
     testPath = distPath + '/test',
     jsdom = require('jsdom'),
     Promise = require('promise'),
-    handlebars = require('handlebars'),
     argv = require('minimist')(process.argv);
 
 /**
  * @method [Anonymous]
  * @return a promise that resolves when the environment is set up.
- * The promise resolves with a window parameter and a routes parameter. The window is the virtual dom window
- * and the routes is a map from unique key to mockjax entry
+ * The promise resolves with the window parameter. The window is the virtual dom window.
  */
-module.exports = function() {
+module.exports = function(testImport) {
   return new Promise(function(resolve, reject) {
     jsdom.env({
       html: '<html><body></body></html>',
-      scripts: [__dirname + '/' + testPath + '/testEnv.js'],
+      scripts: [__dirname + '/' + testPath + '/browserified' + testImport + '.js'],
       features: {
         FetchExternalResources   : ['script'],
         ProcessExternalResources : ['script'],
@@ -34,16 +33,7 @@ module.exports = function() {
           reject(error)
         }
 
-        // This sync is needed because TestView.js imports a compiled .hbs file outside of the window's scope so it uses a different
-        // Set of handlebars helpers.
-        window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {
-          handlebars.registerHelper(helperName, helperFunction);
-        });
-
-        resolve({
-          window: window,
-          routes: require(testPath + '/mockjax')(window.$)
-        });
+        resolve(window);
       }
     });
   });

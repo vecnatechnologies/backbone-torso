@@ -11,7 +11,7 @@ describe('A Form View saving', function() {
       env = environment;
       $ = env.window.$;
       _ = env.window._;
-      TestModel = require(testPath + '/TestModel')(env.window.Torso),
+      TestModel = require(testPath + '/TestModel')(env.window.Torso.Models.Nested),
       FormModel = env.window.Torso.Models.Form;
       testModel = new TestModel();
       FormView = env.window.Torso.Views.Form;

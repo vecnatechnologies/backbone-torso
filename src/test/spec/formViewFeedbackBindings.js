@@ -14,7 +14,7 @@ describe("A Form View's feedback bindings", function() {
       env = environment;
       $ = env.window.$;
       _ = env.window._;
-      UpdateProfileFormView = require(testPath + '/UpdateProfileFormView')(env.window.Torso, _);
+      UpdateProfileFormView = require(testPath + '/UpdateProfileFormView')(env.window.Torso.Views.Form, _);
       done();
     });
   });
