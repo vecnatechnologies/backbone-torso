@@ -37,6 +37,26 @@ node_modules/gulp/bin/gulp.js build
 node_modules/gulp/bin/gulp.js build:clean
 ```
 
+### Watch changes and run tests:
+```
+npm run-script watch
+```
+or
+```
+node_modules/gulp/bin/gulp.js watch
+```
+
+### Build and then Watch changes and run tests:
+```
+npm run-script develop
+npm run-script develop:clean
+```
+or
+```
+node_modules/gulp/bin/gulp.js develop
+node_modules/gulp/bin/gulp.js develop:clean
+```
+
 ### Run tests:
 ```
 npm test
@@ -46,6 +66,21 @@ or
 ```
 node_modules/gulp/bin/gulp.js test
 node_modules/gulp/bin/gulp.js test:clean
+```
+#### To run the tests with the window console output on the command line:
+```
+node_modules/gulp/bin/gulp.js test -v
+node_modules/gulp/bin/gulp.js test:clean -v
+```
+#### To run a specific test:
+```
+node_modules/gulp/bin/gulp.js test --test [test spec file name w/o extension]
+node_modules/gulp/bin/gulp.js test:clean --test [test spec file name w/o extension]
+```
+example to run src/test/spec/commonJsImportTest.js:
+```
+node_modules/gulp/bin/gulp.js test --test commonJsImportTest
+node_modules/gulp/bin/gulp.js test:clean --test commonJsImportTest
 ```
 
 ### Generate Docs:

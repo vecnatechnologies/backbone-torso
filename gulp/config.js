@@ -7,6 +7,7 @@
       config = {
         root: __dirname.replace('/gulp', ''),
         app: src + '/main/javascript',
+        testAll: [srcTest + '/**/*.js'],
         test: srcTest + '/spec',
         testSrc: srcTest + '/source',
         testEnv: dest + '/test',
@@ -21,6 +22,8 @@
           utilsRelativePath: '/utils'
         }
       };
+
+  config.appSrc = [config.app + '/**/*.js'];
 
   config.importPaths.torsoEventsPath = config.importPaths.backboneRelativePath + '/torsoEvents';
 

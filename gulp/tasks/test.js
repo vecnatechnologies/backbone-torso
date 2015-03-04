@@ -19,4 +19,8 @@
 
   gulp.task('test', ['test-copy', 'test-templates', 'test-vendor-commonJs', 'test-vendor-globals'], test);
   gulp.task('test:clean', ['test-copy:clean', 'test-templates:clean', 'test-vendor-commonJs:clean', 'test-vendor-globals:clean'], test);
+
+  gulp.task('test-rebuild-tests', ['test-copy', 'test-templates'], test);
+  gulp.task('test-rebuild-src', ['test-vendor-commonJs', 'test-vendor-globals'], test);
+
 })();

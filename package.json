@@ -1,6 +1,6 @@
 {
   "name": "backbone-torso",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "scripts": {
     "postinstall": "node_modules/.bin/gulp default:clean",
     "default": "node_modules/.bin/gulp",
@@ -8,12 +8,15 @@
     "test": "node_modules/.bin/gulp test",
     "doc": "node_modules/.bin/gulp doc",
     "bundle": "node_modules/.bin/gulp bundle",
+    "watch": "node_modules/.bin/gulp watch",
+    "develop": "node_modules/.bin/gulp develop",
     "clean": "node_modules/.bin/gulp clean",
     "default:clean": "node_modules/.bin/gulp default:clean",
     "build:clean": "node_modules/.bin/gulp build:clean",
     "test:clean": "node_modules/.bin/gulp test:clean",
     "doc:clean": "node_modules/.bin/gulp doc:clean",
     "bundle:clean": "node_modules/.bin/gulp bundle:clean",
+    "develop:clean": "node_modules/.bin/gulp develop:clean"
   },
   "dependencies": {},
   "devDependencies": {

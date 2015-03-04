@@ -4,7 +4,7 @@
   var gulp = require('gulp'),
       config = require('../config'),
       copy = function () {
-        return gulp.src([config.app + '/**/*.js'])
+        return gulp.src(config.appSrc)
           .pipe(gulp.dest(config.dist));
       };
 
