@@ -3,10 +3,39 @@
 </h3>
 <hr/>
 <p>Typically, the validity of a Backbone model should be determined before
-setting the data on the object</p>
-<div class="code-type html"></div>
-<pre><code class="html" for="rep-form"><script type="text/code">
+setting the data on the object model.  Since the Torso Form philosophy has
+already separated the view fields from the object model fields, there is no
+need to be hesitant anymore.  The Form View will write to the locally bound
+Form Model, and then validation will be run against the Form Model before
+pushing the form values back to the pertinent object models.</p>
+<div class="code-type hbs"></div>
+<pre><code class="html" for="validate-form"><script type="text/code">
 <form>
+  <!-- Form error-listing alert -->
+  \{{#if formErrors}}
+  <div class="alert error">
+    <strong>
+      <span class="fa fa-exclamation-triangle"></span>
+      Validation errors exist!
+    </strong>
+    <ul>
+    \{{#each formErrors}}
+      <li>\{{this}}</li>
+    \{{/each}}
+    </ul>
+  </div>
+  \{{/if}}
+
+  <!-- Form success alert -->
+  \{{#if formSuccess}}
+    <div class="alert success">
+      <strong>
+        <span class="fa fa-thumbs-o-up"></span>
+        Validation successful!
+      </strong>
+    </div>
+  \{{/if}}
+
   <fieldset>
     <label>Name:</label>
     <input data-model="name" type="text" name="name"><br/>
@@ -25,76 +54,50 @@ setting the data on the object</p>
   <input class="primary" type="submit" value="Submit">
 </form>
 </script></code></pre>
-<div class="code-type javascript"></div>
-<pre><code class="javascript" for="rep-form"><script type="text/code">
-var BasicFormView = Torso.Views.Form.extend({
-  template: compiledTemplate,
-  fields: {
-    /* >>> Format the "name" field <<< */
-    'name': {
-      modelFormat: function(value) {
-        if (value) {
-          return value.toUpperCase();
-        } else {
-          return value;
-        }
-      },
-      viewFormat: function(value) {
-        if (value) {
-          return value.toLowerCase();
-        } else {
-          return value;
-        }
-      }
+<div class="code-type javascript"> - MODEL</div>
+<pre><code class="javascript" for="validate-form"><script type="text/code">
+var ValidatingFormModel = Torso.Models.Form.extend({
+  validation: {
+    name: {
+      required: true,
+      minLength: 5
     },
-    /* >>> Format the "gender" field <<< */
-    'gender': {
-      modelFormat: function(value) {
-        if (value === 'male') {
-          return 1;
-        } else if (value === 'female') {
-          return 2;
-        } else {
-          return 0;
-        }
-      },
-      viewFormat: function(value) {
-        if (value === 1) {
-          return 'male';
-        } else if (value === 2) {
-          return 'female';
-        } else {
-          return undefined;
-        }
-      }
+    gender: {
+      required: true
     }
-  },
+  }
+});
+var formModel = new ValidatingFormModel();
+</script></code></pre>
+<div class="code-type javascript"> - VIEW</div>
+<pre><code class="javascript" for="validate-form"><script type="text/code">
+var ValidatingFormView = Torso.Views.Form.extend({
+  template: compiledTemplate,
   events: {
     'click [type="submit"]': 'submit'
   },
   render: function() {
-    this.$el.html(this.template());
+    console.log(this.prepare());
+    this.$el.html(this.template(this.prepare()));
     this.delegateEvents();
   },
   submit: function() {
-    alert('FORMATTED DATA SUBMITTED!\n'
-         + JSON.stringify(this.model.toJSON()));
+    var validationErrors = this.model.validate();
+    if (validationErrors) {
+      console.log('FORM HAS ERRORS!', validationErrors);
+    } else {
+      console.log('VALIDATION PASSED --> Save to Object Models now.');
+    }
     this.render();
     return false;
   }
 });
-var formView = new BasicFormView({el: $container});
+var formView = new ValidatingFormView({
+  el: $container,
+  model: formModel
+});
 formView.render();
 </script></code></pre>
 <div class="code-type demo"></div>
-<div class="demo-area" for="rep-form"></div>
-<p>In the demo above, the <b>name</b> field is always stored internally in uppercase
-letters.  When the Form View is re-rendered, the "hidden" Form Model data will be used
-to generate the view state.  Before reaching the UI, the Form Model data is converted
-to lower case letters via the view formatting method. The <b>gender</b> field shows
-that the internal representation for the radio button can be converted to the numbers
-0, 1, and 2 without changing the DOM.</p>
-<p>Please note that the <b>viewFormat</b> method is only invoked ONCE immediately after the
-render call.  This means that any new user input will no undergo the viewFormat data
-transformation.  If you want real time view formatting, look in to Torso's
-<a href="#modules.feeback-view">Feedback View</a> module.</p>
+<div class="demo-area" for="validate-form"></div>
+<p>TODO</p>

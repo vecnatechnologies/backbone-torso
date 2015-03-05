@@ -514,3 +514,7 @@ p b {
   display: block;
   padding: 0em 0em 1em 0em;
 }
+
+.alert > ul {
+  margin-bottom: 0px;
+}

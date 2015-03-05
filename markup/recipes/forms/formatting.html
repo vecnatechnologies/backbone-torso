@@ -33,49 +33,55 @@ their <b>data-model</b> counterpart.
   <input class="primary" type="submit" value="Submit">
 </form>
 </script></code></pre>
-<div class="code-type javascript"></div>
+<div class="code-type javascript"> - FORMATTERS [Name field]</div>
 <pre><code class="javascript" for="rep-form"><script type="text/code">
-var BasicFormView = Torso.Views.Form.extend({
+var nameFormatters = {
+  modelFormat: function(value) {
+    if (value) {
+      return value.toUpperCase();
+    } else {
+      return value;
+    }
+  },
+  viewFormat: function(value) {
+    if (value) {
+      return value.toLowerCase();
+    } else {
+      return value;
+    }
+  }
+};
+</script></code></pre>
+<div class="code-type javascript"> - FORMATTERS [Gender field]</div>
+<pre><code class="javascript" for="rep-form"><script type="text/code">
+var genderFormatters = {
+  modelFormat: function(value) {
+    if (value === 'male') {
+      return 1;
+    } else if (value === 'female') {
+      return 2;
+    } else {
+      return 0;
+    }
+  },
+  viewFormat: function(value) {
+    if (value === 1) {
+      return 'male';
+    } else if (value === 2) {
+      return 'female';
+    } else {
+      return undefined;
+    }
+  }
+};
+</script></code></pre>
+<div class="code-type javascript"> - VIEW</div>
+<pre><code class="javascript" for="rep-form"><script type="text/code">
+var FormattedFormView = Torso.Views.Form.extend({
   template: compiledTemplate,
   fields: {
-    /* >>> Format the "name" field <<< */
-    'name': {
-      modelFormat: function(value) {
-        if (value) {
-          return value.toUpperCase();
-        } else {
-          return value;
-        }
-      },
-      viewFormat: function(value) {
-        if (value) {
-          return value.toLowerCase();
-        } else {
-          return value;
-        }
-      }
-    },
-    /* >>> Format the "gender" field <<< */
-    'gender': {
-      modelFormat: function(value) {
-        if (value === 'male') {
-          return 1;
-        } else if (value === 'female') {
-          return 2;
-        } else {
-          return 0;
-        }
-      },
-      viewFormat: function(value) {
-        if (value === 1) {
-          return 'male';
-        } else if (value === 2) {
-          return 'female';
-        } else {
-          return undefined;
-        }
-      }
-    }
+    'name': nameFormatters,
+    'gender': genderFormatters
   },
   events: {
     'click [type="submit"]': 'submit'
@@ -91,7 +97,7 @@ var BasicFormView = Torso.Views.Form.extend({
     return false;
   }
 });
-var formView = new BasicFormView({el: $container});
+var formView = new FormattedFormView({el: $container});
 formView.render();
 </script></code></pre>
 <div class="code-type demo"></div>
