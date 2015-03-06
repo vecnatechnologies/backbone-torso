@@ -169,6 +169,9 @@ code.hljs {
   border-radius: 0px;
   padding: 0.9em;
   line-height: 1.4em;
+}
+
+div.code-type + pre {
   margin-bottom: 12px;
 }
 
@@ -462,6 +465,7 @@ code {
   font-weight: bold;
   color: #fff;
   text-shadow: 0px 1px 0px #000;
+  cursor: pointer;
 }
 
 .code-type.hbs, .code-type.html {
@@ -472,9 +476,27 @@ code {
   background: #a5a;
 }
 
+.code-type.other {
+  background: #46b;
+}
+
 .code-type.demo {
   background: #4b4;
+  cursor: default;
 }
+
+.code-type:not(.demo):after {
+  float: right;
+  font-family: 'FontAwesome';
+  content: "\f0da";
+}
+
+.code-type.closed:after {
+  float: right;
+  font-family: 'FontAwesome';
+  content: "\f0d7";
+}
+
 .demo-area {
   border: 1px dashed #666;
   border-top: 0px;
@@ -482,7 +504,7 @@ code {
 }
 
 .code-type.demo:before{
-  content: "RESULT";
+  content: "DEMO";
 }
 
 .code-type.hbs:before{
@@ -517,4 +539,8 @@ p b {
 
 .alert > ul {
   margin-bottom: 0px;
+}
+
+.btn-group {
+  padding: 20px 20px 0px 20px;
 }

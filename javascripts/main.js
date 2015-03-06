@@ -1,7 +1,12 @@
 var app;
 $(window).ready(function() {
-  // Register everything as a partial
-  Handlebars.partials = Templates;
+  Handlebars.registerHelper("equal",function(a, b, options) {
+    if (a === b) {
+      return options.fn();
+    } else {
+      return options.inverse();
+    }
+  });
 
   // Main app router
   var AppRouter = Backbone.Router.extend({
@@ -34,6 +39,7 @@ $(window).ready(function() {
       this.currentPerspective.render();
       this.highlightCode();
       this.generateDemos();
+      this.makeCodeBlocksTogglable();
     },
 
     getPathTemplate: function() {
@@ -72,11 +78,30 @@ $(window).ready(function() {
         var $elem = $(elem);
         var forDemo = $elem.attr('for');
         if (forDemo) {
-          var template = Handlebars.compile($('[for="' + forDemo + '"].html').text());
-          var jsCode = $('[for="' + forDemo + '"].javascript').text();
+          var template = Handlebars.compile($('code[for="' + forDemo + '"].html').text());
+          var jsCode = $('code[for="' + forDemo + '"].javascript').text();
           var func = new Function('compiledTemplate', '$container', jsCode);
           func(template, $elem);
         }
+      });
+    },
+
+    makeCodeBlocksTogglable: function() {
+      $('div + pre code').each(function(i, block) {
+        var $block = $(block);
+        var $bar = $block.parent().prev();
+        if ($bar.hasClass('closed')) {
+          $block.toggle();
+        }
+        $bar.click(function(elem) {
+          $block.slideToggle(function(){
+            if ($block.css('display') === 'none') {
+              $bar.addClass('closed');
+            } else {
+              $bar.removeClass('closed');
+            }
+          });
+        });
       });
     }
   });

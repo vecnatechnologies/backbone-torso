@@ -11,14 +11,19 @@
   Philosophy
 </h3>
 <hr/>
-<p>This is text about the design philosophy. [[TODO]]</p>
-<pre><code class="javascript">var basicView = Torso.View.extend({
+<p>This is text about the design philosophy.</p>
+<pre><code class="javascript"><script type="text/code">
+var basicView = Torso.View.extend({
   events: {'click .list-item': 'handler'},
   initialize: function() {...},
+  activate: function() {...},
+  deactivate: function() {...},
   prepare: function() {...},
   render: function() {...},
-  handler: function(evt) {...}
-});</code></pre>
+  handler: function(evt) {...},
+  dispose: function() {...}
+});
+</script></code></pre>
 <p>And maybe some more text.</p>
 <div class="button-panel">
   <a class="learn-more pull-right" href="#philosophy"><i class="fa fa-book"></i> Philosophy</a>
@@ -35,7 +40,8 @@ Some modules are:</p>
 <ul class="large-links">
   <li><a href="modules/polling-mixin">Polling mixin</a>
   <p>Setup periodic polling models or collections.</p>
-<pre><code class="javascript">var users = new Torso.PollingCollection({
+<pre><code class="javascript"><script type="text/code">
+var users = new Torso.PollingCollection({
   model: UserModel,
   url: '/users'
 });
@@ -43,29 +49,18 @@ Some modules are:</p>
 users.startPolling(5000);
 // Stop polling
 users.stopPolling();
-</code></pre>
+</script></code></pre>
           </li>
 
           <li><a href="modules/list-view">List View</a>
           <p>Effectively manage a list of sub-views using backbone collections.</p>
-<pre><code class="javascript">var ingredientsView = new Torso.ListView({
+<pre><code class="javascript"><script type="text/code">
+var ingredientsView = new Torso.ListView({
   collection: ingedientsCollection,
   childView: SingleIngredientView
 });
-</code></pre></li>
-<li><a href="modules/cache-collection">Caching Collection</a>
-  <p>Minimize traffic with the cache collection system.</p>
-<pre><code class="javascript">var userCache = new Torso.CacheCollection();
-var firstFiveUsers = userCache.createPrivateCollection('widget A');
-var bestFiveUsers = userCache.createPrivateCollection('widget B');
-pc1.trackIds([1, 2, 3, 4, 5]);
-pc2.trackIds([100, 15, 2, 44, 3]);
-userCache.fetch();
-// Fetches [1, 2, 3, 4, 5, 15, 44, 100]
-// No duplicate request for '2' and '3'
-</code></pre></li>
-  <li><a href="#recipes.forms.topics">Interactive Forms</a></li>
-</ul>
+</script></code></pre></li>
+
 <div class="button-panel">
   <a class="learn-more pull-right" href="#modules"><i class="fa fa-cubes"></i> Modules</a>
 </div>
@@ -77,11 +72,13 @@ userCache.fetch();
 </h3>
 <hr/>
 <p>This is an example recipe.</p>
-<pre><code class="javascript">var viewClass = Torso.View.extend({
+<pre><code class="javascript"><script type="text/code">
+var viewClass = Torso.View.extend({
   initialize: function() {
     // RECIPE
   }
-});</code></pre>
+});
+</script></code></pre>
 <p>And maybe some more text.</p>
 <div class="button-panel">
   <a class="learn-more pull-right" href="#recipes"><i class="fa fa-spoon"></i> Recipes</a>

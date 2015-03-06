@@ -41,6 +41,7 @@
                 'node_modules/backbone/backbone-min.js',
                 'node_modules/backbone-nested/backbone-nested.js',
                 'node_modules/backbone.stickit/backbone.stickit.js',
+                buildPaths.javascript + '/i18n.js',
                 buildPaths.javascript + '/torso.js',
                 buildPaths.javascript + '/highlight.js',
                 buildPaths.javascript + '/core-view.js',

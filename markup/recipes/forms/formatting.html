@@ -12,7 +12,11 @@ model data.  These methods are allocated in the Form View class as entries in th
 <b>fields</b> hash.  Entries in the <b>fields</b> hash must have the same name as
 their <b>data-model</b> counterpart.
 </p>
-<div class="code-type html"></div>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="rep-form"></div>
+
+<div class="code-type html closed"></div>
 <pre><code class="html" for="rep-form"><script type="text/code">
 <form>
   <fieldset>
@@ -100,8 +104,7 @@ var FormattedFormView = Torso.Views.Form.extend({
 var formView = new FormattedFormView({el: $container});
 formView.render();
 </script></code></pre>
-<div class="code-type demo"></div>
-<div class="demo-area" for="rep-form"></div>
+
 <p>In the demo above, the <b>name</b> field is always stored internally in uppercase
 letters.  When the Form View is re-rendered, the "hidden" Form Model data will be used
 to generate the view state.  Before reaching the UI, the Form Model data is converted

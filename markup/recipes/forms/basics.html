@@ -4,6 +4,10 @@
 <hr/>
 <p>The following example is a basic backbone form that gives an name input, gender
 input, and submit button.</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="basic-form"></div>
+
 <div class="code-type html"></div>
 <pre><code class="html" for="basic-form"><script type="text/code">
 <form>
@@ -45,8 +49,7 @@ var BasicFormView = Backbone.View.extend({
 var formView = new BasicFormView({el: $container});
 formView.render();
 </script></code></pre>
-<div class="code-type demo"></div>
-<div class="demo-area" for="basic-form"></div>
+
 <p>Although this demo works fine, notice that there is a strange behavior on submission.
 When we press submit, the render method is called. When we re-render, the input elements all
 lose their state! This goes against the Torso design philosophy of state-free DOM. If the submit
