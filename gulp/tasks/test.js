@@ -1,26 +1,61 @@
 (function() {
   'use strict';
 
-  var gulp = require('gulp'),
+  var _ = require('underscore'),
+      gulp = require('gulp'),
       $ = require('gulp-load-plugins')(),
-      config = require('../config'),
+      merge = require('merge-stream'),
+      paths = require('../../paths'),
+      globalImportsTest = 'globalImports',
+      commonJsImportsTest = 'commonJsImports',
       SpecReporter = require('jasmine-spec-reporter'),
       argv = require('minimist')(process.argv),
-      test = function() {
-        var testFile = argv.test || '*';
-        return gulp.src([config.test + '/**/' + testFile + '.js'])
-          .pipe($.jasmine({
-            reporter: new SpecReporter({
-              displayStacktrace: true,
-              displaySpecDuration: true
-            })
-        }));
+      lazypipe = require('lazypipe'),
+      testPipe = lazypipe()
+        .pipe($.jasmine, {
+          reporter: new SpecReporter({
+            displayStacktrace: true,
+            displaySpecDuration: true
+          })
+        }),
+      test = function(testPaths, callback) {
+        var testIndex, testPath, testSources = [];
+        testPaths = testPaths || [];
+        if (testPaths.length <= 0) {
+          testPaths.push({});
+        }
+        // Convert each test configuration to a source path.
+        for (testIndex = 0; testIndex < testPaths.length; testIndex++) {
+          testPath = _.extend({}, testPaths[testIndex]);
+          // Override all tests to only run the ones specified in the command line.
+          if (argv['test-folder'] || argv['test']) {
+            testPath.folder = paths.testSpec + '/' + argv['test-folder'];
+            testPath.test = argv.test;
+          }
+          // If either test or folder are not specified then use the defaults (all tests in the functional spec folder).
+          testSources.push((testPath.folder || paths.testFunctional) + '/**/' + (testPath.test || '*') + '.js')
+        }
+        return gulp.src(testSources)
+          .pipe(testPipe());
       };
 
-  gulp.task('test', ['test-copy', 'test-templates', 'test-vendor-commonJs', 'test-vendor-globals'], test);
-  gulp.task('test:clean', ['test-copy:clean', 'test-templates:clean', 'test-vendor-commonJs:clean', 'test-vendor-globals:clean'], test);
+  // the advantage of these tasks is that they have minimal dependencies for their tests, so global based stuff doesn't run browserify.
+  gulp.task('test:functional', ['test-templates', 'test-vendor-globals'], test);
+  gulp.task('test:globalImports', ['test-templates', 'test-vendor-globals'],
+    test.bind(this, [{ folder: paths.testImport, test: globalImportsTest }]));
+  gulp.task('test:commonJsImports', ['test-vendor-commonJs:test']);
 
-  gulp.task('test-rebuild-tests', ['test-copy', 'test-templates'], test);
-  gulp.task('test-rebuild-src', ['test-vendor-commonJs', 'test-vendor-globals'], test);
+  // test is subtly different than running the 3 tasks above since it runs all of the tests in 2 runs of jasmine instead of 3.
+  // CommonJsImport test is special and test-vendor-commonJs manages when to run it.
+  gulp.task('test', ['test-templates', 'test-vendor-globals', 'test-vendor-commonJs'],
+    test.bind(this, [{ folder: paths.testImport }, {}]));
+
+  // test:watch is sufficient parallelized that individual commands for each test type doesn't make sense.
+  gulp.task('test:watch', ['test-templates:watch', 'test-vendor-commonJs:watch', 'test-vendor-globals:watch'], function() {
+    test([{ folder: paths.testImport, test: globalImportsTest }, {}]);
+    gulp.watch([paths.testFunctionalSrc, paths.testSourceSrc], test);
+  });
+
+  module.exports = test;
 
 })();

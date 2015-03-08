@@ -1,0 +1,81 @@
+var _ = require('underscore'),
+    commonJsImportTest = function(moduleToImport, expectedModules) {
+      expectedModules.push(moduleToImport);
+      describe('CommonJS Module import of "' + moduleToImport + '"', function() {
+        var windowRequire, module, actualModule, moduleIndex;
+
+        beforeAll(function(done) {
+          require('./importEnv')('browserified' + moduleToImport).done(function(window) {
+            windowRequire = window.require;
+            done();
+          });
+        })
+
+        for (moduleIndex = 0; moduleIndex < expectedModules.length; moduleIndex++) {
+          module = expectedModules[moduleIndex];
+          it('has the expected "' + module  + '" dependency.', function() {
+            expect(windowRequire(this)).toBeDefined();
+          }.bind(module));
+        }
+
+        it('does not implement any extra dependencies.', function() {
+          var existingModule, dependenciesIndex, failed = false, allDependencies = [];
+          for (existingModule in windowRequire) {
+            // requireify (what brings in the require method on the window object) also generates a 'fake' dependency for the original file, this can be ignored
+            if (existingModule.indexOf('fake') < 0 ) {
+              if (existingModule !== moduleToImport) {
+                allDependencies.push(existingModule);
+              }
+              if (!_.contains(expectedModules, existingModule)) {
+                failed = true;
+                fail(existingModule + ' is not an expected dependency: ' + expectedModules);
+              }
+            }
+          }
+          if (failed) {
+            fail('Expected Modules For "' + moduleToImport + '" are [\'' + allDependencies.join('\', \'') + '\'].');
+          }
+        });
+      });
+    };
+
+commonJsImportTest('/modules/events', ['underscore', 'backbone']);
+
+commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
+                                         '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin']);
+
+commonJsImportTest('/modules/collectionLoadingMixin', ['jquery']);
+commonJsImportTest('/modules/collectionRegistrationMixin', ['underscore', 'jquery']);
+commonJsImportTest('/modules/pollingMixin', ['jquery']);
+commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone', 'jquery',
+                                         '/modules/pollingMixin', '/modules/NestedModel']);
+commonJsImportTest('/modules/viewHierarchyMixin', ['underscore', 'jquery', '/modules/guidManager', '/modules/templateRenderer']);
+
+commonJsImportTest('/modules/Model', ['underscore', 'backbone', 'jquery', '/modules/pollingMixin']);
+commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', 'jquery', '/modules/pollingMixin']);
+commonJsImportTest('/modules/FormModel', ['underscore', 'jquery', 'backbone-nested', 'backbone',
+                                        '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation']);
+
+commonJsImportTest('/modules/Service', ['backbone']);
+
+commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery',
+                                   '/modules/guidManager', '/modules/templateRenderer', '/modules/viewHierarchyMixin']);
+commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested',
+                                       '/modules/guidManager', '/modules/templateRenderer', '/modules/viewHierarchyMixin', '/modules/View',
+                                       '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel']);
+commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone',
+                                       '/modules/guidManager', '/modules/templateRenderer', '/modules/viewHierarchyMixin', '/modules/View']);
+
+commonJsImportTest('/modules/guidManager', []);
+commonJsImportTest('/modules/handlebarsUtils', ['handlebars']);
+commonJsImportTest('/modules/stickitUtils', ['backbone', 'backbone.stickit']);
+commonJsImportTest('/modules/templateRenderer', ['underscore', 'jquery']);
+
+commonJsImportTest('/modules/torso', ['handlebars', 'backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
+                               '/modules/handlebarsUtils', '/modules/stickitUtils',
+                               '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin', '/modules/validation', '/modules/viewHierarchyMixin',
+                               '/modules/Collection',
+                               '/modules/events',
+                               '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/Service',
+                               '/modules/View', '/modules/ListView', '/modules/FormView',
+                               '/modules/guidManager', '/modules/templateRenderer']);
