@@ -4,4 +4,8 @@ target
 .project
 node_modules
 dist
-
+*.swp
+docs/
+testSandbox/
+torso-bundle*
+*.log

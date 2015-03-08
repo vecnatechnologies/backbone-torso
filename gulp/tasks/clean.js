@@ -3,10 +3,13 @@
 
   var gulp = require('gulp'),
       del = require('del'),
-      config = require('../config');
+      paths = require('../../paths');
 
-  gulp.task('clean', function (callback) {
-    del(config.dest, callback);
+  gulp.task('clean', function(callback) {
+    del([paths.bundleDest + '/torso-bundle*.js',
+         paths.docsDest,
+         paths.testSandbox],
+        callback);
   });
 
 })();

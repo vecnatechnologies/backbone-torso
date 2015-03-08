@@ -3,7 +3,6 @@
 
   var gulp = require('gulp');
 
-  gulp.task('default', ['build']);
-  gulp.task('default:clean', ['build:clean']);
+  gulp.task('default', ['bundle', 'doc', 'test']);
 
 })();
