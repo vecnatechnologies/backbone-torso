@@ -1,5 +1,9 @@
 describe('Global Module imports', function() {
   var window, globalIndex,
+      // Define the globals layout, each array is a global to verify
+      //   and each item in the array is a step on the path from the window object.
+      // The test below will verify that all items defined below exist on the window object.
+      // e.g. ['Torso', 'Mixins', 'collectionLoading'] = window.Torso.Mixins.collectionLoading
       globals = [
         ['Torso'],
         ['Torso', 'Collections'],
