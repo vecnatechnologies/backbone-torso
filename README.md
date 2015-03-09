@@ -1,7 +1,7 @@
 # backbone-torso
 A holistic approach to Backbone applications
 
-[development page](/docs/DEVELOPMENT.md)
+##[Development Page](/docs/DEVELOPMENT.md)
 
 ## Credits
 Originally developed by [Vecna Technologies, Inc.](http://www.vecna.com/) and open sourced as part of its community service program. See the LICENSE file for more details.
