@@ -5,7 +5,7 @@ target
 node_modules
 dist
 *.swp
-docs/
+docs/js/
 testSandbox/
 torso-bundle*
 *.log
