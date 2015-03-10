@@ -28,10 +28,8 @@
         for (testIndex = 0; testIndex < testPaths.length; testIndex++) {
           testPath = _.extend({}, testPaths[testIndex]);
           // Override all tests to only run the ones specified in the command line.
-          if (argv['test-folder']) {
-            testPath.folder = paths.testSpec + '/' + argv['test-folder'];
-          }
-          if (argv['test']) { 
+          if (argv['test-folder'] || argv['test']) {
+            testPath.folder = argv['test-folder'] ? paths.testSpec + '/' + argv['test-folder'] : undefined;
             testPath.test = argv.test;
           }
           // If either test or folder are not specified then use the defaults (all tests in the functional spec folder).
