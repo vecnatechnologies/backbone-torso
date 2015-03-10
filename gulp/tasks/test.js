@@ -53,7 +53,7 @@
   // test:watch is sufficient parallelized that individual commands for each test type doesn't make sense.
   gulp.task('test:watch', ['test-templates:watch', 'test-vendor-commonJs:watch', 'test-vendor-globals:watch'], function() {
     test([{ folder: paths.testImport, test: globalImportsTest }, {}]);
-    gulp.watch([paths.testFunctionalSrc, paths.testSourceSrc], test);
+    gulp.watch([paths.testFunctionalSrc, paths.testSourceSrc], test.bind(this, []));
   });
 
   module.exports = test;
