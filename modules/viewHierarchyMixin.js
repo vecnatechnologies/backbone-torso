@@ -44,6 +44,8 @@
      */
     initialize: function() {
       this.super();
+      this.render();
+      this.activate();
     },
 
     /**
@@ -106,23 +108,40 @@
      * @method cleanupSelf
      */
     cleanupSelf: function() {
+      this.deactivate();
+
       // Clean up child views first
       this.cleanupChildViews();
+
+      // Remove view from DOM
+      this.remove();
 
       // Unbind all local event bindings
       this.unbind();
       this.off();
       this.stopListening();
 
-      // Remove view from DOM
-      this.remove();
-
-      // Undelegates events
-      this.undelegateEvents();
-
       // Delete the dom references
       delete this.$el;
       delete this.el;
+    },
+
+    /**
+     * Deactivates the view by deactivating all child view, 
+     * turning off all DOM events, and detaches the view from the DOM.
+     * @method deactivateSelf
+     */
+    deactivateSelf: function() {
+      this.deactivateChildViews();
+
+      // Undelegates events
+      this.undelegateEvents();
+    },
+
+    activateSelf: function() {
+      this.activateChildViews();
+
+      this.delegateEvents();
     },
 
     /**
@@ -134,6 +153,24 @@
     },
 
     /**
+     * Deactivates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     */
+    deactivateChildViews: function() {
+      // do nothing
+    },
+
+    /**
+     * Activates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     */
+    activateChildViews: function() {
+      // do nothing
+    },
+
+    /**
      * Injects a child view and triggers a re-render on that view
      * @method injectView
      * @param injectionSite {String} The name of the injection site in the layout template
@@ -141,11 +178,48 @@
      */
     injectView: function(injectionSite, view) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-
       if (view && injectionPoint) {
-        injectionPoint.html(view.$el);
-        view.render();
+        view.attach(injectionPoint);
       }
+    },
+
+    /**
+     * Detaches the view from the DOM and calls deactivate
+     * @method detach
+     */
+    detach: function() {
+      // Detach view from DOM
+      this.$el.detach();
+      this.deactivate();
+    },
+
+    /**
+     * @param $el [jQuery element] the 
+     * @method attach
+     */
+    attach: function($el) {
+      // be safe and deactivate before attaching yourself
+      this.deactivate();
+      this.render();
+      $el.html(this.$el);
+      this.activate();
+    },
+
+    /**
+     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
+     * and events that may affect user experience. Recursively invokes deactivate on child views
+     * @method deactivate
+     */
+    deactivate: function() {
+      this.deactivateSelf();
+    },
+
+    /**
+     * Resets listeners and events in order for the view to be reattached to the visible DOM
+     * @method activate
+     */
+    activate: function() {
+      this.activateSelf();
     },
 
     /**
@@ -157,7 +231,9 @@
     },
 
     /**
-     * Default pipes directly to cleanupSelf. Called while
+     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
+     * After dispose is called, the view can be safely garbage collected.
+     * By default, dispose pipes directly to cleanupSelf. Called while
      * recursively removing views from the hierarchy.
      * @method dispose
      */
