@@ -27,7 +27,8 @@
         namespace: 'Templates',
         noRedeclare: true, // Avoid duplicate declarations
         processName: function(filePath) {
-          return $.declare.processNameByPath(filePath.replace('markup/', ''));
+          var cleanPath = filePath.replace(/markup(\/|\\)/g, '');
+          return $.declare.processNameByPath(cleanPath);
         }
       }))
       .pipe($.addSrc.prepend('node_modules/handlebars/dist/handlebars.min.js'))
