@@ -22,19 +22,19 @@
   {{/if}}
 
   <span class="control-group">
-    <label {{label 'fullName'}}>Full Name</label>
+    <label {{labelFor 'fullName'}}>Full Name</label>
     <input type="text" {{bindModel 'fullName'}}>
     <div class="tooltip" {{feedback 'fullName-error'}}></div>
   </span>
 
   <span class="control-group">
-    <label {{label 'email'}}>Email</label>
+    <label {{labelFor 'email'}}>Email</label>
     <input type="text" {{bindModel 'email'}}>
     <div class="tooltip" {{feedback 'email-error'}}></div>
   </span>
 
   <span class="control-group">
-    <label {{label 'shortBio'}}>Short Biography</label>
+    <label {{labelFor 'shortBio'}}>Short Biography</label>
     <textarea {{bindModel 'shortBio'}}></textarea>
     <div class="tooltip" {{feedback 'shortBio-error'}}></div>
   </span>
@@ -42,9 +42,9 @@
   <div class="form-question">Gender</div>
   <div class="btn-group">
     <input type="radio" {{bindModel 'gender' value='male'}}>
-    <label class="btn" {{label 'gender' value='male'}}>&nbsp;Male</label>
+    <label class="btn" {{labelFor 'gender' value='male'}}>&nbsp;Male</label>
     <input type="radio" {{bindModel 'gender' value='female'}}>
-    <label class="btn" {{label 'gender' value='female'}}>&nbsp;Female</label>
+    <label class="btn" {{labelFor 'gender' value='female'}}>&nbsp;Female</label>
   </div>
   <div class="tooltip" {{feedback 'gender-error'}}></div>
 
@@ -53,7 +53,7 @@
   <div class="btn-group">
     {{#each weekdays}}
       <input type="checkbox" {{bindModel 'schedule' value=this}}>
-      <label class="btn" {{label 'schedule' value=this}}>&nbsp;{{this}}</label>
+      <label class="btn" {{labelFor 'schedule' value=this}}>&nbsp;{{this}}</label>
     {{/each}}
   </div>
   </br>
@@ -73,7 +73,7 @@
    </span><br/><br/>
 
   <span class="control-group">
-    <label {{label 'ranking'}}>Ranking</label>
+    <label {{labelFor 'ranking'}}>Ranking</label>
     <select data-placeholder="Select a Ranking" {{bindModel 'ranking'}}>
       <option value=""></option>
       <option value="cadet">Cadet</option>

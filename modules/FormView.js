@@ -121,9 +121,10 @@
     render: function() {
       /* Actually render the template */
       var context = this.prepare();
+      this.unplug();
       this.templateRender(this.$el, this.template, context);
-      this.delegateEvents();
       this.plug();
+      this.delegateEvents();
     },
 
     /**
@@ -140,17 +141,23 @@
     },
 
     /**
+     * Before any DOM rendering is done, this method is called and removes any
+     * custom plugins including events that attached to the existing elements.
+     * This method can be overwritten as usual OR extended using <class>.__super__.plug.apply(this, arguments);
+     * @method unplug
+     */
+    unplug: function() {
+      // nothing by default
+    },
+
+    /**
      * After all DOM rendering is done, this method is called and attaches any
      * custom plugins to the existing elements.  This method can be overwritten
      * as usual OR extended using <class>.__super__.plug.apply(this, arguments);
      * @method plug
      */
     plug: function() {
-      // If the "chosen.js" plugin exists
-      var selectApplyChosen = this.$el.find('select');
-      if (selectApplyChosen.chosen) {
-        selectApplyChosen.chosen({});
-      }
+      // nothing by default
     },
 
     /**
@@ -160,7 +167,6 @@
     valid: function() {
       this._success = true;
       this._errors = [];
-      this.render();
     },
 
     /**
@@ -170,7 +176,6 @@
     invalid: function(model, errors) {
       this._success = false;
       this._errors = errors;
-      this.render();
     },
 
     /**
@@ -182,7 +187,14 @@
      */
     invokeFeedback: function(to, evt, indexMap) {
       var result,
-        feedbackToInvoke = _.findWhere(this.feedback, {to: to}),
+        feedbackToInvoke = _.find(this.feedback, function(feedback) {
+          var toToCheck = feedback.to;
+          if (_.isArray(toToCheck)) {
+            return _.contains(toToCheck, to);
+          } else {
+            return to === toToCheck;
+          }
+        }),
         feedbackModelField = to;
       if (feedbackToInvoke) {
         if (indexMap) {
@@ -249,10 +261,16 @@
             }
             $element = self.$el.find('[data-feedback="' + field + '"]');
             _.each(state, function(value, key) {
-              if (_.isArray(value)) {
-                $element[key].apply($element, value);
+              var target;
+              if (_.first(key) === '_') {
+                target = self[key.slice(1)];
               } else {
-                $element[key].call($element, value);
+                target = $element[key];
+              }
+              if (_.isArray(value)) {
+                target.apply($element, value);
+              } else if (value !== undefined) {
+                target.call($element, value);
               }
             });
           };
@@ -331,9 +349,7 @@
      * @method _processFeedbackThenResult
      */
     _processFeedbackThenResult: function(result, feedbackModelField) {
-      var newState,
-        oldState = this.feedbackModel.get(feedbackModelField);
-      newState = $.extend({}, oldState, result);
+      var newState = $.extend({}, result);
       this.feedbackModel.set(feedbackModelField, newState, {silent: true});
       this.feedbackModel.trigger('change:' + feedbackModelField);
     },
@@ -373,80 +389,88 @@
      * @method _generateFeedbackBindings
      */
     _generateFeedbackBindings: function() {
-      var self = this;
+      var i,
+          self = this;
 
       // Cleanup previous "on" events
-      for (var i = 0; i < this._feedbackEvents.length; i++) {
+      for (i = 0; i < this._feedbackEvents.length; i++) {
         this.off(null, this._feedbackEvents[i]);
       }
       this._feedbackEvents = [];
 
       // For each feedback configuration
       _.each(this.feedback, function(declaration) {
-        var destinations = self._getFeedbackDestinations(declaration.to),
-          destIndexTokens = self._getAllIndexTokens(declaration.to);
+        var toEntries = [declaration.to];
+        if (_.isArray(declaration.to)) {
+          toEntries = declaration.to;
+        }
+        _.each(toEntries, function(to) {
+          var destinations = self._getFeedbackDestinations(to),
+            destIndexTokens = self._getAllIndexTokens(to);
 
-        // Iterate over all destinations
-        _.each(destinations, function(dest) {
-          var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
-          dest = $(dest);
-          fieldName = dest.data('feedback');
-          indices = self._getAllIndexTokens(fieldName);
-          indexMap = {};
-          // Generates a mapping from variable name to value:
-          // If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
-          // then the map would look like: {x: 1, y: 4}
-          _.each(destIndexTokens, function(indexToken, i) {
-            indexMap[indexToken] = indices[i];
-          });
-          then = declaration.then;
+          // Iterate over all destinations
+          _.each(destinations, function(dest) {
+            var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
+            dest = $(dest);
+            fieldName = dest.data('feedback');
+            indices = self._getAllIndexTokens(fieldName);
+            indexMap = {};
+            // Generates a mapping from variable name to value:
+            // If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
+            // then the map would look like: {x: 1, y: 4}
+            _.each(destIndexTokens, function(indexToken, i) {
+              indexMap[indexToken] = indices[i];
+            });
+            then = declaration.then;
 
-          // If the "then" clause is a string, assume it's a view method
-          if (_.isString(then)) {
-            then = self[then];
-          } else if (_.isArray(then)) {
-            // If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
-            args = then.slice();
-            method = args[0];
-            args.shift();
-            then = self[method].apply(self, args);
-          }
+            // If the "then" clause is a string, assume it's a view method
+            if (_.isString(then)) {
+              then = self[then];
+            } else if (_.isArray(then)) {
+              // If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
+              args = then.slice();
+              method = args[0];
+              args.shift();
+              then = self[method].apply(self, args);
+            }
 
-          // track the indices for binding
-          bindInfo = {
-            feedbackModelField: fieldName,
-            fn: then,
-            indices: indexMap
-          };
-          // Iterate over all "when" clauses
-          whenEvents = self._generateWhenEvents(declaration.when, indexMap);
-          _.each(whenEvents, function(eventKey) {
-            var invokeThen = function(evt) {
-              var i, args, result;
-              args = [evt];
-              newState = {};
-              args.push(bindInfo.indices);
-              result = bindInfo.fn.apply(self, args);
-              self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
+            // track the indices for binding
+            bindInfo = {
+              feedbackModelField: fieldName,
+              fn: then,
+              indices: indexMap
             };
-            var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-            var match = eventKey.match(delegateEventSplitter);
-            self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
-          });
-          // Special "on" listeners
-          _.each(declaration.when.on, function(eventKey) {
-            var invokeThen = function() {
-              var result,
-                  args = [{
-                    args: arguments,
-                    type: eventKey
-                  }];
-              args.push(bindInfo.indices);
-              result = bindInfo.fn.apply(self, args);
-              self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
-            };
-            self.on(eventKey, invokeThen, self);
-            self._feedbackEvents.push(invokeThen);
+            // Iterate over all "when" clauses
+            whenEvents = self._generateWhenEvents(declaration.when, indexMap);
+            _.each(whenEvents, function(eventKey) {
+              var match, delegateEventSplitter,
+                invokeThen = function(evt) {
+                  var i, args, result;
+                  args = [evt];
+                  newState = {};
+                  args.push(bindInfo.indices);
+                  result = bindInfo.fn.apply(self, args);
+                  self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                };
+              delegateEventSplitter = /^(\S+)\s*(.*)$/;
+              match = eventKey.match(delegateEventSplitter);
+              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
+            });
+            // Special "on" listeners
+            _.each(declaration.when.on, function(eventKey) {
+              var invokeThen = function() {
+                var result,
+                    args = [{
+                      args: arguments,
+                      type: eventKey
+                    }];
+                args.push(bindInfo.indices);
+                result = bindInfo.fn.apply(self, args);
+                self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
+              };
+              self.on(eventKey, invokeThen, self);
+              self._feedbackEvents.push(invokeThen);
+            });
           });
         });
       });
@@ -543,6 +567,57 @@
           subAttrs.push(this._generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
         }
         return subAttrs;
+      }
+    },
+ 
+
+    /**
+     * Checks to see if the form model's field is valid. If the field is invalid, it adds the class.
+     * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
+     * it will validate all the fields together as if they were one (any failure counts as a total failure,
+     * and all fields need to be valid for success).
+     * @param fieldName {String or Array<String>} the name of the form model field or an array of field names
+     * @param className {String} the class name to add or remove
+     * @param [onValid] {Boolean} if true, will reverse the logic operator
+     * @private
+     * @method _thenAddClassIfInvalid
+     * @for WebCore.Views.Form
+     */
+    _thenAddClassIfInvalid: function(fieldName, className, onValid) {
+      var isValid = this.model.isValid(fieldName);
+      if ((onValid ? true : false) === (isValid ? true : false)) {
+        return {
+          addClass: className
+        };
+      } else {
+        return {
+          removeClass: className
+        };
+      }
+    },
+
+    /**
+     * Checks to see if the form model's field is valid. If the field is invalid, it sets the text.
+     * If the field is invalid, it removes the text. When an array is passed in for the fieldName,
+     * it will validate all the fields together as if they were one (any failure counts as a total failure,
+     * and all fields need to be valid for success).
+     * @param fieldName {String or Array<String>} the name of the form model field or an array of field names
+     * @param text {String} the text to set
+     * @param [onValid] {Boolean} if true, will reverse the logic operator
+     * @private
+     * @method _thenAddTextIfInvalid
+     * @for WebCore.Views.Form
+     */
+    _thenSetTextIfInvalid: function(fieldName, text, onValid) {
+      var isValid = this.model.isValid(fieldName);
+      if ((onValid ? true : false) === (isValid ? true : false)) {
+        return {
+          text: text
+        };
+      } else {
+        return {
+          text: ''
+        };
       }
     }
   });
