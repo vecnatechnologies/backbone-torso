@@ -22,7 +22,7 @@
   {{/if}}
 
   <span class="control-group">
-    <label {{label 'fullName'}}>Full Name</label>
+    <label {{labelFor 'fullName'}}>Full Name</label>
     <input type="text" {{bindModel 'fullName'}}>
     <div class="tooltip" {{feedback 'onValidate:fullName'}}></div>
   </span>

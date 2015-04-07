@@ -344,25 +344,40 @@
     var mixin = function(view, options) {
       return {
 
-        // Check whether or not a value, or a hash of values
-        // passes validation without updating the model
+        /**
+         * Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but
+         * you can pass in different values to use in the validation process instead.
+         * @param attr {String or Object or Array} Either the name of the attribute, an array containing many attribute names, or
+         * on object with attribute name to values
+         * @param [value] {Any} a value to use for the attribute value instead of using the model's value.
+         * @return undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
+         * and the error as the value
+         * @method preValidate
+         */
         preValidate: function(attr, value) {
           var self = this,
               result = {},
               error;
-          if (_.isUndefined(value) && isNestedModel(this)) {
-            value = this.get(attr);
-          }
-          if (_.isObject(attr)) {
+          if (_.isArray(attr)) {
+            _.each(attr, function(attr) {
+              error = self.preValidate(attr);
+              if (error) {
+                result[attr] = error;
+              }
+            });
+            return _.isEmpty(result) ? undefined : result;
+          } else if (_.isObject(attr)) {
             _.each(attr, function(value, key) {
               error = self.preValidate(key, value);
-              if(error){
+              if (error) {
                 result[key] = error;
               }
             });
-
             return _.isEmpty(result) ? undefined : result;
           } else {
+            if (_.isUndefined(value) && isNestedModel(this)) {
+              value = this.get(attr);
+            }
             return validateAttr(this, value, attr);
           }
         },

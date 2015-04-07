@@ -24,13 +24,13 @@
   /**
    * Usage: {{label 'fieldName' value="suffix"}}
    * Generates: for="field-name-suffix"
-   * @method Handlebars.helpers.label
+   * @method Handlebars.helpers.labelFor
    * @param field {String} The field name to convert to a compliant "for" attribute
    * @param options {<Handlebars context>} Always passed in as final argument
    * @param [option.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
    * @return {String} Compliant HTML generating the "for" attribute
    */
-  Handlebars.registerHelper('label', function(field, options) {
+  Handlebars.registerHelper('labelFor', function(field, options) {
     return Handlebars.helpers.formAttr(field, 'for', options);
   });
 
