@@ -22,7 +22,7 @@
   gulp.task('test-vendor-globals', ['bundle'], testVendorGlobalsPipe);
   gulp.task('test-vendor-globals:watch', ['bundle:watch', 'test-vendor-globals'], function() {
     gulp.watch(bundleFile, ['test-vendor-globals']);
-    gulp.watch([paths.testGlobalsEnv], test);
+    gulp.watch([paths.testGlobalsEnv], test.bind(this, []));
     gulp.watch([paths.testGlobalsEnv, paths.testImport + '/globalImports.js'],
                test.bind(this, [{ folder: paths.testImport, test: 'globalImports' }]));
   });
