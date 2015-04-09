@@ -131,21 +131,17 @@
 
     /**
      * Method to be invoked when deactivate is called. Use this method to turn off any
-     * custom timers, listenTo's or on's that should be deactivatable.
+     * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
      * @method deactivateCallback
      */
-    deactivateCallback: function() {
-      // do nothing
-    },
+    deactivateCallback: _.noop,
 
     /**
      * Method to be invoked when activate is called. Use this method to turn on any
-     * custom timers, listenTo's or on's that should be activatable.
+     * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
      * @method deactivateCallback
      */
-    activateCallback: function() {
-      // do nothing
-    },
+    activateCallback: _.noop,
 
     /**
      * Default child view cleanup method that may be overriden.
@@ -154,7 +150,7 @@
     cleanupChildViews: function() {
       _.each(this._childViews, function(view) {
         view.dispose();
-      }, this);
+      });
     },
 
     /**
@@ -165,7 +161,7 @@
     deactivateChildViews: function() {
       _.each(this._childViews, function(view) {
         view.deactivate();
-      }, this);
+      });
     },
 
     /**
@@ -176,7 +172,7 @@
     activateChildViews: function() {
       _.each(this._childViews, function(view) {
         view.activate();
-      }, this);
+      });
     },
 
     /**
@@ -223,9 +219,7 @@
      * @method attachChildView
      */
     attachChildView: function($el, view) {
-      if (!this._childViews[view.cid]) {
-        this.registerChildView(view);
-      }
+      this.registerChildView(view);
       view.attach($el);
     },
 

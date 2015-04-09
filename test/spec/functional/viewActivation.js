@@ -3,7 +3,7 @@ var testSrcPath = '../../source',
 
 describe('A View being deactivated and activated', function() {
 
-  var env, _, $, View;
+  var env, _, $, View, ClickView;
 
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
@@ -11,103 +11,28 @@ describe('A View being deactivated and activated', function() {
       $ = env.window.$;
       _ = env.window._;
       View = env.window.Torso.Views.View;
+      ClickView = require(testSrcPath + '/ClickView')(View, _, spyOnBackbone);
       $('body').append('<div class="app"></div>');
       done();
     });
   });
 
-  var setUpView = function() {
-    var ClickView = View.extend({
-      events: {
-        'click div' : 'myClick'
-      },
-      render: function() {
-        this.$el.html('<div class="click">test</div>');
-      },
-      initialize: function() {
-        this.super();
-        this.on('myEvent', this.afterMyEvent);
-        this.render();
-      },
-      activateCallback: function() {
-        this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);
-      },
-      deactivateCallback: function() {
-        this.off('myDeactivatableEvent');
-      },
-      myClick: function() {
-        //do nothing
-      },
-      afterMyEvent: function() {
-        //do nothing
-      },
-      afterMyDeactivatableEvent: function() {
-        //do nothing
-      }
-    });
-
-    spyOnBackbone(ClickView, 'myClick');
-    spyOnBackbone(ClickView, 'afterMyEvent');
-    spyOnBackbone(ClickView, 'afterMyDeactivatableEvent');
-    return ClickView;
-  };
-
+  /**
+   * Creates a child view class with different dom
+   */
   var createChildView = function() {
-    var ChildView = setUpView().extend({
-      events: {
-        'click div.child' : 'myClick' 
-      },
-      render: function() {
-        this.$el.html("<div class='child'>test</div>");
-      },
-    });
-    return ChildView;
+    return require(testSrcPath + '/ChildClickView')(View, _, spyOnBackbone);
   };
 
+  /**
+   * Creates a parent view with two children views
+   */
   var setUpParentView = function(ChildView1, ChildView2) {
-    var ParentView = View.extend({
-      events: {
-        'click div.parent' : 'myClick' 
-      },
-      render: function() {
-        this.$el.html("<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>");
-        this.injectView('one', this.childView1);
-        this.injectView('two', this.childView2);
-        this.activate();
-      },
-      initialize: function() {
-        this.super();
-        this.childView1 = new ChildView1();
-        this.childView2 = new ChildView2();
-        this.on('myEvent', this.afterMyEvent);
-        this.render();
-      },
-      activateCallback: function() {
-        this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);
-      },
-      deactivateCallback: function() {
-        this.off('myDeactivatableEvent');
-      },
-      myClick: function() {
-        //do nothing
-      },
-      afterMyEvent: function() {
-        //do nothing
-      },
-      afterMyDeactivatableEvent: function() {
-        //do nothing
-      }
-    });
-
-    spyOnBackbone(ParentView, 'myClick');
-    spyOnBackbone(ParentView, 'afterMyEvent');
-    spyOnBackbone(ParentView, 'afterMyDeactivatableEvent');
-    return ParentView;
+    return require(testSrcPath + '/ParentClickView')(View, _, spyOnBackbone, ChildView1, ChildView2);
   };
 
 
   it('can be iniatialized correctly', function() {
-    var ClickView = setUpView();
     var view = new ClickView();
     expect(view.$el).toBeDefined();
     view.attach($('div.app'));
@@ -121,7 +46,6 @@ describe('A View being deactivated and activated', function() {
   });
 
   it('can be deactivated correctly', function() {
-    var ClickView = setUpView();
     var view = new ClickView();
     expect(view.$el).toBeDefined();
     view.attach($('div.app'));
@@ -143,7 +67,6 @@ describe('A View being deactivated and activated', function() {
   });
 
   it('can be activated correctly', function() {
-    var ClickView = setUpView();
     var view = new ClickView();
     expect(view.$el).toBeDefined();
     view.attach($('div.app'));
