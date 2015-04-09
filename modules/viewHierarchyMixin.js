@@ -1,14 +1,14 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['./guidManager', './templateRenderer'], factory);
+    define(['underscore', './guidManager', './templateRenderer'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('./guidManager'), require('./templateRenderer'));
+    module.exports = factory(require('underscore'), require('./guidManager'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.viewHierarchy = factory(root.Torso.Utils.guidManager, root.Torso.Utils.templateRenderer);
+    root.Torso.Mixins.viewHierarchy = factory(root._, root.Torso.Utils.guidManager, root.Torso.Utils.templateRenderer);
   }
-}(this, function(guidManager, templateRenderer) {
+}(this, function(_, guidManager, templateRenderer) {
   'use strict';
 
   /**
@@ -26,6 +26,9 @@
     _GUID: null,
     _childViews: null,
     tabInfo: null,
+    _isActive: false,
+    _isAttached: false,
+
 
     /**
      * The super constructor / initialize method for views.
@@ -127,21 +130,21 @@
     },
 
     /**
-     * Deactivates the view by deactivating all child view, 
-     * turning off all DOM events, and detaches the view from the DOM.
-     * @method deactivateSelf
+     * Method to be invoked when deactivate is called. Use this method to turn off any
+     * custom timers, listenTo's or on's that should be deactivatable.
+     * @method deactivateCallback
      */
-    deactivateSelf: function() {
-      this.deactivateChildViews();
-
-      // Undelegates events
-      this.undelegateEvents();
+    deactivateCallback: function() {
+      // do nothing
     },
 
-    activateSelf: function() {
-      this.activateChildViews();
-
-      this.delegateEvents();
+    /**
+     * Method to be invoked when activate is called. Use this method to turn on any
+     * custom timers, listenTo's or on's that should be activatable.
+     * @method deactivateCallback
+     */
+    activateCallback: function() {
+      // do nothing
     },
 
     /**
@@ -149,7 +152,9 @@
      * @method cleanupChildViews
      */
     cleanupChildViews: function() {
-      // do nothing
+      _.each(this._childViews, function(view) {
+        view.dispose();
+      }, this);
     },
 
     /**
@@ -158,7 +163,9 @@
      * @method deactivateChildViews
      */
     deactivateChildViews: function() {
-      // do nothing
+      _.each(this._childViews, function(view) {
+        view.deactivate();
+      }, this);
     },
 
     /**
@@ -167,11 +174,37 @@
      * @method deactivateChildViews
      */
     activateChildViews: function() {
-      // do nothing
+      _.each(this._childViews, function(view) {
+        view.activate();
+      }, this);
     },
 
     /**
-     * Injects a child view and triggers a re-render on that view
+     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the child view as well.
+     * @param view {View} the child view
+     * @return {View} the child view
+     * @method registerChildView
+     */
+    registerChildView: function(view) {
+      this._childViews[view.cid] = view;
+      return view;
+    },
+
+    /**
+     * Unbinds the child view - no recursive calls will be made to this child view
+     * @param view {View} the child view
+     * @return {View} the child view
+     * @method unregisterChildView
+     */
+    unregisterChildView: function(view) {
+      delete this._childViews[view.cid];
+      return view;
+    },
+
+    /**
+     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
+     * Invokes attachChildView as the bulk of the functionality
      * @method injectView
      * @param injectionSite {String} The name of the injection site in the layout template
      * @param view          {View}   The instantiated view object to inject
@@ -179,8 +212,21 @@
     injectView: function(injectionSite, view) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
       if (view && injectionPoint) {
-        view.attach(injectionPoint);
+        this.attachChildView(injectionPoint, view);
       }
+    },
+
+    /**
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @method attachChildView
+     */
+    attachChildView: function($el, view) {
+      if (!this._childViews[view.cid]) {
+        this.registerChildView(view);
+      }
+      view.attach($el);
     },
 
     /**
@@ -188,21 +234,40 @@
      * @method detach
      */
     detach: function() {
-      // Detach view from DOM
-      this.$el.detach();
-      this.deactivate();
+      if (this.isAttached()) {
+        // Detach view from DOM
+        if (this.injectionSite) {
+          this.$el.replaceWith(this.injectionSite);
+        } else {
+          this.$el.detach();
+        }
+        this.deactivate();
+        this._isAttached = false;
+      }
     },
 
     /**
-     * @param $el [jQuery element] the 
+     * Will replace the element passed in with this view's element. Will also activate the view.
+     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
      * @method attach
      */
     attach: function($el) {
-      // be safe and deactivate before attaching yourself
-      this.deactivate();
-      this.render();
-      $el.html(this.$el);
-      this.activate();
+      if (!this.isAttached()) {
+        // be safe and deactivate before attaching yourself
+        this.deactivate();
+        this.render();
+        this.injectionSite = $el.replaceWith(this.$el);
+        this.activate();
+        this._isAttached = true;
+      }
+    },
+
+    /**
+     * @returns {Boolean} true if the view is attached
+     * @method isAttached
+     */
+    isAttached: function() {
+      return this._isAttached;
     },
 
     /**
@@ -211,7 +276,12 @@
      * @method deactivate
      */
     deactivate: function() {
-      this.deactivateSelf();
+      this.deactivateChildViews();
+      if (this.isActive()) {
+        this.undelegateEvents();
+        this.deactivateCallback();
+        this._isActive = false;
+      }
     },
 
     /**
@@ -219,7 +289,20 @@
      * @method activate
      */
     activate: function() {
-      this.activateSelf();
+      this.activateChildViews();
+      if (!this.isActive()) {
+        this.delegateEvents();
+        this.activateCallback();
+        this._isActive = true;
+      }
+    },
+
+    /**
+     * @returns {Boolean} true if the view is active
+     * @method isActive
+     */
+    isActive: function() {
+      return this._isActive;
     },
 
     /**
