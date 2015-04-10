@@ -1,13 +1,14 @@
+var spyOnBackbone = require('../spec/functional/backboneSpy');
+
 /**
  * Creates a view class that has various events it's listening to
  * with spies on the callbacks.
- * @param TorsoView {View} Torso's view
- * @param _ {Underscore} underscore
- * @param spyOnBackbone {function} the spy on backbone function
+ * @param window {window} the window object
  */
-module.exports = function(TorsoView, _, spyOnBackbone) {
+module.exports = function(window) {
+  var _ = window._;
 
-  var ClickView = TorsoView.extend({
+  var ClickView = window.Torso.Views.View.extend({
     events: {
       'click div' : 'myClick'
     },

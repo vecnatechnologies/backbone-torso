@@ -3,33 +3,18 @@ var testSrcPath = '../../source',
 
 describe('A View being detached and attached', function() {
 
-  var env, _, $, View, ClickView;
+  var env, $, ClickView, ParentView;
 
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
       $ = env.window.$;
-      _ = env.window._;
-      View = env.window.Torso.Views.View;
-      ClickView = require(testSrcPath + '/ClickView')(View, _, spyOnBackbone);
+      ClickView = require(testSrcPath + '/clickViewGenerator')(env.window);
+      ParentView = require(testSrcPath + '/parentClickViewGenerator')(env.window);
       $('body').append('<div class="app"></div>');
       done();
     });
   });
-
-  /**
-   * Creates a child view class with different dom
-   */
-  var createChildView = function() {
-    return require(testSrcPath + '/ChildClickView')(View, _, spyOnBackbone);
-  };
-
-  /**
-   * Creates a parent view with two children views
-   */
-  var setUpParentView = function(ChildView1, ChildView2) {
-    return require(testSrcPath + '/ParentClickView')(View, _, spyOnBackbone, ChildView1, ChildView2);
-  };
 
   it('can be iniatialized correctly', function() {
     var view = new ClickView();
@@ -82,7 +67,6 @@ describe('A View being detached and attached', function() {
   });
 
   it('can be initialized correctly with child views', function() {
-    var ParentView = setUpParentView(createChildView(), createChildView());
     var view = new ParentView();
     var childView1 = view.childView1;
     var childView2 = view.childView2;
@@ -133,7 +117,6 @@ describe('A View being detached and attached', function() {
   });
 
   it('can be detached correctly with child views', function() {
-    var ParentView = setUpParentView(createChildView(), createChildView());
     var view = new ParentView();
     var childView1 = view.childView1;
     var childView2 = view.childView2;

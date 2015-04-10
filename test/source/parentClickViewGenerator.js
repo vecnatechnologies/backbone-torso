@@ -1,13 +1,18 @@
+var spyOnBackbone = require('../spec/functional/backboneSpy'),
+    childClickViewGenerator = require('./childClickViewGenerator');
+
 /**
  * Creates a parent view with two children views
- * @param TorsoView {View} Torso's view
- * @param _ {Underscore} underscore
- * @param spyOnBackbone {function} the spy on backbone function
+ * @param window {window} the window object
  * @param ChildView1 {View} the class for the first child view
  * @param ChildView2 {View} the class for the second child view
  */
-module.exports = function(TorsoView, _, spyOnBackbone, ChildView1, ChildView2) {
-  var ParentView = TorsoView.extend({
+module.exports = function(window) {
+  var _ = window._,
+      ChildView1 = childClickViewGenerator(window),
+      ChildView2 = childClickViewGenerator(window);
+
+  var ParentView = window.Torso.Views.View.extend({
     events: {
       'click div.parent' : 'myClick'
     },
