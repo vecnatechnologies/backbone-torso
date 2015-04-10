@@ -1,14 +1,14 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View'], factory);
+    define(['underscore', './View'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'));
+    module.exports = factory(require('underscore'), require('./View'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Views = root.Torso.Views || {};
-    root.Torso.Views.List = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.Views.View);
+    root.Torso.Views.List = factory(root._, root.Torso.Views.View);
   }
-}(this, function(_, $, View) {
+}(this, function(_, View) {
   'use strict';
 
   /**
@@ -230,7 +230,7 @@
           models = this.modelsToRender();
 
         // Trigger a refresh if any DOM elements are out of expected order
-        _.each(models, $.proxy(function(model, i) {
+        _.each(models, function(model, i) {
           childView = this._childViews[model.id];
           if (childView) {
             if (currentChildren[i] !== childView.el) {
@@ -238,7 +238,7 @@
               return;
             }
           }
-        }, this));
+        }, this);
       },
 
       /**

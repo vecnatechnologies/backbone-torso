@@ -1,14 +1,14 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['./guidManager', './templateRenderer'], factory);
+    define(['underscore', './guidManager', './templateRenderer'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('./guidManager'), require('./templateRenderer'));
+    module.exports = factory(require('underscore'), require('./guidManager'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.viewHierarchy = factory(root.Torso.Utils.guidManager, root.Torso.Utils.templateRenderer);
+    root.Torso.Mixins.viewHierarchy = factory(root._, root.Torso.Utils.guidManager, root.Torso.Utils.templateRenderer);
   }
-}(this, function(guidManager, templateRenderer) {
+}(this, function(_, guidManager, templateRenderer) {
   'use strict';
 
   /**
@@ -26,6 +26,9 @@
     _GUID: null,
     _childViews: null,
     tabInfo: null,
+    _isActive: false,
+    _isAttached: false,
+
 
     /**
      * The super constructor / initialize method for views.
@@ -44,6 +47,8 @@
      */
     initialize: function() {
       this.super();
+      this.render();
+      this.activate();
     },
 
     /**
@@ -101,24 +106,23 @@
 
     /**
      * Removes all events and corresponding DOM for a view.
-     * Guarantees to call call "cleanSubviews" to enforce
+     * Guarantees to call call "cleanupChildViews" to enforce
      * recursive removal of views.
      * @method cleanupSelf
      */
     cleanupSelf: function() {
+      this.detach();
+
       // Clean up child views first
       this.cleanupChildViews();
+
+      // Remove view from DOM
+      this.remove();
 
       // Unbind all local event bindings
       this.unbind();
       this.off();
       this.stopListening();
-
-      // Remove view from DOM
-      this.remove();
-
-      // Undelegates events
-      this.undelegateEvents();
 
       // Delete the dom references
       delete this.$el;
@@ -126,26 +130,173 @@
     },
 
     /**
+     * Method to be invoked when deactivate is called. Use this method to turn off any
+     * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
+     * @method deactivateCallback
+     */
+    deactivateCallback: _.noop,
+
+    /**
+     * Method to be invoked when activate is called. Use this method to turn on any
+     * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
+     * @method deactivateCallback
+     */
+    activateCallback: _.noop,
+
+    /**
      * Default child view cleanup method that may be overriden.
      * @method cleanupChildViews
      */
     cleanupChildViews: function() {
-      // do nothing
+      _.each(this._childViews, function(view) {
+        view.dispose();
+      });
     },
 
     /**
-     * Injects a child view and triggers a re-render on that view
+     * Deactivates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     */
+    deactivateChildViews: function() {
+      _.each(this._childViews, function(view) {
+        view.deactivate();
+      });
+    },
+
+    /**
+     * Activates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     */
+    activateChildViews: function() {
+      _.each(this._childViews, function(view) {
+        view.activate();
+      });
+    },
+
+    /**
+     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the child view as well.
+     * @param view {View} the child view
+     * @return {View} the child view
+     * @method registerChildView
+     */
+    registerChildView: function(view) {
+      this._childViews[view.cid] = view;
+      return view;
+    },
+
+    /**
+     * Unbinds the child view - no recursive calls will be made to this child view
+     * @param view {View} the child view
+     * @return {View} the child view
+     * @method unregisterChildView
+     */
+    unregisterChildView: function(view) {
+      delete this._childViews[view.cid];
+      return view;
+    },
+
+    /**
+     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
+     * Invokes attachChildView as the bulk of the functionality
      * @method injectView
      * @param injectionSite {String} The name of the injection site in the layout template
      * @param view          {View}   The instantiated view object to inject
      */
     injectView: function(injectionSite, view) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-
       if (view && injectionPoint) {
-        injectionPoint.html(view.$el);
-        view.render();
+        this.attachChildView(injectionPoint, view);
       }
+    },
+
+    /**
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @method attachChildView
+     */
+    attachChildView: function($el, view) {
+      this.registerChildView(view);
+      view.attach($el);
+    },
+
+    /**
+     * If attached, will detach the view from the DOM and calls deactivate
+     * @method detach
+     */
+    detach: function() {
+      if (this.isAttached()) {
+        // Detach view from DOM
+        if (this.injectionSite) {
+          this.$el.replaceWith(this.injectionSite);
+        } else {
+          this.$el.detach();
+        }
+        this.deactivate();
+        this._isAttached = false;
+      }
+    },
+
+    /**
+     * If detached, will replace the element passed in with this view's element and activate the view.
+     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
+     * @method attach
+     */
+    attach: function($el) {
+      if (!this.isAttached()) {
+        // be safe and deactivate before attaching yourself
+        this.deactivate();
+        this.render();
+        this.injectionSite = $el.replaceWith(this.$el);
+        this.activate();
+        this._isAttached = true;
+      }
+    },
+
+    /**
+     * @returns {Boolean} true if the view is attached
+     * @method isAttached
+     */
+    isAttached: function() {
+      return this._isAttached;
+    },
+
+    /**
+     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
+     * and events that may affect user experience. Recursively invokes deactivate on child views
+     * @method deactivate
+     */
+    deactivate: function() {
+      this.deactivateChildViews();
+      if (this.isActive()) {
+        this.undelegateEvents();
+        this.deactivateCallback();
+        this._isActive = false;
+      }
+    },
+
+    /**
+     * Resets listeners and events in order for the view to be reattached to the visible DOM
+     * @method activate
+     */
+    activate: function() {
+      this.activateChildViews();
+      if (!this.isActive()) {
+        this.delegateEvents();
+        this.activateCallback();
+        this._isActive = true;
+      }
+    },
+
+    /**
+     * @returns {Boolean} true if the view is active
+     * @method isActive
+     */
+    isActive: function() {
+      return this._isActive;
     },
 
     /**
@@ -157,7 +308,9 @@
     },
 
     /**
-     * Default pipes directly to cleanupSelf. Called while
+     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
+     * After dispose is called, the view can be safely garbage collected.
+     * By default, dispose pipes directly to cleanupSelf. Called while
      * recursively removing views from the hierarchy.
      * @method dispose
      */
