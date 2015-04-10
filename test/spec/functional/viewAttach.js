@@ -1,7 +1,7 @@
 var testSrcPath = '../../source',
     spyOnBackbone = require('./backboneSpy');
 
-describe('A View being deactivated and activated', function() {
+describe('A View being detached and attached', function() {
 
   var env, _, $, View, ClickView;
 
@@ -30,7 +30,6 @@ describe('A View being deactivated and activated', function() {
   var setUpParentView = function(ChildView1, ChildView2) {
     return require(testSrcPath + '/ParentClickView')(View, _, spyOnBackbone, ChildView1, ChildView2);
   };
-
 
   it('can be iniatialized correctly', function() {
     var view = new ClickView();

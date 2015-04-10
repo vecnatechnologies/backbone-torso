@@ -106,12 +106,12 @@
 
     /**
      * Removes all events and corresponding DOM for a view.
-     * Guarantees to call call "cleanSubviews" to enforce
+     * Guarantees to call call "cleanupChildViews" to enforce
      * recursive removal of views.
      * @method cleanupSelf
      */
     cleanupSelf: function() {
-      this.deactivate();
+      this.detach();
 
       // Clean up child views first
       this.cleanupChildViews();
@@ -224,7 +224,7 @@
     },
 
     /**
-     * Detaches the view from the DOM and calls deactivate
+     * If attached, will detach the view from the DOM and calls deactivate
      * @method detach
      */
     detach: function() {
@@ -241,7 +241,7 @@
     },
 
     /**
-     * Will replace the element passed in with this view's element. Will also activate the view.
+     * If detached, will replace the element passed in with this view's element and activate the view.
      * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
      * @method attach
      */

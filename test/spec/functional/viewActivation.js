@@ -31,7 +31,6 @@ describe('A View being deactivated and activated', function() {
     return require(testSrcPath + '/ParentClickView')(View, _, spyOnBackbone, ChildView1, ChildView2);
   };
 
-
   it('can be iniatialized correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
