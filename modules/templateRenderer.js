@@ -40,18 +40,22 @@
       if (opts.force) {
         el.html(newHTML);
       } else {
-        newDOM = $('<' + el.prop('tagName') + '>' + newHTML + '</' + el.prop('tagName') + '>');
-        _.each(el.get(0).attributes, function(attrib) {
-          newDOM.attr(attrib.name, attrib.value);
-        });
-        activeElement = document.activeElement;
-        if (activeElement && activeElement.hasAttribute('value')) {
-          currentCaret = this.getCaretPosition(activeElement);
-        }
-        this.hotswap(el, newDOM, opts.ignoreElements, false);
-        if (activeElement) {
-          this.setCaretPosition(activeElement, currentCaret);
-        }
+        newDOM = this.copyTopElement(el);
+        newDOM.html(newHTML);
+        this.safeHotswap(el, newDOM, opts);
+      }
+    },
+
+    safeHotswap: function(el, newDOM, opts) {
+      opts = opts || {};
+      var currentCaret,
+          activeElement = document.activeElement;
+      if (activeElement && activeElement.hasAttribute('value')) {
+        currentCaret = this.getCaretPosition(activeElement);
+      }
+      this.hotswap(el, newDOM, opts.ignoreElements, false);
+      if (activeElement) {
+        this.setCaretPosition(activeElement, currentCaret);
       }
     },
 
@@ -147,6 +151,14 @@
       return hardRefreshes;
     },
 
+    copyTopElement: function(el) {
+      var newDOM = $('<' + el.prop('tagName') + '></' + el.prop('tagName') + '>');
+      _.each(el.get(0).attributes, function(attrib) {
+        newDOM.attr(attrib.name, attrib.value);
+      });
+      return newDOM;
+    },
+
     /**
      * Method that returns the current caret (cursor) position of a given element.
      * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
@@ -187,13 +199,13 @@
      */
     setCaretPosition: function(elem, caretPos) {
       var range;
-      if(elem) {
-        if(elem.createTextRange) {
+      if (elem) {
+        if (elem.createTextRange) {
           // IE support
           range = elem.createTextRange();
           range.move('character', caretPos);
           range.select();
-        } else if(elem.selectionStart || elem.selectionStart === 0) {
+        } else if (elem.selectionStart || elem.selectionStart === 0) {
           // Firefox support
           elem.focus();
           elem.setSelectionRange(caretPos, caretPos);
