@@ -42,11 +42,18 @@
       } else {
         newDOM = this.copyTopElement(el);
         newDOM.html(newHTML);
-        this.safeHotswap(el, newDOM, opts);
+        this.hotswapKeepCaret(el, newDOM, opts);
       }
     },
 
-    safeHotswap: function(el, newDOM, opts) {
+    /**
+     * Call this.hotswap but also keeps the caret position the same
+     * @param  el {jQueryObject} The Element to render into
+     * @param  template {Handlebars Template} The HBS template to apply
+     * @param  context {Object} The context object to pass to the template
+     * @method hotswapKeepCaret
+     */
+    hotswapKeepCaret: function(el, newDOM, opts) {
       opts = opts || {};
       var currentCaret,
           activeElement = document.activeElement;
@@ -151,6 +158,12 @@
       return hardRefreshes;
     },
 
+    /**
+     * Produces a copy of the element tag with attributes but with no contents
+     * @param el {jQuery element} the element to be copied
+     * @return a shallow copy of the element with no children but with attributes
+     * @method copyTopElement
+     */
     copyTopElement: function(el) {
       var newDOM = $('<' + el.prop('tagName') + '></' + el.prop('tagName') + '>');
       _.each(el.get(0).attributes, function(attrib) {
