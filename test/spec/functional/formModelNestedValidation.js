@@ -12,8 +12,8 @@ describe('A Form Model\'s Validation of nested attributes', function() {
       env = environment;
       _ = env.window._;
       $ = env.window.$;
-      FormModel = env.window.Torso.Models.Form;
-      FormView = env.window.Torso.Views.Form;
+      FormModel = env.window.Torso.FormModel;
+      FormView = env.window.Torso.FormView;
       done();
     });
   });

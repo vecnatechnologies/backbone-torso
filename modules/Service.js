@@ -5,8 +5,7 @@
     module.exports = factory(require('backbone'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Services = root.Torso.Services || {};
-    root.Torso.Services.Service = factory(root.Backbone);
+    root.Torso.Service = factory(root.Backbone);
   }
 }(this, function(Backbone) {
   'use strict';

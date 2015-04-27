@@ -6,8 +6,7 @@
     module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./FormModel'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Views = root.Torso.Views || {};
-    root.Torso.Views.Form = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.Views.View, root.Torso.Models.Form);
+    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel);
   }
 }(this, function(_, $, View, FormModel) {
   'use strict';
@@ -65,7 +64,7 @@
      * Override to add more functionality
      * @method initialize
      * @param args {Object} - options argument
-     * @param args.model       {Torso.Models.Form} - requires a form model for binding
+     * @param args.model       {Torso.FormModel} - requires a form model for binding
      * @param [args.template]  {HTML Template} - overrides the template used by this view
      * @param [args.events]    {Events Hash} - merge + override the events hash used by this view
      * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view

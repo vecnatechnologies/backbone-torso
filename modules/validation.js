@@ -6,7 +6,7 @@
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.validation = factory(root._, root.Torso.Models.Nested);
+    root.Torso.validation = factory(root._, root.Torso.NestedModel);
     root.Torso.Mixins.validation = root.Torso.validation.mixin;
   }
 }(this, function(_, NestedModel) {

@@ -6,8 +6,7 @@ describe('Global Module imports', function() {
       // e.g. ['Torso', 'Mixins', 'collectionLoading'] = window.Torso.Mixins.collectionLoading
       globals = [
         ['Torso'],
-        ['Torso', 'Collections'],
-        ['Torso', 'Collections', 'Collection'],
+        ['Torso', 'Collection'],
         ['Torso', 'events'],
         ['Torso', 'Mixins'],
         ['Torso', 'Mixins', 'collectionLoading'],
@@ -15,20 +14,17 @@ describe('Global Module imports', function() {
         ['Torso', 'Mixins', 'polling'],
         ['Torso', 'Mixins', 'validation'],
         ['Torso', 'Mixins', 'viewHierarchy'],
-        ['Torso', 'Models'],
-        ['Torso', 'Models', 'Model'],
-        ['Torso', 'Models', 'Nested'],
-        ['Torso', 'Models', 'Form'],
-        ['Torso', 'Services'],
-        ['Torso', 'Services', 'Service'],
+        ['Torso', 'Model'],
+        ['Torso', 'NestedModel'],
+        ['Torso', 'FormModel'],
+        ['Torso', 'Service'],
         ['Torso', 'Utils'],
         ['Torso', 'Utils', 'guidManager'],
         ['Torso', 'Utils', 'templateRenderer'],
         ['Torso', 'validation'],
-        ['Torso', 'Views'],
-        ['Torso', 'Views', 'View'],
-        ['Torso', 'Views', 'List'],
-        ['Torso', 'Views', 'Form']
+        ['Torso', 'View'],
+        ['Torso', 'ListView'],
+        ['Torso', 'FormView']
       ];
 
   beforeAll(function(done) {

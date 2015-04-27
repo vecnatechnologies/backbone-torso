@@ -15,10 +15,10 @@ describe("A Form View's two-way binding", function() {
       _ = env.window._;
 
       /* Example Form Model */
-      UpdateProfileFormModel = require(testSrcPath + '/UpdateProfileFormModel')(env.window.Torso.Models.Form, _);
+      UpdateProfileFormModel = require(testSrcPath + '/UpdateProfileFormModel')(env.window.Torso.FormModel, _);
 
       /* Example form view */
-      UpdateProfileFormView = require(testSrcPath + '/UpdateProfileFormView')(env.window.Torso.Views.Form, _);
+      UpdateProfileFormView = require(testSrcPath + '/UpdateProfileFormView')(env.window.Torso.FormView, _);
 
       /* Create basic model and view */
       model = new UpdateProfileFormModel();

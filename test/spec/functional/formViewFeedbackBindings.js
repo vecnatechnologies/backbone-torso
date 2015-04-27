@@ -13,13 +13,13 @@ describe("A Form View's feedback bindings", function() {
       env = environment;
       $ = env.window.$;
       _ = env.window._;
-      UpdateProfileFormView = require(testSrcPath + '/UpdateProfileFormView')(env.window.Torso.Views.Form, _);
+      UpdateProfileFormView = require(testSrcPath + '/UpdateProfileFormView')(env.window.Torso.FormView, _);
       done();
     });
   });
 
   it('can update a feedback zone on change of an input', function() {
-    var TestFormModel = env.window.Torso.Models.Form.extend({
+    var TestFormModel = env.window.Torso.FormModel.extend({
       defaults: {
         fullName: ''
       },
@@ -42,7 +42,7 @@ describe("A Form View's feedback bindings", function() {
   });
 
   it('can update a feedback zone on change of a radio group', function() {
-    var TestFormModel = env.window.Torso.Models.Form.extend({
+    var TestFormModel = env.window.Torso.FormModel.extend({
       defaults: {
         gender: undefined
       },
@@ -66,7 +66,7 @@ describe("A Form View's feedback bindings", function() {
   });
 
   it('can update a feedback zone on change of a checkbox group', function() {
-    var TestFormModel = env.window.Torso.Models.Form.extend({
+    var TestFormModel = env.window.Torso.FormModel.extend({
       defaults: {
         schedule: []
       },

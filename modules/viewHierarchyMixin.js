@@ -28,7 +28,7 @@
     tabInfo: null,
     _isActive: false,
     _isAttached: false,
-
+    _isDisposed: false,
 
     /**
      * The super constructor / initialize method for views.
@@ -127,6 +127,8 @@
       // Delete the dom references
       delete this.$el;
       delete this.el;
+
+      this._isDisposed = true;
     },
 
     /**
@@ -142,6 +144,22 @@
      * @method deactivateCallback
      */
     activateCallback: _.noop,
+
+    /**
+     * @return {Boolean} true if this view has child views
+     * @method hasChildViews
+     */
+    hasChildViews: function() {
+      return !_.isEmpty(this._childViews);
+    },
+
+    /**
+     * @return all of the child views this list view has registered
+     * @method getChildViews
+     */
+    getChildViews: function() {
+      return _.values(this._childViews);
+    },
 
     /**
      * Default child view cleanup method that may be overriden.
@@ -195,6 +213,7 @@
      */
     unregisterChildView: function(view) {
       delete this._childViews[view.cid];
+      this.stopListening(view);
       return view;
     },
 
@@ -316,6 +335,14 @@
      */
     dispose: function() {
       this.cleanupSelf();
+    },
+
+    /**
+     * @returns {Boolean} true if the view was disposed
+     * @method isDisposed
+     */
+    isDisposed: function() {
+      return this._isDisposed;
     }
   };
 

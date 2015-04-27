@@ -10,10 +10,10 @@ describe('A Form View saving', function() {
       env = environment;
       $ = env.window.$;
       _ = env.window._;
-      TestModel = require(testSrcPath + '/TestModel')(env.window.Torso.Models.Nested),
-      FormModel = env.window.Torso.Models.Form;
+      TestModel = require(testSrcPath + '/TestModel')(env.window.Torso.NestedModel),
+      FormModel = env.window.Torso.FormModel;
       testModel = new TestModel();
-      FormView = env.window.Torso.Views.Form;
+      FormView = env.window.Torso.FormView;
       done();
     });
   });

@@ -5,8 +5,7 @@
     module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./collectionRegistrationMixin'), require('./collectionLoadingMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Collections = root.Torso.Collections || {};
-    root.Torso.Collections.Collection = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.collectionRegistration, root.Torso.Mixins.collectionLoading);
+    root.Torso.Collection = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.collectionRegistration, root.Torso.Mixins.collectionLoading);
   }
 }(this, function(_, Backbone, pollingMixin, collectionRegistrationMixin, collectionLoadingMixin) {
   'use strict';

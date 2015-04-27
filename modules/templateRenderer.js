@@ -40,18 +40,29 @@
       if (opts.force) {
         el.html(newHTML);
       } else {
-        newDOM = $('<' + el.prop('tagName') + '>' + newHTML + '</' + el.prop('tagName') + '>');
-        _.each(el.get(0).attributes, function(attrib) {
-          newDOM.attr(attrib.name, attrib.value);
-        });
-        activeElement = document.activeElement;
-        if (activeElement && activeElement.hasAttribute('value')) {
-          currentCaret = this.getCaretPosition(activeElement);
-        }
-        this.hotswap(el, newDOM, opts.ignoreElements, false);
-        if (activeElement) {
-          this.setCaretPosition(activeElement, currentCaret);
-        }
+        newDOM = this.copyTopElement(el);
+        newDOM.html(newHTML);
+        this.hotswapKeepCaret(el, newDOM, opts);
+      }
+    },
+
+    /**
+     * Call this.hotswap but also keeps the caret position the same
+     * @param  el {jQueryObject} The Element to render into
+     * @param  template {Handlebars Template} The HBS template to apply
+     * @param  context {Object} The context object to pass to the template
+     * @method hotswapKeepCaret
+     */
+    hotswapKeepCaret: function(el, newDOM, opts) {
+      opts = opts || {};
+      var currentCaret,
+          activeElement = document.activeElement;
+      if (activeElement && activeElement.hasAttribute('value')) {
+        currentCaret = this.getCaretPosition(activeElement);
+      }
+      this.hotswap(el, newDOM, opts.ignoreElements, false);
+      if (activeElement) {
+        this.setCaretPosition(activeElement, currentCaret);
       }
     },
 
@@ -148,6 +159,20 @@
     },
 
     /**
+     * Produces a copy of the element tag with attributes but with no contents
+     * @param el {jQuery element} the element to be copied
+     * @return a shallow copy of the element with no children but with attributes
+     * @method copyTopElement
+     */
+    copyTopElement: function(el) {
+      var newDOM = $('<' + el.prop('tagName') + '></' + el.prop('tagName') + '>');
+      _.each(el.get(0).attributes, function(attrib) {
+        newDOM.attr(attrib.name, attrib.value);
+      });
+      return newDOM;
+    },
+
+    /**
      * Method that returns the current caret (cursor) position of a given element.
      * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
      * @method getCaretPosition
@@ -187,13 +212,13 @@
      */
     setCaretPosition: function(elem, caretPos) {
       var range;
-      if(elem) {
-        if(elem.createTextRange) {
+      if (elem) {
+        if (elem.createTextRange) {
           // IE support
           range = elem.createTextRange();
           range.move('character', caretPos);
           range.select();
-        } else if(elem.selectionStart || elem.selectionStart === 0) {
+        } else if (elem.selectionStart || elem.selectionStart === 0) {
           // Firefox support
           elem.focus();
           elem.setSelectionRange(caretPos, caretPos);

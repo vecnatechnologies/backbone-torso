@@ -5,8 +5,7 @@
     module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Models = root.Torso.Models || {};
-    root.Torso.Models.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
   }
 }(this, function(_, Backbone, pollingMixin) {
   'use strict';
