@@ -12,7 +12,7 @@ module.exports = function(window) {
       ChildView1 = childClickViewGenerator(window),
       ChildView2 = childClickViewGenerator(window);
 
-  var ParentView = window.Torso.Views.View.extend({
+  var ParentView = window.Torso.View.extend({
     events: {
       'click div.parent' : 'myClick'
     },

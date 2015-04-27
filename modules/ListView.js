@@ -5,8 +5,7 @@
     module.exports = factory(require('underscore'), require('./View'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Views = root.Torso.Views || {};
-    root.Torso.Views.List = factory(root._, root.Torso.Views.View, root.Torso.Utils.templateRenderer);
+    root.Torso.ListView = factory(root._, root.Torso.View, root.Torso.Utils.templateRenderer);
   }
 }(this, function(_, View, templateRenderer) {
   'use strict';
@@ -14,7 +13,7 @@
     var removeChildView, addChildView, aggregateRenders, breakDelayedRender;
 
     /**
-     * If one exists, this method will clear the delayed render timeout and invoke render 
+     * If one exists, this method will clear the delayed render timeout and invoke render
      * @param view {List View} the list view
      * @private
      * @method breakDelayedRender

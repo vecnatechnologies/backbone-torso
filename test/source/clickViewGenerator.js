@@ -8,7 +8,7 @@ var spyOnBackbone = require('../spec/functional/backboneSpy');
 module.exports = function(window) {
   var _ = window._;
 
-  var ClickView = window.Torso.Views.View.extend({
+  var ClickView = window.Torso.View.extend({
     events: {
       'click div' : 'myClick'
     },

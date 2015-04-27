@@ -9,7 +9,7 @@ describe("A Form Model's Validation", function() {
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
-      FormModel = env.window.Torso.Models.Form;
+      FormModel = env.window.Torso.FormModel;
       done();
     });
   });

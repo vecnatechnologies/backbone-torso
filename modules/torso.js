@@ -45,12 +45,10 @@
    * @module    Torso
    * @class     Torso
    * @static
-   * @author    ariel.wexler@vecna.com
+   * @author    jyoung@vecna.com
    */
   return {
-    Collections: {
-      Collection: Collection
-    },
+    Collection: Collection,
     events: events,
     Mixins: {
       collectionLoading: collectionLoadingMixin,
@@ -59,23 +57,17 @@
       validation: validation.mixin,
       viewHierarchy: viewHierarchyMixin
     },
-    Models: {
-      Model: Model,
-      Nested: NestedModel,
-      Form: FormModel
-    },
-    Services: {
-      Service: Service
-    },
+    Model: Model,
+    NestedModel: NestedModel,
+    FormModel: FormModel,
+    Service: Service,
     Utils: {
       guidManager: guidManager,
       templateRenderer: templateRenderer
     },
-    Validation: validation,
-    Views: {
-      View: View,
-      List: ListView,
-      Form: FormView
-    }
+    validation: validation,
+    View: View,
+    ListView: ListView,
+    FormView: FormView
   };
 }));

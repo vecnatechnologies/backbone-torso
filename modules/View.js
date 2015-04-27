@@ -5,8 +5,7 @@
     module.exports = factory(require('underscore'), require('backbone'), require('./viewHierarchyMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Views = root.Torso.Views || {};
-    root.Torso.Views.View = factory(root._, root.Backbone, root.Torso.Mixins.viewHierarchy);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Mixins.viewHierarchy);
   }
 }(this, function(_, Backbone, viewHierarchyMixin) {
   'use strict';

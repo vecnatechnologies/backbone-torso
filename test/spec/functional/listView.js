@@ -13,10 +13,10 @@ describe('A List View', function() {
       $ = env.window.$;
       _ = env.window._;
       Handlebars = env.window.Handlebars;
-      ListView = env.window.Torso.Views.List;
-      View = env.window.Torso.Views.View;
-      Collection = env.window.Torso.Collections.Collection;
-      Model = env.window.Torso.Models.Model;
+      ListView = env.window.Torso.ListView;
+      View = env.window.Torso.View;
+      Collection = env.window.Torso.Collection;
+      Model = env.window.Torso.Model;
       templateRenderer = env.window.Torso.Utils.templateRenderer;
       MyListView = ListView.extend({
         className: 'list'
@@ -399,7 +399,7 @@ describe('A List View', function() {
     expect(myListView.$el.find('div.templated-list').length).toBe(1);
     expect(myListView.$el.find('[inject="children"]').length).toBe(0);
     expect(myListView.$el.find('div.item').length).toBe(numberOfViews + 1);
-    expect(myListView.$el.find('div.item-details').length).toBe(numberOfViews + 1);     
+    expect(myListView.$el.find('div.item-details').length).toBe(numberOfViews + 1);
   });
 
   it('has children views that it can add and have them still react to DOM events', function() {

@@ -5,8 +5,7 @@
     module.exports = factory(require('underscore'), require('jquery'), require('./NestedModel'), require('./validation'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Models = root.Torso.Models || {};
-    root.Torso.Models.Form = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.Models.Nested, root.Torso.validation);
+    root.Torso.FormModel = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.NestedModel, root.Torso.validation);
   }
 }(this, function(_, $, NestedModel, validation) {
   'use strict';
