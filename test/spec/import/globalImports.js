@@ -6,6 +6,7 @@ describe('Global Module imports', function() {
       // e.g. ['Torso', 'Mixins', 'collectionLoading'] = window.Torso.Mixins.collectionLoading
       globals = [
         ['Torso'],
+        ['Torso', 'Cell'],
         ['Torso', 'Collection'],
         ['Torso', 'events'],
         ['Torso', 'Mixins'],
@@ -13,11 +14,11 @@ describe('Global Module imports', function() {
         ['Torso', 'Mixins', 'collectionRegistration'],
         ['Torso', 'Mixins', 'polling'],
         ['Torso', 'Mixins', 'validation'],
-        ['Torso', 'Mixins', 'viewHierarchy'],
         ['Torso', 'Model'],
+        ['Torso', 'NestedCell'],
         ['Torso', 'NestedModel'],
         ['Torso', 'FormModel'],
-        ['Torso', 'Service'],
+        ['Torso', 'ServiceCell'],
         ['Torso', 'Utils'],
         ['Torso', 'Utils', 'guidManager'],
         ['Torso', 'Utils', 'templateRenderer'],
@@ -30,6 +31,7 @@ describe('Global Module imports', function() {
   beforeAll(function(done) {
     require('./importEnv')('testEnv').done(function(pageWindow) {
       window = pageWindow;
+      console.log(window.Torso.Cell);
       done();
     });
   });

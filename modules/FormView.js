@@ -14,8 +14,7 @@
   /**
    * Generic Form View
    * @module    Torso
-   * @namespace Torso.Views
-   * @class     Form
+   * @class     FormView
    * @constructor
    * @author ariel.wexler@vecna.com
    */

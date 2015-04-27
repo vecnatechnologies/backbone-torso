@@ -16,7 +16,6 @@
    * unique GUIDs when asked.  These GUIDs can be used for anything.
    *
    * @module    Torso
-   * @namespace Torso.Utils
    * @class     guidManager
    * @static
    * @author    ariel.wexler@vecna.com

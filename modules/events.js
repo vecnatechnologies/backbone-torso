@@ -13,7 +13,6 @@
   /**
    * Generic Events.
    * @module    Torso
-   * @namespace Torso
    * @class     events
    * @constructor
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com

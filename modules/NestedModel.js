@@ -1,6 +1,6 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['undersocre', 'backbone', './pollingMixin', 'backbone-nested'], factory);
+    define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
     module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
@@ -14,8 +14,7 @@
   /**
    * Generic Nested Model
    * @module    Torso
-   * @namespace Torso.Models
-   * @class     Nested
+   * @class     NestedModel
    * @constructor
    * @author kent.willis@vecna.com
    */

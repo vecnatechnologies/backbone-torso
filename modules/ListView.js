@@ -102,8 +102,7 @@
   /**
    * A view that is backed by a collection that managers views per model in the collection.
    * @module    Torso
-   * @namespace Torso.Views
-   * @class     List
+   * @class     ListView
    * @constructor
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
