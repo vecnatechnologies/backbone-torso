@@ -2,7 +2,7 @@
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
   } else if (typeof exports === 'object') {
-    factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('jquery'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
