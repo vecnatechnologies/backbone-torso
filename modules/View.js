@@ -16,7 +16,6 @@
    * - Creation of private collections
    * - Lifecycle of a view
    * @module    Torso
-   * @namespace Torso.Views
    * @class     View
    * @constructor
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com

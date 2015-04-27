@@ -1,12 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['./Collection',
+    define(['./Cell',
+            './Collection',
             './events',
-            './collectionLoadingMixin', './collectionRegistrationMixin',
+            './collectionLoadingMixin', './collectionRegistrationMixin', './cellPersistenceRemovalMixin',
             './pollingMixin',
             './validation',
-            './Model', './NestedModel', './FormModel',
-            './Service',
+            './Model', './NestedCell', './NestedModel', './FormModel',
+            './ServiceCell',
             './View', './ListView', './FormView',
             './guidManager', './templateRenderer',
             './handlebarsUtils', './stickitUtils'],
@@ -14,25 +15,27 @@
   } else if (typeof exports === 'object') {
     require('./handlebarsUtils');
     require('./stickitUtils');
-    module.exports = factory(require('./Collection'),
+    module.exports = factory(require('./Cell'),
+                             require('./Collection'),
                              require('./events'),
-                             require('./collectionLoadingMixin'), require('./collectionRegistrationMixin'),
+                             require('./collectionLoadingMixin'), require('./collectionRegistrationMixin'), require('./cellPersistenceRemovalMixin'),
                              require('./pollingMixin'),
                              require('./validation'),
-                             require('./Model'), require('./NestedModel'), require('./FormModel'),
-                             require('./Service'),
+                             require('./Model'), require('./NestedCell'), require('./NestedModel'), require('./FormModel'),
+                             require('./ServiceCell'),
                              require('./View'), require('./ListView'), require('./FormView'),
                              require('./guidManager'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
   }
-}(this, function(Collection,
+}(this, function(Cell,
+                 Collection,
                  events,
-                 collectionLoadingMixin, collectionRegistrationMixin,
+                 collectionLoadingMixin, collectionRegistrationMixin, cellPersistenceRemovalMixin,
                  pollingMixin,
                  validation,
-                 Model, NestedModel, FormModel,
-                 Service,
+                 Model, NestedCell, NestedModel, FormModel,
+                 ServiceCell,
                  View, ListView, FormView,
                  guidManager, templateRenderer) {
 
@@ -45,18 +48,21 @@
    * @author    jyoung@vecna.com
    */
   return {
+    Cell: Cell,
     Collection: Collection,
     events: events,
     Mixins: {
       collectionLoading: collectionLoadingMixin,
       collectionRegistration: collectionRegistrationMixin,
       polling: pollingMixin,
-      validation: validation.mixin
+      validation: validation.mixin,
+      cellPersistenceRemoval: cellPersistenceRemovalMixin
     },
     Model: Model,
+    NestedCell: NestedCell,
     NestedModel: NestedModel,
     FormModel: FormModel,
-    Service: Service,
+    ServiceCell: ServiceCell,
     Utils: {
       guidManager: guidManager,
       templateRenderer: templateRenderer

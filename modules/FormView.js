@@ -14,8 +14,7 @@
   /**
    * Generic Form View
    * @module    Torso
-   * @namespace Torso.Views
-   * @class     Form
+   * @class     FormView
    * @constructor
    * @author ariel.wexler@vecna.com
    */
@@ -421,9 +420,9 @@
           whenEvents = self._generateWhenEvents(declaration.when, indexMap);
           _.each(whenEvents, function(eventKey) {
             var invokeThen = function(evt) {
-              var i, args, result;
+              var i, args, result,
+                  newState = {};
               args = [evt];
-              newState = {};
               args.push(bindInfo.indices);
               result = bindInfo.fn.apply(self, args);
               self._processFeedbackThenResult(result, bindInfo.feedbackModelField);

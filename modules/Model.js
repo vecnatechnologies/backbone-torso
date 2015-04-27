@@ -13,7 +13,6 @@
   /**
    * Generic Model
    * @module    Torso
-   * @namespace Torso.Models
    * @class     Model
    * @constructor
    * @author kent.willis@vecna.com

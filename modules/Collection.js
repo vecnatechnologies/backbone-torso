@@ -13,7 +13,6 @@
   /**
    * Generic Collection
    * @module    Torso
-   * @namespace Torso.Collections
    * @class     Collection
    * @constructor
    * @author kent.willis@vecna.com

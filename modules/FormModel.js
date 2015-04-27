@@ -13,8 +13,7 @@
   /**
    * Generic Form Model
    * @module    Torso
-   * @namespace Torso.Models
-   * @class     Form
+   * @class     FormModel
    * @constructor
    * @author kent.willis@vecna.com
    */

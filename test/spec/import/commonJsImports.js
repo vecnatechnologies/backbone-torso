@@ -45,6 +45,7 @@ commonJsImportTest = function(moduleToImport, expectedModules) {
 
 commonJsImportTest('/modules/events', ['underscore', 'backbone']);
 
+commonJsImportTest('/modules/Cell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin']);
 commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
                                          '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin']);
 
@@ -55,11 +56,12 @@ commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'bac
                                          '/modules/pollingMixin', '/modules/NestedModel']);
 
 commonJsImportTest('/modules/Model', ['underscore', 'backbone', 'jquery', '/modules/pollingMixin']);
+commonJsImportTest('/modules/NestedCell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin', 'backbone-nested']);
 commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', 'jquery', '/modules/pollingMixin']);
 commonJsImportTest('/modules/FormModel', ['underscore', 'jquery', 'backbone-nested', 'backbone',
                                         '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation']);
 
-commonJsImportTest('/modules/Service', ['backbone']);
+commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin', '/modules/Cell']);
 
 commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery',
                                    '/modules/guidManager', '/modules/templateRenderer']);
@@ -76,9 +78,10 @@ commonJsImportTest('/modules/templateRenderer', ['underscore', 'jquery']);
 
 commonJsImportTest('/modules/torso', ['handlebars', 'backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
                                '/modules/handlebarsUtils', '/modules/stickitUtils',
-                               '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin', '/modules/validation',
+                               '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin', '/modules/cellPersistenceRemovalMixin', '/modules/validation',
+                               '/modules/Cell',
                                '/modules/Collection',
                                '/modules/events',
-                               '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/Service',
+                               '/modules/NestedCell', '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/ServiceCell',
                                '/modules/View', '/modules/ListView', '/modules/FormView',
                                '/modules/guidManager', '/modules/templateRenderer']);
