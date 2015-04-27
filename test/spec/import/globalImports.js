@@ -13,7 +13,6 @@ describe('Global Module imports', function() {
         ['Torso', 'Mixins', 'collectionRegistration'],
         ['Torso', 'Mixins', 'polling'],
         ['Torso', 'Mixins', 'validation'],
-        ['Torso', 'Mixins', 'viewHierarchy'],
         ['Torso', 'Model'],
         ['Torso', 'NestedModel'],
         ['Torso', 'FormModel'],

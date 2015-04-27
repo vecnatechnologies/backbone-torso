@@ -5,7 +5,6 @@
             './collectionLoadingMixin', './collectionRegistrationMixin',
             './pollingMixin',
             './validation',
-            './viewHierarchyMixin',
             './Model', './NestedModel', './FormModel',
             './Service',
             './View', './ListView', './FormView',
@@ -20,7 +19,6 @@
                              require('./collectionLoadingMixin'), require('./collectionRegistrationMixin'),
                              require('./pollingMixin'),
                              require('./validation'),
-                             require('./viewHierarchyMixin'),
                              require('./Model'), require('./NestedModel'), require('./FormModel'),
                              require('./Service'),
                              require('./View'), require('./ListView'), require('./FormView'),
@@ -33,7 +31,6 @@
                  collectionLoadingMixin, collectionRegistrationMixin,
                  pollingMixin,
                  validation,
-                 viewHierarchyMixin,
                  Model, NestedModel, FormModel,
                  Service,
                  View, ListView, FormView,
@@ -54,8 +51,7 @@
       collectionLoading: collectionLoadingMixin,
       collectionRegistration: collectionRegistrationMixin,
       polling: pollingMixin,
-      validation: validation.mixin,
-      viewHierarchy: viewHierarchyMixin
+      validation: validation.mixin
     },
     Model: Model,
     NestedModel: NestedModel,

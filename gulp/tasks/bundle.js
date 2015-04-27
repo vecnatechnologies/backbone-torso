@@ -23,7 +23,6 @@
                      paths.modules + '/collectionLoadingMixin.js',
                      paths.modules + '/pollingMixin.js',
                      paths.modules + '/collectionRegistrationMixin.js',
-                     paths.modules + '/viewHierarchyMixin.js',
                      paths.modules + '/Service.js',
                      paths.modules + '/events.js',
                      paths.modules + '/Collection.js',
