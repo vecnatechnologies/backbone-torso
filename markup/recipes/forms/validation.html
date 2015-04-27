@@ -60,7 +60,7 @@ pushing the form values back to the pertinent object models.</p>
 </script></code></pre>
 <div class="code-type javascript"> - MODEL</div>
 <pre><code class="javascript" for="validate-form"><script type="text/code">
-var ValidatingFormModel = Torso.Models.Form.extend({
+var ValidatingFormModel = Torso.FormModel.extend({
   validation: {
     name: {
       required: true,
@@ -75,7 +75,7 @@ var formModel = new ValidatingFormModel();
 </script></code></pre>
 <div class="code-type javascript"> - VIEW</div>
 <pre><code class="javascript" for="validate-form"><script type="text/code">
-var ValidatingFormView = Torso.Views.Form.extend({
+var ValidatingFormView = Torso.FormView.extend({
   template: compiledTemplate,
   events: {
     'click [type="submit"]': 'submit'
@@ -91,6 +91,7 @@ var ValidatingFormView = Torso.Views.Form.extend({
     } else {
       console.log('VALIDATION PASSED --> Save to Object Models now.');
     }
+    this._errors = validationErrors;
     this.render();
     return false;
   }

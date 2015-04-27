@@ -1,0 +1,44 @@
+<h3>
+  Basic Model
+</h3>
+<hr/>
+<p>Torso model is really just Backbone model.</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="this-demo"></div>
+
+<div class="code-type hbs"></div>
+<pre><code class="html" for="this-demo"><script type="text/code">
+<h2>Model Attributes</h2>
+<div>first: <b>\{{firstName}}</b></div>
+<div>last: <b>\{{lastName}}</b></div>
+<div>age: <b>\{{age}}</b></div>
+</script></code></pre>
+
+<div class="code-type javascript"> - MODEL</div>
+<pre><code class="javascript" for="this-demo"><script type="text/code">
+var torsoModel = new Torso.Model({
+  firstName: 'John',
+  lastName: 'Smith',
+  age: 24
+});
+</script></code></pre>
+
+<div class="code-type javascript closed"> - VIEW</div>
+<pre><code class="javascript" for="this-demo"><script type="text/code">
+var TorsoView = Backbone.View.extend({
+  template: compiledTemplate,
+  prepare: function() {
+    return this.model.toJSON();
+  },
+  render: function() {
+    var context = this.prepare();
+    this.$el.html(this.template(context));
+  }
+});
+var view = new TorsoView({
+  model: torsoModel,
+  el: $container
+});
+view.render();
+</script></code></pre>

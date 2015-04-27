@@ -51,7 +51,7 @@ var persistedModel = new Backbone.Model({
 
 <div class="code-type javascript"> - FORM MODEL</div>
 <pre><code class="javascript" for="assemble-form"><script type="text/code">
-var formModel = new Torso.Models.Form({}, {
+var formModel = new Torso.FormModel({}, {
   model: persistedModel
 });
 </script></code></pre>
@@ -59,7 +59,7 @@ var formModel = new Torso.Models.Form({}, {
 <div class="code-type javascript"> - VIEW</div>
 <pre><code class="javascript" for="assemble-form"><script type="text/code">
 /* Usage of Torso FormView */
-var AssembledFormView = Torso.Views.Form.extend({
+var AssembledFormView = Torso.FormView.extend({
   template: compiledTemplate,
   events: {
     'click ._pull': 'pull',
@@ -87,4 +87,4 @@ var formView = new AssembledFormView({
 formView.render();
 </script></code></pre>
 
-<p>For more details on pushing and pulling, review the <a href="#modules.models.form">Form Model</a> API.</p>
+<p>For more details on pushing and pulling, review the <a href="#modules.models.form-model">Form Model</a> API.</p>

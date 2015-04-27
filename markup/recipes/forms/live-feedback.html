@@ -66,7 +66,7 @@
 </script></code></pre>
 <div class="code-type javascript closed"> - MODEL</div>
 <pre><code class="javascript" for="validate-form"><script type="text/code">
-var ValidatingFormModel = Torso.Models.Form.extend({
+var ValidatingFormModel = Torso.FormModel.extend({
   validation: {
     name: {
       required: true,
@@ -81,7 +81,7 @@ var formModel = new ValidatingFormModel();
 </script></code></pre>
 <div class="code-type javascript"> - VIEW</div>
 <pre><code class="javascript" for="validate-form"><script type="text/code">
-var ValidatingFormView = Torso.Views.Form.extend({
+var ValidatingFormView = Torso.FormView.extend({
   template: compiledTemplate,
   events: {
     'click [type="submit"]': 'submit'

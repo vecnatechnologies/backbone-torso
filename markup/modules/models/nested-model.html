@@ -1,0 +1,49 @@
+<h3>
+  Nested Model
+</h3>
+<hr/>
+<p>By default, Backbone models do not support nested listeners.  Luckily,
+  <a href="https://github.com/afeld/backbone-nested">backbone-nested</a> exists to solve
+  this.  This demo page does not showcase the full benefits of nested models; please
+  refer to the backbone-nested documentation for more information.</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="this-demo"></div>
+
+<div class="code-type hbs"></div>
+<pre><code class="html" for="this-demo"><script type="text/code">
+<h2>Model Attributes</h2>
+<div>first: <b>\{{name.first}}</b></div>
+<div>last: <b>\{{name.last}}</b></div>
+<div>age: <b>\{{age}}</b></div>
+</script></code></pre>
+
+<div class="code-type javascript"> - MODEL</div>
+<pre><code class="javascript" for="this-demo"><script type="text/code">
+var torsoModel = new Torso.NestedModel({
+  name: {
+    first: 'John',
+    last: 'Smith'
+  },
+  age: 24
+});
+</script></code></pre>
+
+<div class="code-type javascript closed"> - VIEW</div>
+<pre><code class="javascript" for="this-demo"><script type="text/code">
+var TorsoView = Backbone.View.extend({
+  template: compiledTemplate,
+  prepare: function() {
+    return this.model.toJSON();
+  },
+  render: function() {
+    var context = this.prepare();
+    this.$el.html(this.template(context));
+  }
+});
+var view = new TorsoView({
+  model: torsoModel,
+  el: $container
+});
+view.render();
+</script></code></pre>

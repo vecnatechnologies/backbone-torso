@@ -81,7 +81,7 @@ var genderFormatters = {
 </script></code></pre>
 <div class="code-type javascript"> - VIEW</div>
 <pre><code class="javascript" for="rep-form"><script type="text/code">
-var FormattedFormView = Torso.Views.Form.extend({
+var FormattedFormView = Torso.FormView.extend({
   template: compiledTemplate,
   fields: {
     'name': nameFormatters,
@@ -114,4 +114,4 @@ that the internal representation for the radio button can be converted to the nu
 <p>Please note that the <b>viewFormat</b> method is only invoked ONCE immediately after the
 render call.  This means that any new user input will no undergo the viewFormat data
 transformation.  If you want real time view formatting, look in to Torso's
-<a href="#modules.feeback-view">Feedback View</a> module.</p>
+<a href="#modules.views.feeback-view">Feedback View</a> module.</p>
