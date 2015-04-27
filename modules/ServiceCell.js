@@ -10,7 +10,7 @@
 }(this, function(Cell) {
   'use strict';
   /**
-   * An non-persistable object that can listen to and emit events like a models.
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
    * @module    Torso
    * @class  ServiceCell
    * @author kent.willis@vecna.com

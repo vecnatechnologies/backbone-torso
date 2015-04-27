@@ -49,6 +49,6 @@
       if (!this.isModelCompatible) {
         throw 'Cell does not have url';
       }
-    },
+    }
   };
 }));
