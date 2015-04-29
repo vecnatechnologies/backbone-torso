@@ -120,9 +120,10 @@
       this.remove();
 
       // Unbind all local event bindings
-      this.unbind();
       this.off();
       this.stopListening();
+      this.viewState.off();
+      this.viewState.stopListening();
 
       // Delete the dom references
       delete this.$el;
