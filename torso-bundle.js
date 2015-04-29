@@ -3021,10 +3021,12 @@
       this.remove();
 
       // Unbind all local event bindings
-      this.unbind();
       this.off();
       this.stopListening();
-
+      if (this.viewState) {
+        this.viewState.off();
+        this.viewState.stopListening();
+      }
       // Delete the dom references
       delete this.$el;
       delete this.el;
