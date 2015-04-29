@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './guidManager', './templateRenderer'], factory);
+    define(['underscore', 'backbone', './guidManager', './templateRenderer', './Cell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./guidManager'), require('./templateRenderer'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./guidManager'), require('./templateRenderer'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.guidManager, root.Torso.Utils.templateRenderer);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.guidManager, root.Torso.Utils.templateRenderer, root.Torso.Cell);
   }
-}(this, function(_, Backbone, guidManager, templateRenderer) {
+}(this, function(_, Backbone, guidManager, templateRenderer, Cell) {
   'use strict';
 
   /**
@@ -23,6 +23,7 @@
   var View = Backbone.View.extend({
     _GUID: null,
     _childViews: null,
+    viewState: null,
     tabInfo: null,
     _isActive: false,
     _isAttached: false,
@@ -36,6 +37,7 @@
     super: function() {
       this.generateGUID();
       this._childViews = {};
+      this.viewState = new Cell();
     },
 
     /**
@@ -118,10 +120,12 @@
       this.remove();
 
       // Unbind all local event bindings
-      this.unbind();
       this.off();
       this.stopListening();
-
+      if (this.viewState) {
+        this.viewState.off();
+        this.viewState.stopListening();
+      }
       // Delete the dom references
       delete this.$el;
       delete this.el;

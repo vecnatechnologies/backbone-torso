@@ -7,5 +7,4 @@ dist
 *.swp
 docs/js/
 testSandbox/
-torso-bundle*
 *.log

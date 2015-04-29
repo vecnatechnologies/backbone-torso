@@ -63,12 +63,12 @@ commonJsImportTest('/modules/FormModel', ['underscore', 'jquery', 'backbone-nest
 
 commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin', '/modules/Cell']);
 
-commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery',
+commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
                                    '/modules/guidManager', '/modules/templateRenderer']);
-commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested',
+commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
                                        '/modules/guidManager', '/modules/templateRenderer', '/modules/View',
                                        '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel']);
-commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone',
+commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
                                        '/modules/guidManager', '/modules/templateRenderer', '/modules/View']);
 
 commonJsImportTest('/modules/guidManager', []);

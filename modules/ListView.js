@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', './View', './templateRenderer'], factory);
+    define(['underscore', 'jquery', './View', './templateRenderer'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('./View'), require('./templateRenderer'));
+    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.ListView = factory(root._, root.Torso.View, root.Torso.Utils.templateRenderer);
+    root.Torso.ListView = factory(root._, root.$, root.Torso.View, root.Torso.Utils.templateRenderer);
   }
-}(this, function(_, View, templateRenderer) {
+}(this, function(_, $, View, templateRenderer) {
   'use strict';
 
     var removeChildView, addChildView, aggregateRenders, breakDelayedRender;
