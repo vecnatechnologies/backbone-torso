@@ -332,8 +332,13 @@
         currentDOM = replacementDOM;
       }
 
-      // Attribute removing old values
       newAttributes = newDOM.get(0).attributes;
+      // Skip trying to hotswap an injection site
+      var injectionSite = _.findWhere(newAttributes, {name: 'inject'});
+      if (injectionSite) {
+        return false;
+      }
+      // Attribute removing old values
       currentAttributes = currentDOM.get(0).attributes;
       while (currentAttributes.length > 0) {
         currentAttributes.removeNamedItem(currentAttributes[0].name);
@@ -3129,7 +3134,7 @@
      */
     injectView: function(injectionSite, view) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-      if (view && injectionPoint) {
+      if (view && injectionPoint.size() > 0) {
         this.attachChildView(injectionPoint, view);
       }
     },
@@ -3141,6 +3146,7 @@
      * @method attachChildView
      */
     attachChildView: function($el, view) {
+      view.detach();
       this.registerChildView(view);
       view.attach($el);
     },
@@ -3525,7 +3531,7 @@
      */
     _createChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
-        childView = this.getChildView(model);
+        var childView = this.getChildView(model);
         if (!childView) {
           childView = this._createChildView(model);
           this.trigger('child-view-added', {model: model, view: childView});

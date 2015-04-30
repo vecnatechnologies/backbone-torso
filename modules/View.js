@@ -228,7 +228,7 @@
      */
     injectView: function(injectionSite, view) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-      if (view && injectionPoint) {
+      if (view && injectionPoint.size() > 0) {
         this.attachChildView(injectionPoint, view);
       }
     },
@@ -240,6 +240,7 @@
      * @method attachChildView
      */
     attachChildView: function($el, view) {
+      view.detach();
       this.registerChildView(view);
       view.attach($el);
     },
