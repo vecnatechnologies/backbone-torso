@@ -24,7 +24,7 @@
     _GUID: null,
     _childViews: null,
     viewState: null,
-    tabInfo: null,
+    template: null,
     _isActive: false,
     _isAttached: false,
     _isDisposed: false,
@@ -56,7 +56,11 @@
      * @method prepare
      */
     prepare: function() {
-      return {};
+      if (this.model) {
+        return this.model.toJSON();
+      } else {
+        return {};
+      }
     },
 
     /**
@@ -67,6 +71,7 @@
     render: function() {
       if (this.template) {
         this.templateRender(this.$el, this.template, this.prepare());
+        this.delegateEvents();
       }
     },
 
@@ -87,14 +92,6 @@
      */
     getGUID: function() {
       return this._GUID;
-    },
-
-    /**
-     * Trigger a change:tab-info event, so any tab view listening can react to it.
-     * @method triggerInfoChange
-     */
-    triggerTabInfoChange: function() {
-      this.trigger('change:tab-info', this.tabInfo);
     },
 
     /**
