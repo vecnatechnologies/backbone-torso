@@ -24,7 +24,7 @@
     _GUID: null,
     _childViews: null,
     viewState: null,
-    tabInfo: null,
+    template: null,
     _isActive: false,
     _isAttached: false,
     _isDisposed: false,
@@ -52,6 +52,30 @@
     },
 
     /**
+     * @return {Object} context for a render method. Defaults to empty object.
+     * @method prepare
+     */
+    prepare: function() {
+      if (this.model) {
+        return this.model.toJSON();
+      } else {
+        return {};
+      }
+    },
+
+    /**
+     * Rebuilds the html for this view's element. Should be able to be called at any time.
+     * Defaults to using this.templateRender
+     * @method render
+     */
+    render: function() {
+      if (this.template) {
+        this.templateRender(this.$el, this.template, this.prepare());
+        this.delegateEvents();
+      }
+    },
+
+    /**
      * Generates and sets this view's GUID (if null)
      * @method generateGUID
      */
@@ -71,19 +95,12 @@
     },
 
     /**
-     * Trigger a change:tab-info event, so any tab view listening can react to it.
-     * @method triggerInfoChange
-     */
-    triggerTabInfoChange: function() {
-      this.trigger('change:tab-info', this.tabInfo);
-    },
-
-    /**
      * Hotswap rendering system reroute method.
      * @method templateRender
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -196,6 +213,17 @@
     },
 
     /**
+     * Detach all child views
+     * Default method may be overriden.
+     * @method detachChildViews
+     */
+    detachChildViews: function() {
+      _.each(this._childViews, function(view) {
+        view.detach();
+      });
+    },
+
+    /**
      * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
      * be done to the child view as well.
      * @param view {View} the child view
@@ -215,7 +243,6 @@
      */
     unregisterChildView: function(view) {
       delete this._childViews[view.cid];
-      this.stopListening(view);
       return view;
     },
 
@@ -228,7 +255,7 @@
      */
     injectView: function(injectionSite, view) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-      if (view && injectionPoint) {
+      if (view && injectionPoint.size() > 0) {
         this.attachChildView(injectionPoint, view);
       }
     },
@@ -240,6 +267,7 @@
      * @method attachChildView
      */
     attachChildView: function($el, view) {
+      view.detach();
       this.registerChildView(view);
       view.attach($el);
     },
@@ -318,14 +346,6 @@
      */
     isActive: function() {
       return this._isActive;
-    },
-
-    /**
-     * Default render method that may be overriden.
-     * @method render
-     */
-    render: function() {
-      //do nothing
     },
 
     /**

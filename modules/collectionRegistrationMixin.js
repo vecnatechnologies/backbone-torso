@@ -125,6 +125,8 @@
      * @param collection {Collection} the collection to add this mixin
      * @param options.requestMap {Object} the object to hold all request state
      * @param options.collectionTrackedIds {Array} list of all ids this collection is tracking
+     * @param [options.getByIdsUrl='/ids'] {String} url path extension to the base collection.url that retrieves
+                                                    many models when posted to with the ids of those models.
      * @param options.knownPrivateCollections {Object} map of all private collections that have registered ids [GUID -> collection]
      */
     cacheMixin = function(collection, options) {
@@ -134,6 +136,7 @@
       var setRequestedIds,
         requestMap = options.requestMap,
         collectionTrackedIds = options.collectionTrackedIds,
+        getByIdsUrl = options.getByIdsUrl || '/ids',
         knownPrivateCollections = options.knownPrivateCollections;
 
       /**
@@ -282,7 +285,7 @@
           }
           return $.ajax({
               type:'POST',
-              url: collection.url + '/ids',
+              url: collection.url + getByIdsUrl,
               contentType: 'application/json; charset=utf-8',
               data: JSON.stringify(idsToFetch)
             }).done(
@@ -346,13 +349,15 @@
        * @method super
        */
       super: function(args) {
+        args = args || {};
         baseSuper.call(this, args);
         this.isRequester = args && args.isRequester;
         if (!this.isRequester) {
           cacheMixin(this, {
             requestMap: {},
             collectionTrackedIds: [],
-            knownPrivateCollections: {}
+            knownPrivateCollections: {},
+            getByIdsUrl: args.getByIdsUrl
           });
         }
       },

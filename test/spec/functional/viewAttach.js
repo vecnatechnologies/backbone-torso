@@ -3,12 +3,13 @@ var testSrcPath = '../../source',
 
 describe('A View being detached and attached', function() {
 
-  var env, $, ClickView, ParentView;
+  var env, $, ClickView, ParentView, Handlebars;
 
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
       $ = env.window.$;
+      Handlebars = env.window.Handlebars;
       ClickView = require(testSrcPath + '/clickViewGenerator')(env.window);
       ParentView = require(testSrcPath + '/parentClickViewGenerator')(env.window);
       $('body').append('<div class="app"></div>');
@@ -167,7 +168,7 @@ describe('A View being detached and attached', function() {
     view.dispose();
   });
 
-  it('can inject subviews correctly', function() {
+  it('can attach and detach a view correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
     view.attach($('div.app'));
@@ -176,5 +177,38 @@ describe('A View being detached and attached', function() {
     view.detach();
     expect($('div.click').length).toBe(0);
     expect($('div.app').length).toBe(1);
+  });
+
+  it('can inject subviews multiple times', function() {
+    var view = new ParentView();
+    var childView1 = view.childView1;
+    var childView2 = view.childView2;
+    expect(view.isAttached()).toBe(false);
+    expect(childView1.isAttached()).toBe(true);
+    expect(childView2.isAttached()).toBe(true);
+    view.attach($('div.app'));
+    view.template = Handlebars.compile("<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>");
+    view.prepare = function() {return {};};
+    view.render = function() {
+      this.templateRender(this.$el, this.template, this.prepare());
+      console.log('PARENT VIEW after template render: ' + view.$el.html());
+      console.log('CHILD VIEW after template render: ' + childView1.$el.html());
+      this.injectView('one', this.childView1);
+      console.log('------------ END INJECT VIEW 1 -----------');
+      this.injectView('two', this.childView2);
+      console.log('------------ END INJECT VIEW 2 -----------');
+    };
+    view.render();
+    expect($('div.child').length).toBe(2);
+    expect($('div[inject]').length).toBe(0);
+    view.render();
+    expect($('div.child').length).toBe(2);
+    expect($('div[inject]').length).toBe(0);
+    childView1.detach();
+    expect($('div.child').length).toBe(1);
+    expect($('div[inject]').length).toBe(1);
+    view.render();
+    expect($('div.child').length).toBe(2);
+    expect($('div[inject]').length).toBe(0);
   });
 });

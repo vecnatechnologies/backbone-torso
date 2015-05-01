@@ -271,7 +271,7 @@
      */
     _createChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
-        childView = this.getChildView(model);
+        var childView = this.getChildView(model);
         if (!childView) {
           childView = this._createChildView(model);
           this.trigger('child-view-added', {model: model, view: childView});

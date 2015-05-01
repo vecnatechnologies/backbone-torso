@@ -26,6 +26,7 @@
                      paths.modules + '/cellPersistenceRemovalMixin.js',
                      paths.modules + '/Cell.js',
                      paths.modules + '/ServiceCell.js',
+                     paths.modules + '/Router.js',
                      paths.modules + '/events.js',
                      paths.modules + '/Collection.js',
                      paths.modules + '/Model.js',

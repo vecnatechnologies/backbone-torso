@@ -790,6 +790,8 @@
      * @param collection {Collection} the collection to add this mixin
      * @param options.requestMap {Object} the object to hold all request state
      * @param options.collectionTrackedIds {Array} list of all ids this collection is tracking
+     * @param [options.getByIdsUrl='/ids'] {String} url path extension to the base collection.url that retrieves
+                                                    many models when posted to with the ids of those models.
      * @param options.knownPrivateCollections {Object} map of all private collections that have registered ids [GUID -> collection]
      */
     cacheMixin = function(collection, options) {
@@ -799,6 +801,7 @@
       var setRequestedIds,
         requestMap = options.requestMap,
         collectionTrackedIds = options.collectionTrackedIds,
+        getByIdsUrl = options.getByIdsUrl || '/ids',
         knownPrivateCollections = options.knownPrivateCollections;
 
       /**
@@ -947,7 +950,7 @@
           }
           return $.ajax({
               type:'POST',
-              url: collection.url + '/ids',
+              url: collection.url + getByIdsUrl,
               contentType: 'application/json; charset=utf-8',
               data: JSON.stringify(idsToFetch)
             }).done(
@@ -1011,13 +1014,15 @@
        * @method super
        */
       super: function(args) {
+        args = args || {};
         baseSuper.call(this, args);
         this.isRequester = args && args.isRequester;
         if (!this.isRequester) {
           cacheMixin(this, {
             requestMap: {},
             collectionTrackedIds: [],
-            knownPrivateCollections: {}
+            knownPrivateCollections: {},
+            getByIdsUrl: args.getByIdsUrl
           });
         }
       },
@@ -1158,6 +1163,26 @@
   var ServiceCell = Cell.extend({ });
 
   return ServiceCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Router = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+  /**
+   * Backbone's router.
+   * @module Torso
+   * @class  Router
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.Router.extend({});
 }));
 
 (function(root, factory) {
@@ -2925,7 +2950,7 @@
     _GUID: null,
     _childViews: null,
     viewState: null,
-    tabInfo: null,
+    template: null,
     _isActive: false,
     _isAttached: false,
     _isDisposed: false,
@@ -2953,6 +2978,30 @@
     },
 
     /**
+     * @return {Object} context for a render method. Defaults to empty object.
+     * @method prepare
+     */
+    prepare: function() {
+      if (this.model) {
+        return this.model.toJSON();
+      } else {
+        return {};
+      }
+    },
+
+    /**
+     * Rebuilds the html for this view's element. Should be able to be called at any time.
+     * Defaults to using this.templateRender
+     * @method render
+     */
+    render: function() {
+      if (this.template) {
+        this.templateRender(this.$el, this.template, this.prepare());
+        this.delegateEvents();
+      }
+    },
+
+    /**
      * Generates and sets this view's GUID (if null)
      * @method generateGUID
      */
@@ -2972,19 +3021,12 @@
     },
 
     /**
-     * Trigger a change:tab-info event, so any tab view listening can react to it.
-     * @method triggerInfoChange
-     */
-    triggerTabInfoChange: function() {
-      this.trigger('change:tab-info', this.tabInfo);
-    },
-
-    /**
      * Hotswap rendering system reroute method.
      * @method templateRender
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -3021,10 +3063,12 @@
       this.remove();
 
       // Unbind all local event bindings
-      this.unbind();
       this.off();
       this.stopListening();
-
+      if (this.viewState) {
+        this.viewState.off();
+        this.viewState.stopListening();
+      }
       // Delete the dom references
       delete this.$el;
       delete this.el;
@@ -3095,6 +3139,17 @@
     },
 
     /**
+     * Detach all child views
+     * Default method may be overriden.
+     * @method detachChildViews
+     */
+    detachChildViews: function() {
+      _.each(this._childViews, function(view) {
+        view.detach();
+      });
+    },
+
+    /**
      * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
      * be done to the child view as well.
      * @param view {View} the child view
@@ -3114,7 +3169,6 @@
      */
     unregisterChildView: function(view) {
       delete this._childViews[view.cid];
-      this.stopListening(view);
       return view;
     },
 
@@ -3127,7 +3181,7 @@
      */
     injectView: function(injectionSite, view) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-      if (view && injectionPoint) {
+      if (view && injectionPoint.size() > 0) {
         this.attachChildView(injectionPoint, view);
       }
     },
@@ -3139,6 +3193,7 @@
      * @method attachChildView
      */
     attachChildView: function($el, view) {
+      view.detach();
       this.registerChildView(view);
       view.attach($el);
     },
@@ -3217,14 +3272,6 @@
      */
     isActive: function() {
       return this._isActive;
-    },
-
-    /**
-     * Default render method that may be overriden.
-     * @method render
-     */
-    render: function() {
-      //do nothing
     },
 
     /**
@@ -3523,7 +3570,7 @@
      */
     _createChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
-        childView = this.getChildView(model);
+        var childView = this.getChildView(model);
         if (!childView) {
           childView = this._createChildView(model);
           this.trigger('child-view-added', {model: model, view: childView});
