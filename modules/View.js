@@ -103,6 +103,7 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -215,6 +216,17 @@
     },
 
     /**
+     * Detach all child views
+     * Default method may be overriden.
+     * @method detachChildViews
+     */
+    detachChildViews: function() {
+      _.each(this._childViews, function(view) {
+        view.detach();
+      });
+    },
+
+    /**
      * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
      * be done to the child view as well.
      * @param view {View} the child view
@@ -234,7 +246,6 @@
      */
     unregisterChildView: function(view) {
       delete this._childViews[view.cid];
-      this.stopListening(view);
       return view;
     },
 

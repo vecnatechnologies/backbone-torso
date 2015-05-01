@@ -101,12 +101,8 @@
         currentDOM = replacementDOM;
       }
 
-      newAttributes = newDOM.get(0).attributes;
       // Skip trying to hotswap an injection site
-      var injectionSite = _.findWhere(newAttributes, {name: 'inject'});
-      if (injectionSite) {
-        return false;
-      }
+      newAttributes = newDOM.get(0).attributes;
       // Attribute removing old values
       currentAttributes = currentDOM.get(0).attributes;
       while (currentAttributes.length > 0) {
