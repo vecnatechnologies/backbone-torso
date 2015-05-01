@@ -101,9 +101,8 @@
         currentDOM = replacementDOM;
       }
 
-      // Skip trying to hotswap an injection site
-      newAttributes = newDOM.get(0).attributes;
       // Attribute removing old values
+      newAttributes = newDOM.get(0).attributes;
       currentAttributes = currentDOM.get(0).attributes;
       while (currentAttributes.length > 0) {
         currentAttributes.removeNamedItem(currentAttributes[0].name);

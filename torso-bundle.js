@@ -332,9 +332,8 @@
         currentDOM = replacementDOM;
       }
 
-      // Skip trying to hotswap an injection site
-      newAttributes = newDOM.get(0).attributes;
       // Attribute removing old values
+      newAttributes = newDOM.get(0).attributes;
       currentAttributes = currentDOM.get(0).attributes;
       while (currentAttributes.length > 0) {
         currentAttributes.removeNamedItem(currentAttributes[0].name);
@@ -2951,7 +2950,7 @@
     _GUID: null,
     _childViews: null,
     viewState: null,
-    tabInfo: null,
+    template: null,
     _isActive: false,
     _isAttached: false,
     _isDisposed: false,
@@ -2983,7 +2982,11 @@
      * @method prepare
      */
     prepare: function() {
-      return {};
+      if (this.model) {
+        return this.model.toJSON();
+      } else {
+        return {};
+      }
     },
 
     /**
@@ -2994,6 +2997,7 @@
     render: function() {
       if (this.template) {
         this.templateRender(this.$el, this.template, this.prepare());
+        this.delegateEvents();
       }
     },
 
@@ -3014,14 +3018,6 @@
      */
     getGUID: function() {
       return this._GUID;
-    },
-
-    /**
-     * Trigger a change:tab-info event, so any tab view listening can react to it.
-     * @method triggerInfoChange
-     */
-    triggerTabInfoChange: function() {
-      this.trigger('change:tab-info', this.tabInfo);
     },
 
     /**
