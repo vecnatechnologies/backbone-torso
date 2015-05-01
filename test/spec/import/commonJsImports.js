@@ -63,6 +63,7 @@ commonJsImportTest('/modules/FormModel', ['underscore', 'jquery', 'backbone-nest
 
 commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin', '/modules/Cell']);
 commonJsImportTest('/modules/Router', ['backbone']);
+commonJsImportTest('/modules/history', ['backbone']);
 commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
                                    '/modules/guidManager', '/modules/templateRenderer']);
 commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
@@ -83,6 +84,7 @@ commonJsImportTest('/modules/torso', ['handlebars', 'backbone', 'backbone-nested
                                '/modules/Collection',
                                '/modules/Events',
                                '/modules/Router',
+                               '/modules/history',
                                '/modules/NestedCell', '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/ServiceCell',
                                '/modules/View', '/modules/ListView', '/modules/FormView',
                                '/modules/guidManager', '/modules/templateRenderer']);

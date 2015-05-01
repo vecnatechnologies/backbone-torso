@@ -28,6 +28,7 @@
                      paths.modules + '/ServiceCell.js',
                      paths.modules + '/Router.js',
                      paths.modules + '/Events.js',
+                     paths.modules + '/history.js',
                      paths.modules + '/Collection.js',
                      paths.modules + '/Model.js',
                      paths.modules + '/NestedModel.js',
