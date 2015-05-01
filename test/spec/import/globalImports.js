@@ -8,7 +8,7 @@ describe('Global Module imports', function() {
         ['Torso'],
         ['Torso', 'Cell'],
         ['Torso', 'Collection'],
-        ['Torso', 'events'],
+        ['Torso', 'Events'],
         ['Torso', 'Mixins'],
         ['Torso', 'Mixins', 'collectionLoading'],
         ['Torso', 'Mixins', 'collectionRegistration'],
