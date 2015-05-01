@@ -1192,7 +1192,7 @@
     module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.events = factory(root._, root.Backbone);
+    root.Torso.Events = factory(root._, root.Backbone);
   }
 }(this, function(_, Backbone) {
   'use strict';
@@ -1200,13 +1200,13 @@
   /**
    * Generic Events.
    * @module    Torso
-   * @class     events
+   * @class     Events
    * @constructor
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
-  var torsoEvents = _.extend({}, Backbone.Events);
+  var Events = _.extend({}, Backbone.Events);
 
-  return torsoEvents;
+  return Events;
 }));
 
 (function(root, factory) {

@@ -8,8 +8,8 @@ commonJsImportTest = function(moduleToImport, expectedModules) {
 
     // Each module is browserified separately to validate requiring just that module.
     // This loads the browserified module and then tests that it includes all the dependencies that are required for that module.
-    // e.g. to validate the events module (which would be brought using require('/modules/events')) this would load the browserified
-    //   file from testSandbox/browserified/modules/events.js and create a jsdom environment and expose the require method
+    // e.g. to validate the Events module (which would be brought using require('/modules/Events')) this would load the browserified
+    //   file from testSandbox/browserified/modules/Events.js and create a jsdom environment and expose the require method
     //   from the window which is then used to verify that all of the dependencies (and only those dependencies) are included.
     beforeAll(function(done) {
       require('./importEnv')('browserified' + moduleToImport).done(function(window) {
@@ -43,7 +43,7 @@ commonJsImportTest = function(moduleToImport, expectedModules) {
   });
 };
 
-commonJsImportTest('/modules/events', ['underscore', 'backbone']);
+commonJsImportTest('/modules/Events', ['underscore', 'backbone']);
 
 commonJsImportTest('/modules/Cell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin']);
 commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
@@ -81,7 +81,7 @@ commonJsImportTest('/modules/torso', ['handlebars', 'backbone', 'backbone-nested
                                '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin', '/modules/cellPersistenceRemovalMixin', '/modules/validation',
                                '/modules/Cell',
                                '/modules/Collection',
-                               '/modules/events',
+                               '/modules/Events',
                                '/modules/Router',
                                '/modules/NestedCell', '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/ServiceCell',
                                '/modules/View', '/modules/ListView', '/modules/FormView',
