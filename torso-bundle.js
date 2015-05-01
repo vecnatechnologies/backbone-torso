@@ -2958,6 +2958,14 @@
     },
 
     /**
+     * @return {Object} context for a render method. Defaults to empty object.
+     * @method prepare
+     */
+    prepare: function() {
+      return {};
+    },
+
+    /**
      * Generates and sets this view's GUID (if null)
      * @method generateGUID
      */
@@ -3232,7 +3240,9 @@
      * @method render
      */
     render: function() {
-      //do nothing
+      if (this.template) {
+        this.templateRender(this.$el, this.template, this.prepare());
+      }
     },
 
     /**

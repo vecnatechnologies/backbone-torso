@@ -52,6 +52,25 @@
     },
 
     /**
+     * @return {Object} context for a render method. Defaults to empty object.
+     * @method prepare
+     */
+    prepare: function() {
+      return {};
+    },
+
+    /**
+     * Rebuilds the html for this view's element. Should be able to be called at any time.
+     * Defaults to using this.templateRender
+     * @method render
+     */
+    render: function() {
+      if (this.template) {
+        this.templateRender(this.$el, this.template, this.prepare());
+      }
+    },
+
+    /**
      * Generates and sets this view's GUID (if null)
      * @method generateGUID
      */
@@ -319,14 +338,6 @@
      */
     isActive: function() {
       return this._isActive;
-    },
-
-    /**
-     * Default render method that may be overriden.
-     * @method render
-     */
-    render: function() {
-      //do nothing
     },
 
     /**
