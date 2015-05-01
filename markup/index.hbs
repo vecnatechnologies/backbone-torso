@@ -1,15 +1,23 @@
 <h3>
   <a id="welcome-to-torso" class="anchor" href="#welcome-to-torso" aria-hidden="true"></a>
-  What is Backbone-torso?
+  What is backbone-torso?
 </h3>
 <hr/>
-<p>Backbone provides many convenient tools for building Single Page Applications (SPAs) out of the box, and we absolutely love using it!  However, the bare Backbone library could use some love in areas such as response forms, data validation tools, polling collections, and sub-view management.  Beyond Torso's handy-dandy utility modules, there are some opinionated design philosophies that we've adopted to make reliable and maintainable Backbone apps. </p>
-
+<p><a href="http://www.backbonejs.org">Backbone</a> provides many convenient tools for building Single Page Applications (SPAs) out of the box, and we absolutely love using it!  However, Backbone only gives us the bare bones (excuse the overused pun) of what you need to build a complex front end application. Torso gives you the blueprints and some extra tools to build something quickly that scales well. Torso was first created by Vecna employees that needed to build robotics and health care applications that have intense feature sets and large user bases.
+</p>
 <div class="button-panel">
   <a class="learn-more pull-right" href="#recipes"><i class="fa fa-spoon"></i> Recipes</a>
   <a class="learn-more pull-right" href="#modules"><i class="fa fa-cubes"></i> Modules</a>
   <a class="learn-more pull-right" href="#philosophy"><i class="fa fa-book"></i> Philosophy</a>
 </div>
+
+<h3>
+  <a id="welcome-to-torso" class="anchor" href="#welcome-to-torso" aria-hidden="true"></a>
+  What's in it?
+</h3>
+<hr/>
+<p>
+First, this reference guide will equip you with a set of rules on how to create small components with clear interfaces that still work well when things get complicated. After that, Torso has many choose-what-you-want modules. These additions to Backbone's base building blocks include form handling, data validation tools, polling caches, sub-view management, and more. Torso simplifies the design process and eases the nightmare of building complicated web apps. </p>
 
 <!-- DESIGN PHILOSOPHY -->
 <h3>
@@ -17,20 +25,18 @@
   Philosophy
 </h3>
 <hr/>
-<p>This is text about the design philosophy.</p>
+<p>You might have heard "convention over configuration" as a way to hide framework implementation and reduce code. Typically, if you have desires to do something that lies just over the edge of convention approaching the unconventional, those frameworks are a headache to get working. Torso is a how-to for "configuration using convention". The goal of Torso is to define some abstractions, rules of thumb, and conventions that sit on top of an unopinionated framework like Backbone, that allows us to move quickly through the easy bits and flexibility to handle the edge cases. Think of Torso as more of a practiced martial art than a weapon to wield. </p>
+<p>To see this, let's examine a simple Backbone View:</p>
 <pre><code class="javascript"><script type="text/code">
-var basicView = Torso.View.extend({
+var basicView = Backbone.View.extend({
   events: {'click .list-item': 'handler'},
   initialize: function() {...},
-  activate: function() {...},
-  deactivate: function() {...},
-  prepare: function() {...},
   render: function() {...},
-  handler: function(evt) {...},
-  dispose: function() {...}
+  handler: function() {...}
 });
 </script></code></pre>
-<p>And maybe some more text.</p>
+<p>Backbone offers an easy jumping off point, but what happens when you add event listeners or timers that need to be removed after the view is done? Should the render method take arguments? Does calling render change the state of the application? When can I call render on this view? So many questions, each one can break functionality if they are inconsistent within your app. With Torso, we lay down the laws that answer questions just like these and keep your application consistent.</p>
+<p>Torso view's render methods never take arguments, can be called whenever, and they never change the state of the application. We'll explain how to make this possible and other rules in <a href="#recipes">Recipes</a> section.</p>
 <div class="button-panel">
   <a class="learn-more pull-right" href="#philosophy"><i class="fa fa-book"></i> Philosophy</a>
 </div>

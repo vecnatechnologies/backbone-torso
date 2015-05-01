@@ -386,41 +386,41 @@
   return Backbone;
 }));
 
-// Backbone.Stickit v0.9.0, MIT Licensed
-// Copyright (c) 2012-2015 The New York Times, CMS Group, Matthew DeLambo <delambo@gmail.com>
+// Backbone.Stickit v0.8.0, MIT Licensed
+// Copyright (c) 2012 The New York Times, CMS Group, Matthew DeLambo <delambo@gmail.com>
 
 (function (factory) {
 
   // Set up Stickit appropriately for the environment. Start with AMD.
-  if (typeof define === 'function' && define.amd)
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', 'exports'], factory);
+  }
 
   // Next for Node.js or CommonJS.
-  else if (typeof exports === 'object')
+  else if (typeof exports === 'object') {
     factory(require('underscore'), require('backbone'), exports);
+  }
 
   // Finally, as a browser global.
-  else
+  else {
     factory(_, Backbone, {});
+  }
 
 }(function (_, Backbone, Stickit) {
 
   // Stickit Namespace
   // --------------------------
 
-  // Export onto Backbone object
-  Backbone.Stickit = Stickit;
-
   Stickit._handlers = [];
 
   Stickit.addHandler = function(handlers) {
     // Fill-in default values.
     handlers = _.map(_.flatten([handlers]), function(handler) {
-      return _.defaults({}, handler, {
+      return _.extend({
         updateModel: true,
         updateView: true,
         updateMethod: 'text'
-      });
+      }, handler);
     });
     this._handlers = this._handlers.concat(handlers);
   };
@@ -438,45 +438,44 @@
     // `this.$el`. If the optional `model` parameter is defined, then only
     // delete bindings for the given `model` and its corresponding view events.
     unstickit: function(model, bindingSelector) {
-
-      // Support passing a bindings hash in place of bindingSelector.
+      // Support bindings hash in place of selector.
       if (_.isObject(bindingSelector)) {
-        _.each(bindingSelector, function(v, selector) {
+        _.each(_.keys(bindingSelector), function(selector) {
           this.unstickit(model, selector);
         }, this);
         return;
       }
 
       var models = [], destroyFns = [];
-      this._modelBindings = _.reject(this._modelBindings, function(binding) {
-        if (model && binding.model !== model) return;
+      _.each(this._modelBindings, function(binding, i) {
+        if (model && binding.model !== model) { return; }
         if (bindingSelector && binding.config.selector != bindingSelector) return;
-
-        binding.model.off(binding.event, binding.fn);
         destroyFns.push(binding.config._destroy);
+        binding.model.off(binding.event, binding.fn);
         models.push(binding.model);
-        return true;
-      });
+        delete this._modelBindings[i];
+      }, this);
 
       // Trigger an event for each model that was unbound.
       _.invoke(_.uniq(models), 'trigger', 'stickit:unstuck', this.cid);
-
       // Call `_destroy` on a unique list of the binding callbacks.
       _.each(_.uniq(destroyFns), function(fn) { fn.call(this); }, this);
+      // Cleanup the null values.
+      this._modelBindings = _.compact(this._modelBindings);
 
       this.$el.off('.stickit' + (model ? '.' + model.cid : ''), bindingSelector);
     },
 
-    // Initilize Stickit bindings for the view. Subsequent binding additions
-    // can either call `stickit` with the new bindings, or add them directly
-    // with `addBinding`. Both arguments to `stickit` are optional.
+    // Using `this.bindings` configuration or the `optionalBindingsConfig`, binds `this.model`
+    // or the `optionalModel` to elements in the view.
     stickit: function(optionalModel, optionalBindingsConfig) {
       var model = optionalModel || this.model,
           bindings = optionalBindingsConfig || _.result(this, "bindings") || {};
 
       this._modelBindings || (this._modelBindings = []);
 
-      // Add bindings in bulk using `addBinding`.
+      // Iterate through the selectors in the bindings configuration and configure
+      // the various options for each field.
       this.addBinding(model, bindings);
 
       // Wrap `view.remove` to unbind stickit model and dom events.
@@ -490,102 +489,93 @@
         };
       }
       this.remove.stickitWrapped = true;
-      return this;
     },
 
-    // Add a single Stickit binding or a hash of bindings to the model. If
-    // `optionalModel` is ommitted, will default to the view's `model` property.
-    addBinding: function(optionalModel, selector, binding) {
-      var model = optionalModel || this.model,
-          namespace = '.stickit.' + model.cid;
+    // Add a single model binding to the view
+    addBinding: function(optionalModel, second, _binding) {
+      var $el, options, modelAttr, config, selector,
+        model = optionalModel || this.model,
+        namespace = '.stickit.' + model.cid,
+        binding = _binding || {},
+        bindId = _.uniqueId();
 
-      binding = binding || {};
-
-      // Support jQuery-style {key: val} event maps.
-      if (_.isObject(selector)) {
-        var bindings = selector;
-        _.each(bindings, function(val, key) {
-          this.addBinding(model, key, val);
+      // Allow jQuery-style {key: val} event maps
+      if (_.isString(second)) {
+        selector = second;
+      } else {
+        var bindings = second;
+        _.each(bindings, function(v, selector) {
+          this.addBinding(model, selector, bindings[selector]);
         }, this);
         return;
       }
 
-      // Special case the ':el' selector to use the view's this.$el.
-      var $el = selector === ':el' ? this.$el : this.$(selector);
+      // Support ':el' selector - special case selector for the view managed delegate.
+      $el = selector === ':el' ? this.$el : this.$(selector);
 
-      // Clear any previous matching bindings.
       this.unstickit(model, selector);
 
       // Fail fast if the selector didn't match an element.
       if (!$el.length) return;
 
       // Allow shorthand setting of model attributes - `'selector':'observe'`.
-      if (_.isString(binding)) binding = {observe: binding};
+      if (_.isString(binding)) binding = {observe:binding};
 
       // Handle case where `observe` is in the form of a function.
       if (_.isFunction(binding.observe)) binding.observe = binding.observe.call(this);
 
-      // Find all matching Stickit handlers that could apply to this element
-      // and store in a config object.
-      var config = getConfiguration($el, binding);
-
-      // The attribute we're observing in our config.
-      var modelAttr = config.observe;
-
-      // Store needed properties for later.
+      config = getConfiguration($el, binding);
       config.selector = selector;
-      config.view = this;
+      modelAttr = config.observe;
 
       // Create the model set options with a unique `bindId` so that we
       // can avoid double-binding in the `change:attribute` event handler.
-      var bindId = config.bindId = _.uniqueId();
+      config.bindId = bindId;
 
       // Add a reference to the view for handlers of stickitChange events
-      var options = _.extend({stickitChange: config}, config.setOptions);
+      config.view = this;
+      options = _.extend({stickitChange:config}, config.setOptions);
 
       // Add a `_destroy` callback to the configuration, in case `destroy`
       // is a named function and we need a unique function when unsticking.
       config._destroy = function() {
-        applyViewFn.call(this, config.destroy, $el, model, config);
+        applyViewFn(this, config.destroy, $el, model, config);
       };
 
-      initializeAttributes($el, config, model, modelAttr);
-      initializeVisible($el, config, model, modelAttr);
-      initializeClasses($el, config, model, modelAttr);
+      initializeAttributes(this, $el, config, model, modelAttr);
+
+      initializeVisible(this, $el, config, model, modelAttr);
 
       if (modelAttr) {
-        // Setup one-way (input element -> model) bindings.
+        // Setup one-way, form element to model, bindings.
         _.each(config.events, function(type) {
-          var eventName = type + namespace;
-          var listener = function(event) {
-            var val = applyViewFn.call(this, config.getVal, $el, event, config, slice.call(arguments, 1));
-
+          var event = type + namespace;
+          var method = function(event) {
+            var val = config.getVal.call(this, $el, event, config, _.rest(arguments));
             // Don't update the model if false is returned from the `updateModel` configuration.
-            var currentVal = evaluateBoolean(config.updateModel, val, event, config);
-            if (currentVal) setAttr(model, modelAttr, val, options, config);
+            if (evaluateBoolean(this, config.updateModel, val, event, config))
+              setAttr(model, modelAttr, val, options, this, config);
           };
-          var sel = selector === ':el'? '' : selector;
-          this.$el.on(eventName, sel, _.bind(listener, this));
+          method = _.bind(method, this);
+          if (selector === ':el') this.$el.on(event, method);
+          else this.$el.on(event, selector, method);
         }, this);
 
         // Setup a `change:modelAttr` observer to keep the view element in sync.
         // `modelAttr` may be an array of attributes or a single string value.
         _.each(_.flatten([modelAttr]), function(attr) {
-          observeModelEvent(model, 'change:' + attr, config, function(m, val, options) {
-            var changeId = options && options.stickitChange && options.stickitChange.bindId;
-            if (changeId !== bindId) {
-              var currentVal = getAttr(model, modelAttr, config);
-              updateViewBindEl($el, config, currentVal, model);
-            }
+          observeModelEvent(model, this, 'change:'+attr, config, function(model, val, options) {
+            var changeId = options && options.stickitChange && options.stickitChange.bindId || null;
+            if (changeId !== bindId)
+              updateViewBindEl(this, $el, config, getAttr(model, modelAttr, config, this), model);
           });
-        });
+        }, this);
 
-        var currentVal = getAttr(model, modelAttr, config);
-        updateViewBindEl($el, config, currentVal, model, true);
+        updateViewBindEl(this, $el, config, getAttr(model, modelAttr, config, this), model, true);
       }
 
       // After each binding is setup, call the `initialize` callback.
-      applyViewFn.call(this, config.initialize, $el, model, config);
+      applyViewFn(this, config.initialize, $el, model, config);
     }
   };
 
@@ -593,8 +583,6 @@
 
   // Helpers
   // -------
-
-  var slice = [].slice;
 
   // Evaluates the given `path` (in object/dot-notation) relative to the given
   // `obj`. If the path is null/undefined, then the given `obj` is returned.
@@ -606,43 +594,37 @@
 
   // If the given `fn` is a string, then view[fn] is called, otherwise it is
   // a function that should be executed.
-  var applyViewFn = function(fn) {
-    fn = _.isString(fn) ? evaluatePath(this, fn) : fn;
-    if (fn) return (fn).apply(this, slice.call(arguments, 1));
+  var applyViewFn = function(view, fn) {
+    if (fn) return (_.isString(fn) ? evaluatePath(view,fn) : fn).apply(view, _.rest(arguments, 2));
   };
+
+  var getSelectedOption = function($select) { return $select.find('option').not(function(){ return !this.selected; }); };
 
   // Given a function, string (view function reference), or a boolean
   // value, returns the truthy result. Any other types evaluate as false.
-  // The first argument must be `reference` and the last must be `config`, but
-  // middle arguments can be variadic.
-  var evaluateBoolean = function(reference, val, config) {
-    if (_.isBoolean(reference)) {
-      return reference;
-    } else if (_.isFunction(reference) || _.isString(reference)) {
-      var view = _.last(arguments).view;
-      return applyViewFn.apply(view, arguments);
-    }
+  var evaluateBoolean = function(view, reference) {
+    if (_.isBoolean(reference)) return reference;
+    else if (_.isFunction(reference) || _.isString(reference))
+      return applyViewFn.apply(this, arguments);
     return false;
   };
 
   // Setup a model event binding with the given function, and track the event
   // in the view's _modelBindings.
-  var observeModelEvent = function(model, event, config, fn) {
-    var view = config.view;
+  var observeModelEvent = function(model, view, event, config, fn) {
     model.on(event, fn, view);
     view._modelBindings.push({model:model, event:event, fn:fn, config:config});
   };
 
   // Prepares the given `val`ue and sets it into the `model`.
-  var setAttr = function(model, attr, val, options, config) {
-    var value = {}, view = config.view;
-    if (config.onSet) {
-      val = applyViewFn.call(view, config.onSet, val, config);
-    }
+  var setAttr = function(model, attr, val, options, context, config) {
+    var value = {};
+    if (config.onSet)
+      val = applyViewFn(context, config.onSet, val, config);
 
-    if (config.set) {
-      applyViewFn.call(view, config.set, attr, val, options, config);
-    } else {
+    if (config.set)
+      applyViewFn(context, config.set, attr, val, options, config);
+    else {
       value[attr] = val;
       // If `observe` is defined as an array and `onSet` returned
       // an array, then map attributes to their values.
@@ -659,16 +641,16 @@
   // Returns the given `attr`'s value from the `model`, escaping and
   // formatting if necessary. If `attr` is an array, then an array of
   // respective values will be returned.
-  var getAttr = function(model, attr, config) {
-    var view = config.view;
-    var retrieveVal = function(field) {
-      return model[config.escape ? 'escape' : 'get'](field);
-    };
-    var sanitizeVal = function(val) {
-      return val == null ? '' : val;
-    };
-    var val = _.isArray(attr) ? _.map(attr, retrieveVal) : retrieveVal(attr);
-    if (config.onGet) val = applyViewFn.call(view, config.onGet, val, config);
+  var getAttr = function(model, attr, config, context) {
+    var val,
+      retrieveVal = function(field) {
+        return model[config.escape ? 'escape' : 'get'](field);
+      },
+      sanitizeVal = function(val) {
+        return val == null ? '' : val;
+      };
+    val = _.isArray(attr) ? _.map(attr, retrieveVal) : retrieveVal(attr);
+    if (config.onGet) val = applyViewFn(context, config.onGet, val, config);
     return _.isArray(val) ? _.map(val, sanitizeVal) : sanitizeVal(val);
   };
 
@@ -686,13 +668,11 @@
       return $el.is(handler.selector);
     }));
     handlers.push(binding);
-
-    // Merge handlers into a single config object. Last props in wins.
     var config = _.extend.apply(_, handlers);
-
     // `updateView` is defaulted to false for configutrations with
     // `visible`; otherwise, `updateView` is defaulted to true.
-    if (!_.has(config, 'updateView')) config.updateView = !config.visible;
+    if (config.visible && !_.has(config, 'updateView')) config.updateView = false;
+    else if (!_.has(config, 'updateView')) config.updateView = true;
     return config;
   };
 
@@ -706,56 +686,27 @@
   //       onGet: function(modelAttrVal, modelAttrName) { ... }
   //     }, ...]
   //
-  var initializeAttributes = function($el, config, model, modelAttr) {
-    var props = ['autofocus', 'autoplay', 'async', 'checked', 'controls',
-      'defer', 'disabled', 'hidden', 'indeterminate', 'loop', 'multiple',
-      'open', 'readonly', 'required', 'scoped', 'selected'];
-
-    var view = config.view;
+  var initializeAttributes = function(view, $el, config, model, modelAttr) {
+    var props = ['autofocus', 'autoplay', 'async', 'checked', 'controls', 'defer', 'disabled', 'hidden', 'indeterminate', 'loop', 'multiple', 'open', 'readonly', 'required', 'scoped', 'selected'];
 
     _.each(config.attributes || [], function(attrConfig) {
+      var lastClass = '', observed, updateAttr;
       attrConfig = _.clone(attrConfig);
-      attrConfig.view = view;
-
-      var lastClass = '';
-      var observed = attrConfig.observe || (attrConfig.observe = modelAttr);
-      var updateAttr = function() {
-        var updateType = _.contains(props, attrConfig.name) ? 'prop' : 'attr',
-            val = getAttr(model, observed, attrConfig);
-
+      observed = attrConfig.observe || (attrConfig.observe = modelAttr),
+      updateAttr = function() {
+        var updateType = _.indexOf(props, attrConfig.name, true) > -1 ? 'prop' : 'attr',
+          val = getAttr(model, observed, attrConfig, view);
         // If it is a class then we need to remove the last value and add the new.
         if (attrConfig.name === 'class') {
           $el.removeClass(lastClass).addClass(val);
           lastClass = val;
-        } else {
-          $el[updateType](attrConfig.name, val);
         }
+        else $el[updateType](attrConfig.name, val);
       };
-
       _.each(_.flatten([observed]), function(attr) {
-        observeModelEvent(model, 'change:' + attr, config, updateAttr);
+        observeModelEvent(model, view, 'change:' + attr, config, updateAttr);
       });
-
-      // Initialize the matched element's state.
       updateAttr();
-    });
-  };
-
-  var initializeClasses = function($el, config, model, modelAttr) {
-    _.each(config.classes || [], function(classConfig, name) {
-      if (_.isString(classConfig)) classConfig = {observe: classConfig};
-      classConfig.view = config.view;
-
-      var observed = classConfig.observe;
-      var updateClass = function() {
-        var val = getAttr(model, observed, classConfig);
-        $el.toggleClass(name, !!val);
-      };
-
-      _.each(_.flatten([observed]), function(attr) {
-        observeModelEvent(model, 'change:' + attr, config, updateClass);
-      });
-      updateClass();
     });
   };
 
@@ -768,33 +719,24 @@
   //     visible: true, // or function(val, options) {}
   //     visibleFn: function($el, isVisible, options) {} // optional handler
   //
-  var initializeVisible = function($el, config, model, modelAttr) {
+  var initializeVisible = function(view, $el, config, model, modelAttr) {
     if (config.visible == null) return;
-    var view = config.view;
-
     var visibleCb = function() {
       var visible = config.visible,
           visibleFn = config.visibleFn,
-          val = getAttr(model, modelAttr, config),
+          val = getAttr(model, modelAttr, config, view),
           isVisible = !!val;
-
       // If `visible` is a function then it should return a boolean result to show/hide.
-      if (_.isFunction(visible) || _.isString(visible)) {
-        isVisible = !!applyViewFn.call(view, visible, val, config);
-      }
-
+      if (_.isFunction(visible) || _.isString(visible)) isVisible = !!applyViewFn(view, visible, val, config);
       // Either use the custom `visibleFn`, if provided, or execute the standard show/hide.
-      if (visibleFn) {
-        applyViewFn.call(view, visibleFn, $el, isVisible, config);
-      } else {
+      if (visibleFn) applyViewFn(view, visibleFn, $el, isVisible, config);
+      else {
         $el.toggle(isVisible);
       }
     };
-
     _.each(_.flatten([modelAttr]), function(attr) {
-      observeModelEvent(model, 'change:' + attr, config, visibleCb);
+      observeModelEvent(model, view, 'change:' + attr, config, visibleCb);
     });
-
     visibleCb();
   };
 
@@ -805,18 +747,17 @@
   //     updateView: true, // defaults to true
   //     afterUpdate: function($el, val, options) {} // optional callback
   //
-  var updateViewBindEl = function($el, config, val, model, isInitializing) {
-    var view = config.view;
-    if (!evaluateBoolean(config.updateView, val, config)) return;
-    applyViewFn.call(view, config.update, $el, val, model, config);
-    if (!isInitializing) applyViewFn.call(view, config.afterUpdate, $el, val, config);
+  var updateViewBindEl = function(view, $el, config, val, model, isInitializing) {
+    if (!evaluateBoolean(view, config.updateView, val, config)) return;
+    applyViewFn(view, config.update, $el, val, model, config);
+    if (!isInitializing) applyViewFn(view, config.afterUpdate, $el, val, config);
   };
 
   // Default Handlers
   // ----------------
 
   Stickit.addHandler([{
-    selector: '[contenteditable]',
+    selector: '[contenteditable="true"]',
     updateMethod: 'html',
     events: ['input', 'change']
   }, {
@@ -891,14 +832,8 @@
       if (!selectConfig) {
         selectConfig = {};
         var getList = function($el) {
-          return $el.map(function(index, option) {
-            // Retrieve the text and value of the option, preferring "stickit-bind-val"
-            // data attribute over value property.
-            var dataVal = Backbone.$(option).data('stickit-bind-val');
-            return {
-              value: dataVal !== undefined ? dataVal : option.value,
-              label: option.text
-            };
+          return $el.map(function() {
+            return {value:this.value, label:this.text};
           }).get();
         };
         if ($el.find('optgroup').length) {
@@ -923,47 +858,28 @@
       // Fill in default label and path values.
       selectConfig.valuePath = selectConfig.valuePath || 'value';
       selectConfig.labelPath = selectConfig.labelPath || 'label';
-      selectConfig.disabledPath = selectConfig.disabledPath || 'disabled';
 
       var addSelectOptions = function(optList, $el, fieldVal) {
         _.each(optList, function(obj) {
           var option = Backbone.$('<option/>'), optionVal = obj;
 
-          var fillOption = function(text, val, disabled) {
+          var fillOption = function(text, val) {
             option.text(text);
             optionVal = val;
             // Save the option value as data so that we can reference it later.
-            option.data('stickit-bind-val', optionVal);
+            option.data('stickit_bind_val', optionVal);
             if (!_.isArray(optionVal) && !_.isObject(optionVal)) option.val(optionVal);
-
-            if (disabled === true) option.prop('disabled', 'disabled');
           };
 
-          var text, val, disabled;
-          if (obj === '__default__') {
-            text = fieldVal.label,
-            val = fieldVal.value,
-            disabled = fieldVal.disabled;
-          } else {
-            text = evaluatePath(obj, selectConfig.labelPath),
-            val = evaluatePath(obj, selectConfig.valuePath),
-            disabled = evaluatePath(obj, selectConfig.disabledPath);
-          }
-          fillOption(text, val, disabled);
+          if (obj === '__default__')
+            fillOption(selectConfig.defaultOption.label, selectConfig.defaultOption.value);
+          else
+            fillOption(evaluatePath(obj, selectConfig.labelPath), evaluatePath(obj, selectConfig.valuePath));
 
           // Determine if this option is selected.
-          var isSelected = function() {
-            if (!isMultiple && optionVal != null && fieldVal != null && optionVal === fieldVal) {
-              return true;
-            } else if (_.isObject(fieldVal) && _.isEqual(optionVal, fieldVal)) {
-              return true;
-            }
-            return false;
-          };
-
-          if (isSelected()) {
+          if (!isMultiple && optionVal != null && fieldVal != null && optionVal === fieldVal || (_.isObject(fieldVal) && _.isEqual(optionVal, fieldVal)))
             option.prop('selected', true);
-          } else if (isMultiple && _.isArray(fieldVal)) {
+          else if (isMultiple && _.isArray(fieldVal)) {
             _.each(fieldVal, function(val) {
               if (_.isObject(val)) val = evaluatePath(val, selectConfig.valuePath);
               if (val === optionVal || (_.isObject(val) && _.isEqual(optionVal, val)))
@@ -979,56 +895,21 @@
 
       // The `list` configuration is a function that returns the options list or a string
       // which represents the path to the list relative to `window` or the view/`this`.
-      if (_.isString(list)) {
+      var evaluate = function(view, list) {
         var context = window;
-        if (list.indexOf('this.') === 0) context = this;
+        if (list.indexOf('this.') === 0) context = view;
         list = list.replace(/^[a-z]*\.(.+)$/, '$1');
-        optList = evaluatePath(context, list);
-      } else if (_.isFunction(list)) {
-        optList = applyViewFn.call(this, list, $el, options);
-      } else {
-        optList = list;
-      }
+        return evaluatePath(context, list);
+      };
+      if (_.isString(list)) optList = evaluate(this, list);
+      else if (_.isFunction(list)) optList = applyViewFn(this, list, $el, options);
+      else optList = list;
 
       // Support Backbone.Collection and deserialize.
-      if (optList instanceof Backbone.Collection) {
-        var collection = optList;
-        var refreshSelectOptions = function() {
-          var currentVal = getAttr(model, options.observe, options);
-          applyViewFn.call(this, options.update, $el, currentVal, model, options);
-        };
-        // We need to call this function after unstickit and after an update so we don't end up
-        // with multiple listeners doing the same thing
-        var removeCollectionListeners = function() {
-          collection.off('add remove reset sort', refreshSelectOptions);
-        };
-        var removeAllListeners = function() {
-          removeCollectionListeners();
-          collection.off('stickit:selectRefresh');
-          model.off('stickit:selectRefresh');
-        };
-        // Remove previously set event listeners by triggering a custom event
-        collection.trigger('stickit:selectRefresh');
-        collection.once('stickit:selectRefresh', removeCollectionListeners, this);
-
-        // Listen to the collection and trigger an update of the select options
-        collection.on('add remove reset sort', refreshSelectOptions, this);
-
-        // Remove the previous model event listener
-        model.trigger('stickit:selectRefresh');
-        model.once('stickit:selectRefresh', function() {
-          model.off('stickit:unstuck', removeAllListeners);
-        });
-        // Remove collection event listeners once this binding is unstuck
-        model.once('stickit:unstuck', removeAllListeners, this);
-        optList = optList.toJSON();
-      }
+      if (optList instanceof Backbone.Collection) optList = optList.toJSON();
 
       if (selectConfig.defaultOption) {
-        var option = _.isFunction(selectConfig.defaultOption) ?
-          selectConfig.defaultOption.call(this, $el, options) :
-          selectConfig.defaultOption;
-        addSelectOptions(["__default__"], $el, option);
+        addSelectOptions(["__default__"], $el);
       }
 
       if (_.isArray(optList)) {
@@ -1058,24 +939,27 @@
           opt[selectConfig.labelPath] = optList[i];
           opts.push(opt);
         }
-        opts = _.sortBy(opts, selectConfig.comparator || selectConfig.labelPath);
-        addSelectOptions(opts, $el, val);
+        addSelectOptions(_.sortBy(opts, selectConfig.comparator || selectConfig.labelPath), $el, val);
       }
     },
     getVal: function($el) {
-      var selected = $el.find('option:selected');
-
+      var val;
       if ($el.prop('multiple')) {
-        return _.map(selected, function(el) {
-          return Backbone.$(el).data('stickit-bind-val');
-        });
+        val = Backbone.$(getSelectedOption($el).map(function() {
+          return Backbone.$(this).data('stickit_bind_val');
+        })).get();
       } else {
-        return selected.data('stickit-bind-val');
+        val = getSelectedOption($el).data('stickit_bind_val');
       }
+      return val;
     }
   }]);
 
-  return Stickit;
+
+  // Export onto Backbone object
+  Backbone.Stickit = Stickit;
+
+  return Backbone.Stickit;
 
 }));
 
@@ -1560,7 +1444,7 @@
 
 })(jQuery);
 !function(e,t){"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?module.exports=t():(e.Torso=e.Torso||{},e.Torso.Utils=e.Torso.Utils||{},e.Torso.Utils.guidManager=t())}(this,function(){"use strict";var e={_current:0,generate:function(){var e=this._generateGUID();return e},_generateGUID:function(){var e="G"+this._current;return this._current++,e}};return e}),function(e,t){"function"==typeof define&&define.amd?define(["handlebars"],t):t("object"==typeof exports?require("handlebars"):e.Handlebars)}(this,function(e){"use strict";var t="feedback",i="model";e.registerHelper("labelFor",function(t,i){return e.helpers.formAttr(t,"for",i)}),e.registerHelper("bindModel",function(n,r){return e.helpers.formAttr(n,i+", "+t+", name, id",r)}),e.registerHelper("feedback",function(i,n){return e.helpers.formAttr(i,t,n)}),e.registerHelper("formAttr",function(n,r,s){var o,a,u=s.hash?s.hash.value:void 0,d=e.helpers.injectFieldIndices(n,s.hash),c="";for(r=r.split(","),o=0;o<r.length;o++)a=r[o].trim(),a===t?c+='data-feedback="'+d+'" ':a===i?c+='data-model="'+d+'" ':"name"===a?c+='name="'+e.helpers.dasherize(d)+'" ':"id"===a?(c+='id="'+e.helpers.dasherize(d),void 0!==u&&(c+="-"+u),c+='" '):"for"===a&&(c+='for="'+e.helpers.dasherize(d),void 0!==u&&(c+="-"+u),c+='" ');return void 0!==u&&(c+='value="'+u+'"'),new e.SafeString(c)}),e.registerHelper("dasherize",function(e){var t,i,n;return t=e.replace(/([A-Z])/g,function(e){return"-"+e.toLowerCase()}),i=t.replace(/\./g,function(){return"_"}),n=i.replace(/\[[0-9]+\]/g,function(e){return"-"+e.substring(1,e.length-1)})}),e.registerHelper("injectFieldIndices",function(e,t){return t?e.replace(/\[.+?\]/g,function(e){var i=t[e.substring(1,e.length-1)];return"["+(void 0===i?"":i)+"]"}):e})}),function(e,t){"function"==typeof define&&define.amd?define(["backbone","backbone.stickit"],t):"object"==typeof exports?(require("backbone.stickit"),t(require("backbone"))):t(e.Backbone)}(this,function(e){"use strict";e.Stickit.addHandler({selector:'input[type="radio"]',events:["change"],update:function(e,t){e.prop("checked",!1),e.filter('[value="'+t+'"]').prop("checked",!0)},getVal:function(e){return e.filter(":checked").val()}})}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","jquery"],t):"object"==typeof exports?t(require("underscore"),require("jquery")):(e.Torso=e.Torso||{},e.Torso.Utils=e.Torso.Utils||{},e.Torso.Utils.templateRenderer=t(e._,e.jQuery||e.Zepto||e.ender||e.$))}(this,function(e,t){"use strict";var i={render:function(e,t,i,n){var r,s=t(i);n=n||{},n.force?e.html(s):(r=this.copyTopElement(e),r.html(s),this.hotswapKeepCaret(e,r,n))},hotswapKeepCaret:function(e,t,i){i=i||{};var n,r=document.activeElement;r&&r.hasAttribute("value")&&(n=this.getCaretPosition(r)),this.hotswap(e,t,i.ignoreElements,!1),r&&this.setCaretPosition(r,n)},hotswap:function(i,n,r,s){var o,a,u,d,c,l,h,f,p,m,g,v,F,_,b=[],y=r?r.length:0;for(a=n.prop("tagName"),u=i.prop("tagName"),a!==u&&(m=t("<"+a+">"+n.html()+"</"+a+">"),i.replaceWith(m),i=m),f=n.get(0).attributes,p=i.get(0).attributes;p.length>0;)p.removeNamedItem(p[0].name);if(e.each(f,function(e){g=document.createAttribute(e.name),g.value=e.value,p.setNamedItem(g)}),i.html()===n.html())return!1;if(l=n.children(),h=i.children(),l.length!==h.length)return i.html(n.html()),!0;if(0===h.length)return i.html(n.html()),!1;for(o=0;o<h.length;o++){if(v=!1,d=t(l[o]),c=t(h[o]),r)for(F=0;y>F;F++)if(c.is(r[F])){v=!0;break}v||(_=this.hotswap(c,d,r,s),s&&b.push(_))}return b},copyTopElement:function(i){var n=t("<"+i.prop("tagName")+"></"+i.prop("tagName")+">");return e.each(i.get(0).attributes,function(e){n.attr(e.name,e.value)}),n},getCaretPosition:function(e){var t,i=0;return document.selection?(e.focus(),t=document.selection.createRange(),t.moveStart("character",-e.value.length),i=t.text.length):(e.selectionStart||0===e.selectionStart)&&(i=e.selectionStart),i},setCaretPosition:function(e,t){var i;e&&(e.createTextRange?(i=e.createTextRange(),i.move("character",t),i.select()):e.selectionStart||0===e.selectionStart?(e.focus(),e.setSelectionRange(t,t)):e.focus())}};return i}),function(e,t){"function"==typeof define&&define.amd?define(["jquery"],t):"object"==typeof exports?module.exports=t(require("jquery")):(e.Torso=e.Torso||{},e.Torso.Mixins=e.Torso.Mixins||{},e.Torso.Mixins.collectionLoading=t(e.jQuery||e.Zepto||e.ender||e.$))}(this,function(e){var t=function(t){var i,n=t["super"]||function(){};return i=function(i,n){var r=n.loadedOnceDeferred,s=n.loadedOnce,o=n.loading;i.hasLoadedOnce=function(){return s},i.isLoading=function(){return o},i.getLoadedOncePromise=function(){return r.promise()},i.fetch=function(e){this._loadWrapper(t.fetch,e)},i._loadWrapper=function(t,n){return o=!0,i.trigger("load-begin"),e.when(t.call(i,n)).done(function(e,t,n){i.trigger("load-complete",{success:!0,data:e,textStatus:t,jqXHR:n})}).fail(function(e,t,n){i.trigger("load-complete",{success:!1,jqXHR:e,textStatus:t,errorThrown:n})}).always(function(){s||(s=!0,r.resolve()),o=!1})}},{"super":function(t){n.call(this,t),i(this,{loadedOnceDeferred:new e.Deferred,loadedOnce:!1,loading:!1})}}};return t}),function(e,t){"function"==typeof define&&define.amd?define(["jquery"],t):"object"==typeof exports?module.exports=t(require("jquery")):(e.Torso=e.Torso||{},e.Torso.Mixins=e.Torso.Mixins||{},e.Torso.Mixins.polling=t(e.jQuery||e.Zepto||e.ender||e.$))}(this,function(e){var t={pollTimeoutId:void 0,_pollStarted:!1,_pollInterval:5e3,isPolling:function(){return this._pollStarted},startPolling:function(t){t&&(this._pollInterval=t),this._pollStarted||(this._pollStarted=!0,this._poll(),this.pollTimeoutId=window.setInterval(e.proxy(function(){this._poll()},this),this._pollInterval))},stopPolling:function(){window.clearInterval(this.pollTimeoutId),this._pollStarted=!1},polledFetch:function(){this.fetch()},_poll:function(){this.polledFetch()}};return t}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","jquery"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("jquery")):(e.Torso=e.Torso||{},e.Torso.Mixins=e.Torso.Mixins||{},e.Torso.Mixins.collectionRegistration=t(e._,e.jQuery||e.Zepto||e.ender||e.$))}(this,function(e,t){var i=function(i){var n,r,s=i["super"]||function(){};return r=function(i,n){return i.constructor.extend(function(i,n,r){var s,o=i["super"];return s=function(i,s){i.getTrackedIds=function(){return s},i.fetch=function(){return i._loadWrapper(function(){return s&&s.length?n.fetchByIds({idsToFetch:s,setOptions:{remove:!1}}):t.Deferred().resolve().promise()})},i.trackIds=function(t){i.remove(e.difference(s,t)),n.registerIds(t,r),s=t},i.fetchByIds=function(e){return i.trackIds(e),i.fetch()},i.requesterDispose=function(){n.removeRequster(r)}},{"super":function(e){e=e||{},e.isRequester=!0,o.call(this,e),s(this,[]),this.listenTo(n,"load-begin",function(){this.trigger("cache-load-begin")}),this.listenTo(n,"load-complete",function(){this.trigger("cache-load-complete")})}}}(i.constructor.__super__,i,n))},n=function(i,n){var s,o=n.requestMap,a=n.collectionTrackedIds,u=n.knownPrivateCollections;i.lazyFetch=i.lazyFetch||!1,s=function(t,i){o[t]={array:i,dict:e.object(e.map(i,function(e){return[e,e]}))}},i.getRequesterIds=function(e){return o[e]&&o[e].array},i.getRequesterIdsAsDictionary=function(e){return o[e]&&o[e].dict},i.removeRequster=function(e){delete o[e],delete u[e]},i.getRequesters=function(){return e.keys(o)},i.getAllRequestedIds=function(){return a},i.createPrivateCollection=function(e){var t=r(i,e);return u[e]=new t,u[e]},i.registerIds=function(e,t){var n,r,o,u,d,c={},l=[];for(s(t,e),u=i.getRequesters(),d=u.length,r=0;d>r;r++)for(o=i.getRequesterIds(u[r]),n=0;n<o.length;n++)c[o[n]]=!0;for(n in c)l.push(parseInt(n,10));a=l,i.polledFetch=function(){i.fetchByIds({idsToFetch:a,setOptions:{remove:!0}})}},i.fetchByIds=function(n){return i._loadWrapper(function(n){var r,s;return r=n.idsToFetch,s=i.lazyFetch?e.difference(r,this.models.pluck("id")):r,t.ajax({type:"POST",url:i.url+"/ids",contentType:"application/json; charset=utf-8",data:JSON.stringify(s)}).done(function(e){var t,s,o,a,d,c,l,h,f=r.length,p=n.setOptions;for(i.set(i.parse(e),p),l=i.getRequesters(),c=l.length,s=0;c>s;s++){for(o=i.getRequesterIdsAsDictionary(l[s]),a=[],t=0;f>t;t++)o[r[t]]&&(h=i.get(r[t]),h&&a.push(h));d=u[l[s]],d.set(a,{remove:!1})}})},n)},i.setLazyFetch=function(e){i.lazyFetch=e},i.isLazyFetch=function(){return i.lazyFetch}},{"super":function(e){s.call(this,e),this.isRequester=e&&e.isRequester,this.isRequester||n(this,{requestMap:{},collectionTrackedIds:[],knownPrivateCollections:{}})},initialize:function(e){this["super"](e)},dispose:function(){this.unbind(),this.off(),this.stopListening(),this.stopPolling(),this.isRequester&&this.requesterDispose()},filterDefault:function(){return this.constructor(this)}}};return i}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","./guidManager","./templateRenderer"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("./guidManager"),require("./templateRenderer")):(e.Torso=e.Torso||{},e.Torso.Mixins=e.Torso.Mixins||{},e.Torso.Mixins.viewHierarchy=t(e._,e.Torso.Utils.guidManager,e.Torso.Utils.templateRenderer))}(this,function(e,t,i){"use strict";var n={_GUID:null,_childViews:null,tabInfo:null,_isActive:!1,_isAttached:!1,_isDisposed:!1,"super":function(){this.generateGUID(),this._childViews={}},initialize:function(){this["super"](),this.render(),this.activate()},generateGUID:function(){null===this._GUID&&(this._GUID=t.generate(this))},getGUID:function(){return this._GUID},triggerTabInfoChange:function(){this.trigger("change:tab-info",this.tabInfo)},templateRender:function(e,t,n,r){i.render(e,t,n,r)},createPrivateCollection:function(e){return e.createPrivateCollection(this._GUID)},cleanupSelf:function(){this.detach(),this.cleanupChildViews(),this.remove(),this.unbind(),this.off(),this.stopListening(),delete this.$el,delete this.el,this._isDisposed=!0},deactivateCallback:e.noop,activateCallback:e.noop,hasChildViews:function(){return!e.isEmpty(this._childViews)},getChildViews:function(){return e.values(this._childViews)},cleanupChildViews:function(){e.each(this._childViews,function(e){e.dispose()})},deactivateChildViews:function(){e.each(this._childViews,function(e){e.deactivate()})},activateChildViews:function(){e.each(this._childViews,function(e){e.activate()})},registerChildView:function(e){return this._childViews[e.cid]=e,e},unregisterChildView:function(e){return delete this._childViews[e.cid],this.stopListening(e),e},injectView:function(e,t){var i=this.$el.find("[inject="+e+"]");t&&i&&this.attachChildView(i,t)},attachChildView:function(e,t){this.registerChildView(t),t.attach(e)},detach:function(){this.isAttached()&&(this.injectionSite?this.$el.replaceWith(this.injectionSite):this.$el.detach(),this.deactivate(),this._isAttached=!1)},attach:function(e){this.isAttached()||(this.deactivate(),this.render(),this.injectionSite=e.replaceWith(this.$el),this.activate(),this._isAttached=!0)},isAttached:function(){return this._isAttached},deactivate:function(){this.deactivateChildViews(),this.isActive()&&(this.undelegateEvents(),this.deactivateCallback(),this._isActive=!1)},activate:function(){this.activateChildViews(),this.isActive()||(this.delegateEvents(),this.activateCallback(),this._isActive=!0)},isActive:function(){return this._isActive},render:function(){},dispose:function(){this.cleanupSelf()},isDisposed:function(){return this._isDisposed}};return n}),function(e,t){"function"==typeof define&&define.amd?define(["backbone"],t):"object"==typeof exports?module.exports=t(require("backbone")):(e.Torso=e.Torso||{},e.Torso.Service=t(e.Backbone))}(this,function(e){"use strict";var t=function(t){return function(){var i,n,r;return i=t.apply(this,arguments),n=e.Model.extend(i),r=new n}};return t}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","backbone"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("backbone")):(e.Torso=e.Torso||{},e.Torso.events=t(e._,e.Backbone))}(this,function(e,t){"use strict";var i=e.extend({},t.Events);return i}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","backbone","./pollingMixin","./collectionRegistrationMixin","./collectionLoadingMixin"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("backbone"),require("./pollingMixin"),require("./collectionRegistrationMixin"),require("./collectionLoadingMixin")):(e.Torso=e.Torso||{},e.Torso.Collection=t(e._,e.Backbone,e.Torso.Mixins.polling,e.Torso.Mixins.collectionRegistration,e.Torso.Mixins.collectionLoading))}(this,function(e,t,i,n,r){"use strict";var s=t.Collection.extend({});return e.extend(s.prototype,i),e.extend(s.prototype,n(s.prototype)),e.extend(s.prototype,r(s.prototype)),s}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","backbone","./pollingMixin"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("backbone"),require("./pollingMixin")):(e.Torso=e.Torso||{},e.Torso.Model=t(e._,e.Backbone,e.Torso.Mixins.polling))}(this,function(e,t,i){"use strict";var n=t.Model.extend({});return e.extend(n.prototype,i),n}),function(e,t){"function"==typeof define&&define.amd?define(["undersocre","backbone","./pollingMixin","backbone-nested"],t):"object"==typeof exports?(require("backbone-nested"),module.exports=t(require("underscore"),require("backbone"),require("./pollingMixin"))):(e.Torso=e.Torso||{},e.Torso.NestedModel=t(e._,e.Backbone,e.Torso.Mixins.polling))}(this,function(e,t,i){"use strict";var n=t.NestedModel.extend({});return e.extend(n.prototype,i),n}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","./NestedModel"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("./NestedModel")):(e.Torso=e.Torso||{},e.Torso.Mixins=e.Torso.Mixins||{},e.Torso.validation=t(e._,e.Torso.NestedModel),e.Torso.Mixins.validation=e.Torso.validation.mixin)}(this,function(e,t){"use strict";var i={forceUpdate:!1,selector:"name",labelFormatter:"sentenceCase",messageFormatter:"none",valid:Function.prototype,invalid:Function.prototype},n={formatLabel:function(e,t){return d[i.labelFormatter](e,t)},format:function(){return c[i.messageFormatter].apply(c,arguments)}},r=function(t,i,n){return i=i||{},n=n||"",e.each(t,function(e,s){t.hasOwnProperty(s)&&(e&&"object"==typeof e&&e.constructor===Object&&r(e,i,n+s+"."),i[n+s]=e)}),i},s=function(){var s=function(t,i){return i=i||e.keys(e.result(t,"validation")||{}),e.reduce(i,function(e,t){return e[t]=void 0,e},{})},a=function(t,i){var n=t.attributes;return e.isFunction(n)?n=n(i):e.isString(n)&&e.isFunction(l[n])&&(n=l[n](i)),e.isArray(n)?n:void 0},u=function(t,i){var n=t.validation?e.result(t,"validation")[i]||{}:{};return(e.isFunction(n)||e.isString(n))&&(n={fn:n}),e.isArray(n)||(n=[n]),e.reduce(n,function(t,i){return e.each(e.without(e.keys(i),"msg","msgKey"),function(e){t.push({fn:h[e],val:i[e],msg:i.msg,msgKey:i.msgKey})}),t},[])},d=function(e){var t,i,n=0,r=!0,s=[];for(t=e.indexOf("[",n);t>0&&r;)i=e.indexOf("]",n),s.push(parseInt(e.substring(t+1,i),10)),n=i+1,r=n>0,t=e.indexOf("[",n);return s},c=function(t,i,n){var r,s,o,a,u,d=t.indexOf("[]");if(e.isEmpty(n)&&(n=[]),-1===d)return{attr:t,index:n};for(s=t.substring(0,d),o=t.substring(d+2),a=[],r=0;r<i.get(s).length;r++)u=n.slice(),u.push(r),a.push(c(s+"["+r+"]"+o,i,u));return a},f=function(e){return t&&e instanceof t},p=function(e){return e.indexOf(".")>0||e.indexOf("]")>0},m=function(e){var t,i,n=0,r=!0;if(t=e.indexOf("[",n),0>t)return e;for(i=e.substring(0,t+1);t>0&&r;)n=e.indexOf("]",n)+1,r=n>0,t=e.indexOf("[",n),t>0&&(i+=e.substring(n-1,t+1));return i+=e.substring(n-1)},g=function(t,i,n,r,s,o){var a,u;return e.isArray(i)?e.reduce(i,function(e,i){return e.push(g(t,i,n,r,s,o+1)),e},[]):(u=i.index,a=i.attr,e.isUndefined(n)&&p(a)&&(n=t.get(a)),v(s,t,n,a,r,u))},v=function(t,i,r,s,o,a){return e.reduce(t,function(t,u){var d=e.extend({msgKey:u.msgKey},n,h),c=u.fn.call(d,r,s,u.val,i,o,a);return c===!1||t===!1?!1:c&&!t?e.result(e.extend({},u,n,h),"msg")||c:t},"")},F=function(t,i,n,r){var s,o,a,d=u(t,i);return o=c(i,t),a=g(t,o,n,r,d,0),e.isArray(a)&&(s=e.reduce(e.flatten(a),function(e,t){return e||t},!1),!s)?"":a},_=function(t,i,n){var r,s={},o=!0,a=e.clone(i);return e.each(n,function(e,i){r=F(t,i,e,a),r&&(s[i]=r,o=!1)}),{invalidAttrs:s,isValid:o}},b=function(t,i,n){var r,s,o=t.validation?e.result(t,"validation")||{}:{};return e.contains(e.keys(o),n)?F(t,n,i,e.extend({},t.attributes)):(r=d(n),n=m(n),s=u(t,n),v(s,t,i,n,e.extend({},t.attributes),r))},y=function(t,i){return{preValidate:function(t,i){var n,r=this,s={};return e.isArray(t)?(e.each(t,function(e){n=r.preValidate(e),n&&(s[e]=n)}),e.isEmpty(s)?void 0:s):e.isObject(t)?(e.each(t,function(e,t){n=r.preValidate(t,e),n&&(s[t]=n)}),e.isEmpty(s)?void 0:s):(e.isUndefined(i)&&f(this)&&(i=this.get(t)),b(this,i,t))},isValid:function(n){var s,o,u;return n=n||a(i,t),e.isString(n)?s=[n]:e.isArray(n)&&(s=n),s&&e.each(s,function(t){var n;n=f(this)?this.get(t):r(this.attributes)[t],o=b(this,n,t),o&&(u=u||{},u[t]=o),e.each(this.associatedViews,function(e){o?i.invalid(e,t,o,i.selector):i.valid(e,t,i.selector)},this)},this),n===!0&&(u=this.validate()),u&&this.trigger("invalid",this,u,{validationError:u}),s?!u:this.validation?this._isValid:!0},validate:function(n,o){var u,d,c,l,h,f,p,m=this;return u=!n,d=e.extend({},i,o),c=s(m,a(i,t)),l=e.extend({},c,m.attributes,n),h=r(l),f=n?r(n):h,p=_(m,l,e.pick(h,e.keys(c))),m._isValid=p.isValid,e.each(m.associatedViews,function(t){e.each(c,function(e,i){var n=p.invalidAttrs.hasOwnProperty(i),r=f.hasOwnProperty(i);n||d.valid(t,i,d.selector),n&&(r||u)&&d.invalid(t,i,p.invalidAttrs[i],d.selector)})}),e.defer(function(){m.trigger("validated",m._isValid,m,p.invalidAttrs),m.trigger("validated:"+(m._isValid?"valid":"invalid"),m,p.invalidAttrs)}),!d.forceUpdate&&e.intersection(e.keys(p.invalidAttrs),e.keys(f)).length>0?p.invalidAttrs:void 0}}},x=function(t,i,n){i.associatedViews?i.associatedViews.push(t):i.associatedViews=[t],e.extend(i,y(t,n))},T=function(t,i){i&&t.associatedViews.length>1?t.associatedViews=e.without(t.associatedViews,i):(delete t.validate,delete t.preValidate,delete t.isValid,delete t.associatedViews)},w=function(e){x(this.view,e,this.options)},C=function(e){T(e)};return{version:"0.11.3",configure:function(t){e.extend(i,t)},bind:function(t,n){n=e.extend({},i,o,n);var r=n.model||t.model,s=n.collection||t.collection;if("undefined"==typeof r&&"undefined"==typeof s)throw"Before you execute the binding your view must have a model or a collection.\nSee http://thedersen.com/projects/backbone-validation/#using-form-model-validation for more information.";r?x(t,r,n):s&&(s.each(function(e){x(t,e,n)}),s.bind("add",w,{view:t,options:n}),s.bind("remove",C))},unbind:function(t,i){i=e.extend({},i);var n=i.model||t.model,r=i.collection||t.collection;n?T(n,t):r&&(r.each(function(e){T(e,t)}),r.unbind("add",w),r.unbind("remove",C))},mixin:y(null,i)}}(),o=s.callbacks={valid:function(e,t,i){e.$("["+i+'~="'+t+'"]').removeClass("invalid").removeAttr("data-error")},invalid:function(e,t,i,n){e.$("["+n+'~="'+t+'"]').addClass("invalid").attr("data-error",i)}},a=s.patterns={digits:/^\d+$/,number:/^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/,email:/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i,url:/^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i},u=s.messages={required:"{0} is required",acceptance:"{0} must be accepted",min:"{0} must be greater than or equal to {1}",max:"{0} must be less than or equal to {1}",range:"{0} must be between {1} and {2}",length:"{0} must be {1} characters",minLength:"{0} must be at least {1} characters",maxLength:"{0} must be at most {1} characters",rangeLength:"{0} must be between {1} and {2} characters",oneOf:"{0} must be one of: {1}",equalTo:"{0} must be the same as {1}",digits:"{0} must only contain digits",number:"{0} must be a number",email:"{0} must be a valid email",url:"{0} must be a valid url",inlinePattern:"{0} is invalid"},d=s.labelFormatters={none:function(e){return e},sentenceCase:function(e){return e.replace(/(?:^\w|[A-Z]|\b\w)/g,function(e,t){return 0===t?e.toUpperCase():" "+e.toLowerCase()}).replace(/_/g," ")},label:function(e,t){return t.labels&&t.labels[e]||d.sentenceCase(e,t)}},c=s.messageFormatters={none:function(){var e=Array.prototype.slice.call(arguments),t=e.shift();return t.replace(/\{(\d+)\}/g,function(t,i){return"undefined"!=typeof e[i]?e[i]:t})}},l=s.attributeLoaders={inputNames:function(e){var t=[];return e&&e.$("form [name]").each(function(){/^(?:input|select|textarea)$/i.test(this.nodeName)&&this.name&&"submit"!==this.type&&-1===t.indexOf(this.name)&&t.push(this.name)}),t}},h=s.validators=function(){var t=String.prototype.trim?function(e){return null===e?"":String.prototype.trim.call(e)}:function(e){var t=/^\s+/,i=/\s+$/;return null===e?"":e.toString().replace(t,"").replace(i,"")},i=function(t){return e.isNumber(t)||e.isString(t)&&t.match(a.number)},r=function(i){return!(e.isNull(i)||e.isUndefined(i)||e.isString(i)&&""===t(i)||e.isArray(i)&&e.isEmpty(i))},s=function(e,t){return e?e:t};return{format:n.format,formatLabel:n.formatLabel,fn:function(t,i,n,r,s){return e.isString(n)&&(n=r[n]),n.call(r,t,i,s)},inlineFn:function(e,t,i,n,r,s){return i.call(this,e,t,n,r,s)},required:function(t,i,n,o,a){var d=e.isFunction(n)?n.call(o,t,i,a):n;return d||r(t)?d&&!r(t)?this.format(s(this.msgKey,u.required),this.formatLabel(i,o)):void 0:!1},acceptance:function(t,i,n,r){return"true"===t||e.isBoolean(t)&&t!==!1?void 0:this.format(s(this.msgKey,u.acceptance),this.formatLabel(i,r))},min:function(e,t,n,r){return!i(e)||n>e?this.format(s(this.msgKey,u.min),this.formatLabel(t,r),n):void 0},max:function(e,t,n,r){return!i(e)||e>n?this.format(s(this.msgKey,u.max),this.formatLabel(t,r),n):void 0},range:function(e,t,n,r){return!i(e)||e<n[0]||e>n[1]?this.format(s(this.msgKey,u.range),this.formatLabel(t,r),n[0],n[1]):void 0},length:function(t,i,n,r){return e.isString(t)&&t.length===n?void 0:this.format(s(this.msgKey,u.length),this.formatLabel(i,r),n)},minLength:function(t,i,n,r){return!e.isString(t)||t.length<n?this.format(s(this.msgKey,u.minLength),this.formatLabel(i,r),n):void 0},maxLength:function(t,i,n,r){return!e.isString(t)||t.length>n?this.format(s(this.msgKey,u.maxLength),this.formatLabel(i,r),n):void 0},rangeLength:function(t,i,n,r){return!e.isString(t)||t.length<n[0]||t.length>n[1]?this.format(s(this.msgKey,u.rangeLength),this.formatLabel(i,r),n[0],n[1]):void 0},oneOf:function(t,i,n,r){return e.include(n,t)?void 0:this.format(s(this.msgKey,u.oneOf),this.formatLabel(i,r),n.join(", "))},equalTo:function(e,t,i,n,r){return e!==r[i]?this.format(s(this.msgKey,u.equalTo),this.formatLabel(t,n),this.formatLabel(i,n)):void 0},pattern:function(e,t,i,n){return r(e)&&e.toString().match(a[i]||i)?void 0:this.format(s(this.msgKey,u[i])||u.inlinePattern,this.formatLabel(t,n),i)}}}();return s}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","jquery","./NestedModel","./validation"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("jquery"),require("./NestedModel"),require("./validation")):(e.Torso=e.Torso||{},e.Torso.FormModel=t(e._,e.jQuery||e.Zepto||e.ender||e.$,e.Torso.NestedModel,e.Torso.validation))}(this,function(e,t,i,n){"use strict";var r=i.extend({defaultMapping:null,initialize:function(t,i){this._computed=[],this._cache={},this._currentUpdateEvents=[],this._modelConfigs=[],i=i||{},this._initMappings(i),this.validation=e.extend({},this.validation||{},i.validation||{}),this.labels=e.extend({},this.labels||{},i.labels||{}),this.pull(),t&&this.set(t),i.startUpdating&&this.startUpdating(),this.trigger("initialization-complete")},addModel:function(e,t){this._modelConfigs.push(e),t&&(this._copyFields(e.fields,this,e.model),this._updateCache(e.model))},addComputed:function(t,i){this._computed.push(t),i&&(this._invokeComputedPull.call({formModel:this,models:t.models,pull:t.pull}),e.each(t.models,function(e){this._updateCache(e.model)},this))},isTrackingObjectModel:function(){return e.size(this._modelConfigs)>0||e.size(this._computed)>0},isUpdating:function(){return this._currentUpdateEvents.length>0},startUpdating:function(e){this.isTrackingObjectModel()&&!this.isUpdating()&&(e&&this.pull(),this._setupListeners())},stopUpdating:function(){e.each(this._currentUpdateEvents,function(e){this.stopListening(e.model,e.eventName)},this),this._currentUpdateEvents=[]},save:function(i){var n,r=new t.Deferred;return i=i||{},e.defaults(i,{rollback:!0,force:!0}),this.isTrackingObjectModel()?(function(t){function n(n,s,c){u[s.cid]={success:c,response:n},a+o===l&&(a>0?(i.rollback&&e.each(t._getAllModels(!0),function(e){e.set(d[e.cid]),u[e.cid].success&&e.save()}),t.trigger("save-fail",u),r.reject(u)):(t.trigger("save-success",u),r.resolve(u)))}var s,o=0,a=0,u={},d={},c=t._getAllModels(!0),l=c.length;if(!i.force&&(s=t.checkIfModelsAreStale(),s.length>0))throw{name:"Stale data",staleModels:s};e.each(c,function(e){d[e.cid]=t._getTrackedModelFields(e)}),t.push(),e.each(c,function(e){e.save().fail(function(){a++,n(arguments,e,!1)}).done(function(){o++,n(arguments,e,!0)})})}(this),r.promise()):(n={none:{success:!1,response:[{responseJSON:{generalReasons:[{messageKey:"no.models.were.bound.to.form"}]}}]}},this.trigger("save-fail",n),(new t.Deferred).reject(n).promise())},push:function(){e.each(this._modelConfigs,function(e){this._copyFields(e.fields,e.model,this)},this),e.each(this._computed,function(t){t.push&&t.push.apply(this,[e.pluck(t.models,"model")])},this)},pull:function(){e.each(this._modelConfigs,function(e){this._copyFields(e.fields,this,e.model),this._updateCache(e.model)},this),e.each(this._computed,function(t){this._invokeComputedPull.call({formModel:this,models:t.models,pull:t.pull}),e.each(t.models,function(e){this._updateCache(e.model)},this)},this)},isModelStale:function(e,t,i){var n;i=i||{},i[e.cid]||(i[e.cid]=this._generateHashValue(e)),n=i[e.cid];var r=this._cache[e.cid]!==n;return t&&(r?t[e.cid]=e:t[e.cid]&&delete t[e.cid]),r},checkIfModelsAreStale:function(){var t={},i=this._generateAllHashValues();return e.each(this._getAllModels(!0),function(e){this.isModelStale(e,t,i)},this),e.values(t)},listenToModelField:function(t,i){var n="change:"+i;this.listenTo(t,n,e.bind(this._updateFormField,{formModel:this,field:i})),this._currentUpdateEvents.push({model:t,eventName:n})},listenToComputedValuesDependency:function(t,i,n){var r="change:"+n;this.listenTo(i,"change:"+n,e.bind(this._invokeComputedPull,{formModel:this,models:t.models,pull:t.pull})),this._currentUpdateEvents.push({model:i,eventName:r})},_clone:function(i){var n;if(e.isArray(i))n=[];else{if(!e.isObject(i))return i;n={}}return t.extend(!0,n,i)},_setupListeners:function(){e.each(this._modelConfigs,function(t){t.fields?e.each(t.fields,function(e){this.listenToModelField(t.model,e)},this):(this.listenTo(t.model,"change",this._updateFormModel,this),this._currentUpdateEvents.push({model:t.model,eventName:"change"}))},this),e.each(this._computed,function(t){e.each(t.models,function(i){e.each(i.fields,function(e){this.listenToComputedValuesDependency(t,i.model,e)},this)},this)},this)},_copyFields:function(t,i,n){t||this!==n||(t=e.keys(i.attributes)),t?e.each(t,function(e){i.set(e,this._clone(n.get(e)))},this):i.set(this._clone(n.attributes))},_updateFormField:function(e,t){this.formModel.set(this.field,t),this.formModel._updateCache(e)},_hashValue:function(e){return JSON.stringify(e)},_generateHashValue:function(e){var t=this._getTrackedModelFields(e);return this._hashValue(t)},_generateAllHashValues:function(){var t={};return e.each(this._getAllModels(!0),function(e){t[e.cid]=this._generateHashValue(e)},this),t},_updateFormModel:function(t){e.each(t.changedAttributes(),function(e,t){this.set(t,this._clone(e))},this),this._updateCache(t)},_updateCache:function(e){this._cache[e.cid]=this._generateHashValue(e)},_initMappings:function(t){var i=e.result(this,"mapping"),n=e.pick(t,["model","fields","models","computed"]);this._initModels(n,i),this._initComputeds(n,i)},_initModels:function(t,i){var n=this._pullModelsFromMapping(t)||this._pullModelsFromMapping(i);e.each(n,this.addModel,this)},_initComputeds:function(t,i){var n;t=t||{},i=i||{},n=t.computed||i.computed,e.each(n,this.addComputed,this)},_mappingHasModels:function(e){return e&&(e.model||e.models)},_pullModelsFromMapping:function(e){var t=[];return e&&e.model?t.push({model:e.model,fields:e.fields}):e&&e.models&&(t=e.models.slice()),0===t.length?null:t},_getTrackedModelFields:function(t){var i,n={},r={},s=[];return e.each(this._getAllModelConfigs(),function(e){e.model.cid===t.cid&&s.push(e)}),i=e.reduce(s,function(e,t){return e||!t.fields},!1),i?r=this._clone(t.attributes):e.each(s,function(i){e.each(i.fields,function(e){n[e]||(n[e]=!0,r[e]=this._clone(t.get(e)))},this)},this),r},_getAllModels:function(t){var i={},n=e.pluck(this._getAllModelConfigs(),"model");if(t){var r=[];e.each(n,function(e){i[e.cid]||(i[e.cid]=!0,r.push(e))}),n=r}return n},_getAllModelConfigs:function(){var t=this._modelConfigs.slice();return e.each(this._computed,function(e){t=t.concat(e.models)}),t},_invokeComputedPull:function(t){var i=[];t&&this.formModel._updateCache(t),function(t,n,r){e.each(r,function(n){n.fields?e.each(n.fields,function(e){i.push(t._clone(n.model.get(e)))}):i.push(t._clone(n.model.attributes))}),n.apply(t,i)}(this.formModel,this.pull,this.models)}});return e.extend(r.prototype,n.mixin),r}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","backbone","./viewHierarchyMixin"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("backbone"),require("./viewHierarchyMixin")):(e.Torso=e.Torso||{},e.Torso.View=t(e._,e.Backbone,e.Torso.Mixins.viewHierarchy))}(this,function(e,t,i){"use strict";var n=t.View.extend({});return e.extend(n.prototype,i),n}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","./View","./templateRenderer"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("./View"),require("./templateRenderer")):(e.Torso=e.Torso||{},e.Torso.ListView=t(e._,e.Torso.View,e.Torso.Utils.templateRenderer))
-}(this,function(e,t,i){"use strict";var n,r,s,o;o=function(e){e._delayedRenderTimeout&&(clearTimeout(e._delayedRenderTimeout),e._delayedRenderTimeout=null,e.render())},s=function(e,t){var i=function(){t._delayedRenderTimeout=null,t.render()};return function(){!t._delayedRenderTimeout&&e>0?t._delayedRenderTimeout=setTimeout(i,e):0>=e&&t.render()}},n=function(e){var t=this.getChildView(e);t&&(t.dispose(),this.unregisterChildView(t),delete this._modelToViewMap[e.cid],this.trigger("child-view-removed",{model:e,view:t}),this.hasChildViews()||this._delayedRender())},r=function(e){var t,i,n,r=this.modelsToRender(),s=r.indexOf(e);s>-1&&(this._createChildViews(),this.hasChildViews()?(o(this),t=this.getChildView(e),i=this.getChildView(r[s+1]),n=this.getChildView(r[s-1]),i?i.$el.before(t.$el):n?n.$el.after(t.$el):this._delayedRender()):this._delayedRender())};var a=t.extend({className:"",_collection:null,_modelName:"",_childView:null,_modelToViewMap:null,_template:null,_emptyTemplate:null,_childContext:null,_renderWait:0,_delayedRender:null,_delayedRenderTimeout:null,initialize:function(e){this["super"](),this.listViewSetup(e),this.render()},listViewSetup:function(e){this.$el;if(e=e||{},this._modelName=e.childModel||"model",this._collection=e.collection,this._childView=e.childView,this._template=e.template,this._childrenContainer=e.childrenContainer,this._template&&!this._childrenContainer)throw"Children container is required when using a template";this._emptyTemplate=e.emptyTemplate,this.modelsToRender=e.modelsToRender||this.modelsToRender,this._childContext=e.childContext,this._modelToViewMap={},this._renderWait=e.renderWait||this._renderWait,this._modelId=e.modelId||"cid",this._createChildViews(),this._delayedRender=s(this._renderWait,this),this.listenTo(this._collection,"remove",n,this),this.listenTo(this._collection,"add",r,this),this.listenTo(this._collection,"sort",this._delayedRender,this),this.listenTo(this._collection,"reset",this.update,this)},render:function(){var e,t=i.copyTopElement(this.$el);this._template?(t.html(this._template(this.prepare())),e=t.find("[inject="+this._childrenContainer+"]")):(e=$("<span>"),t.append(e)),this.hasChildViews()?e.replaceWith(this._buildChildViewsFragment()):this._emptyTemplate&&e.replaceWith(this._emptyTemplate(this.prepareEmpty())),this.trigger("render-before-dom-replacement",t),this.$el.html(t.contents()),this.delegateEvents(),this.trigger("render-complete")},renderChildViews:function(){e.each(this.modelsToRender(),function(e){var t=this.getChildView(e);t.render()},this)},prepare:function(){return{}},prepareEmpty:function(){return{}},modelsToRender:function(){return this._collection?this._collection.models:[]},update:function(){this._createChildViews(),this._delayedRender()},getChildView:function(e){return e?this._childViews[this._modelToViewMap[e[this._modelId]]]:void 0},_createChildViews:function(){e.each(this.modelsToRender(),function(e){childView=this.getChildView(e),childView||(childView=this._createChildView(e),this.trigger("child-view-added",{model:e,view:childView}))},this)},_buildChildViewsFragment:function(){var t=document.createDocumentFragment();return e.each(this.modelsToRender(),function(e){var i=this.getChildView(e);i&&t.appendChild(i.el)},this),$(t)},_createChildView:function(e){var t=this.registerChildView(new this._childView(this._generateChildArgs(e)));return this._modelToViewMap[e.cid]=t.cid,t},_generateChildArgs:function(t){var i={context:e.extend({},e.result(this,"_childContext"))};return i[this._modelName]=t,i}});return a}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","jquery","./View","./FormModel"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("jquery"),require("./View"),require("./FormModel")):(e.Torso=e.Torso||{},e.Torso.FormView=t(e._,e.jQuery||e.Zepto||e.ender||e.$,e.Torso.View,e.Torso.FormModel))}(this,function(e,t,i,n){"use strict";var r=i.extend({initialize:function(t){this["super"](),t=t||{},this.feedbackModel=new Backbone.Model,this.model=this.model||new n,this.listenTo(this.model,"validated:valid",this.valid),this.listenTo(this.model,"validated:invalid",this.invalid),this.template=t.template||this.template,this.events=e.extend({},this.events||{},t.events||{}),this.fields=e.extend({},this.fields||{},t.fields||{}),this._errors=[],this._success=!1,this._feedbackEvents=[],this._bindings=e.extend({},this.bindings||{},t.bindings||{}),this.render()},prepare:function(){return{model:this.model.toJSON(),formErrors:0!==e.size(this._errors)?this._errors:null,formSuccess:this._success}},render:function(){var e=this.prepare();this.unplug(),this.templateRender(this.$el,this.template,e),this.plug(),this.delegateEvents()},delegateEvents:function(){this._generateStickitBindings(),this.stickit(),i.prototype.delegateEvents.call(this),this._generateFeedbackBindings(),this._generateFeedbackModelCallbacks()},unplug:function(){},plug:function(){},valid:function(){this._success=!0,this._errors=[]},invalid:function(e,t){this._success=!1,this._errors=t},invokeFeedback:function(t,i,n){var r,s=e.find(this.feedback,function(i){var n=i.to;return e.isArray(n)?e.contains(n,t):t===n}),o=t;s&&(n&&(o=this._substituteIndicesUsingMap(t,n)),r=s.then.call(this,i,n),this._processFeedbackThenResult(r,o))},dispose:function(){this.unstickit(),r.__super__.dispose.apply(this,arguments)},_generateStickitBindings:function(){var i=this;this.bindings=e.extend({},this._bindings),e.each(this.$el.find("[data-model]"),function(e){var n=t(e).data("model"),r=i._getFieldOptions(n),s=i._generateModelFieldBinding(n,r);i.bindings['[data-model="'+n+'"]']=s})},_generateFeedbackModelCallbacks:function(){var i=this;i.feedbackModel.off(),e.each(this.$el.find("[data-feedback]"),function(n){var r=t(n).data("feedback");i.feedbackModel.on("change:"+r,function(t){return function(){var n,r=i.feedbackModel.get(t);r&&(n=i.$el.find('[data-feedback="'+t+'"]'),e.each(r,function(t,r){var s;s="_"===e.first(r)?i[r.slice(1)]:n[r],e.isArray(t)?s.apply(n,t):void 0!==t&&s.call(n,t)}))}}(r))}),e.each(i.feedbackModel.attributes,function(e,t){i.feedbackModel.trigger("change:"+t)})},_getFieldOptions:function(e){return e=this._stripAllAttribute(e),this.fields[e]||{}},_getAllIndexTokens:function(t){return e.reduce(t.match(/\[.+?\]/g),function(e,t){var i=t.substring(1,t.length-1);return e.push(isNaN(i)?i:parseInt(i,10)),e},[])},_stripAllAttribute:function(e){return e=e.replace(/\[.+?\]/g,function(){return"[]"})},_substituteIndicesUsingMap:function(e,t){var i;return e.replace(/\[.?\]/g,function(e){return e.match(/\[\d+\]/g)||e.match(/\[\]/g)?e:(i=t[e.substring(1,e.length-1)],"["+(void 0===i?"":i)+"]")})},_processFeedbackThenResult:function(e,i){var n=t.extend({},e);this.feedbackModel.set(i,n,{silent:!0}),this.feedbackModel.trigger("change:"+i)},_generateModelFieldBinding:function(t,i){var n=this._getAllIndexTokens(t);return{observe:t,onSet:function(t){var r=[t];return r.push(n),r=e.flatten(r),i.modelFormat?i.modelFormat.apply(this,r):t},onGet:function(t){var r=[t];return r.push(n),r=e.flatten(r),i.viewFormat?i.viewFormat.apply(this,r):t}}},_generateFeedbackBindings:function(){var i,n=this;for(i=0;i<this._feedbackEvents.length;i++)this.off(null,this._feedbackEvents[i]);this._feedbackEvents=[],e.each(this.feedback,function(i){var r=[i.to];e.isArray(i.to)&&(r=i.to),e.each(r,function(r){var s=n._getFeedbackDestinations(r),o=n._getAllIndexTokens(r);e.each(s,function(r){var s,a,u,d,c,l,h,f;r=t(r),s=r.data("feedback"),a=n._getAllIndexTokens(s),u={},e.each(o,function(e,t){u[e]=a[t]}),d=i.then,e.isString(d)?d=n[d]:e.isArray(d)&&(c=d.slice(),l=c[0],c.shift(),d=n[l].apply(n,c)),f={feedbackModelField:s,fn:d,indices:u},h=n._generateWhenEvents(i.when,u),e.each(h,function(t){var i,r,s=function(e){var t,i,newState;t=[e],newState={},t.push(f.indices),i=f.fn.apply(n,t),n._processFeedbackThenResult(i,f.feedbackModelField)};r=/^(\S+)\s*(.*)$/,i=t.match(r),n.$el.on(i[1]+".delegateEvents"+n.cid,i[2],e.bind(s,n))}),e.each(i.when.on,function(e){var t=function(){var t,i=[{args:arguments,type:e}];i.push(f.indices),t=f.fn.apply(n,i),n._processFeedbackThenResult(t,f.feedbackModelField)};n.on(e,t,n),n._feedbackEvents.push(t)})})})})},_getFeedbackDestinations:function(e){var i=this,n=this._stripAllAttribute(e),r=e,s=e.indexOf("[");return s>0&&(r=e.substring(0,s)),this.$el.find('[data-feedback^="'+r+'"]').filter(function(){return i._stripAllAttribute(t(this).data("feedback"))===n})},_generateWhenEvents:function(t,i){var n=this,r=[];return e.each(t,function(t,s){var o,a=[s],u="@"===s.charAt(0);"on"!==s&&(u&&(s=s.substring(1),o=n._substituteIndicesUsingMap(s,i),a=e.flatten(n._generateSubAttributes(o,n.model))),e.each(a,function(i){e.each(t,function(e){var t=e+" "+i;u&&(t=e+' [data-model="'+i+'"]'),r.push(t)})}))}),r},_generateSubAttributes:function(e,t){var i,n,r,s,o,a=e.indexOf("[]");if(-1===a)return[e];if(n=e.substring(0,a),r=e.substring(a+2),s=[],o=t.get(n),!o)return[e];for(i=0;i<o.length;i++)s.push(this._generateSubAttributes(n+"["+i+"]"+r,t));return s},_thenAddClassIfInvalid:function(e,t,i){var n=this.model.isValid(e);return(i?!0:!1)==(n?!0:!1)?{addClass:t}:{removeClass:t}},_thenSetTextIfInvalid:function(e,t,i){var n=this.model.isValid(e);return(i?!0:!1)==(n?!0:!1)?{text:t}:{text:""}}});return r});
+}(this,function(e,t,i){"use strict";var n,r,s,o;o=function(e){e._delayedRenderTimeout&&(clearTimeout(e._delayedRenderTimeout),e._delayedRenderTimeout=null,e.render())},s=function(e,t){var i=function(){t._delayedRenderTimeout=null,t.render()};return function(){!t._delayedRenderTimeout&&e>0?t._delayedRenderTimeout=setTimeout(i,e):0>=e&&t.render()}},n=function(e){var t=this.getChildView(e);t&&(t.dispose(),this.unregisterChildView(t),delete this._modelToViewMap[e.cid],this.trigger("child-view-removed",{model:e,view:t}),this.hasChildViews()||this._delayedRender())},r=function(e){var t,i,n,r=this.modelsToRender(),s=r.indexOf(e);s>-1&&(this._createChildViews(),this.hasChildViews()?(o(this),t=this.getChildView(e),i=this.getChildView(r[s+1]),n=this.getChildView(r[s-1]),i?i.$el.before(t.$el):n?n.$el.after(t.$el):this._delayedRender()):this._delayedRender())};var a=t.extend({className:"",_collection:null,_modelName:"",_childView:null,_modelToViewMap:null,_template:null,_emptyTemplate:null,_childContext:null,_renderWait:0,_delayedRender:null,_delayedRenderTimeout:null,initialize:function(e){this["super"](),this.listViewSetup(e),this.render()},listViewSetup:function(e){this.$el;if(e=e||{},this._modelName=e.childModel||"model",this._collection=e.collection,this._childView=e.childView,this._template=e.template,this._childrenContainer=e.childrenContainer,this._template&&!this._childrenContainer)throw"Children container is required when using a template";this._emptyTemplate=e.emptyTemplate,this.modelsToRender=e.modelsToRender||this.modelsToRender,this._childContext=e.childContext,this._modelToViewMap={},this._renderWait=e.renderWait||this._renderWait,this._modelId=e.modelId||"cid",this._createChildViews(),this._delayedRender=s(this._renderWait,this),this.listenTo(this._collection,"remove",n,this),this.listenTo(this._collection,"add",r,this),this.listenTo(this._collection,"sort",this._delayedRender,this),this.listenTo(this._collection,"reset",this.update,this)},render:function(){var e,t=i.copyTopElement(this.$el);this._template?(t.html(this._template(this.prepare())),e=t.find("[inject="+this._childrenContainer+"]")):(e=$("<span>"),t.append(e)),this.hasChildViews()?e.replaceWith(this._buildChildViewsFragment()):this._emptyTemplate&&e.replaceWith(this._emptyTemplate(this.prepareEmpty())),this.trigger("render-before-dom-replacement",t),this.$el.html(t.contents()),this.delegateEvents(),this.trigger("render-complete")},renderChildViews:function(){e.each(this.modelsToRender(),function(e){var t=this.getChildView(e);t.render()},this)},prepare:function(){return{}},prepareEmpty:function(){return{}},modelsToRender:function(){return this._collection?this._collection.models:[]},update:function(){this._createChildViews(),this._delayedRender()},getChildView:function(e){return e?this._childViews[this._modelToViewMap[e[this._modelId]]]:void 0},_createChildViews:function(){e.each(this.modelsToRender(),function(e){childView=this.getChildView(e),childView||(childView=this._createChildView(e),this.trigger("child-view-added",{model:e,view:childView}))},this)},_buildChildViewsFragment:function(){var t=document.createDocumentFragment();return e.each(this.modelsToRender(),function(e){var i=this.getChildView(e);i&&t.appendChild(i.el)},this),$(t)},_createChildView:function(e){var t=this.registerChildView(new this._childView(this._generateChildArgs(e)));return this._modelToViewMap[e.cid]=t.cid,t},_generateChildArgs:function(t){var i={context:e.extend({},e.result(this,"_childContext"))};return i[this._modelName]=t,i}});return a}),function(e,t){"function"==typeof define&&define.amd?define(["underscore","jquery","./View","./FormModel"],t):"object"==typeof exports?module.exports=t(require("underscore"),require("jquery"),require("./View"),require("./FormModel")):(e.Torso=e.Torso||{},e.Torso.FormView=t(e._,e.jQuery||e.Zepto||e.ender||e.$,e.Torso.View,e.Torso.FormModel))}(this,function(e,t,i,n){"use strict";var r=i.extend({initialize:function(t){this["super"](),t=t||{},this.feedbackModel=new Backbone.Model,this.model=this.model||new n,this.listenTo(this.model,"validated:valid",this.valid),this.listenTo(this.model,"validated:invalid",this.invalid),this.template=t.template||this.template,this.events=e.extend({},this.events||{},t.events||{}),this.fields=e.extend({},this.fields||{},t.fields||{}),this._errors=[],this._success=!1,this._feedbackEvents=[],this._bindings=e.extend({},this.bindings||{},t.bindings||{}),this.render()},prepare:function(){return{model:this.model.toJSON(),formErrors:0!==e.size(this._errors)?this._errors:null,formSuccess:this._success}},render:function(){var e=this.prepare();this.unplug(),this.templateRender(this.$el,this.template,e),this.plug(),this.delegateEvents()},delegateEvents:function(){this._generateStickitBindings(),this.stickit(),i.prototype.delegateEvents.call(this),this._generateFeedbackBindings(),this._generateFeedbackModelCallbacks()},unplug:function(){},plug:function(){},valid:function(){this._success=!0,this._errors=[]},invalid:function(e,t){this._success=!1,this._errors=t},invokeFeedback:function(t,i,n){var r,s=e.find(this.feedback,function(i){var n=i.to;return e.isArray(n)?e.contains(n,t):t===n}),o=t;s&&(n&&(o=this._substituteIndicesUsingMap(t,n)),r=s.then.call(this,i,n),this._processFeedbackThenResult(r,o))},dispose:function(){this.unstickit(),r.__super__.dispose.apply(this,arguments)},_generateStickitBindings:function(){var i=this;this.bindings=e.extend({},this._bindings),e.each(this.$el.find("[data-model]"),function(e){var n=t(e).data("model"),r=i._getFieldOptions(n),s=i._generateModelFieldBinding(n,r);i.bindings['[data-model="'+n+'"]']=s})},_generateFeedbackModelCallbacks:function(){var i=this;i.feedbackModel.off(),e.each(this.$el.find("[data-feedback]"),function(n){var r=t(n).data("feedback");i.feedbackModel.on("change:"+r,function(t){return function(){var n,r=i.feedbackModel.get(t);r&&(n=i.$el.find('[data-feedback="'+t+'"]'),e.each(r,function(t,r){var s;s="_"===e.first(r)?i[r.slice(1)]:n[r],e.isArray(t)?s.apply(n,t):void 0!==t&&s.call(n,t)}))}}(r))}),e.each(i.feedbackModel.attributes,function(e,t){i.feedbackModel.trigger("change:"+t)})},_getFieldOptions:function(e){return e=this._stripAllAttribute(e),this.fields[e]||{}},_getAllIndexTokens:function(t){return e.reduce(t.match(/\[.+?\]/g),function(e,t){var i=t.substring(1,t.length-1);return e.push(isNaN(i)?i:parseInt(i,10)),e},[])},_stripAllAttribute:function(e){return e=e.replace(/\[.+?\]/g,function(){return"[]"})},_substituteIndicesUsingMap:function(e,t){var i;return e.replace(/\[.?\]/g,function(e){return e.match(/\[\d+\]/g)||e.match(/\[\]/g)?e:(i=t[e.substring(1,e.length-1)],"["+(void 0===i?"":i)+"]")})},_processFeedbackThenResult:function(e,i){var n=t.extend({},e);this.feedbackModel.set(i,n,{silent:!0}),this.feedbackModel.trigger("change:"+i)},_generateModelFieldBinding:function(t,i){var n=this._getAllIndexTokens(t);return{observe:t,onSet:function(t){var r=[t];return r.push(n),r=e.flatten(r),i.modelFormat?i.modelFormat.apply(this,r):t},onGet:function(t){var r=[t];return r.push(n),r=e.flatten(r),i.viewFormat?i.viewFormat.apply(this,r):t}}},_generateFeedbackBindings:function(){var i,n=this;for(i=0;i<this._feedbackEvents.length;i++)this.off(null,this._feedbackEvents[i]);this._feedbackEvents=[],e.each(this.feedback,function(i){var r=[i.to];e.isArray(i.to)&&(r=i.to),e.each(r,function(r){var s=n._getFeedbackDestinations(r),o=n._getAllIndexTokens(r);e.each(s,function(r){var s,a,u,d,c,l,h,f;r=t(r),s=r.data("feedback"),a=n._getAllIndexTokens(s),u={},e.each(o,function(e,t){u[e]=a[t]}),d=i.then,e.isString(d)?d=n[d]:e.isArray(d)&&(c=d.slice(),l=c[0],c.shift(),d=n[l].apply(n,c)),f={feedbackModelField:s,fn:d,indices:u},h=n._generateWhenEvents(i.when,u),e.each(h,function(t){var i,r,s=function(e){var t,i;t=[e],newState={},t.push(f.indices),i=f.fn.apply(n,t),n._processFeedbackThenResult(i,f.feedbackModelField)};r=/^(\S+)\s*(.*)$/,i=t.match(r),n.$el.on(i[1]+".delegateEvents"+n.cid,i[2],e.bind(s,n))}),e.each(i.when.on,function(e){var t=function(){var t,i=[{args:arguments,type:e}];i.push(f.indices),t=f.fn.apply(n,i),n._processFeedbackThenResult(t,f.feedbackModelField)};n.on(e,t,n),n._feedbackEvents.push(t)})})})})},_getFeedbackDestinations:function(e){var i=this,n=this._stripAllAttribute(e),r=e,s=e.indexOf("[");return s>0&&(r=e.substring(0,s)),this.$el.find('[data-feedback^="'+r+'"]').filter(function(){return i._stripAllAttribute(t(this).data("feedback"))===n})},_generateWhenEvents:function(t,i){var n=this,r=[];return e.each(t,function(t,s){var o,a=[s],u="@"===s.charAt(0);"on"!==s&&(u&&(s=s.substring(1),o=n._substituteIndicesUsingMap(s,i),a=e.flatten(n._generateSubAttributes(o,n.model))),e.each(a,function(i){e.each(t,function(e){var t=e+" "+i;u&&(t=e+' [data-model="'+i+'"]'),r.push(t)})}))}),r},_generateSubAttributes:function(e,t){var i,n,r,s,o,a=e.indexOf("[]");if(-1===a)return[e];if(n=e.substring(0,a),r=e.substring(a+2),s=[],o=t.get(n),!o)return[e];for(i=0;i<o.length;i++)s.push(this._generateSubAttributes(n+"["+i+"]"+r,t));return s},_thenAddClassIfInvalid:function(e,t,i){var n=this.model.isValid(e);return(i?!0:!1)==(n?!0:!1)?{addClass:t}:{removeClass:t}},_thenSetTextIfInvalid:function(e,t,i){var n=this.model.isValid(e);return(i?!0:!1)==(n?!0:!1)?{text:t}:{text:""}}});return r});
 !function(e){"undefined"!=typeof exports?e(exports):(window.hljs=e({}),"function"==typeof define&&define.amd&&define([],function(){return window.hljs}))}(function(e){function n(e){return e.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;")}function t(e){return e.nodeName.toLowerCase()}function r(e,n){var t=e&&e.exec(n);return t&&0==t.index}function a(e){var n=(e.className+" "+(e.parentNode?e.parentNode.className:"")).split(/\s+/);return n=n.map(function(e){return e.replace(/^lang(uage)?-/,"")}),n.filter(function(e){return N(e)||/no(-?)highlight/.test(e)})[0]}function o(e,n){var t={};for(var r in e)t[r]=e[r];if(n)for(var r in n)t[r]=n[r];return t}function i(e){var n=[];return function r(e,a){for(var o=e.firstChild;o;o=o.nextSibling)3==o.nodeType?a+=o.nodeValue.length:1==o.nodeType&&(n.push({event:"start",offset:a,node:o}),a=r(o,a),t(o).match(/br|hr|img|input/)||n.push({event:"stop",offset:a,node:o}));return a}(e,0),n}function c(e,r,a){function o(){return e.length&&r.length?e[0].offset!=r[0].offset?e[0].offset<r[0].offset?e:r:"start"==r[0].event?e:r:e.length?e:r}function i(e){function r(e){return" "+e.nodeName+'="'+n(e.value)+'"'}l+="<"+t(e)+Array.prototype.map.call(e.attributes,r).join("")+">"}function c(e){l+="</"+t(e)+">"}function u(e){("start"==e.event?i:c)(e.node)}for(var s=0,l="",f=[];e.length||r.length;){var g=o();if(l+=n(a.substr(s,g[0].offset-s)),s=g[0].offset,g==e){f.reverse().forEach(c);do u(g.splice(0,1)[0]),g=o();while(g==e&&g.length&&g[0].offset==s);f.reverse().forEach(i)}else"start"==g[0].event?f.push(g[0].node):f.pop(),u(g.splice(0,1)[0])}return l+n(a.substr(s))}function u(e){function n(e){return e&&e.source||e}function t(t,r){return RegExp(n(t),"m"+(e.cI?"i":"")+(r?"g":""))}function r(a,i){if(!a.compiled){if(a.compiled=!0,a.k=a.k||a.bK,a.k){var c={},u=function(n,t){e.cI&&(t=t.toLowerCase()),t.split(" ").forEach(function(e){var t=e.split("|");c[t[0]]=[n,t[1]?Number(t[1]):1]})};"string"==typeof a.k?u("keyword",a.k):Object.keys(a.k).forEach(function(e){u(e,a.k[e])}),a.k=c}a.lR=t(a.l||/\b[A-Za-z0-9_]+\b/,!0),i&&(a.bK&&(a.b="\\b("+a.bK.split(" ").join("|")+")\\b"),a.b||(a.b=/\B|\b/),a.bR=t(a.b),a.e||a.eW||(a.e=/\B|\b/),a.e&&(a.eR=t(a.e)),a.tE=n(a.e)||"",a.eW&&i.tE&&(a.tE+=(a.e?"|":"")+i.tE)),a.i&&(a.iR=t(a.i)),void 0===a.r&&(a.r=1),a.c||(a.c=[]);var s=[];a.c.forEach(function(e){e.v?e.v.forEach(function(n){s.push(o(e,n))}):s.push("self"==e?a:e)}),a.c=s,a.c.forEach(function(e){r(e,a)}),a.starts&&r(a.starts,i);var l=a.c.map(function(e){return e.bK?"\\.?("+e.b+")\\.?":e.b}).concat([a.tE,a.i]).map(n).filter(Boolean);a.t=l.length?t(l.join("|"),!0):{exec:function(){return null}}}}r(e)}function s(e,t,a,o){function i(e,n){for(var t=0;t<n.c.length;t++)if(r(n.c[t].bR,e))return n.c[t]}function c(e,n){return r(e.eR,n)?e:e.eW?c(e.parent,n):void 0}function f(e,n){return!a&&r(n.iR,e)}function g(e,n){var t=x.cI?n[0].toLowerCase():n[0];return e.k.hasOwnProperty(t)&&e.k[t]}function p(e,n,t,r){var a=r?"":E.classPrefix,o='<span class="'+a,i=t?"":"</span>";return o+=e+'">',o+n+i}function d(){if(!w.k)return n(y);var e="",t=0;w.lR.lastIndex=0;for(var r=w.lR.exec(y);r;){e+=n(y.substr(t,r.index-t));var a=g(w,r);a?(B+=a[1],e+=p(a[0],n(r[0]))):e+=n(r[0]),t=w.lR.lastIndex,r=w.lR.exec(y)}return e+n(y.substr(t))}function h(){if(w.sL&&!R[w.sL])return n(y);var e=w.sL?s(w.sL,y,!0,L[w.sL]):l(y);return w.r>0&&(B+=e.r),"continuous"==w.subLanguageMode&&(L[w.sL]=e.top),p(e.language,e.value,!1,!0)}function v(){return void 0!==w.sL?h():d()}function b(e,t){var r=e.cN?p(e.cN,"",!0):"";e.rB?(M+=r,y=""):e.eB?(M+=n(t)+r,y=""):(M+=r,y=t),w=Object.create(e,{parent:{value:w}})}function m(e,t){if(y+=e,void 0===t)return M+=v(),0;var r=i(t,w);if(r)return M+=v(),b(r,t),r.rB?0:t.length;var a=c(w,t);if(a){var o=w;o.rE||o.eE||(y+=t),M+=v();do w.cN&&(M+="</span>"),B+=w.r,w=w.parent;while(w!=a.parent);return o.eE&&(M+=n(t)),y="",a.starts&&b(a.starts,""),o.rE?0:t.length}if(f(t,w))throw new Error('Illegal lexeme "'+t+'" for mode "'+(w.cN||"<unnamed>")+'"');return y+=t,t.length||1}var x=N(e);if(!x)throw new Error('Unknown language: "'+e+'"');u(x);for(var w=o||x,L={},M="",k=w;k!=x;k=k.parent)k.cN&&(M=p(k.cN,"",!0)+M);var y="",B=0;try{for(var C,j,I=0;;){if(w.t.lastIndex=I,C=w.t.exec(t),!C)break;j=m(t.substr(I,C.index-I),C[0]),I=C.index+j}m(t.substr(I));for(var k=w;k.parent;k=k.parent)k.cN&&(M+="</span>");return{r:B,value:M,language:e,top:w}}catch(A){if(-1!=A.message.indexOf("Illegal"))return{r:0,value:n(t)};throw A}}function l(e,t){t=t||E.languages||Object.keys(R);var r={r:0,value:n(e)},a=r;return t.forEach(function(n){if(N(n)){var t=s(n,e,!1);t.language=n,t.r>a.r&&(a=t),t.r>r.r&&(a=r,r=t)}}),a.language&&(r.second_best=a),r}function f(e){return E.tabReplace&&(e=e.replace(/^((<[^>]+>|\t)+)/gm,function(e,n){return n.replace(/\t/g,E.tabReplace)})),E.useBR&&(e=e.replace(/\n/g,"<br>")),e}function g(e,n,t){var r=n?x[n]:t,a=[e.trim()];return e.match(/(\s|^)hljs(\s|$)/)||a.push("hljs"),r&&a.push(r),a.join(" ").trim()}function p(e){var n=a(e);if(!/no(-?)highlight/.test(n)){var t;E.useBR?(t=document.createElementNS("http://www.w3.org/1999/xhtml","div"),t.innerHTML=e.innerHTML.replace(/\n/g,"").replace(/<br[ \/]*>/g,"\n")):t=e;var r=t.textContent,o=n?s(n,r,!0):l(r),u=i(t);if(u.length){var p=document.createElementNS("http://www.w3.org/1999/xhtml","div");p.innerHTML=o.value,o.value=c(u,i(p),r)}o.value=f(o.value),e.innerHTML=o.value,e.className=g(e.className,n,o.language),e.result={language:o.language,re:o.r},o.second_best&&(e.second_best={language:o.second_best.language,re:o.second_best.r})}}function d(e){E=o(E,e)}function h(){if(!h.called){h.called=!0;var e=document.querySelectorAll("pre code");Array.prototype.forEach.call(e,p)}}function v(){addEventListener("DOMContentLoaded",h,!1),addEventListener("load",h,!1)}function b(n,t){var r=R[n]=t(e);r.aliases&&r.aliases.forEach(function(e){x[e]=n})}function m(){return Object.keys(R)}function N(e){return R[e]||R[x[e]]}var E={classPrefix:"hljs-",tabReplace:null,useBR:!1,languages:void 0},R={},x={};return e.highlight=s,e.highlightAuto=l,e.fixMarkup=f,e.highlightBlock=p,e.configure=d,e.initHighlighting=h,e.initHighlightingOnLoad=v,e.registerLanguage=b,e.listLanguages=m,e.getLanguage=N,e.inherit=o,e.IR="[a-zA-Z][a-zA-Z0-9_]*",e.UIR="[a-zA-Z_][a-zA-Z0-9_]*",e.NR="\\b\\d+(\\.\\d+)?",e.CNR="(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)",e.BNR="\\b(0b[01]+)",e.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~",e.BE={b:"\\\\[\\s\\S]",r:0},e.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[e.BE]},e.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[e.BE]},e.PWM={b:/\b(a|an|the|are|I|I'm|isn't|don't|doesn't|won't|but|just|should|pretty|simply|enough|gonna|going|wtf|so|such)\b/},e.CLCM={cN:"comment",b:"//",e:"$",c:[e.PWM]},e.CBCM={cN:"comment",b:"/\\*",e:"\\*/",c:[e.PWM]},e.HCM={cN:"comment",b:"#",e:"$",c:[e.PWM]},e.NM={cN:"number",b:e.NR,r:0},e.CNM={cN:"number",b:e.CNR,r:0},e.BNM={cN:"number",b:e.BNR,r:0},e.CSSNM={cN:"number",b:e.NR+"(%|em|ex|ch|rem|vw|vh|vmin|vmax|cm|mm|in|pt|pc|px|deg|grad|rad|turn|s|ms|Hz|kHz|dpi|dpcm|dppx)?",r:0},e.RM={cN:"regexp",b:/\//,e:/\/[gimuy]*/,i:/\n/,c:[e.BE,{b:/\[/,e:/\]/,r:0,c:[e.BE]}]},e.TM={cN:"title",b:e.IR,r:0},e.UTM={cN:"title",b:e.UIR,r:0},e});hljs.registerLanguage("cpp",function(t){var i={keyword:"false int float while private char catch export virtual operator sizeof dynamic_cast|10 typedef const_cast|10 const struct for static_cast|10 union namespace unsigned long volatile static protected bool template mutable if public friend do goto auto void enum else break extern using true class asm case typeid short reinterpret_cast|10 default double register explicit signed typename try this switch continue wchar_t inline delete alignof char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local restrict _Bool complex _Complex _Imaginaryintmax_t uintmax_t int8_t uint8_t int16_t uint16_t int32_t uint32_t  int64_t uint64_tint_least8_t uint_least8_t int_least16_t uint_least16_t int_least32_t uint_least32_tint_least64_t uint_least64_t int_fast8_t uint_fast8_t int_fast16_t uint_fast16_t int_fast32_tuint_fast32_t int_fast64_t uint_fast64_t intptr_t uintptr_t atomic_bool atomic_char atomic_scharatomic_uchar atomic_short atomic_ushort atomic_int atomic_uint atomic_long atomic_ulong atomic_llongatomic_ullong atomic_wchar_t atomic_char16_t atomic_char32_t atomic_intmax_t atomic_uintmax_tatomic_intptr_t atomic_uintptr_t atomic_size_t atomic_ptrdiff_t atomic_int_least8_t atomic_int_least16_tatomic_int_least32_t atomic_int_least64_t atomic_uint_least8_t atomic_uint_least16_t atomic_uint_least32_tatomic_uint_least64_t atomic_int_fast8_t atomic_int_fast16_t atomic_int_fast32_t atomic_int_fast64_tatomic_uint_fast8_t atomic_uint_fast16_t atomic_uint_fast32_t atomic_uint_fast64_t",built_in:"std string cin cout cerr clog stringstream istringstream ostringstream auto_ptr deque list queue stack vector map set bitset multiset multimap unordered_set unordered_map unordered_multiset unordered_multimap array shared_ptr abort abs acos asin atan2 atan calloc ceil cosh cos exit exp fabs floor fmod fprintf fputs free frexp fscanf isalnum isalpha iscntrl isdigit isgraph islower isprint ispunct isspace isupper isxdigit tolower toupper labs ldexp log10 log malloc memchr memcmp memcpy memset modf pow printf putchar puts scanf sinh sin snprintf sprintf sqrt sscanf strcat strchr strcmp strcpy strcspn strlen strncat strncmp strncpy strpbrk strrchr strspn strstr tanh tan vfprintf vprintf vsprintf"};return{aliases:["c","h","c++","h++"],k:i,i:"</",c:[t.CLCM,t.CBCM,t.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},t.CNM,{cN:"preprocessor",b:"#",e:"$",k:"if else elif endif define undef warning error line pragma",c:[{b:'include\\s*[<"]',e:'[>"]',k:"include",i:"\\n"},t.CLCM]},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:i,c:["self"]},{b:t.IR+"::"},{bK:"new throw return",r:0},{cN:"function",b:"("+t.IR+"\\s+)+"+t.IR+"\\s*\\(",rB:!0,e:/[{;=]/,eE:!0,k:i,c:[{b:t.IR+"\\s*\\(",rB:!0,c:[t.TM],r:0},{cN:"params",b:/\(/,e:/\)/,k:i,r:0,c:[t.CBCM]},t.CLCM,t.CBCM]}]}});hljs.registerLanguage("ruby",function(e){var b="[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?",r="and false then defined module in return redo if BEGIN retry end for true self when next until do begin unless END rescue nil else break undef not super class case require yield alias while ensure elsif or include attr_reader attr_writer attr_accessor",c={cN:"yardoctag",b:"@[A-Za-z]+"},a={cN:"value",b:"#<",e:">"},s={cN:"comment",v:[{b:"#",e:"$",c:[c]},{b:"^\\=begin",e:"^\\=end",c:[c],r:10},{b:"^__END__",e:"\\n$"}]},n={cN:"subst",b:"#\\{",e:"}",k:r},t={cN:"string",c:[e.BE,n],v:[{b:/'/,e:/'/},{b:/"/,e:/"/},{b:/`/,e:/`/},{b:"%[qQwWx]?\\(",e:"\\)"},{b:"%[qQwWx]?\\[",e:"\\]"},{b:"%[qQwWx]?{",e:"}"},{b:"%[qQwWx]?<",e:">"},{b:"%[qQwWx]?/",e:"/"},{b:"%[qQwWx]?%",e:"%"},{b:"%[qQwWx]?-",e:"-"},{b:"%[qQwWx]?\\|",e:"\\|"},{b:/\B\?(\\\d{1,3}|\\x[A-Fa-f0-9]{1,2}|\\u[A-Fa-f0-9]{4}|\\?\S)\b/}]},i={cN:"params",b:"\\(",e:"\\)",k:r},d=[t,a,s,{cN:"class",bK:"class module",e:"$|;",i:/=/,c:[e.inherit(e.TM,{b:"[A-Za-z_]\\w*(::\\w+)*(\\?|\\!)?"}),{cN:"inheritance",b:"<\\s*",c:[{cN:"parent",b:"("+e.IR+"::)?"+e.IR}]},s]},{cN:"function",bK:"def",e:" |$|;",r:0,c:[e.inherit(e.TM,{b:b}),i,s]},{cN:"constant",b:"(::)?(\\b[A-Z]\\w*(::)?)+",r:0},{cN:"symbol",b:e.UIR+"(\\!|\\?)?:",r:0},{cN:"symbol",b:":",c:[t,{b:b}],r:0},{cN:"number",b:"(\\b0[0-7_]+)|(\\b0x[0-9a-fA-F_]+)|(\\b[1-9][0-9_]*(\\.[0-9_]+)?)|[0_]\\b",r:0},{cN:"variable",b:"(\\$\\W)|((\\$|\\@\\@?)(\\w+))"},{b:"("+e.RSR+")\\s*",c:[a,s,{cN:"regexp",c:[e.BE,n],i:/\n/,v:[{b:"/",e:"/[a-z]*"},{b:"%r{",e:"}[a-z]*"},{b:"%r\\(",e:"\\)[a-z]*"},{b:"%r!",e:"![a-z]*"},{b:"%r\\[",e:"\\][a-z]*"}]}],r:0}];n.c=d,i.c=d;var l="[>?]>",u="[\\w#]+\\(\\w+\\):\\d+:\\d+>",N="(\\w+-)?\\d+\\.\\d+\\.\\d(p\\d+)?[^>]+>",o=[{b:/^\s*=>/,cN:"status",starts:{e:"$",c:d}},{cN:"prompt",b:"^("+l+"|"+u+"|"+N+")",starts:{e:"$",c:d}}];return{aliases:["rb","gemspec","podspec","thor","irb"],k:r,c:[s].concat(o).concat(d)}});hljs.registerLanguage("apache",function(e){var r={cN:"number",b:"[\\$%]\\d+"};return{aliases:["apacheconf"],cI:!0,c:[e.HCM,{cN:"tag",b:"</?",e:">"},{cN:"keyword",b:/\w+/,r:0,k:{common:"order deny allow setenv rewriterule rewriteengine rewritecond documentroot sethandler errordocument loadmodule options header listen serverroot servername"},starts:{e:/$/,r:0,k:{literal:"on off all"},c:[{cN:"sqbracket",b:"\\s\\[",e:"\\]$"},{cN:"cbracket",b:"[\\$%]\\{",e:"\\}",c:["self",r]},r,e.QSM]}}],i:/\S/}});hljs.registerLanguage("python",function(e){var r={cN:"prompt",b:/^(>>>|\.\.\.) /},b={cN:"string",c:[e.BE],v:[{b:/(u|b)?r?'''/,e:/'''/,c:[r],r:10},{b:/(u|b)?r?"""/,e:/"""/,c:[r],r:10},{b:/(u|r|ur)'/,e:/'/,r:10},{b:/(u|r|ur)"/,e:/"/,r:10},{b:/(b|br)'/,e:/'/},{b:/(b|br)"/,e:/"/},e.ASM,e.QSM]},l={cN:"number",r:0,v:[{b:e.BNR+"[lLjJ]?"},{b:"\\b(0o[0-7]+)[lLjJ]?"},{b:e.CNR+"[lLjJ]?"}]},c={cN:"params",b:/\(/,e:/\)/,c:["self",r,l,b]};return{aliases:["py","gyp"],k:{keyword:"and elif is global as in if from raise for except finally print import pass return exec else break not with class assert yield try while continue del or def lambda nonlocal|10 None True False",built_in:"Ellipsis NotImplemented"},i:/(<\/|->|\?)/,c:[r,l,b,e.HCM,{v:[{cN:"function",bK:"def",r:10},{cN:"class",bK:"class"}],e:/:/,i:/[${=;\n]/,c:[e.UTM,c]},{cN:"decorator",b:/@/,e:/$/},{b:/\b(print|exec)\(/}]}});hljs.registerLanguage("javascript",function(r){return{aliases:["js"],k:{keyword:"in if for while finally var new function do return void else break catch instanceof with throw case default try this switch continue typeof delete let yield const class",literal:"true false null undefined NaN Infinity",built_in:"eval isFinite isNaN parseFloat parseInt decodeURI decodeURIComponent encodeURI encodeURIComponent escape unescape Object Function Boolean Error EvalError InternalError RangeError ReferenceError StopIteration SyntaxError TypeError URIError Number Math Date String RegExp Array Float32Array Float64Array Int16Array Int32Array Int8Array Uint16Array Uint32Array Uint8Array Uint8ClampedArray ArrayBuffer DataView JSON Intl arguments require module console window document"},c:[{cN:"pi",r:10,v:[{b:/^\s*('|")use strict('|")/},{b:/^\s*('|")use asm('|")/}]},r.ASM,r.QSM,r.CLCM,r.CBCM,r.CNM,{b:"("+r.RSR+"|\\b(case|return|throw)\\b)\\s*",k:"return throw case",c:[r.CLCM,r.CBCM,r.RM,{b:/</,e:/>;/,r:0,sL:"xml"}],r:0},{cN:"function",bK:"function",e:/\{/,eE:!0,c:[r.inherit(r.TM,{b:/[A-Za-z$_][0-9A-Za-z$_]*/}),{cN:"params",b:/\(/,e:/\)/,c:[r.CLCM,r.CBCM],i:/["'\(]/}],i:/\[|%/},{b:/\$[(.]/},{b:"\\."+r.IR,r:0}]}});hljs.registerLanguage("coffeescript",function(e){var c={keyword:"in if for while finally new do return else break catch instanceof throw try this switch continue typeof delete debugger super then unless until loop of by when and or is isnt not",literal:"true false null undefined yes no on off",reserved:"case default function var void with const let enum export import native __hasProp __extends __slice __bind __indexOf",built_in:"npm require console print module global window document"},n="[A-Za-z$_][0-9A-Za-z$_]*",t={cN:"subst",b:/#\{/,e:/}/,k:c},r=[e.BNM,e.inherit(e.CNM,{starts:{e:"(\\s*/)?",r:0}}),{cN:"string",v:[{b:/'''/,e:/'''/,c:[e.BE]},{b:/'/,e:/'/,c:[e.BE]},{b:/"""/,e:/"""/,c:[e.BE,t]},{b:/"/,e:/"/,c:[e.BE,t]}]},{cN:"regexp",v:[{b:"///",e:"///",c:[t,e.HCM]},{b:"//[gim]*",r:0},{b:/\/(?![ *])(\\\/|.)*?\/[gim]*(?=\W|$)/}]},{cN:"property",b:"@"+n},{b:"`",e:"`",eB:!0,eE:!0,sL:"javascript"}];t.c=r;var i=e.inherit(e.TM,{b:n}),s="(\\(.*\\))?\\s*\\B[-=]>",o={cN:"params",b:"\\([^\\(]",rB:!0,c:[{b:/\(/,e:/\)/,k:c,c:["self"].concat(r)}]};return{aliases:["coffee","cson","iced"],k:c,i:/\/\*/,c:r.concat([{cN:"comment",b:"###",e:"###",c:[e.PWM]},e.HCM,{cN:"function",b:"^\\s*"+n+"\\s*=\\s*"+s,e:"[-=]>",rB:!0,c:[i,o]},{b:/[:\(,=]\s*/,r:0,c:[{cN:"function",b:s,e:"[-=]>",rB:!0,c:[o]}]},{cN:"class",bK:"class",e:"$",i:/[:="\[\]]/,c:[{bK:"extends",eW:!0,i:/[:="\[\]]/,c:[i]},i]},{cN:"attribute",b:n+":",e:":",rB:!0,rE:!0,r:0}])}});hljs.registerLanguage("http",function(){return{i:"\\S",c:[{cN:"status",b:"^HTTP/[0-9\\.]+",e:"$",c:[{cN:"number",b:"\\b\\d{3}\\b"}]},{cN:"request",b:"^[A-Z]+ (.*?) HTTP/[0-9\\.]+$",rB:!0,e:"$",c:[{cN:"string",b:" ",e:" ",eB:!0,eE:!0}]},{cN:"attribute",b:"^\\w",e:": ",eE:!0,i:"\\n|\\s|=",starts:{cN:"string",e:"$"}},{b:"\\n\\n",starts:{sL:"",eW:!0}}]}});hljs.registerLanguage("css",function(e){var c="[a-zA-Z-][a-zA-Z0-9_-]*",a={cN:"function",b:c+"\\(",rB:!0,eE:!0,e:"\\("};return{cI:!0,i:"[=/|']",c:[e.CBCM,{cN:"id",b:"\\#[A-Za-z0-9_-]+"},{cN:"class",b:"\\.[A-Za-z0-9_-]+",r:0},{cN:"attr_selector",b:"\\[",e:"\\]",i:"$"},{cN:"pseudo",b:":(:)?[a-zA-Z0-9\\_\\-\\+\\(\\)\\\"\\']+"},{cN:"at_rule",b:"@(font-face|page)",l:"[a-z-]+",k:"font-face page"},{cN:"at_rule",b:"@",e:"[{;]",c:[{cN:"keyword",b:/\S+/},{b:/\s/,eW:!0,eE:!0,r:0,c:[a,e.ASM,e.QSM,e.CSSNM]}]},{cN:"tag",b:c,r:0},{cN:"rules",b:"{",e:"}",i:"[^\\s]",r:0,c:[e.CBCM,{cN:"rule",b:"[^\\s]",rB:!0,e:";",eW:!0,c:[{cN:"attribute",b:"[A-Z\\_\\.\\-]+",e:":",eE:!0,i:"[^\\s]",starts:{cN:"value",eW:!0,eE:!0,c:[a,e.CSSNM,e.QSM,e.ASM,e.CBCM,{cN:"hexcolor",b:"#[0-9A-Fa-f]+"},{cN:"important",b:"!important"}]}}]}]}]}});hljs.registerLanguage("ini",function(e){return{cI:!0,i:/\S/,c:[{cN:"comment",b:";",e:"$"},{cN:"title",b:"^\\[",e:"\\]"},{cN:"setting",b:"^[a-z0-9\\[\\]_-]+[ \\t]*=[ \\t]*",e:"$",c:[{cN:"value",eW:!0,k:"on off true false yes no",c:[e.QSM,e.NM],r:0}]}]}});hljs.registerLanguage("objectivec",function(e){var t={keyword:"int float while char export sizeof typedef const struct for union unsigned long volatile static bool mutable if do return goto void enum else break extern asm case short default double register explicit signed typename this switch continue wchar_t inline readonly assign readwrite self @synchronized id typeof nonatomic super unichar IBOutlet IBAction strong weak copy in out inout bycopy byref oneway __strong __weak __block __autoreleasing @private @protected @public @try @property @end @throw @catch @finally @autoreleasepool @synthesize @dynamic @selector @optional @required",literal:"false true FALSE TRUE nil YES NO NULL",built_in:"NSString NSData NSDictionary CGRect CGPoint UIButton UILabel UITextView UIWebView MKMapView NSView NSViewController NSWindow NSWindowController NSSet NSUUID NSIndexSet UISegmentedControl NSObject UITableViewDelegate UITableViewDataSource NSThread UIActivityIndicator UITabbar UIToolBar UIBarButtonItem UIImageView NSAutoreleasePool UITableView BOOL NSInteger CGFloat NSException NSLog NSMutableString NSMutableArray NSMutableDictionary NSURL NSIndexPath CGSize UITableViewCell UIView UIViewController UINavigationBar UINavigationController UITabBarController UIPopoverController UIPopoverControllerDelegate UIImage NSNumber UISearchBar NSFetchedResultsController NSFetchedResultsChangeType UIScrollView UIScrollViewDelegate UIEdgeInsets UIColor UIFont UIApplication NSNotFound NSNotificationCenter NSNotification UILocalNotification NSBundle NSFileManager NSTimeInterval NSDate NSCalendar NSUserDefaults UIWindow NSRange NSArray NSError NSURLRequest NSURLConnection NSURLSession NSURLSessionDataTask NSURLSessionDownloadTask NSURLSessionUploadTask NSURLResponseUIInterfaceOrientation MPMoviePlayerController dispatch_once_t dispatch_queue_t dispatch_sync dispatch_async dispatch_once"},o=/[a-zA-Z@][a-zA-Z0-9_]*/,a="@interface @class @protocol @implementation";return{aliases:["m","mm","objc","obj-c"],k:t,l:o,i:"</",c:[e.CLCM,e.CBCM,e.CNM,e.QSM,{cN:"string",v:[{b:'@"',e:'"',i:"\\n",c:[e.BE]},{b:"'",e:"[^\\\\]'",i:"[^\\\\][^']"}]},{cN:"preprocessor",b:"#",e:"$",c:[{cN:"title",v:[{b:'"',e:'"'},{b:"<",e:">"}]}]},{cN:"class",b:"("+a.split(" ").join("|")+")\\b",e:"({|$)",eE:!0,k:a,l:o,c:[e.UTM]},{cN:"variable",b:"\\."+e.UIR,r:0}]}});hljs.registerLanguage("bash",function(e){var t={cN:"variable",v:[{b:/\$[\w\d#@][\w\d_]*/},{b:/\$\{(.*?)\}/}]},s={cN:"string",b:/"/,e:/"/,c:[e.BE,t,{cN:"variable",b:/\$\(/,e:/\)/,c:[e.BE]}]},a={cN:"string",b:/'/,e:/'/};return{aliases:["sh","zsh"],l:/-?[a-z\.]+/,k:{keyword:"if then else elif fi for while in do done case esac function",literal:"true false",built_in:"break cd continue eval exec exit export getopts hash pwd readonly return shift test times trap umask unset alias bind builtin caller command declare echo enable help let local logout mapfile printf read readarray source type typeset ulimit unalias set shopt autoload bg bindkey bye cap chdir clone comparguments compcall compctl compdescribe compfiles compgroups compquote comptags comptry compvalues dirs disable disown echotc echoti emulate fc fg float functions getcap getln history integer jobs kill limit log noglob popd print pushd pushln rehash sched setcap setopt stat suspend ttyctl unfunction unhash unlimit unsetopt vared wait whence where which zcompile zformat zftp zle zmodload zparseopts zprof zpty zregexparse zsocket zstyle ztcp",operator:"-ne -eq -lt -gt -f -d -e -s -l -a"},c:[{cN:"shebang",b:/^#![^\n]+sh\s*$/,r:10},{cN:"function",b:/\w[\w\d_]*\s*\(\s*\)\s*\{/,rB:!0,c:[e.inherit(e.TM,{b:/\w[\w\d_]*/})],r:0},e.HCM,e.NM,s,a,t]}});hljs.registerLanguage("markdown",function(){return{aliases:["md","mkdown","mkd"],c:[{cN:"header",v:[{b:"^#{1,6}",e:"$"},{b:"^.+?\\n[=-]{2,}$"}]},{b:"<",e:">",sL:"xml",r:0},{cN:"bullet",b:"^([*+-]|(\\d+\\.))\\s+"},{cN:"strong",b:"[*_]{2}.+?[*_]{2}"},{cN:"emphasis",v:[{b:"\\*.+?\\*"},{b:"_.+?_",r:0}]},{cN:"blockquote",b:"^>\\s+",e:"$"},{cN:"code",v:[{b:"`.+?`"},{b:"^( {4}|	)",e:"$",r:0}]},{cN:"horizontal_rule",b:"^[-\\*]{3,}",e:"$"},{b:"\\[.+?\\][\\(\\[].*?[\\)\\]]",rB:!0,c:[{cN:"link_label",b:"\\[",e:"\\]",eB:!0,rE:!0,r:0},{cN:"link_url",b:"\\]\\(",e:"\\)",eB:!0,eE:!0},{cN:"link_reference",b:"\\]\\[",e:"\\]",eB:!0,eE:!0}],r:10},{b:"^\\[.+\\]:",rB:!0,c:[{cN:"link_reference",b:"\\[",e:"\\]:",eB:!0,eE:!0,starts:{cN:"link_url",e:"$"}}]}]}});hljs.registerLanguage("java",function(e){var a=e.UIR+"(<"+e.UIR+">)?",t="false synchronized int abstract float private char boolean static null if const for true while long strictfp finally protected import native final void enum else break transient catch instanceof byte super volatile case assert short package default double public try this switch continue throws protected public private",c="(\\b(0b[01_]+)|\\b0[xX][a-fA-F0-9_]+|(\\b[\\d_]+(\\.[\\d_]*)?|\\.[\\d_]+)([eE][-+]?\\d+)?)[lLfF]?",r={cN:"number",b:c,r:0};return{aliases:["jsp"],k:t,i:/<\//,c:[{cN:"javadoc",b:"/\\*\\*",e:"\\*/",r:0,c:[{cN:"javadoctag",b:"(^|\\s)@[A-Za-z]+"}]},e.CLCM,e.CBCM,e.ASM,e.QSM,{cN:"class",bK:"class interface",e:/[{;=]/,eE:!0,k:"class interface",i:/[:"\[\]]/,c:[{bK:"extends implements"},e.UTM]},{bK:"new throw return",r:0},{cN:"function",b:"("+a+"\\s+)+"+e.UIR+"\\s*\\(",rB:!0,e:/[{;=]/,eE:!0,k:t,c:[{b:e.UIR+"\\s*\\(",rB:!0,r:0,c:[e.UTM]},{cN:"params",b:/\(/,e:/\)/,k:t,r:0,c:[e.ASM,e.QSM,e.CNM,e.CBCM]},e.CLCM,e.CBCM]},r,{cN:"annotation",b:"@[A-Za-z]+"}]}});hljs.registerLanguage("diff",function(){return{aliases:["patch"],c:[{cN:"chunk",r:10,v:[{b:/^\@\@ +\-\d+,\d+ +\+\d+,\d+ +\@\@$/},{b:/^\*\*\* +\d+,\d+ +\*\*\*\*$/},{b:/^\-\-\- +\d+,\d+ +\-\-\-\-$/}]},{cN:"header",v:[{b:/Index: /,e:/$/},{b:/=====/,e:/=====$/},{b:/^\-\-\-/,e:/$/},{b:/^\*{3} /,e:/$/},{b:/^\+\+\+/,e:/$/},{b:/\*{5}/,e:/\*{5}$/}]},{cN:"addition",b:"^\\+",e:"$"},{cN:"deletion",b:"^\\-",e:"$"},{cN:"change",b:"^\\!",e:"$"}]}});hljs.registerLanguage("perl",function(e){var t="getpwent getservent quotemeta msgrcv scalar kill dbmclose undef lc ma syswrite tr send umask sysopen shmwrite vec qx utime local oct semctl localtime readpipe do return format read sprintf dbmopen pop getpgrp not getpwnam rewinddir qqfileno qw endprotoent wait sethostent bless s|0 opendir continue each sleep endgrent shutdown dump chomp connect getsockname die socketpair close flock exists index shmgetsub for endpwent redo lstat msgctl setpgrp abs exit select print ref gethostbyaddr unshift fcntl syscall goto getnetbyaddr join gmtime symlink semget splice x|0 getpeername recv log setsockopt cos last reverse gethostbyname getgrnam study formline endhostent times chop length gethostent getnetent pack getprotoent getservbyname rand mkdir pos chmod y|0 substr endnetent printf next open msgsnd readdir use unlink getsockopt getpriority rindex wantarray hex system getservbyport endservent int chr untie rmdir prototype tell listen fork shmread ucfirst setprotoent else sysseek link getgrgid shmctl waitpid unpack getnetbyname reset chdir grep split require caller lcfirst until warn while values shift telldir getpwuid my getprotobynumber delete and sort uc defined srand accept package seekdir getprotobyname semop our rename seek if q|0 chroot sysread setpwent no crypt getc chown sqrt write setnetent setpriority foreach tie sin msgget map stat getlogin unless elsif truncate exec keys glob tied closedirioctl socket readlink eval xor readline binmode setservent eof ord bind alarm pipe atan2 getgrent exp time push setgrent gt lt or ne m|0 break given say state when",r={cN:"subst",b:"[$@]\\{",e:"\\}",k:t},s={b:"->{",e:"}"},n={cN:"variable",v:[{b:/\$\d/},{b:/[\$\%\@](\^\w\b|#\w+(\:\:\w+)*|{\w+}|\w+(\:\:\w*)*)/},{b:/[\$\%\@][^\s\w{]/,r:0}]},o={cN:"comment",b:"^(__END__|__DATA__)",e:"\\n$",r:5},i=[e.BE,r,n],c=[n,e.HCM,o,{cN:"comment",b:"^\\=\\w",e:"\\=cut",eW:!0},s,{cN:"string",c:i,v:[{b:"q[qwxr]?\\s*\\(",e:"\\)",r:5},{b:"q[qwxr]?\\s*\\[",e:"\\]",r:5},{b:"q[qwxr]?\\s*\\{",e:"\\}",r:5},{b:"q[qwxr]?\\s*\\|",e:"\\|",r:5},{b:"q[qwxr]?\\s*\\<",e:"\\>",r:5},{b:"qw\\s+q",e:"q",r:5},{b:"'",e:"'",c:[e.BE]},{b:'"',e:'"'},{b:"`",e:"`",c:[e.BE]},{b:"{\\w+}",c:[],r:0},{b:"-?\\w+\\s*\\=\\>",c:[],r:0}]},{cN:"number",b:"(\\b0[0-7_]+)|(\\b0x[0-9a-fA-F_]+)|(\\b[1-9][0-9_]*(\\.[0-9_]+)?)|[0_]\\b",r:0},{b:"(\\/\\/|"+e.RSR+"|\\b(split|return|print|reverse|grep)\\b)\\s*",k:"split return print reverse grep",r:0,c:[e.HCM,o,{cN:"regexp",b:"(s|tr|y)/(\\\\.|[^/])*/(\\\\.|[^/])*/[a-z]*",r:10},{cN:"regexp",b:"(m|qr)?/",e:"/[a-z]*",c:[e.BE],r:0}]},{cN:"sub",bK:"sub",e:"(\\s*\\(.*?\\))?[;{]",r:5},{cN:"operator",b:"-\\w\\b",r:0}];return r.c=c,s.c=c,{aliases:["pl"],k:t,c:c}});hljs.registerLanguage("makefile",function(e){var a={cN:"variable",b:/\$\(/,e:/\)/,c:[e.BE]};return{aliases:["mk","mak"],c:[e.HCM,{b:/^\w+\s*\W*=/,rB:!0,r:0,starts:{cN:"constant",e:/\s*\W*=/,eE:!0,starts:{e:/$/,r:0,c:[a]}}},{cN:"title",b:/^[\w]+:\s*$/},{cN:"phony",b:/^\.PHONY:/,e:/$/,k:".PHONY",l:/[\.\w]+/},{b:/^\t+/,e:/$/,r:0,c:[e.QSM,a]}]}});hljs.registerLanguage("cs",function(e){var r="abstract as base bool break byte case catch char checked const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long null object operator out override params private protected public readonly ref sbyte sealed short sizeof stackalloc static string struct switch this true try typeof uint ulong unchecked unsafe ushort using virtual volatile void while async protected public private internal ascending descending from get group into join let orderby partial select set value var where yield",t=e.IR+"(<"+e.IR+">)?";return{aliases:["csharp"],k:r,i:/::/,c:[{cN:"comment",b:"///",e:"$",rB:!0,c:[{cN:"xmlDocTag",v:[{b:"///",r:0},{b:"<!--|-->"},{b:"</?",e:">"}]}]},e.CLCM,e.CBCM,{cN:"preprocessor",b:"#",e:"$",k:"if else elif endif define undef warning error line region endregion pragma checksum"},{cN:"string",b:'@"',e:'"',c:[{b:'""'}]},e.ASM,e.QSM,e.CNM,{bK:"class namespace interface",e:/[{;=]/,i:/[^\s:]/,c:[e.TM,e.CLCM,e.CBCM]},{bK:"new return throw await",r:0},{cN:"function",b:"("+t+"\\s+)+"+e.IR+"\\s*\\(",rB:!0,e:/[{;=]/,eE:!0,k:r,c:[{b:e.IR+"\\s*\\(",rB:!0,c:[e.TM],r:0},{cN:"params",b:/\(/,e:/\)/,k:r,r:0,c:[e.ASM,e.QSM,e.CNM,e.CBCM]},e.CLCM,e.CBCM]}]}});hljs.registerLanguage("json",function(e){var t={literal:"true false null"},i=[e.QSM,e.CNM],l={cN:"value",e:",",eW:!0,eE:!0,c:i,k:t},c={b:"{",e:"}",c:[{cN:"attribute",b:'\\s*"',e:'"\\s*:\\s*',eB:!0,eE:!0,c:[e.BE],i:"\\n",starts:l}],i:"\\S"},n={b:"\\[",e:"\\]",c:[e.inherit(l,{cN:null})],i:"\\S"};return i.splice(i.length,0,c,n),{c:i,k:t,i:"\\S"}});hljs.registerLanguage("nginx",function(e){var r={cN:"variable",v:[{b:/\$\d+/},{b:/\$\{/,e:/}/},{b:"[\\$\\@]"+e.UIR}]},b={eW:!0,l:"[a-z/_]+",k:{built_in:"on off yes no true false none blocked debug info notice warn error crit select break last permanent redirect kqueue rtsig epoll poll /dev/poll"},r:0,i:"=>",c:[e.HCM,{cN:"string",c:[e.BE,r],v:[{b:/"/,e:/"/},{b:/'/,e:/'/}]},{cN:"url",b:"([a-z]+):/",e:"\\s",eW:!0,eE:!0,c:[r]},{cN:"regexp",c:[e.BE,r],v:[{b:"\\s\\^",e:"\\s|{|;",rE:!0},{b:"~\\*?\\s+",e:"\\s|{|;",rE:!0},{b:"\\*(\\.[a-z\\-]+)+"},{b:"([a-z\\-]+\\.)+\\*"}]},{cN:"number",b:"\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(:\\d{1,5})?\\b"},{cN:"number",b:"\\b\\d+[kKmMgGdshdwy]*\\b",r:0},r]};return{aliases:["nginxconf"],c:[e.HCM,{b:e.UIR+"\\s",e:";|{",rB:!0,c:[{cN:"title",b:e.UIR,starts:b}],r:0}],i:"[^\\s\\}]"}});hljs.registerLanguage("sql",function(e){var t={cN:"comment",b:"--",e:"$"};return{cI:!0,i:/[<>]/,c:[{cN:"operator",bK:"begin end start commit rollback savepoint lock alter create drop rename call delete do handler insert load replace select truncate update set show pragma grant merge describe use explain help declare prepare execute deallocate savepoint release unlock purge reset change stop analyze cache flush optimize repair kill install uninstall checksum restore check backup",e:/;/,eW:!0,k:{keyword:"abs absolute acos action add adddate addtime aes_decrypt aes_encrypt after aggregate all allocate alter analyze and any are as asc ascii asin assertion at atan atan2 atn2 authorization authors avg backup before begin benchmark between bin binlog bit_and bit_count bit_length bit_or bit_xor both by cache call cascade cascaded case cast catalog ceil ceiling chain change changed char_length character_length charindex charset check checksum checksum_agg choose close coalesce coercibility collate collation collationproperty column columns columns_updated commit compress concat concat_ws concurrent connect connection connection_id consistent constraint constraints continue contributors conv convert convert_tz corresponding cos cot count count_big crc32 create cross cume_dist curdate current current_date current_time current_timestamp current_user cursor curtime data database databases datalength date_add date_format date_sub dateadd datediff datefromparts datename datepart datetime2fromparts datetimeoffsetfromparts day dayname dayofmonth dayofweek dayofyear deallocate declare decode default deferrable deferred degrees delayed delete des_decrypt des_encrypt des_key_file desc describe descriptor diagnostics difference disconnect distinct distinctrow div do domain double drop dumpfile each else elt enclosed encode encrypt end end-exec engine engines eomonth errors escape escaped event eventdata events except exception exec execute exists exp explain export_set extended external extract fast fetch field fields find_in_set first first_value floor flush for force foreign format found found_rows from from_base64 from_days from_unixtime full function get get_format get_lock getdate getutcdate global go goto grant grants greatest group group_concat grouping grouping_id gtid_subset gtid_subtract handler having help hex high_priority hosts hour ident_current ident_incr ident_seed identified identity if ifnull ignore iif ilike immediate in index indicator inet6_aton inet6_ntoa inet_aton inet_ntoa infile initially inner innodb input insert install instr intersect into is is_free_lock is_ipv4 is_ipv4_compat is_ipv4_mapped is_not is_not_null is_used_lock isdate isnull isolation join key kill language last last_day last_insert_id last_value lcase lead leading least leaves left len lenght level like limit lines ln load load_file local localtime localtimestamp locate lock log log10 log2 logfile logs low_priority lower lpad ltrim make_set makedate maketime master master_pos_wait match matched max md5 medium merge microsecond mid min minute mod mode module month monthname mutex name_const names national natural nchar next no no_write_to_binlog not now nullif nvarchar oct octet_length of old_password on only open optimize option optionally or ord order outer outfile output pad parse partial partition password patindex percent_rank percentile_cont percentile_disc period_add period_diff pi plugin position pow power pragma precision prepare preserve primary prior privileges procedure procedure_analyze processlist profile profiles public publishingservername purge quarter query quick quote quotename radians rand read references regexp relative relaylog release release_lock rename repair repeat replace replicate reset restore restrict return returns reverse revoke right rlike rollback rollup round row row_count rows rpad rtrim savepoint schema scroll sec_to_time second section select serializable server session session_user set sha sha1 sha2 share show sign sin size slave sleep smalldatetimefromparts snapshot some soname soundex sounds_like space sql sql_big_result sql_buffer_result sql_cache sql_calc_found_rows sql_no_cache sql_small_result sql_variant_property sqlstate sqrt square start starting status std stddev stddev_pop stddev_samp stdev stdevp stop str str_to_date straight_join strcmp string stuff subdate substr substring subtime subtring_index sum switchoffset sysdate sysdatetime sysdatetimeoffset system_user sysutcdatetime table tables tablespace tan temporary terminated tertiary_weights then time time_format time_to_sec timediff timefromparts timestamp timestampadd timestampdiff timezone_hour timezone_minute to to_base64 to_days to_seconds todatetimeoffset trailing transaction translation trigger trigger_nestlevel triggers trim truncate try_cast try_convert try_parse ucase uncompress uncompressed_length unhex unicode uninstall union unique unix_timestamp unknown unlock update upgrade upped upper usage use user user_resources using utc_date utc_time utc_timestamp uuid uuid_short validate_password_strength value values var var_pop var_samp variables variance varp version view warnings week weekday weekofyear weight_string when whenever where with work write xml xor year yearweek zon",literal:"true false null",built_in:"array bigint binary bit blob boolean char character date dec decimal float int integer interval number numeric real serial smallint varchar varying int8 serial8 text"},c:[{cN:"string",b:"'",e:"'",c:[e.BE,{b:"''"}]},{cN:"string",b:'"',e:'"',c:[e.BE,{b:'""'}]},{cN:"string",b:"`",e:"`",c:[e.BE]},e.CNM,e.CBCM,t]},e.CBCM,t]}});hljs.registerLanguage("xml",function(){var t="[A-Za-z0-9\\._:-]+",e={b:/<\?(php)?(?!\w)/,e:/\?>/,sL:"php",subLanguageMode:"continuous"},c={eW:!0,i:/</,r:0,c:[e,{cN:"attribute",b:t,r:0},{b:"=",r:0,c:[{cN:"value",c:[e],v:[{b:/"/,e:/"/},{b:/'/,e:/'/},{b:/[^\s\/>]+/}]}]}]};return{aliases:["html","xhtml","rss","atom","xsl","plist"],cI:!0,c:[{cN:"doctype",b:"<!DOCTYPE",e:">",r:10,c:[{b:"\\[",e:"\\]"}]},{cN:"comment",b:"<!--",e:"-->",r:10},{cN:"cdata",b:"<\\!\\[CDATA\\[",e:"\\]\\]>",r:10},{cN:"tag",b:"<style(?=\\s|>|$)",e:">",k:{title:"style"},c:[c],starts:{e:"</style>",rE:!0,sL:"css"}},{cN:"tag",b:"<script(?=\\s|>|$)",e:">",k:{title:"script"},c:[c],starts:{e:"</script>",rE:!0,sL:"javascript"}},e,{cN:"pi",b:/<\?\w+/,e:/\?>/,r:10},{cN:"tag",b:"</?",e:"/?>",c:[{cN:"title",b:/[^ \/><\n\t]+/,r:0},c]}]}});hljs.registerLanguage("php",function(e){var c={cN:"variable",b:"\\$+[a-zA-Z_-ÿ][a-zA-Z0-9_-ÿ]*"},i={cN:"preprocessor",b:/<\?(php)?|\?>/},a={cN:"string",c:[e.BE,i],v:[{b:'b"',e:'"'},{b:"b'",e:"'"},e.inherit(e.ASM,{i:null}),e.inherit(e.QSM,{i:null})]},n={v:[e.BNM,e.CNM]};return{aliases:["php3","php4","php5","php6"],cI:!0,k:"and include_once list abstract global private echo interface as static endswitch array null if endwhile or const for endforeach self var while isset public protected exit foreach throw elseif include __FILE__ empty require_once do xor return parent clone use __CLASS__ __LINE__ else break print eval new catch __METHOD__ case exception default die require __FUNCTION__ enddeclare final try switch continue endfor endif declare unset true false trait goto instanceof insteadof __DIR__ __NAMESPACE__ yield finally",c:[e.CLCM,e.HCM,{cN:"comment",b:"/\\*",e:"\\*/",c:[{cN:"phpdoc",b:"\\s@[A-Za-z]+"},i]},{cN:"comment",b:"__halt_compiler.+?;",eW:!0,k:"__halt_compiler",l:e.UIR},{cN:"string",b:"<<<['\"]?\\w+['\"]?$",e:"^\\w+;",c:[e.BE]},i,c,{b:/->+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/},{cN:"function",bK:"function",e:/[;{]/,eE:!0,i:"\\$|\\[|%",c:[e.UTM,{cN:"params",b:"\\(",e:"\\)",c:["self",c,e.CBCM,a,n]}]},{cN:"class",bK:"class interface",e:"{",eE:!0,i:/[:\(\$"]/,c:[{bK:"extends implements"},e.UTM]},{bK:"namespace",e:";",i:/[\.']/,c:[e.UTM]},{bK:"use",e:";",c:[e.UTM]},{b:"=>"},a,n]}});
 var CoreView = Torso.View.extend({
   initialize: function(args) {
