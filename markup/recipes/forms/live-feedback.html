@@ -1,13 +1,15 @@
 <h3>
-  Validation
+  Live Feedback
 </h3>
 <hr/>
-<p>Typically, the validity of a Backbone model should be determined before
-setting the data on the object model.  Since the Torso Form philosophy has
-already separated the view fields from the object model fields, there is no
-need to be hesitant anymore.  The Form View will write to the locally bound
-Form Model, and then validation will be run against the Form Model before
-pushing the form values back to the pertinent object models.</p>
+<p>Modern webapps rely heavily on realtime feedback.  The Torso library provides
+  a framework for creating highly dynamic pages that stores view state for you.
+  The <a href="#modules.views.feedback">Feedback</a> framework intends to give the
+  coder a semantic interface.  <b>When</b> and event happend, <b>Then</b> a function
+  will be performed, returning state <b>To</b> a destination.  This demo shows
+  pre-validation on the two fields.  As the fields are edited, the user feedback
+  is updated.
+</p>
 
 <div class="code-type demo"></div>
 <div class="demo-area" for="validate-form"></div>
@@ -42,7 +44,9 @@ pushing the form values back to the pertinent object models.</p>
 
   <fieldset>
     <label>Name:</label>
-    <input data-model="name" type="text" name="name"><br/>
+    <input data-feedback="name" data-model="name"
+           type="text" name="name"><br/>
+    <label class="tooltip error" data-feedback="nameError"></label>
   </fieldset>
 
   <fieldset>
@@ -53,12 +57,14 @@ pushing the form values back to the pertinent object models.</p>
     <input data-model="gender" type="radio" id="gender-female"
            name="gender" value="female">
     <label for="gender-female" class="btn">female</label>
+    <br/><br/>
+    <label class="tooltip error" data-feedback="genderError"></label>
   </fieldset>
 
   <input class="primary" type="submit" value="Submit">
 </form>
 </script></code></pre>
-<div class="code-type javascript"> - MODEL</div>
+<div class="code-type javascript closed"> - MODEL</div>
 <pre><code class="javascript" for="validate-form"><script type="text/code">
 var ValidatingFormModel = Torso.FormModel.extend({
   validation: {
@@ -80,9 +86,34 @@ var ValidatingFormView = Torso.FormView.extend({
   events: {
     'click [type="submit"]': 'submit'
   },
+
+  /* FEEDBACK FUNCTIONS */
+  feedback: [{
+    when: {'@name': ['keyup']},
+    then: function(evt) {
+      return {
+        'text': this.model.preValidate('name')
+      };
+    },
+    to: 'nameError'
+  }, {
+    when: {
+      '@gender': ['click'],
+      'on': ['render-done']
+    },
+    then: function(evt) {
+      return {
+        'text': this.model.preValidate('gender')
+      };
+    },
+    to: 'genderError'
+  }],
+  /* END OF FEEDBACK FUNCTIONS */
+
   render: function() {
     this.$el.html(this.template(this.prepare()));
     this.delegateEvents();
+    this.trigger('render-done');
   },
   submit: function() {
     var validationErrors = this.model.validate();
@@ -91,7 +122,6 @@ var ValidatingFormView = Torso.FormView.extend({
     } else {
       console.log('VALIDATION PASSED --> Save to Object Models now.');
     }
-    this._errors = validationErrors;
     this.render();
     return false;
   }
@@ -103,4 +133,4 @@ var formView = new ValidatingFormView({
 formView.render();
 </script></code></pre>
 
-<p>For more details on validation, review the <a href="#modules.models.form-model">Form Model</a> API.</p>
+<p>For more details on pushing and pulling, review the <a href="#modules.models.form">Form Model</a> API.</p>

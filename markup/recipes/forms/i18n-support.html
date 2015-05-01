@@ -106,7 +106,7 @@ Handlebars.registerHelper("i18n",function(data) {
 </script></code></pre>
 <div class="code-type javascript"> - MODEL</div>
 <pre><code class="javascript" for="i18n-form"><script type="text/code">
-var ValidatingFormModel = Torso.Models.Form.extend({
+var ValidatingFormModel = Torso.FormModel.extend({
   validation: {
     name: {
       inlineFn: function(value) {
@@ -134,7 +134,7 @@ var formModel = new ValidatingFormModel();
 </script></code></pre>
 <div class="code-type javascript closed"> - VIEW</div>
 <pre><code class="javascript" for="i18n-form"><script type="text/code">
-var ValidatingFormView = Torso.Views.Form.extend({
+var ValidatingFormView = Torso.FormView.extend({
   template: compiledTemplate,
   language: 'en',
   events: {
@@ -151,7 +151,7 @@ var ValidatingFormView = Torso.Views.Form.extend({
     this.delegateEvents();
   },
   submit: function() {
-    this.model.validate();
+    this._errors = this.model.validate();
     this.render();
     return false;
   },

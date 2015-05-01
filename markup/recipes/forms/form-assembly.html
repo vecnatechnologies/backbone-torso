@@ -1,0 +1,90 @@
+<h3>
+  Form Assembly
+</h3>
+<hr/>
+<p>The Torso mentality for forms is that persisted models and form models
+  have disjoint state.  The form model has one-to-one correspondence with
+  the current view state; however, it is completely dissociated from any
+  persisted models.  Form models can be a composite of fields from many
+  different persisted models if desired.  <b>"Pulling"</b> from a form model means
+  that attributes will be read from the persisted objects and inserted
+  in to the form model's current state.  <b>"Pushing"</b> from a form model means
+  that the form attributes will be mapped backed to their corresponding
+  fields in the original persisted object.  Typically, the push operation is
+  only permitted after data <b>validation</b> has occured.  In this demo, pulling
+  will always reset the state to the most recently pushed values.
+</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="assemble-form"></div>
+
+<div class="code-type html closed"></div>
+<pre><code class="html" for="assemble-form"><script type="text/code">
+<form>
+  <fieldset>
+    <label>Name:</label>
+    <input data-model="name" type="text" name="name"><br/>
+  </fieldset>
+
+  <fieldset>
+    <label>Gender:</label>
+    <input data-model="gender" type="radio" id="gender-male"
+           name="gender" value="male">
+    <label for="gender-male" class="btn">male</label>
+    <input data-model="gender" type="radio" id="gender-female"
+           name="gender" value="female">
+    <label for="gender-female" class="btn">female</label>
+  </fieldset>
+
+  <input class="btn _push" type="button" value="Push / Save">
+  <input class="btn _pull" type="button" value="Pull / Load">
+</form>
+</script></code></pre>
+
+<div class="code-type javascript"> - PERSISTED MODEL</div>
+<pre><code class="javascript" for="assemble-form"><script type="text/code">
+var persistedModel = new Backbone.Model({
+  name: 'John Smith',
+  gender: 'male'
+});
+</script></code></pre>
+
+<div class="code-type javascript"> - FORM MODEL</div>
+<pre><code class="javascript" for="assemble-form"><script type="text/code">
+var formModel = new Torso.FormModel({}, {
+  model: persistedModel
+});
+</script></code></pre>
+
+<div class="code-type javascript"> - VIEW</div>
+<pre><code class="javascript" for="assemble-form"><script type="text/code">
+/* Usage of Torso FormView */
+var AssembledFormView = Torso.FormView.extend({
+  template: compiledTemplate,
+  events: {
+    'click ._pull': 'pull',
+    'click ._push': 'push',
+  },
+  render: function() {
+    this.$el.html(this.template());
+    this.delegateEvents();
+  },
+  pull: function() {
+    this.model.pull();
+    this.render();
+    return false;
+  },
+  push: function() {
+    this.model.push();
+    this.render();
+    return false;
+  }
+});
+var formView = new AssembledFormView({
+  el: $container,
+  model: formModel
+});
+formView.render();
+</script></code></pre>
+
+<p>For more details on pushing and pulling, review the <a href="#modules.models.form-model">Form Model</a> API.</p>

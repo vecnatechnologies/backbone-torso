@@ -439,6 +439,7 @@ a.learn-more {
   min-width: 150px;
   display: inline-block;
   text-align: center;
+  margin-left: 5px;
 }
 
 a.learn-more:hover {
@@ -501,6 +502,7 @@ code {
   border: 1px dashed #666;
   border-top: 0px;
   margin-bottom: 2em;
+  padding: 10px 20px 20px 20px;
 }
 
 .code-type.demo:before{
@@ -522,6 +524,10 @@ code {
 p b {
   font-weight: bold;
   color: #009;
+}
+
+b {
+  font-weight: bold;
 }
 
 .breadcrumb {
