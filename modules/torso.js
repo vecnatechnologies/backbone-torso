@@ -2,7 +2,7 @@
   if (typeof define === 'function' && define.amd) {
     define(['./Cell',
             './Collection',
-            './events',
+            './Events',
             './collectionLoadingMixin', './collectionRegistrationMixin', './cellPersistenceRemovalMixin',
             './pollingMixin',
             './validation',
@@ -18,7 +18,7 @@
     require('./stickitUtils');
     module.exports = factory(require('./Cell'),
                              require('./Collection'),
-                             require('./events'),
+                             require('./Events'),
                              require('./collectionLoadingMixin'), require('./collectionRegistrationMixin'), require('./cellPersistenceRemovalMixin'),
                              require('./pollingMixin'),
                              require('./validation'),
@@ -32,7 +32,7 @@
   }
 }(this, function(Cell,
                  Collection,
-                 events,
+                 Events,
                  collectionLoadingMixin, collectionRegistrationMixin, cellPersistenceRemovalMixin,
                  pollingMixin,
                  validation,
@@ -53,7 +53,7 @@
   return {
     Cell: Cell,
     Collection: Collection,
-    events: events,
+    Events: Events,
     Mixins: {
       collectionLoading: collectionLoadingMixin,
       collectionRegistration: collectionRegistrationMixin,
