@@ -8,6 +8,7 @@
             './validation',
             './Model', './NestedCell', './NestedModel', './FormModel',
             './ServiceCell',
+            './Router',
             './View', './ListView', './FormView',
             './guidManager', './templateRenderer',
             './handlebarsUtils', './stickitUtils'],
@@ -23,6 +24,7 @@
                              require('./validation'),
                              require('./Model'), require('./NestedCell'), require('./NestedModel'), require('./FormModel'),
                              require('./ServiceCell'),
+                             require('./Router'),
                              require('./View'), require('./ListView'), require('./FormView'),
                              require('./guidManager'), require('./templateRenderer'));
   } else {
@@ -36,6 +38,7 @@
                  validation,
                  Model, NestedCell, NestedModel, FormModel,
                  ServiceCell,
+                 Router,
                  View, ListView, FormView,
                  guidManager, templateRenderer) {
 
@@ -63,6 +66,7 @@
     NestedModel: NestedModel,
     FormModel: FormModel,
     ServiceCell: ServiceCell,
+    Router: Router,
     Utils: {
       guidManager: guidManager,
       templateRenderer: templateRenderer
