@@ -3659,14 +3659,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './FormModel'], factory);
+    define(['underscore', 'jquery', './View', './FormModel', './Cell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./FormModel'));
+    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./FormModel'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel);
+    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
   }
-}(this, function(_, $, View, FormModel) {
+}(this, function(_, $, View, FormModel, Cell) {
   'use strict';
 
   /**
@@ -3733,7 +3733,7 @@
       args = args || {};
 
       /* Listen to model validation callbacks */
-      this.feedbackModel = new Backbone.Model();
+      this.feedbackModel = new Cell();
       this.model = this.model || (new FormModel());
       this.listenTo(this.model, 'validated:valid', this.valid);
       this.listenTo(this.model, 'validated:invalid', this.invalid);
@@ -4225,7 +4225,7 @@
         return subAttrs;
       }
     },
- 
+
 
     /**
      * Checks to see if the form model's field is valid. If the field is invalid, it adds the class.
