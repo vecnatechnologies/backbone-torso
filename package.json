@@ -43,7 +43,7 @@
     "gulp-util": "^3.0.1",
     "gulp-wrap": "0.9.0",
     "gulp-yuidoc": "^0.1.2",
-    "jasmine": "^2.2.1",
+    "jasmine": "~2.2.1",
     "jasmine-reporters": "2.0.2",
     "jasmine-spec-reporter": "2.1.0",
     "jquery-mockjax": "1.6.1",
