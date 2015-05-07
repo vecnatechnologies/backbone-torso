@@ -187,7 +187,7 @@
      */
     render: function() {
       var injectionSite,
-          newDOM = templateRenderer.copyTopElement(this.$el);
+          newDOM = $(templateRenderer.copyTopElement(this.el));
       if (this._template) {
         newDOM.html(this._template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this._childrenContainer + ']');
