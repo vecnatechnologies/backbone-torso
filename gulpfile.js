@@ -5,7 +5,6 @@
     gulp = require('gulp'),
     runSequence = require('run-sequence'),
     $ = require('gulp-load-plugins')(),
-    SpecReporter = require('jasmine-spec-reporter'),
     argv = require('minimist')(process.argv.slice(3));
 
   buildPaths = {
@@ -42,8 +41,8 @@
                 'node_modules/backbone/backbone-min.js',
                 'node_modules/backbone-nested/backbone-nested.js',
                 'node_modules/backbone.stickit/backbone.stickit.js',
+                'node_modules/backbone-torso/torso-bundle.js',
                 buildPaths.javascript + '/i18n.js',
-                buildPaths.javascript + '/torso.js',
                 buildPaths.javascript + '/highlight.js',
                 buildPaths.javascript + '/core-view.js',
                 buildPaths.javascript + '/main.js'];
