@@ -1324,6 +1324,119 @@
   'use strict';
 
   /**
+   * Changes DOM Nodes that are different, and leaves others untouched.
+   *
+   * Algorithm:
+   * Delegates to a particular swapMethod, depending on the Node type.
+   * Recurses for nested Element Nodes only.
+   * There is always room for optimizing this method.
+   *
+   * @method hotswap
+   * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
+   * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
+   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   */
+  function hotswap(currentNode, newNode, ignoreElements) {
+    var newNodeType = newNode.nodeType,
+      currentNodeType = currentNode.nodeType,
+      swapMethod;
+
+    if(newNodeType !== currentNodeType) {
+      $(currentNode).replaceWith(newNode);
+    } else {
+      swapMethod = swapMethods[newNodeType] || swapMethods['default'];
+      swapMethod(currentNode, newNode, ignoreElements);
+    }
+  }
+
+  /*
+   * Swap method for Element Nodes
+   * @param currentNode {Element} The pre-existing DOM Element to update
+   * @param newNode {Element} The detached DOM Element representing the desired DOM Element subtree
+   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   */
+  function swapElementNodes(currentNode, newNode, ignoreElements) {
+    var $currentNode = $(currentNode),
+      $newNode = $(newNode),
+      shouldIgnore,
+      $currChildNodes,
+      $newChildNodes,
+      currentAttributes;
+
+    shouldIgnore = _.some(ignoreElements, function(selector) {
+      return $currentNode.is(selector);
+    });
+
+    if (shouldIgnore) {
+      return;
+    }
+
+    // Handle tagname changes with full replacement
+    if (newNode.tagName !== currentNode.tagName) {
+      $currentNode.replaceWith(newNode);
+      return;
+    }
+
+    // Remove current attributes
+    currentAttributes = currentNode.attributes;
+    while (currentAttributes.length > 0) {
+      currentNode.removeAttribute(currentAttributes[0].name);
+    }
+
+    // Set new attributes
+    _.each(newNode.attributes, function(attrib) {
+      currentNode.setAttribute(attrib.name, attrib.value);
+    });
+
+    // Quick check to see if we need to bother comparing sub-levels
+    if ($currentNode.html() === $newNode.html()) {
+      return;
+    }
+
+    // Include all child nodes, including text and comment nodes
+    $newChildNodes = $newNode.contents();
+    $currChildNodes = $currentNode.contents();
+
+    // If the DOM lists are different sizes, perform a hard refresh
+    if ($newChildNodes.length !== $currChildNodes.length) {
+      $currentNode.html($newNode.html());
+      return;
+    }
+
+    // Perform a recursive hotswap for all children nodes
+    $currChildNodes.each(function(index, currChildNode) {
+      hotswap(currChildNode, $newChildNodes.get(index), ignoreElements);
+    });
+  }
+
+  /*
+   * Swap method for Text, Comment, and CDATA Section Nodes
+   * @param currentNode {Node} The pre-existing DOM Node to update
+   * @param newNode {Node} The detached DOM Node representing the desired DOM Node subtree
+   */
+  function updateIfNodeValueChanged(currentNode, newNode){
+    var nodeValueChanged = newNode.nodeValue !== currentNode.nodeValue;
+    if (nodeValueChanged) {
+      $(currentNode).replaceWith(newNode);
+    }
+  }
+
+  /*
+   * Map of nodeType to hot swap implementations.
+   * NodeTypes are hard-coded integers per the DOM Level 2 specification instead of
+   * references to constants defined on the window.Node object for IE8 compatibility
+   */
+  var swapMethods = {
+    1: swapElementNodes, // ELEMENT_NODE
+    3: updateIfNodeValueChanged, // TEXT_NODE
+    4: updateIfNodeValueChanged, // CDATA_SECTION_NODE
+    8: updateIfNodeValueChanged, // COMMENT_NODE
+    default: function(currentNode, newNode) {
+      $(currentNode).replaceWith(newNode);
+    }
+  };
+
+  /**
    * Static Template Engine.
    * All template renders should be piped through this method.
    *
@@ -1337,149 +1450,61 @@
     /**
      * Performs efficient re-rendering of a template.
      * @method render
-     * @param  el {jQueryObject} The Element to render into
+     * @param  $el {jQueryObject} The Element to render into
      * @param  template {Handlebars Template} The HBS template to apply
      * @param  context {Object} The context object to pass to the template
      * @param  [opts] {Object} Other options
      * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
      * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
      */
-    render: function(el, template, context, opts) {
-      var newDOM, activeElement, currentCaret,
-          newHTML = template(context);
+    render: function($el, template, context, opts) {
+      var newDOM,
+          newHTML = template(context),
+          el = $el.get(0);
       opts = opts || {};
 
       if (opts.force) {
-        el.html(newHTML);
+        $el.html(newHTML);
       } else {
         newDOM = this.copyTopElement(el);
-        newDOM.html(newHTML);
-        this.hotswapKeepCaret(el, newDOM, opts);
+        $(newDOM).html(newHTML);
+        this.hotswapKeepCaret(el, newDOM, opts.ignoreElements);
       }
     },
 
     /**
      * Call this.hotswap but also keeps the caret position the same
-     * @param  el {jQueryObject} The Element to render into
-     * @param  template {Handlebars Template} The HBS template to apply
-     * @param  context {Object} The context object to pass to the template
+     * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
+     * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
+     * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
      * @method hotswapKeepCaret
      */
-    hotswapKeepCaret: function(el, newDOM, opts) {
-      opts = opts || {};
+
+    hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
           activeElement = document.activeElement;
       if (activeElement && activeElement.hasAttribute('value')) {
         currentCaret = this.getCaretPosition(activeElement);
       }
-      this.hotswap(el, newDOM, opts.ignoreElements, false);
+      this.hotswap(currentNode, newNode, ignoreElements);
       if (activeElement) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },
 
-    /**
-     * Hotswap algorithm:
-     * Runtime is O(N) where N is the number of total DOM elements.
-     * There is always room for optimizing this method.
-     * Changes DOM elements that are different, and
-     * leaves others untouched.  Note that the top-most element's
-     * tag type is immutable so it can never be changed.
-     * @method hotswap
-     * @param newDOM {jQueryElement} The jQuery DOM for the desired render
-     * @param currentDOM {jQueryElement} The jQuery DOM for the existing render
-     * @param ignoreElements {Array} Array of jQuery selectors of DOM elements to ignore during render. Can be an expensive check.
-     * @param returnRefreshTree {Boolean} if true, will return an array tree that corresponds element-by-element to the currentDOM
-     *   where a true value means the element was forced to refresh. A true value will short circuit that branch. A common example
-     *   would be if the top level current dom needs a force refresh, this method will return a single true value.
-     * @return {Boolean} true if requires a full refresh, false otherwise
-     */
-    hotswap: function(currentDOM, newDOM, ignoreElements, returnRefreshTree) {
-      var i, newTag, currTag,
-        newElem, currElem,
-        newChildren, currChildren,
-        newAttributes, currentAttributes,
-        replacementDOM, attrNode,
-        skip, ignoreIdx, childForceRefresh,
-        hardRefreshes = [],
-        ignoreElementsLen = ignoreElements ? ignoreElements.length : 0;
-
-      // Handle tagname changes with full replacement
-      newTag = newDOM.prop('tagName');
-      currTag = currentDOM.prop('tagName');
-      if (newTag !== currTag) {
-        replacementDOM = $('<' + newTag + '>' + newDOM.html() + '</' + newTag + '>');
-        currentDOM.replaceWith(replacementDOM);
-        currentDOM = replacementDOM;
-      }
-
-      // Attribute removing old values
-      newAttributes = newDOM.get(0).attributes;
-      currentAttributes = currentDOM.get(0).attributes;
-      while (currentAttributes.length > 0) {
-        currentAttributes.removeNamedItem(currentAttributes[0].name);
-      }
-
-      // Attribute setting for new values
-      _.each(newAttributes, function(attrib) {
-        attrNode = document.createAttribute(attrib.name);
-        attrNode.value = attrib.value;
-        currentAttributes.setNamedItem(attrNode);
-      });
-
-      // Quick check if we need to bother comparing sub-levels
-      if (currentDOM.html() === newDOM.html()) {
-        return false;
-      }
-
-      newChildren = newDOM.children();
-      currChildren = currentDOM.children();
-
-      // If the DOM lists are different sizes, perform a hard refresh
-      if (newChildren.length !== currChildren.length) {
-        currentDOM.html(newDOM.html());
-        return true;
-      }
-
-      // Compare and set content if this is a leaf node
-      if (currChildren.length === 0) {
-        currentDOM.html(newDOM.html());
-        return false;
-      }
-
-      // Perform a recursive hotswap for all children elements
-      for (i = 0; i < currChildren.length; i++) {
-        skip = false;
-        newElem = $(newChildren[i]);
-        currElem = $(currChildren[i]);
-        if (ignoreElements) {
-          for (ignoreIdx = 0; ignoreIdx < ignoreElementsLen; ignoreIdx++) {
-            if (currElem.is(ignoreElements[ignoreIdx])) {
-              skip = true;
-              break;
-            }
-          }
-        }
-        if (!skip) {
-          childForceRefresh = this.hotswap(currElem, newElem, ignoreElements, returnRefreshTree);
-          if (returnRefreshTree) {
-            hardRefreshes.push(childForceRefresh);
-          }
-        }
-      }
-      return hardRefreshes;
-    },
+    // See above function declaration for method-level documentation
+    hotswap: hotswap,
 
     /**
      * Produces a copy of the element tag with attributes but with no contents
-     * @param el {jQuery element} the element to be copied
-     * @return a shallow copy of the element with no children but with attributes
+     * @param el {Element} the DOM element to be copied
+     * @return {Element} a shallow copy of the element with no children but with attributes
      * @method copyTopElement
      */
     copyTopElement: function(el) {
-      var newDOM = $('<' + el.prop('tagName') + '></' + el.prop('tagName') + '>');
-      _.each(el.get(0).attributes, function(attrib) {
-        newDOM.attr(attrib.name, attrib.value);
+      var newDOM = document.createElement(el.tagName);
+      _.each(el.attributes, function(attrib) {
+        newDOM.setAttribute(attrib.name, attrib.value);
       });
       return newDOM;
     },
@@ -4589,7 +4614,7 @@
      */
     render: function() {
       var injectionSite,
-          newDOM = templateRenderer.copyTopElement(this.$el);
+          newDOM = $(templateRenderer.copyTopElement(this.el));
       if (this._template) {
         newDOM.html(this._template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this._childrenContainer + ']');
