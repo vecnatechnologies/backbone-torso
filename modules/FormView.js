@@ -443,7 +443,7 @@
             _.each(whenEvents, function(eventKey) {
               var match, delegateEventSplitter,
                 invokeThen = function(evt) {
-                  var i, args, result;
+                  var i, args, result, newState;
                   args = [evt];
                   newState = {};
                   args.push(bindInfo.indices);
