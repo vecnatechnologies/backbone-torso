@@ -68,7 +68,7 @@ commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery', '/modul
                                    '/modules/guidManager', '/modules/templateRenderer']);
 commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
                                        '/modules/guidManager', '/modules/templateRenderer', '/modules/View',
-                                       '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel']);
+                                       '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel', 'backbone.stickit']);
 commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
                                        '/modules/guidManager', '/modules/templateRenderer', '/modules/View']);
 
