@@ -171,7 +171,7 @@
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
           activeElement = document.activeElement;
-      if (activeElement && activeElement.hasAttribute('value')) {
+      if (activeElement && activeElement.hasAttribute('value') && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
@@ -195,6 +195,17 @@
         newDOM.setAttribute(attrib.name, attrib.value);
       });
       return newDOM;
+    },
+    
+    /** 
+     * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
+     * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
+     * @param el {Element} the DOM element to check 
+     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el 
+     * @method supportsSelection
+     */
+    supportsSelection : function (el) {
+      return (/text|password|search|tel|url/).test(el.type); 
     },
 
     /**
