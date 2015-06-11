@@ -124,7 +124,6 @@
      * Override to add more functionality but remember to call this.listViewSetup(args) first
      * @method initialize
      * @param args {Object} - options argument
-     *   @param args.childModel {String} - name of the model argument passed to the child view during initialization
      *   @param args.childView {Backbone.View definition} - the class definition of the child view. This view will be instantiated
      *                                                     for every model returned by modelsToRender()
      *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
@@ -139,6 +138,7 @@
      *                                           functionality.
      *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {String} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
+     *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
       this.super();
