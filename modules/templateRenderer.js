@@ -44,13 +44,10 @@
    * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
    */
   function swapElementNodes(currentNode, newNode, ignoreElements) {
-    var $currentNode = $(currentNode),
+    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
+      $currentNode = $(currentNode),
       $newNode = $(newNode),
-      idx = 0,
-      shouldIgnore,
-      $currChildNodes,
-      $newChildNodes,
-      currentAttributes;
+      idx = 0;
 
     shouldIgnore = _.some(ignoreElements, function(selector) {
       return $currentNode.is(selector);
