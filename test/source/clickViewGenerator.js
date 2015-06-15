@@ -19,10 +19,10 @@ module.exports = function(window) {
       window.Torso.View.prototype.initialize.call(this);
       this.on('myEvent', this.afterMyEvent);
     },
-    activateCallback: function() {
+    _activate: function() {
       this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);
     },
-    deactivateCallback: function() {
+    _deactivate: function() {
       this.off('myDeactivatableEvent');
     },
     myClick: _.noop,

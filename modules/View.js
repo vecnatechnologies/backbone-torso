@@ -28,16 +28,16 @@
     _isDisposed: false,
 
     /**
-     * The default initialize method.
-     * @method initialize
-     * @param [args]
-     * @param   [args.preventDefault=false] Prevents render and activate call
+     * Overrides constructor to create needed fields and invoke activate/render after initialization
+     * @method constructor
+     * @override
      */
-    initialize: function(args) {
-      args = args || {};
+    constructor: function(options) {
+      options = options || {};
       this._childViews = {};
       this.viewState = new Cell();
-      if (!args.preventDefault) {
+      Backbone.View.apply(this, arguments);
+      if (!options.preventDefault) {
         this.render();
         this.activate();
       }
@@ -68,12 +68,13 @@
      * @method render
      */
     render: function() {
+      this.unplug();
       if (this.template) {
         this.templateRender(this.$el, this.template, this.prepare());
         this.delegateEvents();
       }
+      this.plug();
     },
-
 
     /**
      * Hotswap rendering system reroute method.
@@ -92,7 +93,7 @@
      * @method dispose
      */
     dispose: function() {
-      this.disposeCallback();
+      this._dispose();
 
       // Detach DOM and deactivate the view
       this.detach();
@@ -119,23 +120,26 @@
     },
 
     /**
-     * @method disposeCallback
+     * Method to be invoked when dispose is called. By default calling dispose will remove the
+     * view's element, its on's, listenTo's, and any registered children.
+     * Override this method to destruct any extra
+     * @method _dispose
      */
-    disposeCallback: _.noop,
+    _dispose: _.noop,
 
     /**
      * Method to be invoked when deactivate is called. Use this method to turn off any
      * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
-     * @method deactivateCallback
+     * @method _deactivate
      */
-    deactivateCallback: _.noop,
+    _deactivate: _.noop,
 
     /**
      * Method to be invoked when activate is called. Use this method to turn on any
      * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
-     * @method deactivateCallback
+     * @method _activate
      */
-    activateCallback: _.noop,
+    _activate: _.noop,
 
     /**
      * @return {Boolean} true if this view has child views
@@ -301,7 +305,7 @@
       this.deactivateChildViews();
       if (this.isActive()) {
         this.undelegateEvents();
-        this.deactivateCallback();
+        this._deactivate();
         this._isActive = false;
       }
     },
@@ -314,10 +318,26 @@
       this.activateChildViews();
       if (!this.isActive()) {
         this.delegateEvents();
-        this.activateCallback();
+        this._activate();
         this._isActive = true;
       }
     },
+
+        /**
+     * Before any DOM rendering is done, this method is called and removes any
+     * custom plugins including events that attached to the existing elements.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * @method unplug
+     */
+    unplug: _.noop,
+
+    /**
+     * After all DOM rendering is done, this method is called and attaches any
+     * custom plugins to the existing elements.  This method can be overwritten
+     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * @method plug
+     */
+    plug: _.noop,
 
     /**
      * @returns {Boolean} true if the view is active

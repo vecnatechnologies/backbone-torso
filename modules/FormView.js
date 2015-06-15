@@ -140,26 +140,6 @@
     },
 
     /**
-     * Before any DOM rendering is done, this method is called and removes any
-     * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * @method unplug
-     */
-    unplug: function() {
-      // nothing by default
-    },
-
-    /**
-     * After all DOM rendering is done, this method is called and attaches any
-     * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * @method plug
-     */
-    plug: function() {
-      // nothing by default
-    },
-
-    /**
      * Default method called on validation success.
      * @method valid
      */

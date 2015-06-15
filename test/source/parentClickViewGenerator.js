@@ -29,10 +29,10 @@ module.exports = function(window) {
       this.render();
       this.activate();
     },
-    activateCallback: function() {
+    _activate: function() {
       this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);
     },
-    deactivateCallback: function() {
+    _deactivate: function() {
       this.off('myDeactivatableEvent');
     },
     myClick: _.noop,
