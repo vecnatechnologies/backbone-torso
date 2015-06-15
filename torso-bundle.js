@@ -277,6 +277,7 @@
   function swapElementNodes(currentNode, newNode, ignoreElements) {
     var $currentNode = $(currentNode),
       $newNode = $(newNode),
+      idx = 0,
       shouldIgnore,
       $currChildNodes,
       $newChildNodes,
@@ -296,10 +297,14 @@
       return;
     }
 
-    // Remove current attributes
+    // Remove current attributes that have changed
     currentAttributes = currentNode.attributes;
-    while (currentAttributes.length > 0) {
-      currentNode.removeAttribute(currentAttributes[0].name);
+    while (idx < currentAttributes.length) {
+      currentAttr = currentAttributes[idx].name;
+      if (!_.contains(currentAttr, newNode.attributes)) {
+        currentNode.removeAttribute(currentAttr);
+      }
+      idx++;
     }
 
     // Set new attributes
@@ -402,11 +407,11 @@
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
           activeElement = document.activeElement;
-      if (activeElement && activeElement.hasAttribute('value')) {
+      if (activeElement && activeElement.hasAttribute('value') && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement) {
+      if (activeElement && this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },
@@ -426,6 +431,17 @@
         newDOM.setAttribute(attrib.name, attrib.value);
       });
       return newDOM;
+    },
+
+    /**
+     * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
+     * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
+     * @param el {Element} the DOM element to check
+     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el
+     * @method supportsSelection
+     */
+    supportsSelection : function (el) {
+      return (/text|password|search|tel|url/).test(el.type);
     },
 
     /**
@@ -3470,7 +3486,6 @@
      * Override to add more functionality but remember to call this.listViewSetup(args) first
      * @method initialize
      * @param args {Object} - options argument
-     *   @param args.childModel {String} - name of the model argument passed to the child view during initialization
      *   @param args.childView {Backbone.View definition} - the class definition of the child view. This view will be instantiated
      *                                                     for every model returned by modelsToRender()
      *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
@@ -3485,6 +3500,7 @@
      *                                           functionality.
      *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {String} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
+     *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
       this.super();

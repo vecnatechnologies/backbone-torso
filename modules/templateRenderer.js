@@ -46,6 +46,7 @@
   function swapElementNodes(currentNode, newNode, ignoreElements) {
     var $currentNode = $(currentNode),
       $newNode = $(newNode),
+      idx = 0,
       shouldIgnore,
       $currChildNodes,
       $newChildNodes,
@@ -65,10 +66,14 @@
       return;
     }
 
-    // Remove current attributes
+    // Remove current attributes that have changed
     currentAttributes = currentNode.attributes;
-    while (currentAttributes.length > 0) {
-      currentNode.removeAttribute(currentAttributes[0].name);
+    while (idx < currentAttributes.length) {
+      currentAttr = currentAttributes[idx].name;
+      if (!_.contains(currentAttr, newNode.attributes)) {
+        currentNode.removeAttribute(currentAttr);
+      }
+      idx++;
     }
 
     // Set new attributes
@@ -196,16 +201,16 @@
       });
       return newDOM;
     },
-    
-    /** 
+
+    /**
      * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
      * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
-     * @param el {Element} the DOM element to check 
-     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el 
+     * @param el {Element} the DOM element to check
+     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el
      * @method supportsSelection
      */
     supportsSelection : function (el) {
-      return (/text|password|search|tel|url/).test(el.type); 
+      return (/text|password|search|tel|url/).test(el.type);
     },
 
     /**
