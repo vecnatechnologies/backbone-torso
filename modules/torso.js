@@ -12,10 +12,9 @@
             './history',
             './View', './ListView', './FormView',
             './guidManager', './templateRenderer',
-            './handlebarsUtils', './stickitUtils'],
+            './stickitUtils'],
            factory);
   } else if (typeof exports === 'object') {
-    require('./handlebarsUtils');
     require('./stickitUtils');
     module.exports = factory(require('./Cell'),
                              require('./Collection'),

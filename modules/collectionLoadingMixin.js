@@ -59,7 +59,7 @@
        * @param options {Object} - the object to hold the options needed by the base fetch method
        */
       collection.fetch = function(options) {
-        this._loadWrapper(base.fetch, options);
+        return this._loadWrapper(base.fetch, options);
       };
 
       /**

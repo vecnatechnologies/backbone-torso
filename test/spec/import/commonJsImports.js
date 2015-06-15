@@ -51,7 +51,7 @@ commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
 
 commonJsImportTest('/modules/collectionLoadingMixin', ['jquery']);
 commonJsImportTest('/modules/collectionRegistrationMixin', ['underscore', 'jquery']);
-commonJsImportTest('/modules/pollingMixin', ['jquery']);
+commonJsImportTest('/modules/pollingMixin', []);
 commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone', 'jquery',
                                          '/modules/pollingMixin', '/modules/NestedModel']);
 
@@ -73,12 +73,12 @@ commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', '/m
                                        '/modules/guidManager', '/modules/templateRenderer', '/modules/View']);
 
 commonJsImportTest('/modules/guidManager', []);
-commonJsImportTest('/modules/handlebarsUtils', ['handlebars']);
+commonJsImportTest('/modules/handlebarsUtils', []);
 commonJsImportTest('/modules/stickitUtils', ['backbone', 'backbone.stickit']);
 commonJsImportTest('/modules/templateRenderer', ['underscore', 'jquery']);
 
-commonJsImportTest('/modules/torso', ['handlebars', 'backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
-                               '/modules/handlebarsUtils', '/modules/stickitUtils',
+commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
+                               '/modules/stickitUtils',
                                '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin', '/modules/cellPersistenceRemovalMixin', '/modules/validation',
                                '/modules/Cell',
                                '/modules/Collection',

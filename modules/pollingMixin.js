@@ -1,14 +1,14 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
+    define([], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
+    module.exports = factory();
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory((root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.polling = factory();
   }
-}(this, function($) {
+}(this, function() {
   /**
    * Periodic Polling Object to be mixed into Backbone Collections and Models.
    *
@@ -43,6 +43,7 @@
      * @param  pollInterval {Integer} interval between each poll in ms.
      */
     startPolling: function(pollInterval) {
+      var self = this;
       if (pollInterval) {
         this._pollInterval = pollInterval;
       }
@@ -52,9 +53,9 @@
       } else {
         this._pollStarted = true;
         this._poll();
-        this.pollTimeoutId = window.setInterval($.proxy(function() {
-          this._poll();
-        }, this), this._pollInterval);
+        this.pollTimeoutId = window.setInterval(function() {
+          self._poll();
+        }, this._pollInterval);
       }
     },
 

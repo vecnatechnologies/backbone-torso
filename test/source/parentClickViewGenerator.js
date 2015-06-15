@@ -22,11 +22,12 @@ module.exports = function(window) {
       this.injectView('two', this.childView2);
     },
     initialize: function() {
-      this.super();
+      window.Torso.View.initialize.call(this, {preventDefault: true});
       this.childView1 = new ChildView1();
       this.childView2 = new ChildView2();
       this.on('myEvent', this.afterMyEvent);
       this.render();
+      this.activate();
     },
     activateCallback: function() {
       this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);

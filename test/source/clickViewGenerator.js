@@ -16,9 +16,8 @@ module.exports = function(window) {
       this.$el.html('<div class="click">test</div>');
     },
     initialize: function() {
-      this.super();
+      window.Torso.View.initialize.call(this);
       this.on('myEvent', this.afterMyEvent);
-      this.render();
     },
     activateCallback: function() {
       this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);

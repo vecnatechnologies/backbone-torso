@@ -2,197 +2,146 @@
   if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory();
+    factory();
   } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.guidManager = factory();
+    factory();
   }
 }(this, function() {
   'use strict';
 
-  /**
-   * A static object responsible for tracking and creating
-   * unique GUIDs when asked.  These GUIDs can be used for anything.
-   *
-   * @module    Torso
-   * @class     guidManager
-   * @static
-   * @author    ariel.wexler@vecna.com
-   */
-  var guidManager = {
-    /**
-     * The next GUID numeral
-     * @property _current
-     */
-    _current: 0,
+  module.exports = function(Handlebars) {
 
     /**
-     * Create a GUID and return it
-     * @method generate
-     * @return {String} A unique hash
+     * Extensions to handlebars helpers.
+     *
+     * @module    Torso
+     * @namespace Torso.Utils
+     * @class     handlebarsUtils
+     * @static
+     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
      */
-    generate: function() {
-      var hash = this._generateGUID();
-      return hash;
-    },
+    var FEEDBACK_KEY = 'feedback',
+        MODEL_KEY = 'model';
 
     /**
-     * Random GUID generator.  Creates GUIDs in the format: G<number>
-     * @private
-     * @method _generateGUID
-     * @return {String} A sequence of Hex Digits
+     * Usage: {{label 'fieldName' value="suffix"}}
+     * Generates: for="field-name-suffix"
+     * @method Handlebars.helpers.labelFor
+     * @param field {String} The field name to convert to a compliant "for" attribute
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @param [option.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {String} Compliant HTML generating the "for" attribute
      */
-    _generateGUID: function() {
-      var GUID = 'G' + this._current;
-      this._current++;
-      return GUID;
-    }
-  };
-  return guidManager;
-}));
+    Handlebars.registerHelper('labelFor', function(field, options) {
+      return Handlebars.helpers.formAttr(field, 'for', options);
+    });
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['handlebars'], factory);
-  } else if (typeof exports === 'object') {
-    factory(require('handlebars'));
-  } else {
-    factory(root.Handlebars);
-  }
-}(this, function(Handlebars) {
-  'use strict';
+    /**
+     * Usage: {{bindModel 'fieldName' value='suffix'}}
+     * Generates: id="field-name-suffix" name="field-name-suffix" data-model="fieldName" data-feedback="firstName"
+     * @method Handlebars.helpers.bindModel
+     * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {String} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     */
+    Handlebars.registerHelper('bindModel', function(field, options) {
+      return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
+    });
 
-  /**
-   * Extensions to handlebars helpers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     handlebarsUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var FEEDBACK_KEY = 'feedback',
-      MODEL_KEY = 'model';
+    /**
+     * Usage: {{feedback 'fieldName'}}
+     * Generates: data-feedback="firstName"
+     * @method Handlebars.helpers.feedback
+     * @param field {String} The field name to convert to a compliant data-feedback attribute
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @return {String} Compliant HTML generating the data-feedback attribute
+     */
+    Handlebars.registerHelper('feedback', function(field, options) {
+      return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
+    });
 
-  /**
-   * Usage: {{label 'fieldName' value="suffix"}}
-   * Generates: for="field-name-suffix"
-   * @method Handlebars.helpers.labelFor
-   * @param field {String} The field name to convert to a compliant "for" attribute
-   * @param options {<Handlebars context>} Always passed in as final argument
-   * @param [option.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-   * @return {String} Compliant HTML generating the "for" attribute
-   */
-  Handlebars.registerHelper('labelFor', function(field, options) {
-    return Handlebars.helpers.formAttr(field, 'for', options);
-  });
-
-  /**
-   * Usage: {{bindModel 'fieldName' value='suffix'}}
-   * Generates: id="field-name-suffix" name="field-name-suffix" data-model="fieldName" data-feedback="firstName"
-   * @method Handlebars.helpers.bindModel
-   * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
-   * @param options {<Handlebars context>} Always passed in as final argument
-   * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-   * @return {String} Compliant HTML generating the id, name, data-model, and data-feedback attributes
-   */
-  Handlebars.registerHelper('bindModel', function(field, options) {
-    return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
-  });
-
-  /**
-   * Usage: {{feedback 'fieldName'}}
-   * Generates: data-feedback="firstName"
-   * @method Handlebars.helpers.feedback
-   * @param field {String} The field name to convert to a compliant data-feedback attribute
-   * @param options {<Handlebars context>} Always passed in as final argument
-   * @return {String} Compliant HTML generating the data-feedback attribute
-   */
-  Handlebars.registerHelper('feedback', function(field, options) {
-    return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
-  });
-
-  /**
-   * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
-   * Generates: id="first-name-123_sub-demo" for="first-name-123_sub"
-   * @method Handlebars.helpers.formAttr
-   * @param field {String} The field name to convert to a compliant data-feedback attribute
-   * @param options {<Handlebars context>} Always passed in as final argument
-   * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-   * @return {String} Compliant HTML generating the data-feedback attribute
-   */
-  Handlebars.registerHelper('formAttr', function(field, attrs, options) {
-    var i, attrName,
-      value = (options.hash ? options.hash.value : undefined),
-      res = Handlebars.helpers.injectFieldIndices(field, options.hash),
-      attributes = '';
-    attrs = attrs.split(',');
-    for (i = 0; i < attrs.length; i++) {
-      attrName = attrs[i].trim();
-      if (attrName === FEEDBACK_KEY) {
-        attributes += 'data-feedback="' + res + '" ';
-      } else if (attrName === MODEL_KEY) {
-        attributes += 'data-model="' + res + '" ';
-      } else if (attrName === 'name') {
-        attributes += 'name="' + Handlebars.helpers.dasherize(res) + '" ';
-      } else if (attrName === 'id') {
-        attributes += 'id="' + Handlebars.helpers.dasherize(res);
-        if (value !== undefined) {
-          attributes += '-' + value;
+    /**
+     * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
+     * Generates: id="first-name-123_sub-demo" for="first-name-123_sub"
+     * @method Handlebars.helpers.formAttr
+     * @param field {String} The field name to convert to a compliant data-feedback attribute
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {String} Compliant HTML generating the data-feedback attribute
+     */
+    Handlebars.registerHelper('formAttr', function(field, attrs, options) {
+      var i, attrName,
+        value = (options.hash ? options.hash.value : undefined),
+        res = Handlebars.helpers.injectFieldIndices(field, options.hash),
+        attributes = '';
+      attrs = attrs.split(',');
+      for (i = 0; i < attrs.length; i++) {
+        attrName = attrs[i].trim();
+        if (attrName === FEEDBACK_KEY) {
+          attributes += 'data-feedback="' + res + '" ';
+        } else if (attrName === MODEL_KEY) {
+          attributes += 'data-model="' + res + '" ';
+        } else if (attrName === 'name') {
+          attributes += 'name="' + Handlebars.helpers.dasherize(res) + '" ';
+        } else if (attrName === 'id') {
+          attributes += 'id="' + Handlebars.helpers.dasherize(res);
+          if (value !== undefined) {
+            attributes += '-' + value;
+          }
+          attributes += '" ';
+        } else if (attrName === 'for') {
+          attributes += 'for="' + Handlebars.helpers.dasherize(res);
+          if (value !== undefined) {
+            attributes += '-' + value;
+          }
+          attributes += '" ';
         }
-        attributes += '" ';
-      } else if (attrName === 'for') {
-        attributes += 'for="' + Handlebars.helpers.dasherize(res);
-        if (value !== undefined) {
-          attributes += '-' + value;
-        }
-        attributes += '" ';
       }
-    }
-    if (value !== undefined) {
-      attributes += 'value="' + value +'"';
-    }
-    return new Handlebars.SafeString(attributes);
-  });
+      if (value !== undefined) {
+        attributes += 'value="' + value +'"';
+      }
+      return new Handlebars.SafeString(attributes);
+    });
 
-  /**
-   * @method Handlebars.helpers.dasherize
-   * @param str {String} The input string to make HTML compliant (convert to dashes)
-   * @return {String} HTML complicant / dasherized string
-   */
-  Handlebars.registerHelper('dasherize', function(str) {
-    var camelCaseRemoved, dotsRemoved, bracesRemoved;
-    camelCaseRemoved = str.replace(/([A-Z])/g, function(rep) {
-      return '-' + rep.toLowerCase();
-    });
-    dotsRemoved = camelCaseRemoved.replace(/\./g, function() {
-      return '_';
-    });
-    bracesRemoved = dotsRemoved.replace(/\[[0-9]+\]/g, function(rep) {
-      return '-' + rep.substring(1, rep.length - 1);
-    });
-    return bracesRemoved;
-  });
-
-  /**
-   * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});
-   * Generates: 'test[123]-thisIsRegular-y'
-   * @method injectFieldIndices
-   * @param field {String} The field name
-   * @param indexMap {Object} A map of variables
-   * @return {String} the field string with array variables substituted
-   */
-  Handlebars.registerHelper('injectFieldIndices', function(field, indexMap) {
-    if (indexMap) {
-      return field.replace(/\[.+?\]/g, function(m) {
-        var newIndex = indexMap[m.substring(1, m.length - 1)];
-        return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+    /**
+     * @method Handlebars.helpers.dasherize
+     * @param str {String} The input string to make HTML compliant (convert to dashes)
+     * @return {String} HTML complicant / dasherized string
+     */
+    Handlebars.registerHelper('dasherize', function(str) {
+      var camelCaseRemoved, dotsRemoved, bracesRemoved;
+      camelCaseRemoved = str.replace(/([A-Z])/g, function(rep) {
+        return '-' + rep.toLowerCase();
       });
-    } else {
-      return field;
-    }
-  });
+      dotsRemoved = camelCaseRemoved.replace(/\./g, function() {
+        return '_';
+      });
+      bracesRemoved = dotsRemoved.replace(/\[[0-9]+\]/g, function(rep) {
+        return '-' + rep.substring(1, rep.length - 1);
+      });
+      return bracesRemoved;
+    });
+
+    /**
+     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});
+     * Generates: 'test[123]-thisIsRegular-y'
+     * @method injectFieldIndices
+     * @param field {String} The field name
+     * @param indexMap {Object} A map of variables
+     * @return {String} the field string with array variables substituted
+     */
+    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap) {
+      if (indexMap) {
+        return field.replace(/\[.+?\]/g, function(m) {
+          var newIndex = indexMap[m.substring(1, m.length - 1)];
+          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+        });
+      } else {
+        return field;
+      }
+    });
+  };
 }));
 
 (function(root, factory) {
@@ -566,7 +515,7 @@
        * @param options {Object} - the object to hold the options needed by the base fetch method
        */
       collection.fetch = function(options) {
-        this._loadWrapper(base.fetch, options);
+        return this._loadWrapper(base.fetch, options);
       };
 
       /**
@@ -616,15 +565,15 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
+    define([], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
+    module.exports = factory();
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory((root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.polling = factory();
   }
-}(this, function($) {
+}(this, function() {
   /**
    * Periodic Polling Object to be mixed into Backbone Collections and Models.
    *
@@ -659,6 +608,7 @@
      * @param  pollInterval {Integer} interval between each poll in ms.
      */
     startPolling: function(pollInterval) {
+      var self = this;
       if (pollInterval) {
         this._pollInterval = pollInterval;
       }
@@ -668,9 +618,9 @@
       } else {
         this._pollStarted = true;
         this._poll();
-        this.pollTimeoutId = window.setInterval($.proxy(function() {
-          this._poll();
-        }, this), this._pollInterval);
+        this.pollTimeoutId = window.setInterval(function() {
+          self._poll();
+        }, this._pollInterval);
       }
     },
 
@@ -3019,42 +2969,42 @@
     _isDisposed: false,
 
     /**
-     * The super constructor / initialize method for views.
-     * Creates a unique GUID for this view.
-     * @method super
+     * The default initialize method.
+     * @method initialize
+     * @param [args]
+     * @param   [args.preventDefault=false] Prevents render and activate call
      */
-    super: function() {
-      this.generateGUID();
+    initialize: function(args) {
       this._childViews = {};
       this.viewState = new Cell();
+      if (!args.preventDefault) {
+        this.render();
+        this.activate();
+      }
     },
 
     /**
-     * The default initialize method should simply call the
-     * super constructor.
-     * @method initialize
-     */
-    initialize: function() {
-      this.super();
-      this.render();
-      this.activate();
-    },
-
-    /**
-     * @return {Object} context for a render method. Defaults to empty object.
+     * @return {Object} context for a render method. Defaults to:
+     *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
      * @method prepare
      */
     prepare: function() {
       if (this.model) {
-        return this.model.toJSON();
+        return {
+          model: this.model.toJSON(),
+          view: this.viewState.toJSON()
+        };
       } else {
-        return {};
+        return {
+          view: this.viewState.toJSON()
+        };
       }
     },
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
-     * Defaults to using this.templateRender
+     * Defaults to using this.templateRender. Assumes that this.template is a javascript
+     * function that accepted a single JSON context.
      * @method render
      */
     render: function() {
@@ -3064,24 +3014,6 @@
       }
     },
 
-    /**
-     * Generates and sets this view's GUID (if null)
-     * @method generateGUID
-     */
-    generateGUID: function() {
-      if (this._GUID === null) {
-        this._GUID = guidManager.generate(this);
-      }
-    },
-
-    /**
-     * Returns the GUID
-     *
-     * @method getGUID
-     */
-    getGUID: function() {
-      return this._GUID;
-    },
 
     /**
      * Hotswap rendering system reroute method.
@@ -3094,33 +3026,20 @@
     },
 
     /**
-     * Creates a private collection object for this view using the
-     * input collection as a reference.  If the invoking view is
-     * visiting this method for the first time, the view will be
-     * assigned a unique requester Id.  Private collections have all
-     * the functionality of the original collection, but are automatically
-     * managed by the parent (passed in) collection.  That is, any view
-     * using a provate collection should only have to worry about registering
-     * Ids of interest, and the rest is managed behind the scenes.
-     * @method createPrivateCollection
-     * @param  parentCollection {Collection} The parent collection to mimic and link to
-     * @return {Collection} The new private collection
+     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
+     * After dispose is called, the view can be safely garbage collected. Called while
+     * recursively removing views from the hierarchy.
+     * @method dispose
      */
-    createPrivateCollection: function(parentCollection) {
-      return parentCollection.createPrivateCollection(this._GUID);
-    },
+    dispose: function() {
+      this.disposeCallback();
 
-    /**
-     * Removes all events and corresponding DOM for a view.
-     * Guarantees to call call "cleanupChildViews" to enforce
-     * recursive removal of views.
-     * @method cleanupSelf
-     */
-    cleanupSelf: function() {
+      // Detach DOM and deactivate the view
       this.detach();
+      this.deactivate();
 
       // Clean up child views first
-      this.cleanupChildViews();
+      this.disposeChildViews();
 
       // Remove view from DOM
       this.remove();
@@ -3138,6 +3057,11 @@
 
       this._isDisposed = true;
     },
+
+    /**
+     * @method disposeCallback
+     */
+    disposeCallback: _.noop,
 
     /**
      * Method to be invoked when deactivate is called. Use this method to turn off any
@@ -3171,9 +3095,9 @@
 
     /**
      * Default child view cleanup method that may be overriden.
-     * @method cleanupChildViews
+     * @method disposeChildViews
      */
-    cleanupChildViews: function() {
+    disposeChildViews: function() {
       _.each(this._childViews, function(view) {
         view.dispose();
       });
@@ -3216,23 +3140,29 @@
      * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
      * be done to the child view as well.
      * @param view {View} the child view
-     * @return {View} the child view
      * @method registerChildView
      */
     registerChildView: function(view) {
       this._childViews[view.cid] = view;
-      return view;
     },
 
     /**
      * Unbinds the child view - no recursive calls will be made to this child view
      * @param view {View} the child view
-     * @return {View} the child view
      * @method unregisterChildView
      */
     unregisterChildView: function(view) {
       delete this._childViews[view.cid];
-      return view;
+    },
+
+    /**
+     * Unregisters all child views
+     * @method unregisterChildViews
+     */
+    unregisterChildViews: function() {
+      _.each(this._childViews, function(view) {
+        delete this._childViews[view.cid];
+      }, this);
     },
 
     /**
@@ -3335,17 +3265,6 @@
      */
     isActive: function() {
       return this._isActive;
-    },
-
-    /**
-     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
-     * After dispose is called, the view can be safely garbage collected.
-     * By default, dispose pipes directly to cleanupSelf. Called while
-     * recursively removing views from the hierarchy.
-     * @method dispose
-     */
-    dispose: function() {
-      this.cleanupSelf();
     },
 
     /**
@@ -3503,9 +3422,10 @@
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
-      this.super();
+      View.initialize.prototype.call(this, {preventDefault: true});
       this.listViewSetup(args);
       this.render();
+      this.activate();
     },
 
     /**
@@ -3665,7 +3585,8 @@
      * @return {Backbone View} the new child view
      */
     _createChildView: function(model) {
-      var childView = this.registerChildView(new this._childView(this._generateChildArgs(model)));
+      var childView = new this._childView(this._generateChildArgs(model));
+      this.registerChildView(childView);
       this._modelToViewMap[model.cid] = childView.cid;
       return childView;
     },
@@ -3770,8 +3691,7 @@
      * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
      */
     initialize: function(args) {
-      this.super();
-
+      View.prototype.initialize.call(this, {preventDefault: true});
       args = args || {};
 
       /* Listen to model validation callbacks */
@@ -3794,6 +3714,7 @@
 
       /* Render */
       this.render();
+      this.activate();
     },
 
     /**
@@ -3841,7 +3762,7 @@
     /**
      * Before any DOM rendering is done, this method is called and removes any
      * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <class>.__super__.plug.apply(this, arguments);
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
      * @method unplug
      */
     unplug: function() {
@@ -3851,7 +3772,7 @@
     /**
      * After all DOM rendering is done, this method is called and attaches any
      * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <class>.__super__.plug.apply(this, arguments);
+     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
      * @method plug
      */
     plug: function() {
@@ -3905,12 +3826,12 @@
 
     /**
      * Dispose method that intelligently removes any newly allocated
-     * resources or event bindings then calls the super class.
-     * @method valid
+     * resources or event bindings then calls the base dispose.
+     * @method dispose
      */
     dispose: function() {
       this.unstickit();
-      FormView.__super__.dispose.apply(this, arguments);
+      View.prototype.dispose.apply(this, arguments);
     },
 
     /**

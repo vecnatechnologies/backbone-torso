@@ -71,8 +71,7 @@
      * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
      */
     initialize: function(args) {
-      this.super();
-
+      View.prototype.initialize.call(this, {preventDefault: true});
       args = args || {};
 
       /* Listen to model validation callbacks */
@@ -95,6 +94,7 @@
 
       /* Render */
       this.render();
+      this.activate();
     },
 
     /**
@@ -142,7 +142,7 @@
     /**
      * Before any DOM rendering is done, this method is called and removes any
      * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <class>.__super__.plug.apply(this, arguments);
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
      * @method unplug
      */
     unplug: function() {
@@ -152,7 +152,7 @@
     /**
      * After all DOM rendering is done, this method is called and attaches any
      * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <class>.__super__.plug.apply(this, arguments);
+     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
      * @method plug
      */
     plug: function() {
@@ -206,12 +206,12 @@
 
     /**
      * Dispose method that intelligently removes any newly allocated
-     * resources or event bindings then calls the super class.
-     * @method valid
+     * resources or event bindings then calls the base dispose.
+     * @method dispose
      */
     dispose: function() {
       this.unstickit();
-      FormView.__super__.dispose.apply(this, arguments);
+      View.prototype.dispose.apply(this, arguments);
     },
 
     /**

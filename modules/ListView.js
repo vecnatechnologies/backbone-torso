@@ -141,9 +141,10 @@
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
-      this.super();
+      View.initialize.prototype.call(this, {preventDefault: true});
       this.listViewSetup(args);
       this.render();
+      this.activate();
     },
 
     /**
@@ -303,7 +304,8 @@
      * @return {Backbone View} the new child view
      */
     _createChildView: function(model) {
-      var childView = this.registerChildView(new this._childView(this._generateChildArgs(model)));
+      var childView = new this._childView(this._generateChildArgs(model));
+      this.registerChildView(childView);
       this._modelToViewMap[model.cid] = childView.cid;
       return childView;
     },

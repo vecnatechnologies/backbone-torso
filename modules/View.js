@@ -30,42 +30,42 @@
     _isDisposed: false,
 
     /**
-     * The super constructor / initialize method for views.
-     * Creates a unique GUID for this view.
-     * @method super
+     * The default initialize method.
+     * @method initialize
+     * @param [args]
+     * @param   [args.preventDefault=false] Prevents render and activate call
      */
-    super: function() {
-      this.generateGUID();
+    initialize: function(args) {
       this._childViews = {};
       this.viewState = new Cell();
+      if (!args.preventDefault) {
+        this.render();
+        this.activate();
+      }
     },
 
     /**
-     * The default initialize method should simply call the
-     * super constructor.
-     * @method initialize
-     */
-    initialize: function() {
-      this.super();
-      this.render();
-      this.activate();
-    },
-
-    /**
-     * @return {Object} context for a render method. Defaults to empty object.
+     * @return {Object} context for a render method. Defaults to:
+     *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
      * @method prepare
      */
     prepare: function() {
       if (this.model) {
-        return this.model.toJSON();
+        return {
+          model: this.model.toJSON(),
+          view: this.viewState.toJSON()
+        };
       } else {
-        return {};
+        return {
+          view: this.viewState.toJSON()
+        };
       }
     },
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
-     * Defaults to using this.templateRender
+     * Defaults to using this.templateRender. Assumes that this.template is a javascript
+     * function that accepted a single JSON context.
      * @method render
      */
     render: function() {
@@ -75,24 +75,6 @@
       }
     },
 
-    /**
-     * Generates and sets this view's GUID (if null)
-     * @method generateGUID
-     */
-    generateGUID: function() {
-      if (this._GUID === null) {
-        this._GUID = guidManager.generate(this);
-      }
-    },
-
-    /**
-     * Returns the GUID
-     *
-     * @method getGUID
-     */
-    getGUID: function() {
-      return this._GUID;
-    },
 
     /**
      * Hotswap rendering system reroute method.
@@ -105,33 +87,20 @@
     },
 
     /**
-     * Creates a private collection object for this view using the
-     * input collection as a reference.  If the invoking view is
-     * visiting this method for the first time, the view will be
-     * assigned a unique requester Id.  Private collections have all
-     * the functionality of the original collection, but are automatically
-     * managed by the parent (passed in) collection.  That is, any view
-     * using a provate collection should only have to worry about registering
-     * Ids of interest, and the rest is managed behind the scenes.
-     * @method createPrivateCollection
-     * @param  parentCollection {Collection} The parent collection to mimic and link to
-     * @return {Collection} The new private collection
+     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
+     * After dispose is called, the view can be safely garbage collected. Called while
+     * recursively removing views from the hierarchy.
+     * @method dispose
      */
-    createPrivateCollection: function(parentCollection) {
-      return parentCollection.createPrivateCollection(this._GUID);
-    },
+    dispose: function() {
+      this.disposeCallback();
 
-    /**
-     * Removes all events and corresponding DOM for a view.
-     * Guarantees to call call "cleanupChildViews" to enforce
-     * recursive removal of views.
-     * @method cleanupSelf
-     */
-    cleanupSelf: function() {
+      // Detach DOM and deactivate the view
       this.detach();
+      this.deactivate();
 
       // Clean up child views first
-      this.cleanupChildViews();
+      this.disposeChildViews();
 
       // Remove view from DOM
       this.remove();
@@ -149,6 +118,11 @@
 
       this._isDisposed = true;
     },
+
+    /**
+     * @method disposeCallback
+     */
+    disposeCallback: _.noop,
 
     /**
      * Method to be invoked when deactivate is called. Use this method to turn off any
@@ -182,9 +156,9 @@
 
     /**
      * Default child view cleanup method that may be overriden.
-     * @method cleanupChildViews
+     * @method disposeChildViews
      */
-    cleanupChildViews: function() {
+    disposeChildViews: function() {
       _.each(this._childViews, function(view) {
         view.dispose();
       });
@@ -227,23 +201,29 @@
      * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
      * be done to the child view as well.
      * @param view {View} the child view
-     * @return {View} the child view
      * @method registerChildView
      */
     registerChildView: function(view) {
       this._childViews[view.cid] = view;
-      return view;
     },
 
     /**
      * Unbinds the child view - no recursive calls will be made to this child view
      * @param view {View} the child view
-     * @return {View} the child view
      * @method unregisterChildView
      */
     unregisterChildView: function(view) {
       delete this._childViews[view.cid];
-      return view;
+    },
+
+    /**
+     * Unregisters all child views
+     * @method unregisterChildViews
+     */
+    unregisterChildViews: function() {
+      _.each(this._childViews, function(view) {
+        delete this._childViews[view.cid];
+      }, this);
     },
 
     /**
@@ -346,17 +326,6 @@
      */
     isActive: function() {
       return this._isActive;
-    },
-
-    /**
-     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
-     * After dispose is called, the view can be safely garbage collected.
-     * By default, dispose pipes directly to cleanupSelf. Called while
-     * recursively removing views from the hierarchy.
-     * @method dispose
-     */
-    dispose: function() {
-      this.cleanupSelf();
     },
 
     /**

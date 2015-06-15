@@ -4,6 +4,8 @@ var jsdom = require('jsdom'),
     paths = require('../../../paths'),
     argv = require('minimist')(process.argv);
 
+require(__dirname + '/../../../' + paths.modules + '/handlebarsUtils')(handlebars);
+
 /**
  * @method [Anonymous]
  * @return a promise that resolves when the environment is set up.
