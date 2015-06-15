@@ -79,6 +79,26 @@
             myTrackedIds = ids;
           };
 
+
+          /**
+           * Adds a new model to the requester collection and tracks the model.id
+           * @method requesterMixin.addModelAndTrack
+           * @param model {Backbone Model} the model to be added
+           */
+          collection.addModelAndTrack = function(model) {
+            collection.add(model);
+            collection.trackNewId(model.id);
+          };
+
+          /**
+           * Tracks a new id
+           * @method requesterMixin.trackNewId
+           * @param id {String or Number} the id attribute of the model
+           */
+          collection.trackNewId = function(id) {
+            collection.trackIds(collection.getTrackedIds().concat(id));
+          };
+
           /**
            * Will register the new ids and then ask the cache to fetch them
            * @method requesterMixin.fetchByIds
