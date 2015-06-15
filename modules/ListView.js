@@ -141,7 +141,7 @@
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
-      View.initialize.prototype.call(this, {preventDefault: true});
+      View.prototype.initialize.call(this, {preventDefault: true});
       this.listViewSetup(args);
       this.render();
       this.activate();

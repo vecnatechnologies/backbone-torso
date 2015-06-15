@@ -4,12 +4,14 @@
   } else if (typeof exports === 'object') {
     factory();
   } else {
-    factory();
+    root.Torso = root.Torso || {};
+    root.Torso.Utils = root.Torso.Utils || {};
+    root.Torso.Utils.handlebarsUtils = factory();
   }
 }(this, function() {
   'use strict';
 
-  module.exports = function(Handlebars) {
+  return function(Handlebars) {
 
     /**
      * Extensions to handlebars helpers.
@@ -2939,19 +2941,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './guidManager', './templateRenderer', './Cell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./guidManager'), require('./templateRenderer'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.guidManager, root.Torso.Utils.templateRenderer, root.Torso.Cell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
   }
-}(this, function(_, Backbone, guidManager, templateRenderer, Cell) {
+}(this, function(_, Backbone, templateRenderer, Cell) {
   'use strict';
 
   /**
    * Generic View that deals with:
-   * - Unique GUID setting
    * - Creation of private collections
    * - Lifecycle of a view
    * @module    Torso
@@ -2960,7 +2961,6 @@
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var View = Backbone.View.extend({
-    _GUID: null,
     _childViews: null,
     viewState: null,
     template: null,
@@ -2975,6 +2975,7 @@
      * @param   [args.preventDefault=false] Prevents render and activate call
      */
     initialize: function(args) {
+      args = args || {};
       this._childViews = {};
       this.viewState = new Cell();
       if (!args.preventDefault) {
@@ -3422,7 +3423,7 @@
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
-      View.initialize.prototype.call(this, {preventDefault: true});
+      View.prototype.initialize.call(this, {preventDefault: true});
       this.listViewSetup(args);
       this.render();
       this.activate();

@@ -191,12 +191,8 @@ describe('A View being detached and attached', function() {
     view.prepare = function() {return {};};
     view.render = function() {
       this.templateRender(this.$el, this.template, this.prepare());
-      console.log('PARENT VIEW after template render: ' + view.$el.html());
-      console.log('CHILD VIEW after template render: ' + childView1.$el.html());
       this.injectView('one', this.childView1);
-      console.log('------------ END INJECT VIEW 1 -----------');
       this.injectView('two', this.childView2);
-      console.log('------------ END INJECT VIEW 2 -----------');
     };
     view.render();
     expect($('div.child').length).toBe(2);

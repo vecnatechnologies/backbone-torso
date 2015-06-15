@@ -11,7 +11,8 @@
             './Router',
             './history',
             './View', './ListView', './FormView',
-            './guidManager', './templateRenderer',
+            './templateRenderer',
+            './handlebarsUtils',
             './stickitUtils'],
            factory);
   } else if (typeof exports === 'object') {
@@ -27,7 +28,7 @@
                              require('./Router'),
                              require('./history'),
                              require('./View'), require('./ListView'), require('./FormView'),
-                             require('./guidManager'), require('./templateRenderer'));
+                             require('./templateRenderer'), require('./handlebarsUtils'));
   } else {
     root.Torso = root.Torso || {};
   }
@@ -42,7 +43,8 @@
                  Router,
                  history,
                  View, ListView, FormView,
-                 guidManager, templateRenderer) {
+                 templateRenderer,
+                 handlebarsUtils) {
 
   /**
    * File containing all dependencies that exports a single object with everything attached (same format as the global).
@@ -71,8 +73,8 @@
     Router: Router,
     history: history,
     Utils: {
-      guidManager: guidManager,
-      templateRenderer: templateRenderer
+      templateRenderer: templateRenderer,
+      handlebarsUtils: handlebarsUtils
     },
     validation: validation,
     View: View,

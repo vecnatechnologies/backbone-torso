@@ -4,12 +4,14 @@
   } else if (typeof exports === 'object') {
     factory();
   } else {
-    factory();
+    root.Torso = root.Torso || {};
+    root.Torso.Utils = root.Torso.Utils || {};
+    root.Torso.Utils.handlebarsUtils = factory();
   }
 }(this, function() {
   'use strict';
 
-  module.exports = function(Handlebars) {
+  return function(Handlebars) {
 
     /**
      * Extensions to handlebars helpers.
