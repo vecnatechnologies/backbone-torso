@@ -2989,8 +2989,9 @@
     _isDisposed: false,
 
     /**
-     * The default initialize method.
-     * @method initialize
+     * Overrides constructor to create needed fields and invoke activate/render after initialization
+     * @method constructor
+     * @override
      */
     constructor: function(options) {
       options = options || {};
