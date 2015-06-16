@@ -183,10 +183,14 @@ describe('A View being detached and attached', function() {
     var view = new ParentView();
     var childView1 = view.childView1;
     var childView2 = view.childView2;
+    //TODO figure out the state of a child view being attached to a view that's been attached vs. not attached
     expect(view.isAttached()).toBe(false);
+    expect(childView1.isAttached()).toBe(false);
+    expect(childView2.isAttached()).toBe(false);
+    view.attach($('div.app'));
+    expect(view.isAttached()).toBe(true);
     expect(childView1.isAttached()).toBe(true);
     expect(childView2.isAttached()).toBe(true);
-    view.attach($('div.app'));
     view.template = Handlebars.compile("<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>");
     view.prepare = function() {return {};};
     view.render = function() {

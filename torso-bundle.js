@@ -226,13 +226,10 @@
    * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
    */
   function swapElementNodes(currentNode, newNode, ignoreElements) {
-    var $currentNode = $(currentNode),
+    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
+      $currentNode = $(currentNode),
       $newNode = $(newNode),
-      idx = 0,
-      shouldIgnore,
-      $currChildNodes,
-      $newChildNodes,
-      currentAttributes;
+      idx = 0;
 
     shouldIgnore = _.some(ignoreElements, function(selector) {
       return $currentNode.is(selector);
@@ -591,15 +588,15 @@
      * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
      */
     pollTimeoutId: undefined,
-    _pollStarted: false,
-    _pollInterval: 5000,
+    __pollStarted: false,
+    __pollInterval: 5000,
 
     /**
      * Returns true if the poll is active
      * @method isPolling
      */
     isPolling: function() {
-      return this._pollStarted;
+      return this.__pollStarted;
     },
 
     /**
@@ -612,17 +609,17 @@
     startPolling: function(pollInterval) {
       var self = this;
       if (pollInterval) {
-        this._pollInterval = pollInterval;
+        this.__pollInterval = pollInterval;
       }
       // have only 1 poll going at a time
-      if (this._pollStarted) {
+      if (this.__pollStarted) {
         return;
       } else {
-        this._pollStarted = true;
-        this._poll();
+        this.__pollStarted = true;
+        this.__poll();
         this.pollTimeoutId = window.setInterval(function() {
-          self._poll();
-        }, this._pollInterval);
+          self.__poll();
+        }, this.__pollInterval);
       }
     },
 
@@ -632,7 +629,7 @@
      */
     stopPolling: function() {
       window.clearInterval(this.pollTimeoutId);
-      this._pollStarted = false;
+      this.__pollStarted = false;
     },
 
     /**
@@ -644,12 +641,14 @@
       this.fetch();
     },
 
+    /************** Private methods **************/
+
     /**
      * Private function to recursively call itself and poll for db updates.
      * @private
-     * @method _poll
+     * @method __poll
      */
-    _poll: function() {
+    __poll: function() {
       this.polledFetch();
     }
   };
@@ -2326,7 +2325,7 @@
       this._currentUpdateEvents = [];
       this._modelConfigs = [];
       options = options || {};
-      this._initMappings(options);
+      this.__initMappings(options);
 
       // override + extend the validation and labels hashes
       this.validation = _.extend({}, this.validation || {}, options.validation || {});
@@ -2359,8 +2358,8 @@
     addModel: function(modelConfig, copy) {
       this._modelConfigs.push(modelConfig);
       if (copy) {
-        this._copyFields(modelConfig.fields, this, modelConfig.model);
-        this._updateCache(modelConfig.model);
+        this.__copyFields(modelConfig.fields, this, modelConfig.model);
+        this.__updateCache(modelConfig.model);
       }
     },
 
@@ -2381,9 +2380,9 @@
     addComputed: function(computedConfig, copy) {
       this._computed.push(computedConfig);
       if (copy) {
-        this._invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
+        this.__invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
         _.each(computedConfig.models, function(modelConfig) {
-          this._updateCache(modelConfig.model);
+          this.__updateCache(modelConfig.model);
         }, this);
       }
     },
@@ -2415,7 +2414,7 @@
         if (pullFirst) {
           this.pull();
         }
-        this._setupListeners();
+        this.__setupListeners();
       }
     },
 
@@ -2460,7 +2459,7 @@
             responsesFailed = 0,
             responses = {},
             oldValues = {},
-            models = formModel._getAllModels(true),
+            models = formModel.__getAllModels(true),
             numberOfSaves = models.length;
           // If we're not forcing a save, then throw an error if the models are stale
           if (!options.force) {
@@ -2484,7 +2483,7 @@
               if (responsesFailed > 0) {
                 // Rollback if any responses have failed
                 if (options.rollback) {
-                  _.each(formModel._getAllModels(true), function(model) {
+                  _.each(formModel.__getAllModels(true), function(model) {
                     model.set(oldValues[model.cid]);
                     if (responses[model.cid].success) {
                       model.save();
@@ -2501,7 +2500,7 @@
           }
           // Grab the current values of the object models
           _.each(models, function(model) {
-            oldValues[model.cid] = formModel._getTrackedModelFields(model);
+            oldValues[model.cid] = formModel.__getTrackedModelFields(model);
           });
           // Push the form model values to the object models
           formModel.push();
@@ -2541,7 +2540,7 @@
      */
     push: function() {
       _.each(this._modelConfigs, function(modelConfig) {
-        this._copyFields(modelConfig.fields, modelConfig.model, this);
+        this.__copyFields(modelConfig.fields, modelConfig.model, this);
       }, this);
       _.each(this._computed, function(computedConfig) {
         // If a push callback is defined, fire it.
@@ -2558,13 +2557,13 @@
      */
     pull: function() {
       _.each(this._modelConfigs, function(modelConfig) {
-        this._copyFields(modelConfig.fields, this, modelConfig.model);
-        this._updateCache(modelConfig.model);
+        this.__copyFields(modelConfig.fields, this, modelConfig.model);
+        this.__updateCache(modelConfig.model);
       }, this);
       _.each(this._computed, function(computedConfig) {
-        this._invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
+        this.__invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
         _.each(computedConfig.models, function(modelConfig) {
-          this._updateCache(modelConfig.model);
+          this.__updateCache(modelConfig.model);
         }, this);
       }, this);
     },
@@ -2581,7 +2580,7 @@
       var hashValue;
       currentHashValues = currentHashValues || {};
       if (!currentHashValues[model.cid]) {
-        currentHashValues[model.cid] = this._generateHashValue(model);
+        currentHashValues[model.cid] = this.__generateHashValue(model);
       }
       hashValue = currentHashValues[model.cid];
       var isStaleModel = this._cache[model.cid] !== hashValue;
@@ -2601,8 +2600,8 @@
      */
     checkIfModelsAreStale: function() {
       var staleModels = {},
-        currentHashValues = this._generateAllHashValues();
-      _.each(this._getAllModels(true), function(model) {
+        currentHashValues = this.__generateAllHashValues();
+      _.each(this.__getAllModels(true), function(model) {
         this.isModelStale(model, staleModels, currentHashValues);
       }, this);
       return _.values(staleModels);
@@ -2616,7 +2615,7 @@
      */
     listenToModelField: function(model, field) {
       var eventName = 'change:' + field;
-      this.listenTo(model, eventName, _.bind(this._updateFormField,
+      this.listenTo(model, eventName, _.bind(this.__updateFormField,
           {formModel: this, field: field}));
       this._currentUpdateEvents.push({model: model, eventName: eventName});
     },
@@ -2630,9 +2629,87 @@
      */
     listenToComputedValuesDependency: function(computedConfig, model, field) {
       var eventName = 'change:' + field;
-      this.listenTo(model, 'change:' + field, _.bind(this._invokeComputedPull,
+      this.listenTo(model, 'change:' + field, _.bind(this.__invokeComputedPull,
           {formModel: this, models: computedConfig.models, pull: computedConfig.pull}));
       this._currentUpdateEvents.push({model: model, eventName: eventName});
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Updates a single attribute in this form model.
+     * NOTE: requires the context of this function to be:
+     * {
+     *  formModel: <this form model>,
+     *  field: <the field being updated>
+     * }
+     * @private
+     * @method __updateFormField
+     */
+    __updateFormField: function(model, value) {
+      this.formModel.set(this.field, value);
+      this.formModel.__updateCache(model);
+    },
+
+    /**
+     * NOTE: When looking to update the form model manually, call this.pull().
+     * Updates this form model with the changed attributes of a given object model
+     * @param model {Backbone.Model} the object model that has been changed
+     * @private
+     * @method __updateFormModel
+     */
+    __updateFormModel: function(model) {
+      _.each(model.changedAttributes(), function(value, fieldName) {
+        this.set(fieldName, this.__cloneVal(value));
+      }, this);
+      this.__updateCache(model);
+    },
+
+    /**
+     * Updates the form model's snapshot of the model's attributes to use later
+     * @param model {Backbone.Model} the object model
+     * @param [cache=this._cache] {Object} if passed an object (can be empty), this method will fill
+     *   this cache object instead of this form model's _cache field
+     * @private
+     * @method __updateCache
+     */
+    __updateCache: function(model) {
+      this._cache[model.cid] = this.__generateHashValue(model);
+    },
+
+    /**
+     * Create a hash value of a simple object
+     * @param obj {Object} simple object with no functions
+     * @return a hash value of the object
+     * @private
+     * @method __hashValue
+     */
+    __hashValue: function(obj) {
+      return JSON.stringify(obj);
+    },
+
+    /**
+     * @param model {Backbone.Model} the model to create the hash value from
+     * @return {String} the hash value of the model making sure to only use the tracked fields
+     * @private
+     * @method __generateHashValue
+     */
+    __generateHashValue: function(model) {
+      var modelFields = this.__getTrackedModelFields(model);
+      return this.__hashValue(modelFields);
+    },
+
+    /**
+     * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
+     * @private
+     * @method __generateAllHashValues
+     */
+    __generateAllHashValues: function() {
+      var currentHashValues = {};
+      _.each(this.__getAllModels(true), function(model) {
+        currentHashValues[model.cid] = this.__generateHashValue(model);
+      }, this);
+      return currentHashValues;
     },
 
     /**
@@ -2640,9 +2717,9 @@
      * @param val {Object|Array|Basic Data Type} a non-function value
      * @return the clone
      * @private
-     * @method _clone
+     * @method __cloneVal
      */
-    _clone: function(val) {
+    __cloneVal: function(val) {
       var seed;
       if (_.isArray(val)) {
         seed = [];
@@ -2657,16 +2734,16 @@
     /**
      * Attaches listeners to the tracked object models with callbacks that will copy new properties into this form model.
      * @private
-     * @method _setupListeners
+     * @method __setupListeners
      */
-    _setupListeners: function() {
+    __setupListeners: function() {
       _.each(this._modelConfigs, function(modelConfig) {
         if (modelConfig.fields) {
           _.each(modelConfig.fields, function(field) {
             this.listenToModelField(modelConfig.model, field);
           }, this);
         } else {
-          this.listenTo(modelConfig.model, 'change', this._updateFormModel, this);
+          this.listenTo(modelConfig.model, 'change', this.__updateFormModel, this);
           this._currentUpdateEvents.push({model: modelConfig.model, eventName: 'change'});
         }
       }, this);
@@ -2687,116 +2764,41 @@
      * @param destination {Backbone.Model} the backbone model that will have values copied into
      * @param origin {Backbone.Model} the backbone model that will be used to grab values.
      * @private
-     * @method _copyFields
+     * @method __copyFields
      */
-    _copyFields: function(fields, destination, origin) {
+    __copyFields: function(fields, destination, origin) {
       if (!fields && this === origin) {
         fields = _.keys(destination.attributes);
       }
       if (fields) {
         _.each(fields, function(field) {
-          destination.set(field, this._clone(origin.get(field)));
+          destination.set(field, this.__cloneVal(origin.get(field)));
         }, this);
       } else {
-        destination.set(this._clone(origin.attributes));
+        destination.set(this.__cloneVal(origin.attributes));
       }
-    },
-
-    /**
-     * Updates a single attribute in this form model.
-     * NOTE: requires the context of this function to be:
-     * {
-     *  formModel: <this form model>,
-     *  field: <the field being updated>
-     * }
-     * @private
-     * @method _updateFormField
-     */
-    _updateFormField: function(model, value) {
-      this.formModel.set(this.field, value);
-      this.formModel._updateCache(model);
-    },
-
-    /**
-     * Create a hash value of a simple object
-     * @param obj {Object} simple object with no functions
-     * @return a hash value of the object
-     * @private
-     * @method _hashValue
-     */
-    _hashValue: function(obj) {
-      return JSON.stringify(obj);
-    },
-
-    /**
-     * @param model {Backbone.Model} the model to create the hash value from
-     * @return {String} the hash value of the model making sure to only use the tracked fields
-     * @private
-     * @method _generateHashValue
-     */
-    _generateHashValue: function(model) {
-      var modelFields = this._getTrackedModelFields(model);
-      return this._hashValue(modelFields);
-    },
-
-    /**
-     * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
-     * @private
-     * @method _generateAllHashValues
-     */
-    _generateAllHashValues: function() {
-      var currentHashValues = {};
-      _.each(this._getAllModels(true), function(model) {
-        currentHashValues[model.cid] = this._generateHashValue(model);
-      }, this);
-      return currentHashValues;
-    },
-
-    /**
-     * Updates this form model with the changed attributes of a given object model
-     * @param model {Backbone.Model} the object model that has been changed
-     * @private
-     * @method _updateFormModel
-     */
-    _updateFormModel: function(model) {
-      _.each(model.changedAttributes(), function(value, fieldName) {
-        this.set(fieldName, this._clone(value));
-      }, this);
-      this._updateCache(model);
-    },
-
-    /**
-     * Updates the form model's snapshot of the model's attributes to use later
-     * @param model {Backbone.Model} the object model
-     * @param [cache=this._cache] {Object} if passed an object (can be empty), this method will fill
-     *   this cache object instead of this form model's _cache field
-     * @private
-     * @method _updateCache
-     */
-    _updateCache: function(model) {
-      this._cache[model.cid] = this._generateHashValue(model);
     },
 
     /**
      * @param [options] {Object} See initialize option's 'model', 'fields', 'models', 'computed'.
      * @private
-     * @method _initMappings
+     * @method __initMappings
      */
-    _initMappings: function(options) {
+    __initMappings: function(options) {
       var defaultMapping = _.result(this, 'mapping'),
         optionsMapping = _.pick(options, ['model', 'fields', 'models', 'computed']);
-      this._initModels(optionsMapping, defaultMapping);
-      this._initComputeds(optionsMapping, defaultMapping);
+      this.__initModels(optionsMapping, defaultMapping);
+      this.__initComputeds(optionsMapping, defaultMapping);
     },
 
     /**
      * @param [optionsMapping] {Object} a mapping object with override values
      * @param [defaultMapping] {Object} the default mapping object
      * @private
-     * @method _initModels
+     * @method __initModels
      */
-    _initModels: function(optionsMapping, defaultMapping) {
-      var modelConfigs = this._pullModelsFromMapping(optionsMapping) || this._pullModelsFromMapping(defaultMapping);
+    __initModels: function(optionsMapping, defaultMapping) {
+      var modelConfigs = this.__pullModelsFromMapping(optionsMapping) || this.__pullModelsFromMapping(defaultMapping);
       _.each(modelConfigs, this.addModel, this);
     },
 
@@ -2806,9 +2808,9 @@
      * @param [defaultMapping] {Object} the default mapping object
      *   @param [defaultMapping.computed] {Array} and array of Computed Configs
      * @private
-     * @method _initComputeds
+     * @method __initComputeds
      */
-    _initComputeds: function(optionsMapping, defaultMapping) {
+    __initComputeds: function(optionsMapping, defaultMapping) {
       var computeds;
       optionsMapping = optionsMapping || {};
       defaultMapping = defaultMapping || {};
@@ -2817,24 +2819,14 @@
     },
 
     /**
-     * @param [mapping] {Object} an object with object model(s) as dependencies
-     * @return {Boolean} true if the mapping exists and specifies an object model dependency
-     * @private
-     * @method _mappingHasModels
-     */
-    _mappingHasModels: function(mapping) {
-      return mapping && (mapping.model || mapping.models);
-    },
-
-    /**
      * @param [mapping] {Object} object with attributes that contain either a model/field pair as a convenience or an array of
      *   model configs. The model/field pair takes priority if both exist.
      * @return {Array} an array of model configs that are either from the mapping.model or mapping.model. If no model configs are
      *   defined in the mapping, it will return null.
      * @private
-     * @method _pullModelsFromMapping
+     * @method __pullModelsFromMapping
      */
-    _pullModelsFromMapping: function(mapping) {
+    __pullModelsFromMapping: function(mapping) {
       var modelConfigs = [];
       if (mapping && mapping.model) {
         modelConfigs.push({
@@ -2852,14 +2844,14 @@
      * @return {Object} an object with key's as the fields this form model is tracking against
      *   the model and value's as the current value in that object model
      * @private
-     * @method _getTrackedModelFields
+     * @method __getTrackedModelFields
      */
-    _getTrackedModelFields: function(model) {
+    __getTrackedModelFields: function(model) {
       var allFields,
         fieldsUsed = {},
         modelFields = {},
         modelConfigs = [];
-      _.each(this._getAllModelConfigs(), function(modelConfig) {
+      _.each(this.__getAllModelConfigs(), function(modelConfig) {
         if (modelConfig.model.cid === model.cid) {
           modelConfigs.push(modelConfig);
         }
@@ -2868,13 +2860,13 @@
         return result || !modelConfig.fields;
       }, false);
       if (allFields) {
-        modelFields = this._clone(model.attributes);
+        modelFields = this.__cloneVal(model.attributes);
       } else {
         _.each(modelConfigs, function(modelConfig) {
           _.each(modelConfig.fields, function(field) {
             if (!fieldsUsed[field]) {
               fieldsUsed[field] = true;
-              modelFields[field] = this._clone(model.get(field));
+              modelFields[field] = this.__cloneVal(model.get(field));
             }
           }, this);
         }, this);
@@ -2887,11 +2879,11 @@
      * @return {Array} a list of object models that this form model is using a dependencies. Includes those defined in the
      *   computed fields
      * @private
-     * @method _getAllModels
+     * @method __getAllModels
      */
-    _getAllModels: function(normalize) {
+    __getAllModels: function(normalize) {
       var modelsSeen = {},
-        models = _.pluck(this._getAllModelConfigs(), 'model');
+        models = _.pluck(this.__getAllModelConfigs(), 'model');
       if (normalize) {
         var normalizedModels = [];
         _.each(models, function(model) {
@@ -2909,9 +2901,9 @@
      * @return {Array} a list of Model Configurations that this form model is using a dependencies. Includes those defined in the
      *   computed fields
      * @private
-     * @method _getAllModelConfigs
+     * @method __getAllModelConfigs
      */
-    _getAllModelConfigs: function() {
+    __getAllModelConfigs: function() {
       var modelConfigs = this._modelConfigs.slice();
       _.each(this._computed, function(computedConfig) {
         modelConfigs = modelConfigs.concat(computedConfig.models);
@@ -2932,21 +2924,21 @@
      *  update: <the update callback from the Computed Configuration>,
      * }
      * @private
-     * @method _invokeComputedPull
+     * @method __invokeComputedPull
      */
-    _invokeComputedPull: function(model) {
+    __invokeComputedPull: function(model) {
       var args = [];
       if (model) {
-        this.formModel._updateCache(model);
+        this.formModel.__updateCache(model);
       }
       (function(formModel, pullCallback, modelConfigs) {
         _.each(modelConfigs, function(modelConfig) {
           if (modelConfig.fields) {
             _.each(modelConfig.fields, function(field) {
-              args.push(formModel._clone(modelConfig.model.get(field)));
+              args.push(formModel.__cloneVal(modelConfig.model.get(field)));
             });
           } else {
-            args.push(formModel._clone(modelConfig.model.attributes));
+            args.push(formModel.__cloneVal(modelConfig.model.attributes));
           }
         });
         pullCallback.apply(formModel, args);
@@ -2981,12 +2973,26 @@
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var View = Backbone.View.extend({
-    _childViews: null,
     viewState: null,
     template: null,
-    _isActive: false,
-    _isAttached: false,
-    _isDisposed: false,
+    feedback: null,
+    feedbackModel: null, // TODO feedback model shouldn't be called a model if it's a cell
+    __childViews: null,
+    __isActive: false,
+    __isAttached: false,
+    __isDisposed: false,
+    __feedbackEvents: null,
+    /**
+     * Array of feedback when-then-to's. Example:
+     * [{
+     *   when: {'@fullName': ['change']},
+     *   then: function(event) { return {text: this.feedbackModel.get('fullName')};},
+     *   to: 'fullName-feedback'
+     * }]
+     * @private
+     * @property feedback
+     * @type Array
+     */
 
     /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
@@ -2995,11 +3001,12 @@
      */
     constructor: function(options) {
       options = options || {};
-      this._childViews = {};
       this.viewState = new Cell();
+      this.feedbackModel = new Cell();
+      this.__childViews = {};
+      this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
-      if (!options.preventDefault) {
-        this.render();
+      if (!options.noActivate) {
         this.activate();
       }
     },
@@ -3032,9 +3039,9 @@
       this.unplug();
       if (this.template) {
         this.templateRender(this.$el, this.template, this.prepare());
+        this.plug();
         this.delegateEvents();
       }
-      this.plug();
     },
 
     /**
@@ -3045,6 +3052,18 @@
     templateRender: function(el, template, context, opts) {
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
+    },
+
+    /**
+     * Binds DOM events with the view using events hash.
+     * Also adds feedback event bindings
+     * @method delegateEvents
+     * @override
+     */
+    delegateEvents: function() {
+      Backbone.View.prototype.delegateEvents.call(this);
+      this.__generateFeedbackBindings();
+      this.__generateFeedbackModelCallbacks();
     },
 
     /**
@@ -3077,7 +3096,7 @@
       delete this.$el;
       delete this.el;
 
-      this._isDisposed = true;
+      this.__isDisposed = true;
     },
 
     /**
@@ -3107,7 +3126,7 @@
      * @method hasChildViews
      */
     hasChildViews: function() {
-      return !_.isEmpty(this._childViews);
+      return !_.isEmpty(this.__childViews);
     },
 
     /**
@@ -3115,7 +3134,17 @@
      * @method getChildViews
      */
     getChildViews: function() {
-      return _.values(this._childViews);
+      return _.values(this.__childViews);
+    },
+
+    /**
+     * Returns the view that corresponds to the cid
+     * @param viewCID {cid} the view cid
+     * @return the child view corresponding to the cid
+     * @method getChildView
+     */
+    getChildView: function(viewCID) {
+      return this.__childViews[viewCID];
     },
 
     /**
@@ -3123,7 +3152,7 @@
      * @method disposeChildViews
      */
     disposeChildViews: function() {
-      _.each(this._childViews, function(view) {
+      _.each(this.__childViews, function(view) {
         view.dispose();
       });
     },
@@ -3134,7 +3163,7 @@
      * @method deactivateChildViews
      */
     deactivateChildViews: function() {
-      _.each(this._childViews, function(view) {
+      _.each(this.__childViews, function(view) {
         view.deactivate();
       });
     },
@@ -3145,7 +3174,7 @@
      * @method deactivateChildViews
      */
     activateChildViews: function() {
-      _.each(this._childViews, function(view) {
+      _.each(this.__childViews, function(view) {
         view.activate();
       });
     },
@@ -3156,7 +3185,7 @@
      * @method detachChildViews
      */
     detachChildViews: function() {
-      _.each(this._childViews, function(view) {
+      _.each(this.__childViews, function(view) {
         view.detach();
       });
     },
@@ -3168,7 +3197,7 @@
      * @method registerChildView
      */
     registerChildView: function(view) {
-      this._childViews[view.cid] = view;
+      this.__childViews[view.cid] = view;
     },
 
     /**
@@ -3177,7 +3206,7 @@
      * @method unregisterChildView
      */
     unregisterChildView: function(view) {
-      delete this._childViews[view.cid];
+      delete this.__childViews[view.cid];
     },
 
     /**
@@ -3185,8 +3214,8 @@
      * @method unregisterChildViews
      */
     unregisterChildViews: function() {
-      _.each(this._childViews, function(view) {
-        delete this._childViews[view.cid];
+      _.each(this.__childViews, function(view) {
+        this.unregisterChildView(view);
       }, this);
     },
 
@@ -3198,7 +3227,7 @@
      * @param view          {View}   The instantiated view object to inject
      */
     injectView: function(injectionSite, view) {
-      var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
+      var injectionPoint = this.$('[inject=' + injectionSite + ']');
       if (view && injectionPoint.size() > 0) {
         this.attachChildView(injectionPoint, view);
       }
@@ -3229,7 +3258,7 @@
           this.$el.detach();
         }
         this.deactivate();
-        this._isAttached = false;
+        this.__isAttached = false;
       }
     },
 
@@ -3245,7 +3274,7 @@
         this.render();
         this.injectionSite = $el.replaceWith(this.$el);
         this.activate();
-        this._isAttached = true;
+        this.__isAttached = true;
       }
     },
 
@@ -3254,7 +3283,7 @@
      * @method isAttached
      */
     isAttached: function() {
-      return this._isAttached;
+      return this.__isAttached;
     },
 
     /**
@@ -3267,7 +3296,7 @@
       if (this.isActive()) {
         this.undelegateEvents();
         this._deactivate();
-        this._isActive = false;
+        this.__isActive = false;
       }
     },
 
@@ -3280,7 +3309,7 @@
       if (!this.isActive()) {
         this.delegateEvents();
         this._activate();
-        this._isActive = true;
+        this.__isActive = true;
       }
     },
 
@@ -3305,7 +3334,7 @@
      * @method isActive
      */
     isActive: function() {
-      return this._isActive;
+      return this.__isActive;
     },
 
     /**
@@ -3313,8 +3342,337 @@
      * @method isDisposed
      */
     isDisposed: function() {
-      return this._isDisposed;
+      return this.__isDisposed;
+    },
+
+    /**
+     * Invokes a feedback entry's "then" method
+     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
+     * @param [evt] {Event} the event to be passed to the "then" method
+     * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
+     * @method invokeFeedback
+     */
+    invokeFeedback: function(to, evt, indexMap) {
+      var result,
+        feedbackToInvoke = _.find(this.feedback, function(feedback) {
+          var toToCheck = feedback.to;
+          if (_.isArray(toToCheck)) {
+            return _.contains(toToCheck, to);
+          } else {
+            return to === toToCheck;
+          }
+        }),
+        feedbackModelField = to;
+      if (feedbackToInvoke) {
+        if (indexMap) {
+          feedbackModelField = this.__substituteIndicesUsingMap(to, indexMap);
+        }
+        result = feedbackToInvoke.then.call(this, evt, indexMap);
+        this.__processFeedbackThenResult(result, feedbackModelField);
+      }
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Generates callbacks for changes in feedback model fields
+     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback model
+     * If feedbackModel.get('fullName') returns:
+     * { text: 'my text',
+     *   attr: {class: 'newClass'}
+     *   hide: [100, function() {...}]
+     * ...}
+     * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
+     * @private
+     * @method __generateFeedbackModelCallbacks
+     */
+    __generateFeedbackModelCallbacks: function() {
+      var self = this;
+      // Feedback one-way bindings
+      self.feedbackModel.off();
+      _.each(this.$('[data-feedback]'), function(element) {
+        var attr = $(element).data('feedback');
+        self.feedbackModel.on('change:' + attr, (function(field) {
+          return function() {
+            var $element,
+              state = self.feedbackModel.get(field);
+            if (!state) {
+              return;
+            }
+            $element = self.$el.find('[data-feedback="' + field + '"]');
+            _.each(state, function(value, key) {
+              var target;
+              if (_.first(key) === '_') {
+                target = self[key.slice(1)];
+              } else {
+                target = $element[key];
+              }
+              if (_.isArray(value)) {
+                target.apply($element, value);
+              } else if (value !== undefined) {
+                target.call($element, value);
+              }
+            });
+          };
+        })(attr));
+      });
+      _.each(self.feedbackModel.attributes, function(value, attr) {
+        self.feedbackModel.trigger('change:' + attr);
+      });
+    },
+
+    /**
+     * Processes the result of the then method. Adds to the feedback model.
+     * @param result {Object} the result of the then method
+     * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
+     * @private
+     * @method __processFeedbackThenResult
+     */
+    __processFeedbackThenResult: function(result, feedbackModelField) {
+      var newState = $.extend({}, result);
+      this.feedbackModel.set(feedbackModelField, newState, {silent: true});
+      this.feedbackModel.trigger('change:' + feedbackModelField);
+    },
+
+    /**
+     * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks
+     * Finds all feedback zones that match the "to" field, and binds the "when" events to invoke the "then" method
+     * @private
+     * @method __generateFeedbackBindings
+     */
+    __generateFeedbackBindings: function() {
+      var i,
+          self = this;
+
+      // Cleanup previous "on" events
+      for (i = 0; i < this.__feedbackEvents.length; i++) {
+        this.off(null, this.__feedbackEvents[i]);
+      }
+      this.__feedbackEvents = [];
+
+      // For each feedback configuration
+      _.each(this.feedback, function(declaration) {
+        var toEntries = [declaration.to];
+        if (_.isArray(declaration.to)) {
+          toEntries = declaration.to;
+        }
+        _.each(toEntries, function(to) {
+          var destinations = self.__getFeedbackDestinations(to),
+            destIndexTokens = self.__getAllIndexTokens(to);
+
+          // Iterate over all destinations
+          _.each(destinations, function(dest) {
+            var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
+            dest = $(dest);
+            fieldName = dest.data('feedback');
+            indices = self.__getAllIndexTokens(fieldName);
+            indexMap = {};
+            // Generates a mapping from variable name to value:
+            // If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
+            // then the map would look like: {x: 1, y: 4}
+            _.each(destIndexTokens, function(indexToken, i) {
+              indexMap[indexToken] = indices[i];
+            });
+            then = declaration.then;
+
+            // If the "then" clause is a string, assume it's a view method
+            if (_.isString(then)) {
+              then = self[then];
+            } else if (_.isArray(then)) {
+              // If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
+              args = then.slice();
+              method = args[0];
+              args.shift();
+              then = self[method].apply(self, args);
+            }
+
+            // track the indices for binding
+            bindInfo = {
+              feedbackModelField: fieldName,
+              fn: then,
+              indices: indexMap
+            };
+            // Iterate over all "when" clauses
+            whenEvents = self.__generateWhenEvents(declaration.when, indexMap);
+            _.each(whenEvents, function(eventKey) {
+              var match, delegateEventSplitter,
+                invokeThen = function(evt) {
+                  var i, args, result, newState;
+                  args = [evt];
+                  newState = {};
+                  args.push(bindInfo.indices);
+                  result = bindInfo.fn.apply(self, args);
+                  self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                };
+              delegateEventSplitter = /^(\S+)\s*(.*)$/;
+              match = eventKey.match(delegateEventSplitter);
+              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
+            });
+            // Special "on" listeners
+            _.each(declaration.when.on, function(eventKey) {
+              var invokeThen = function() {
+                var result,
+                    args = [{
+                      args: arguments,
+                      type: eventKey
+                    }];
+                args.push(bindInfo.indices);
+                result = bindInfo.fn.apply(self, args);
+                self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+              };
+              self.on(eventKey, invokeThen, self);
+              self.__feedbackEvents.push(invokeThen);
+            });
+          });
+        });
+      });
+    },
+
+    /**
+     * Returns all elements on the page that match the feedback mapping
+     * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
+     * @param dest {String} the string of the data-feedback
+     * @return {jQuery array} all elements on the page that match the feedback mapping
+     * @private
+     * @method __getFeedbackDestinations
+     */
+    __getFeedbackDestinations: function(dest) {
+      var self = this,
+          strippedField = this.__stripAllAttribute(dest),
+          destPrefix = dest,
+          firstArrayIndex = dest.indexOf('[');
+      if (firstArrayIndex > 0) {
+        destPrefix = dest.substring(0, firstArrayIndex);
+      }
+      // Tries to match as much as possible by using a prefix (the string before the array notation)
+      return this.$('[data-feedback^="' + destPrefix + '"]').filter(function() {
+        // Only take the elements that actually match after the array notation is converted to open notation ([x] -> [])
+        return self.__stripAllAttribute($(this).data('feedback')) === strippedField;
+      });
+    },
+
+    /**
+     * Generates the events needed to listen to the feedback's when methods. A when event is only created
+     * if the appropriate element exist on the page
+     * @param whenMap the collection of "when"'s for a given feedback
+     * @param indexMap map from variable names to values when substituting array notation
+     * @return the events that were generated
+     * @private
+     * @method __generateWhenEvents
+     */
+    __generateWhenEvents: function(whenMap, indexMap) {
+      var self = this,
+          events = [];
+      _.each(whenMap, function(whenEvents, whenField) {
+        var substitutedWhenField,
+            qualifiedFields = [whenField],
+            useAtNotation = (whenField.charAt(0) === '@');
+
+        if (whenField !== 'on') {
+          if (useAtNotation) {
+            whenField = whenField.substring(1);
+            // substitute indices in to "when" placeholders
+            // [] -> to all, [0] -> to specific, [x] -> [x's value]
+            substitutedWhenField = self.__substituteIndicesUsingMap(whenField, indexMap);
+            qualifiedFields = _.flatten(self.__generateSubAttributes(substitutedWhenField, self.model));
+          }
+          // For each qualified field
+          _.each(qualifiedFields, function(qualifiedField) {
+            _.each(whenEvents, function(eventType) {
+              var backboneEvent = eventType + ' ' + qualifiedField;
+              if (useAtNotation) {
+                backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
+              }
+              events.push(backboneEvent);
+            });
+          });
+        }
+      });
+      return events;
+    },
+
+    /**
+     * Returns an array of all the values and variables used within the array notations in a string
+     * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
+     * This does not handle or return any "open" array notations: []
+     * @private
+     * @method __getAllIndexTokens
+     */
+    __getAllIndexTokens: function(attr) {
+      return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
+        var token = arrayNotation.substring(1, arrayNotation.length - 1);
+        if (!isNaN(token)) {
+          result.push(parseInt(token, 10));
+        } else {
+          result.push(token);
+        }
+        return result;
+      }, []);
+    },
+
+    /**
+     * Replaces all array notations with open array notations.
+     * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
+     * @private
+     * @method __stripAllAttribute
+     */
+    __stripAllAttribute: function(attr) {
+      attr = attr.replace(/\[.+?\]/g, function() {
+        return '[]';
+      });
+      return attr;
+    },
+
+    /**
+     * Takes a map from variable name to value to be replaced and processes a string with them.
+     * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+     * @private
+     * @method __substituteIndicesUsingMap
+     */
+    __substituteIndicesUsingMap : function(dest, indexMap) {
+      var newIndex;
+      return dest.replace(/\[.?\]/g, function(arrayNotation) {
+        if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
+          return arrayNotation;
+        } else {
+          newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
+          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+        }
+      });
+    },
+
+    /**
+     * Generates an array of all the possible field accessors and their indices when using
+     * the "open" array notation:
+     *    foo[] -> ['foo[0]', 'foo[1]'].
+     * Will also perform nested arrays:
+     *    foo[][] -> ['foo[0][0]', foo[1][0]']
+     * @method __generateSubAttributes
+     * @private
+     * @param {String} attr The name of the attribute to expand according to the bound model
+     * @return {Array<String>} The fully expanded subattribute names
+     */
+    __generateSubAttributes: function(attr, model) {
+      var i, attrName, remainder, subAttrs, values,
+        firstBracket = attr.indexOf('[]');
+      if (firstBracket === -1) {
+        return [attr];
+      } else {
+        attrName = attr.substring(0, firstBracket);
+        remainder = attr.substring(firstBracket + 2);
+        subAttrs = [];
+        values = model.get(attrName);
+        if (!values) {
+          return [attr];
+        }
+        for (i = 0 ; i < values.length; i++) {
+          subAttrs.push(this.__generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
+        }
+        return subAttrs;
+      }
     }
+
+    /************** End Feedback **************/
   });
 
   return View;
@@ -3341,9 +3699,9 @@
      * @method breakDelayedRender
      */
     breakDelayedRender = function(view) {
-      if (view._delayedRenderTimeout) {
-        clearTimeout(view._delayedRenderTimeout);
-        view._delayedRenderTimeout = null;
+      if (view.__delayedRenderTimeout) {
+        clearTimeout(view.__delayedRenderTimeout);
+        view.__delayedRenderTimeout = null;
         view.render();
       }
     };
@@ -3359,12 +3717,12 @@
      */
     aggregateRenders = function(wait, view) {
       var postpone = function() {
-        view._delayedRenderTimeout = null;
+        view.__delayedRenderTimeout = null;
         view.render();
       };
       return function() {
-        if (!view._delayedRenderTimeout && wait > 0) {
-          view._delayedRenderTimeout = setTimeout(postpone, wait);
+        if (!view.__delayedRenderTimeout && wait > 0) {
+          view.__delayedRenderTimeout = setTimeout(postpone, wait);
         } else if (wait <= 0) {
           view.render();
         }
@@ -3378,14 +3736,14 @@
      * @param model {Backbone Model instance} the model that has been removed
      */
     removeChildView = function(model) {
-      var childView = this.getChildView(model);
+      var childView = this.getChildViewFromModel(model);
       if (childView) {
         childView.dispose();
         this.unregisterChildView(childView);
-        delete this._modelToViewMap[model.cid];
+        delete this.__modelToViewMap[model.cid];
         this.trigger('child-view-removed', {model: model, view: childView});
         if (!this.hasChildViews()) {
-          this._delayedRender();
+          this.__delayedRender();
         }
       }
     };
@@ -3402,20 +3760,20 @@
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
-        this._createChildViews();
+        this.__createChildViews();
         if (!this.hasChildViews()) {
-          this._delayedRender();
+          this.__delayedRender();
         } else {
           breakDelayedRender(this);
-          childView = this.getChildView(model);
-          viewAfter = this.getChildView(models[indexOfModel + 1]);
-          viewBefore = this.getChildView(models[indexOfModel - 1]);
+          childView = this.getChildViewFromModel(model);
+          viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
+          viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
           if (viewAfter) {
             viewAfter.$el.before(childView.$el);
           } else if (viewBefore) {
             viewBefore.$el.after(childView.$el);
           } else {
-            this._delayedRender();
+            this.__delayedRender();
           }
         }
       }
@@ -3430,20 +3788,21 @@
    */
   var ListView = View.extend({
     className: '',
-    _collection: null,
-    _modelName: '',
-    _childView: null,
-    _modelToViewMap: null,
-    _template: null,
-    _emptyTemplate: null,
-    _childContext: null,
-    _renderWait: 0,
-    _delayedRender: null,
-    _delayedRenderTimeout: null,
+    collection: null,
+    childView: null,
+    template: null,
+    emptyTemplate: null,
+    __modelName: '',
+    __modelId: '',
+    __modelToViewMap: null,
+    __childContext: null,
+    __renderWait: 0,
+    __delayedRender: null,
+    __delayedRenderTimeout: null,
 
     /**
      * Initialize the list view object.
-     * Override to add more functionality but remember to call this.listViewSetup(args) first
+     * Override to add more functionality but remember to call ListView.prorotype.initialize.call(this, args) first
      * @method initialize
      * @param args {Object} - options argument
      *   @param args.childView {Backbone.View definition} - the class definition of the child view. This view will be instantiated
@@ -3463,43 +3822,31 @@
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
-      View.prototype.initialize.call(this, {preventDefault: true});
-      this.listViewSetup(args);
-      this.render();
-      this.activate();
-    },
-
-    /**
-     * Set up the list view object. See {#initialize()} to understand the arguments required
-     * @method listViewSetup
-     * @param args {Object} See initialize method for args documentation as they are identical
-     */
-    listViewSetup: function(args) {
       var initialModels, i, l, childView,
         injectionSite = this.$el;
       args = args || {};
-      this._modelName = args.childModel || 'model';
-      this._collection = args.collection;
-      this._childView = args.childView;
-      this._template = args.template;
-      this._childrenContainer = args.childrenContainer;
-      if (this._template && !this._childrenContainer) {
+      this.collection = args.collection;
+      this.template = args.template;
+      this.emptyTemplate = args.emptyTemplate;
+      this.childView = args.childView;
+      this.childrenContainer = args.childrenContainer;
+      if (this.template && !this.childrenContainer) {
         throw 'Children container is required when using a template';
       }
-      this._emptyTemplate = args.emptyTemplate;
       this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this._childContext = args.childContext;
-      this._modelToViewMap = {};
-      this._renderWait = args.renderWait || this._renderWait;
-      this._modelId = args.modelId || 'cid';
-      this._createChildViews();
-      this._delayedRender = aggregateRenders(this._renderWait, this);
+      this.__childContext = args.childContext;
+      this.__modelToViewMap = {};
+      this.__renderWait = args.renderWait || this.__renderWait;
+      this.__modelId = args.modelId || 'cid';
+      this.__modelName = args.childModel || 'model';
+      this.__createChildViews();
+      this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
       // if a 'changed' event happens, the model's view should handle re-rendering itself
-      this.listenTo(this._collection, 'remove', removeChildView, this);
-      this.listenTo(this._collection, 'add', addChildView, this);
-      this.listenTo(this._collection, 'sort', this._delayedRender, this);
-      this.listenTo(this._collection, 'reset', this.update, this);
+      this.listenTo(this.collection, 'remove', removeChildView, this);
+      this.listenTo(this.collection, 'add', addChildView, this);
+      this.listenTo(this.collection, 'sort', this.__delayedRender, this);
+      this.listenTo(this.collection, 'reset', this.update, this);
     },
 
     /**
@@ -3511,17 +3858,17 @@
     render: function() {
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
-      if (this._template) {
-        newDOM.html(this._template(this.prepare()));
-        injectionSite = newDOM.find('[inject=' + this._childrenContainer + ']');
+      if (this.template) {
+        newDOM.html(this.template(this.prepare()));
+        injectionSite = newDOM.find('[inject=' + this.childrenContainer + ']');
       } else {
         injectionSite = $('<span>');
         newDOM.append(injectionSite);
       }
       if (this.hasChildViews()) {
-        injectionSite.replaceWith(this._buildChildViewsFragment());
-      } else if (this._emptyTemplate) {
-        injectionSite.replaceWith(this._emptyTemplate(this.prepareEmpty()));
+        injectionSite.replaceWith(this.__buildChildViewsFragment());
+      } else if (this.emptyTemplate) {
+        injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
       this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
@@ -3535,7 +3882,7 @@
      */
     renderChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildView(model);
+        var childView = this.getChildViewFromModel(model);
         childView.render();
       }, this);
     },
@@ -3566,7 +3913,7 @@
      * @method modelsToRender
      */
     modelsToRender: function() {
-      return this._collection ? this._collection.models : [];
+      return this.collection ? this.collection.models : [];
     },
 
     /**
@@ -3574,29 +3921,31 @@
      * @method update
      */
     update: function() {
-      this._createChildViews();
-      this._delayedRender();
+      this.__createChildViews();
+      this.__delayedRender();
     },
 
     /**
      * Returns the view that corresponds to the model if one exists
      * @param model {Model} the model
      * @return the child view corresponding to the model
-     * @method getChildView
+     * @method getChildViewFromModel
      */
-    getChildView: function(model) {
-      return model ? this._childViews[this._modelToViewMap[model[this._modelId]]] : undefined;
+    getChildViewFromModel: function(model) {
+      return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
     },
+
+    /************** Private methods **************/
 
     /**
      * Creates a new child view if there doesn't exist one for a model
-     * @method _createChildViews
+     * @method __createChildViews
      */
-    _createChildViews: function() {
+    __createChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildView(model);
+        var childView = this.getChildViewFromModel(model);
         if (!childView) {
-          childView = this._createChildView(model);
+          childView = this.__createChildView(model);
           this.trigger('child-view-added', {model: model, view: childView});
         }
       }, this);
@@ -3604,13 +3953,13 @@
 
     /**
      * @return a DOM fragment with child view elements appended
-     * @method _buildChildViewsFragment
+     * @method __buildChildViewsFragment
      * @private
      */
-    _buildChildViewsFragment: function(renderAlso) {
+    __buildChildViewsFragment: function(renderAlso) {
       var injectionFragment = document.createDocumentFragment();
      _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildView(model);
+        var childView = this.getChildViewFromModel(model);
         if (childView) {
           injectionFragment.appendChild(childView.el);
         }
@@ -3620,15 +3969,15 @@
 
     /**
      * Creates a child view and stores a reference to it
-     * @method _createChildView
+     * @method __createChildView
      * @private
      * @param model {Backbone Model} the model to create the view from
      * @return {Backbone View} the new child view
      */
-    _createChildView: function(model) {
-      var childView = new this._childView(this._generateChildArgs(model));
+    __createChildView: function(model) {
+      var childView = new this.childView(this.__generateChildArgs(model));
       this.registerChildView(childView);
-      this._modelToViewMap[model.cid] = childView.cid;
+      this.__modelToViewMap[model.cid] = childView.cid;
       return childView;
     },
 
@@ -3642,16 +3991,16 @@
      *   },
      *   <modelName>: <modelObject>
      * }
-     * @method _generateChildArgs
+     * @method __generateChildArgs
      * @private
      * @param model the model for a child view
      * @return a context to be used by a child view
      */
-    _generateChildArgs: function(model) {
+    __generateChildArgs: function(model) {
       var args = {
-        'context': _.extend({}, _.result(this, '_childContext'))
+        'context': _.extend({}, _.result(this, '__childContext'))
       };
-      args[this._modelName] = model;
+      args[this.__modelName] = model;
       return args;
     }
   });
@@ -3732,11 +4081,9 @@
      * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
      */
     initialize: function(args) {
-      View.prototype.initialize.call(this, {preventDefault: true});
       args = args || {};
 
       /* Listen to model validation callbacks */
-      this.feedbackModel = new Cell();
       this.model = this.model || (new FormModel());
       this.listenTo(this.model, 'validated:valid', this.valid);
       this.listenTo(this.model, 'validated:invalid', this.invalid);
@@ -3749,13 +4096,8 @@
       this.fields = _.extend({}, this.fields || {}, args.fields || {});
       this._errors = [];
       this._success = false;
-      this._feedbackEvents = [];
       // this._bindings is a snapshot of the original bindings
       this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
-
-      /* Render */
-      this.render();
-      this.activate();
     },
 
     /**
@@ -3768,23 +4110,10 @@
     prepare: function() {
       return {
         model: this.model.toJSON(),
+        view: this.viewState.toJSON(),
         formErrors: (_.size(this._errors) !== 0) ? this._errors : null,
         formSuccess: this._success
       };
-    },
-
-    /**
-     * Render the formview, delegate the view events, apply two-way bindings,
-     * and finally attach the additional plugins.
-     * @method render
-     */
-    render: function() {
-      /* Actually render the template */
-      var context = this.prepare();
-      this.unplug();
-      this.templateRender(this.$el, this.template, context);
-      this.plug();
-      this.delegateEvents();
     },
 
     /**
@@ -3793,11 +4122,9 @@
      */
     delegateEvents: function() {
       /* DOM event bindings and plugins */
-      this._generateStickitBindings();
+      this.__generateStickitBindings();
       this.stickit();
       View.prototype.delegateEvents.call(this);
-      this._generateFeedbackBindings();
-      this._generateFeedbackModelCallbacks();
     },
 
     /**
@@ -3819,399 +4146,18 @@
     },
 
     /**
-     * Invokes a feedback entry's "then" method
-     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
-     * @param [evt] {Event} the event to be passed to the "then" method
-     * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
-     * @method invokeFeedback
+     * Deactivate callback that removes bindings and other resources
+     * that shouldn't exist in a dactivated state
+     * @method _deactivate
      */
-    invokeFeedback: function(to, evt, indexMap) {
-      var result,
-        feedbackToInvoke = _.find(this.feedback, function(feedback) {
-          var toToCheck = feedback.to;
-          if (_.isArray(toToCheck)) {
-            return _.contains(toToCheck, to);
-          } else {
-            return to === toToCheck;
-          }
-        }),
-        feedbackModelField = to;
-      if (feedbackToInvoke) {
-        if (indexMap) {
-          feedbackModelField = this._substituteIndicesUsingMap(to, indexMap);
-        }
-        result = feedbackToInvoke.then.call(this, evt, indexMap);
-        this._processFeedbackThenResult(result, feedbackModelField);
-      }
-    },
-
-    /**
-     * Dispose method that intelligently removes any newly allocated
-     * resources or event bindings then calls the base dispose.
-     * @method dispose
-     */
-    dispose: function() {
+    _deactivate: function() {
+      View.prototype._deactivate.call(this);
+      // No detach callback... Deactivate will have to do as it is called by detach
       this.unstickit();
-      View.prototype.dispose.apply(this, arguments);
     },
 
-    /**
-     * Selects all data-model references in this view's DOM, and creates stickit bindings
-     * @method _generateStickitBindings
-     * @private
-     */
-    _generateStickitBindings: function() {
-      var self = this;
-      // Start by removing all old bindings and falling back to the initialized binding contents
-      this.bindings = _.extend({}, this._bindings);
-
-      // Stickit model two-way bindings
-      _.each(this.$el.find('[data-model]'), function(element) {
-        var attr = $(element).data('model'),
-            options = self._getFieldOptions(attr),
-            fieldBinding = self._generateModelFieldBinding(attr, options);
-        self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
-      });
-    },
-
-    /**
-     * Generates callbacks for changes in feedback model fields
-     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback model
-     * If feedbackModel.get('fullName') returns:
-     * { text: 'my text',
-     *   attr: {class: 'newClass'}
-     *   hide: [100, function() {...}]
-     * ...}
-     * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
-     * @private
-     * @method _generateFeedbackModelCallbacks
-     */
-    _generateFeedbackModelCallbacks: function() {
-      var self = this;
-      // Feedback one-way bindings
-      self.feedbackModel.off();
-      _.each(this.$el.find('[data-feedback]'), function(element) {
-        var attr = $(element).data('feedback');
-        self.feedbackModel.on('change:' + attr, (function(field) {
-          return function() {
-            var $element,
-              state = self.feedbackModel.get(field);
-            if (!state) {
-              return;
-            }
-            $element = self.$el.find('[data-feedback="' + field + '"]');
-            _.each(state, function(value, key) {
-              var target;
-              if (_.first(key) === '_') {
-                target = self[key.slice(1)];
-              } else {
-                target = $element[key];
-              }
-              if (_.isArray(value)) {
-                target.apply($element, value);
-              } else if (value !== undefined) {
-                target.call($element, value);
-              }
-            });
-          };
-        })(attr));
-      });
-      _.each(self.feedbackModel.attributes, function(value, attr) {
-        self.feedbackModel.trigger('change:' + attr);
-      });
-    },
-
-    /**
-     * @method _getFieldOptions
-     * @param attr {String} An attribute of the model
-     * @return {Object} Any settings that are associates with that attribute
-     */
-    _getFieldOptions: function(attr) {
-      attr = this._stripAllAttribute(attr);
-      return this.fields[attr] || {};
-    },
-
-    /**
-     * Returns an array of all the values and variables used within the array notations in a string
-     * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
-     * This does not handle or return any "open" array notations: []
-     * @private
-     * @method _getAllIndexTokens
-     */
-    _getAllIndexTokens: function(attr) {
-      return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
-        var token = arrayNotation.substring(1, arrayNotation.length - 1);
-        if (!isNaN(token)) {
-          result.push(parseInt(token, 10));
-        } else {
-          result.push(token);
-        }
-        return result;
-      }, []);
-    },
-
-    /**
-     * Replaces all array notations with open array notations.
-     * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
-     * @private
-     * @method _stripAllAttribute
-     */
-    _stripAllAttribute: function(attr) {
-      attr = attr.replace(/\[.+?\]/g, function() {
-        return '[]';
-      });
-      return attr;
-    },
-
-    /**
-     * Takes a map from variable name to value to be replaced and processes a string with them.
-     * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
-     * @private
-     * @method _substituteIndicesUsingMap
-     */
-    _substituteIndicesUsingMap : function(dest, indexMap) {
-      var newIndex;
-      return dest.replace(/\[.?\]/g, function(arrayNotation) {
-        if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
-          return arrayNotation;
-        } else {
-          newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
-          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
-        }
-      });
-    },
-
-    /**
-     * Processes the result of the then method. Adds to the feedback model.
-     * @param result {Object} the result of the then method
-     * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
-     * @private
-     * @method _processFeedbackThenResult
-     */
-    _processFeedbackThenResult: function(result, feedbackModelField) {
-      var newState = $.extend({}, result);
-      this.feedbackModel.set(feedbackModelField, newState, {silent: true});
-      this.feedbackModel.trigger('change:' + feedbackModelField);
-    },
-
-    /**
-     * @method _generateModelFieldBinding
-     * @param field {String} A specific model field
-     * @param options {Object} Additional heavior options for the bindings
-     * @param [options.modelFormat] {Object} The function called before setting model values
-     * @param [options.viewFormat] {Object} The function called before setting view values
-     * @private
-     * @return {<Stickit Binding Hash>}
-     */
-    _generateModelFieldBinding: function(field, options) {
-      var indices = this._getAllIndexTokens(field);
-      return {
-        observe: field,
-        onSet: function(value) {
-          var params = [value];
-          params.push(indices);
-          params = _.flatten(params);
-          return options.modelFormat ? options.modelFormat.apply(this, params) : value;
-        },
-        onGet: function(value) {
-          var params = [value];
-          params.push(indices);
-          params = _.flatten(params);
-          return options.viewFormat ? options.viewFormat.apply(this, params) : value;
-        }
-      };
-    },
-
-    /**
-     * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks
-     * Finds all feedback zones that match the "to" field, and binds the "when" events to invoke the "then" method
-     * @private
-     * @method _generateFeedbackBindings
-     */
-    _generateFeedbackBindings: function() {
-      var i,
-          self = this;
-
-      // Cleanup previous "on" events
-      for (i = 0; i < this._feedbackEvents.length; i++) {
-        this.off(null, this._feedbackEvents[i]);
-      }
-      this._feedbackEvents = [];
-
-      // For each feedback configuration
-      _.each(this.feedback, function(declaration) {
-        var toEntries = [declaration.to];
-        if (_.isArray(declaration.to)) {
-          toEntries = declaration.to;
-        }
-        _.each(toEntries, function(to) {
-          var destinations = self._getFeedbackDestinations(to),
-            destIndexTokens = self._getAllIndexTokens(to);
-
-          // Iterate over all destinations
-          _.each(destinations, function(dest) {
-            var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
-            dest = $(dest);
-            fieldName = dest.data('feedback');
-            indices = self._getAllIndexTokens(fieldName);
-            indexMap = {};
-            // Generates a mapping from variable name to value:
-            // If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
-            // then the map would look like: {x: 1, y: 4}
-            _.each(destIndexTokens, function(indexToken, i) {
-              indexMap[indexToken] = indices[i];
-            });
-            then = declaration.then;
-
-            // If the "then" clause is a string, assume it's a view method
-            if (_.isString(then)) {
-              then = self[then];
-            } else if (_.isArray(then)) {
-              // If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
-              args = then.slice();
-              method = args[0];
-              args.shift();
-              then = self[method].apply(self, args);
-            }
-
-            // track the indices for binding
-            bindInfo = {
-              feedbackModelField: fieldName,
-              fn: then,
-              indices: indexMap
-            };
-            // Iterate over all "when" clauses
-            whenEvents = self._generateWhenEvents(declaration.when, indexMap);
-            _.each(whenEvents, function(eventKey) {
-              var match, delegateEventSplitter,
-                invokeThen = function(evt) {
-                  var i, args, result, newState;
-                  args = [evt];
-                  newState = {};
-                  args.push(bindInfo.indices);
-                  result = bindInfo.fn.apply(self, args);
-                  self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
-                };
-              delegateEventSplitter = /^(\S+)\s*(.*)$/;
-              match = eventKey.match(delegateEventSplitter);
-              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
-            });
-            // Special "on" listeners
-            _.each(declaration.when.on, function(eventKey) {
-              var invokeThen = function() {
-                var result,
-                    args = [{
-                      args: arguments,
-                      type: eventKey
-                    }];
-                args.push(bindInfo.indices);
-                result = bindInfo.fn.apply(self, args);
-                self._processFeedbackThenResult(result, bindInfo.feedbackModelField);
-              };
-              self.on(eventKey, invokeThen, self);
-              self._feedbackEvents.push(invokeThen);
-            });
-          });
-        });
-      });
-    },
-
-    /**
-     * Returns all elements on the page that match the feedback mapping
-     * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
-     * @param dest {String} the string of the data-feedback
-     * @return {jQuery array} all elements on the page that match the feedback mapping
-     * @private
-     * @method _getFeedbackDestinations
-     */
-    _getFeedbackDestinations: function(dest) {
-      var self = this,
-          strippedField = this._stripAllAttribute(dest),
-          destPrefix = dest,
-          firstArrayIndex = dest.indexOf('[');
-      if (firstArrayIndex > 0) {
-        destPrefix = dest.substring(0, firstArrayIndex);
-      }
-      // Tries to match as much as possible by using a prefix (the string before the array notation)
-      return this.$el.find('[data-feedback^="' + destPrefix + '"]').filter(function() {
-        // Only take the elements that actually match after the array notation is converted to open notation ([x] -> [])
-        return self._stripAllAttribute($(this).data('feedback')) === strippedField;
-      });
-    },
-
-    /**
-     * Generates the events needed to listen to the feedback's when methods. A when event is only created
-     * if the appropriate element exist on the page
-     * @param whenMap the collection of "when"'s for a given feedback
-     * @param indexMap map from variable names to values when substituting array notation
-     * @return the events that were generated
-     * @private
-     * @method _generateWhenEvents
-     */
-    _generateWhenEvents: function(whenMap, indexMap) {
-      var self = this,
-          events = [];
-      _.each(whenMap, function(whenEvents, whenField) {
-        var substitutedWhenField,
-            qualifiedFields = [whenField],
-            useAtNotation = (whenField.charAt(0) === '@');
-
-        if (whenField !== 'on') {
-          if (useAtNotation) {
-            whenField = whenField.substring(1);
-            // substitute indices in to "when" placeholders
-            // [] -> to all, [0] -> to specific, [x] -> [x's value]
-            substitutedWhenField = self._substituteIndicesUsingMap(whenField, indexMap);
-            qualifiedFields = _.flatten(self._generateSubAttributes(substitutedWhenField, self.model));
-          }
-          // For each qualified field
-          _.each(qualifiedFields, function(qualifiedField) {
-            _.each(whenEvents, function(eventType) {
-              var backboneEvent = eventType + ' ' + qualifiedField;
-              if (useAtNotation) {
-                backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
-              }
-              events.push(backboneEvent);
-            });
-          });
-        }
-      });
-      return events;
-    },
-
-    /**
-     * Generates an array of all the possible field accessors and their indices when using
-     * the "open" array notation:
-     *    foo[] -> ['foo[0]', 'foo[1]'].
-     * Will also perform nested arrays:
-     *    foo[][] -> ['foo[0][0]', foo[1][0]']
-     * @method _generateSubAttributes
-     * @private
-     * @param {String} attr The name of the attribute to expand according to the bound model
-     * @return {Array<String>} The fully expanded subattribute names
-     */
-    _generateSubAttributes: function(attr, model) {
-      var i, attrName, remainder, subAttrs, values,
-        firstBracket = attr.indexOf('[]');
-      if (firstBracket === -1) {
-        return [attr];
-      } else {
-        attrName = attr.substring(0, firstBracket);
-        remainder = attr.substring(firstBracket + 2);
-        subAttrs = [];
-        values = model.get(attrName);
-        if (!values) {
-          return [attr];
-        }
-        for (i = 0 ; i < values.length; i++) {
-          subAttrs.push(this._generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
-        }
-        return subAttrs;
-      }
-    },
-
-
-    /**
+        /**
+     * For use in a feedback's "then" callback
      * Checks to see if the form model's field is valid. If the field is invalid, it adds the class.
      * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
@@ -4221,7 +4167,6 @@
      * @param [onValid] {Boolean} if true, will reverse the logic operator
      * @private
      * @method _thenAddClassIfInvalid
-     * @for WebCore.Views.Form
      */
     _thenAddClassIfInvalid: function(fieldName, className, onValid) {
       var isValid = this.model.isValid(fieldName);
@@ -4237,6 +4182,7 @@
     },
 
     /**
+     * For use in a feedback's "then" callback
      * Checks to see if the form model's field is valid. If the field is invalid, it sets the text.
      * If the field is invalid, it removes the text. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
@@ -4246,7 +4192,6 @@
      * @param [onValid] {Boolean} if true, will reverse the logic operator
      * @private
      * @method _thenAddTextIfInvalid
-     * @for WebCore.Views.Form
      */
     _thenSetTextIfInvalid: function(fieldName, text, onValid) {
       var isValid = this.model.isValid(fieldName);
@@ -4259,6 +4204,65 @@
           text: ''
         };
       }
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Selects all data-model references in this view's DOM, and creates stickit bindings
+     * @method __generateStickitBindings
+     * @private
+     */
+    __generateStickitBindings: function() {
+      var self = this;
+      // Start by removing all old bindings and falling back to the initialized binding contents
+      this.bindings = _.extend({}, this._bindings);
+
+      // Stickit model two-way bindings
+      _.each(this.$('[data-model]'), function(element) {
+        var attr = $(element).data('model'),
+            options = self.__getFieldOptions(attr),
+            fieldBinding = self.__generateModelFieldBinding(attr, options);
+        self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
+      });
+    },
+
+    /**
+     * @method __getFieldOptions
+     * @param attr {String} An attribute of the model
+     * @return {Object} Any settings that are associates with that attribute
+     */
+    __getFieldOptions: function(attr) {
+      attr = this.__stripAllAttribute(attr);
+      return this.fields[attr] || {};
+    },
+
+    /**
+     * @method __generateModelFieldBinding
+     * @param field {String} A specific model field
+     * @param options {Object} Additional heavior options for the bindings
+     * @param [options.modelFormat] {Object} The function called before setting model values
+     * @param [options.viewFormat] {Object} The function called before setting view values
+     * @private
+     * @return {<Stickit Binding Hash>}
+     */
+    __generateModelFieldBinding: function(field, options) {
+      var indices = this.__getAllIndexTokens(field);
+      return {
+        observe: field,
+        onSet: function(value) {
+          var params = [value];
+          params.push(indices);
+          params = _.flatten(params);
+          return options.modelFormat ? options.modelFormat.apply(this, params) : value;
+        },
+        onGet: function(value) {
+          var params = [value];
+          params.push(indices);
+          params = _.flatten(params);
+          return options.viewFormat ? options.viewFormat.apply(this, params) : value;
+        }
+      };
     }
   });
 

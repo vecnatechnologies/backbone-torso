@@ -90,7 +90,7 @@
       this._currentUpdateEvents = [];
       this._modelConfigs = [];
       options = options || {};
-      this._initMappings(options);
+      this.__initMappings(options);
 
       // override + extend the validation and labels hashes
       this.validation = _.extend({}, this.validation || {}, options.validation || {});
@@ -123,8 +123,8 @@
     addModel: function(modelConfig, copy) {
       this._modelConfigs.push(modelConfig);
       if (copy) {
-        this._copyFields(modelConfig.fields, this, modelConfig.model);
-        this._updateCache(modelConfig.model);
+        this.__copyFields(modelConfig.fields, this, modelConfig.model);
+        this.__updateCache(modelConfig.model);
       }
     },
 
@@ -145,9 +145,9 @@
     addComputed: function(computedConfig, copy) {
       this._computed.push(computedConfig);
       if (copy) {
-        this._invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
+        this.__invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
         _.each(computedConfig.models, function(modelConfig) {
-          this._updateCache(modelConfig.model);
+          this.__updateCache(modelConfig.model);
         }, this);
       }
     },
@@ -179,7 +179,7 @@
         if (pullFirst) {
           this.pull();
         }
-        this._setupListeners();
+        this.__setupListeners();
       }
     },
 
@@ -224,7 +224,7 @@
             responsesFailed = 0,
             responses = {},
             oldValues = {},
-            models = formModel._getAllModels(true),
+            models = formModel.__getAllModels(true),
             numberOfSaves = models.length;
           // If we're not forcing a save, then throw an error if the models are stale
           if (!options.force) {
@@ -248,7 +248,7 @@
               if (responsesFailed > 0) {
                 // Rollback if any responses have failed
                 if (options.rollback) {
-                  _.each(formModel._getAllModels(true), function(model) {
+                  _.each(formModel.__getAllModels(true), function(model) {
                     model.set(oldValues[model.cid]);
                     if (responses[model.cid].success) {
                       model.save();
@@ -265,7 +265,7 @@
           }
           // Grab the current values of the object models
           _.each(models, function(model) {
-            oldValues[model.cid] = formModel._getTrackedModelFields(model);
+            oldValues[model.cid] = formModel.__getTrackedModelFields(model);
           });
           // Push the form model values to the object models
           formModel.push();
@@ -305,7 +305,7 @@
      */
     push: function() {
       _.each(this._modelConfigs, function(modelConfig) {
-        this._copyFields(modelConfig.fields, modelConfig.model, this);
+        this.__copyFields(modelConfig.fields, modelConfig.model, this);
       }, this);
       _.each(this._computed, function(computedConfig) {
         // If a push callback is defined, fire it.
@@ -322,13 +322,13 @@
      */
     pull: function() {
       _.each(this._modelConfigs, function(modelConfig) {
-        this._copyFields(modelConfig.fields, this, modelConfig.model);
-        this._updateCache(modelConfig.model);
+        this.__copyFields(modelConfig.fields, this, modelConfig.model);
+        this.__updateCache(modelConfig.model);
       }, this);
       _.each(this._computed, function(computedConfig) {
-        this._invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
+        this.__invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
         _.each(computedConfig.models, function(modelConfig) {
-          this._updateCache(modelConfig.model);
+          this.__updateCache(modelConfig.model);
         }, this);
       }, this);
     },
@@ -345,7 +345,7 @@
       var hashValue;
       currentHashValues = currentHashValues || {};
       if (!currentHashValues[model.cid]) {
-        currentHashValues[model.cid] = this._generateHashValue(model);
+        currentHashValues[model.cid] = this.__generateHashValue(model);
       }
       hashValue = currentHashValues[model.cid];
       var isStaleModel = this._cache[model.cid] !== hashValue;
@@ -365,8 +365,8 @@
      */
     checkIfModelsAreStale: function() {
       var staleModels = {},
-        currentHashValues = this._generateAllHashValues();
-      _.each(this._getAllModels(true), function(model) {
+        currentHashValues = this.__generateAllHashValues();
+      _.each(this.__getAllModels(true), function(model) {
         this.isModelStale(model, staleModels, currentHashValues);
       }, this);
       return _.values(staleModels);
@@ -380,7 +380,7 @@
      */
     listenToModelField: function(model, field) {
       var eventName = 'change:' + field;
-      this.listenTo(model, eventName, _.bind(this._updateFormField,
+      this.listenTo(model, eventName, _.bind(this.__updateFormField,
           {formModel: this, field: field}));
       this._currentUpdateEvents.push({model: model, eventName: eventName});
     },
@@ -394,9 +394,87 @@
      */
     listenToComputedValuesDependency: function(computedConfig, model, field) {
       var eventName = 'change:' + field;
-      this.listenTo(model, 'change:' + field, _.bind(this._invokeComputedPull,
+      this.listenTo(model, 'change:' + field, _.bind(this.__invokeComputedPull,
           {formModel: this, models: computedConfig.models, pull: computedConfig.pull}));
       this._currentUpdateEvents.push({model: model, eventName: eventName});
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Updates a single attribute in this form model.
+     * NOTE: requires the context of this function to be:
+     * {
+     *  formModel: <this form model>,
+     *  field: <the field being updated>
+     * }
+     * @private
+     * @method __updateFormField
+     */
+    __updateFormField: function(model, value) {
+      this.formModel.set(this.field, value);
+      this.formModel.__updateCache(model);
+    },
+
+    /**
+     * NOTE: When looking to update the form model manually, call this.pull().
+     * Updates this form model with the changed attributes of a given object model
+     * @param model {Backbone.Model} the object model that has been changed
+     * @private
+     * @method __updateFormModel
+     */
+    __updateFormModel: function(model) {
+      _.each(model.changedAttributes(), function(value, fieldName) {
+        this.set(fieldName, this.__cloneVal(value));
+      }, this);
+      this.__updateCache(model);
+    },
+
+    /**
+     * Updates the form model's snapshot of the model's attributes to use later
+     * @param model {Backbone.Model} the object model
+     * @param [cache=this._cache] {Object} if passed an object (can be empty), this method will fill
+     *   this cache object instead of this form model's _cache field
+     * @private
+     * @method __updateCache
+     */
+    __updateCache: function(model) {
+      this._cache[model.cid] = this.__generateHashValue(model);
+    },
+
+    /**
+     * Create a hash value of a simple object
+     * @param obj {Object} simple object with no functions
+     * @return a hash value of the object
+     * @private
+     * @method __hashValue
+     */
+    __hashValue: function(obj) {
+      return JSON.stringify(obj);
+    },
+
+    /**
+     * @param model {Backbone.Model} the model to create the hash value from
+     * @return {String} the hash value of the model making sure to only use the tracked fields
+     * @private
+     * @method __generateHashValue
+     */
+    __generateHashValue: function(model) {
+      var modelFields = this.__getTrackedModelFields(model);
+      return this.__hashValue(modelFields);
+    },
+
+    /**
+     * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
+     * @private
+     * @method __generateAllHashValues
+     */
+    __generateAllHashValues: function() {
+      var currentHashValues = {};
+      _.each(this.__getAllModels(true), function(model) {
+        currentHashValues[model.cid] = this.__generateHashValue(model);
+      }, this);
+      return currentHashValues;
     },
 
     /**
@@ -404,9 +482,9 @@
      * @param val {Object|Array|Basic Data Type} a non-function value
      * @return the clone
      * @private
-     * @method _clone
+     * @method __cloneVal
      */
-    _clone: function(val) {
+    __cloneVal: function(val) {
       var seed;
       if (_.isArray(val)) {
         seed = [];
@@ -421,16 +499,16 @@
     /**
      * Attaches listeners to the tracked object models with callbacks that will copy new properties into this form model.
      * @private
-     * @method _setupListeners
+     * @method __setupListeners
      */
-    _setupListeners: function() {
+    __setupListeners: function() {
       _.each(this._modelConfigs, function(modelConfig) {
         if (modelConfig.fields) {
           _.each(modelConfig.fields, function(field) {
             this.listenToModelField(modelConfig.model, field);
           }, this);
         } else {
-          this.listenTo(modelConfig.model, 'change', this._updateFormModel, this);
+          this.listenTo(modelConfig.model, 'change', this.__updateFormModel, this);
           this._currentUpdateEvents.push({model: modelConfig.model, eventName: 'change'});
         }
       }, this);
@@ -451,116 +529,41 @@
      * @param destination {Backbone.Model} the backbone model that will have values copied into
      * @param origin {Backbone.Model} the backbone model that will be used to grab values.
      * @private
-     * @method _copyFields
+     * @method __copyFields
      */
-    _copyFields: function(fields, destination, origin) {
+    __copyFields: function(fields, destination, origin) {
       if (!fields && this === origin) {
         fields = _.keys(destination.attributes);
       }
       if (fields) {
         _.each(fields, function(field) {
-          destination.set(field, this._clone(origin.get(field)));
+          destination.set(field, this.__cloneVal(origin.get(field)));
         }, this);
       } else {
-        destination.set(this._clone(origin.attributes));
+        destination.set(this.__cloneVal(origin.attributes));
       }
-    },
-
-    /**
-     * Updates a single attribute in this form model.
-     * NOTE: requires the context of this function to be:
-     * {
-     *  formModel: <this form model>,
-     *  field: <the field being updated>
-     * }
-     * @private
-     * @method _updateFormField
-     */
-    _updateFormField: function(model, value) {
-      this.formModel.set(this.field, value);
-      this.formModel._updateCache(model);
-    },
-
-    /**
-     * Create a hash value of a simple object
-     * @param obj {Object} simple object with no functions
-     * @return a hash value of the object
-     * @private
-     * @method _hashValue
-     */
-    _hashValue: function(obj) {
-      return JSON.stringify(obj);
-    },
-
-    /**
-     * @param model {Backbone.Model} the model to create the hash value from
-     * @return {String} the hash value of the model making sure to only use the tracked fields
-     * @private
-     * @method _generateHashValue
-     */
-    _generateHashValue: function(model) {
-      var modelFields = this._getTrackedModelFields(model);
-      return this._hashValue(modelFields);
-    },
-
-    /**
-     * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
-     * @private
-     * @method _generateAllHashValues
-     */
-    _generateAllHashValues: function() {
-      var currentHashValues = {};
-      _.each(this._getAllModels(true), function(model) {
-        currentHashValues[model.cid] = this._generateHashValue(model);
-      }, this);
-      return currentHashValues;
-    },
-
-    /**
-     * Updates this form model with the changed attributes of a given object model
-     * @param model {Backbone.Model} the object model that has been changed
-     * @private
-     * @method _updateFormModel
-     */
-    _updateFormModel: function(model) {
-      _.each(model.changedAttributes(), function(value, fieldName) {
-        this.set(fieldName, this._clone(value));
-      }, this);
-      this._updateCache(model);
-    },
-
-    /**
-     * Updates the form model's snapshot of the model's attributes to use later
-     * @param model {Backbone.Model} the object model
-     * @param [cache=this._cache] {Object} if passed an object (can be empty), this method will fill
-     *   this cache object instead of this form model's _cache field
-     * @private
-     * @method _updateCache
-     */
-    _updateCache: function(model) {
-      this._cache[model.cid] = this._generateHashValue(model);
     },
 
     /**
      * @param [options] {Object} See initialize option's 'model', 'fields', 'models', 'computed'.
      * @private
-     * @method _initMappings
+     * @method __initMappings
      */
-    _initMappings: function(options) {
+    __initMappings: function(options) {
       var defaultMapping = _.result(this, 'mapping'),
         optionsMapping = _.pick(options, ['model', 'fields', 'models', 'computed']);
-      this._initModels(optionsMapping, defaultMapping);
-      this._initComputeds(optionsMapping, defaultMapping);
+      this.__initModels(optionsMapping, defaultMapping);
+      this.__initComputeds(optionsMapping, defaultMapping);
     },
 
     /**
      * @param [optionsMapping] {Object} a mapping object with override values
      * @param [defaultMapping] {Object} the default mapping object
      * @private
-     * @method _initModels
+     * @method __initModels
      */
-    _initModels: function(optionsMapping, defaultMapping) {
-      var modelConfigs = this._pullModelsFromMapping(optionsMapping) || this._pullModelsFromMapping(defaultMapping);
+    __initModels: function(optionsMapping, defaultMapping) {
+      var modelConfigs = this.__pullModelsFromMapping(optionsMapping) || this.__pullModelsFromMapping(defaultMapping);
       _.each(modelConfigs, this.addModel, this);
     },
 
@@ -570,9 +573,9 @@
      * @param [defaultMapping] {Object} the default mapping object
      *   @param [defaultMapping.computed] {Array} and array of Computed Configs
      * @private
-     * @method _initComputeds
+     * @method __initComputeds
      */
-    _initComputeds: function(optionsMapping, defaultMapping) {
+    __initComputeds: function(optionsMapping, defaultMapping) {
       var computeds;
       optionsMapping = optionsMapping || {};
       defaultMapping = defaultMapping || {};
@@ -581,24 +584,14 @@
     },
 
     /**
-     * @param [mapping] {Object} an object with object model(s) as dependencies
-     * @return {Boolean} true if the mapping exists and specifies an object model dependency
-     * @private
-     * @method _mappingHasModels
-     */
-    _mappingHasModels: function(mapping) {
-      return mapping && (mapping.model || mapping.models);
-    },
-
-    /**
      * @param [mapping] {Object} object with attributes that contain either a model/field pair as a convenience or an array of
      *   model configs. The model/field pair takes priority if both exist.
      * @return {Array} an array of model configs that are either from the mapping.model or mapping.model. If no model configs are
      *   defined in the mapping, it will return null.
      * @private
-     * @method _pullModelsFromMapping
+     * @method __pullModelsFromMapping
      */
-    _pullModelsFromMapping: function(mapping) {
+    __pullModelsFromMapping: function(mapping) {
       var modelConfigs = [];
       if (mapping && mapping.model) {
         modelConfigs.push({
@@ -616,14 +609,14 @@
      * @return {Object} an object with key's as the fields this form model is tracking against
      *   the model and value's as the current value in that object model
      * @private
-     * @method _getTrackedModelFields
+     * @method __getTrackedModelFields
      */
-    _getTrackedModelFields: function(model) {
+    __getTrackedModelFields: function(model) {
       var allFields,
         fieldsUsed = {},
         modelFields = {},
         modelConfigs = [];
-      _.each(this._getAllModelConfigs(), function(modelConfig) {
+      _.each(this.__getAllModelConfigs(), function(modelConfig) {
         if (modelConfig.model.cid === model.cid) {
           modelConfigs.push(modelConfig);
         }
@@ -632,13 +625,13 @@
         return result || !modelConfig.fields;
       }, false);
       if (allFields) {
-        modelFields = this._clone(model.attributes);
+        modelFields = this.__cloneVal(model.attributes);
       } else {
         _.each(modelConfigs, function(modelConfig) {
           _.each(modelConfig.fields, function(field) {
             if (!fieldsUsed[field]) {
               fieldsUsed[field] = true;
-              modelFields[field] = this._clone(model.get(field));
+              modelFields[field] = this.__cloneVal(model.get(field));
             }
           }, this);
         }, this);
@@ -651,11 +644,11 @@
      * @return {Array} a list of object models that this form model is using a dependencies. Includes those defined in the
      *   computed fields
      * @private
-     * @method _getAllModels
+     * @method __getAllModels
      */
-    _getAllModels: function(normalize) {
+    __getAllModels: function(normalize) {
       var modelsSeen = {},
-        models = _.pluck(this._getAllModelConfigs(), 'model');
+        models = _.pluck(this.__getAllModelConfigs(), 'model');
       if (normalize) {
         var normalizedModels = [];
         _.each(models, function(model) {
@@ -673,9 +666,9 @@
      * @return {Array} a list of Model Configurations that this form model is using a dependencies. Includes those defined in the
      *   computed fields
      * @private
-     * @method _getAllModelConfigs
+     * @method __getAllModelConfigs
      */
-    _getAllModelConfigs: function() {
+    __getAllModelConfigs: function() {
       var modelConfigs = this._modelConfigs.slice();
       _.each(this._computed, function(computedConfig) {
         modelConfigs = modelConfigs.concat(computedConfig.models);
@@ -696,21 +689,21 @@
      *  update: <the update callback from the Computed Configuration>,
      * }
      * @private
-     * @method _invokeComputedPull
+     * @method __invokeComputedPull
      */
-    _invokeComputedPull: function(model) {
+    __invokeComputedPull: function(model) {
       var args = [];
       if (model) {
-        this.formModel._updateCache(model);
+        this.formModel.__updateCache(model);
       }
       (function(formModel, pullCallback, modelConfigs) {
         _.each(modelConfigs, function(modelConfig) {
           if (modelConfig.fields) {
             _.each(modelConfig.fields, function(field) {
-              args.push(formModel._clone(modelConfig.model.get(field)));
+              args.push(formModel.__cloneVal(modelConfig.model.get(field)));
             });
           } else {
-            args.push(formModel._clone(modelConfig.model.attributes));
+            args.push(formModel.__cloneVal(modelConfig.model.attributes));
           }
         });
         pullCallback.apply(formModel, args);

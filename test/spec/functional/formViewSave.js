@@ -99,7 +99,7 @@ describe('A Form View saving', function() {
     view = new View({
       model: testFormModel
     });
-    $('body').append(view.$el);
+    view.attach($('body'));
     view.$el.find('.submit').click();
   });
 });

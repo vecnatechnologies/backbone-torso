@@ -19,9 +19,9 @@
      * @method breakDelayedRender
      */
     breakDelayedRender = function(view) {
-      if (view._delayedRenderTimeout) {
-        clearTimeout(view._delayedRenderTimeout);
-        view._delayedRenderTimeout = null;
+      if (view.__delayedRenderTimeout) {
+        clearTimeout(view.__delayedRenderTimeout);
+        view.__delayedRenderTimeout = null;
         view.render();
       }
     };
@@ -37,12 +37,12 @@
      */
     aggregateRenders = function(wait, view) {
       var postpone = function() {
-        view._delayedRenderTimeout = null;
+        view.__delayedRenderTimeout = null;
         view.render();
       };
       return function() {
-        if (!view._delayedRenderTimeout && wait > 0) {
-          view._delayedRenderTimeout = setTimeout(postpone, wait);
+        if (!view.__delayedRenderTimeout && wait > 0) {
+          view.__delayedRenderTimeout = setTimeout(postpone, wait);
         } else if (wait <= 0) {
           view.render();
         }
@@ -56,14 +56,14 @@
      * @param model {Backbone Model instance} the model that has been removed
      */
     removeChildView = function(model) {
-      var childView = this.getChildView(model);
+      var childView = this.getChildViewFromModel(model);
       if (childView) {
         childView.dispose();
         this.unregisterChildView(childView);
-        delete this._modelToViewMap[model.cid];
+        delete this.__modelToViewMap[model.cid];
         this.trigger('child-view-removed', {model: model, view: childView});
         if (!this.hasChildViews()) {
-          this._delayedRender();
+          this.__delayedRender();
         }
       }
     };
@@ -80,20 +80,20 @@
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
-        this._createChildViews();
+        this.__createChildViews();
         if (!this.hasChildViews()) {
-          this._delayedRender();
+          this.__delayedRender();
         } else {
           breakDelayedRender(this);
-          childView = this.getChildView(model);
-          viewAfter = this.getChildView(models[indexOfModel + 1]);
-          viewBefore = this.getChildView(models[indexOfModel - 1]);
+          childView = this.getChildViewFromModel(model);
+          viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
+          viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
           if (viewAfter) {
             viewAfter.$el.before(childView.$el);
           } else if (viewBefore) {
             viewBefore.$el.after(childView.$el);
           } else {
-            this._delayedRender();
+            this.__delayedRender();
           }
         }
       }
@@ -108,20 +108,21 @@
    */
   var ListView = View.extend({
     className: '',
-    _collection: null,
-    _modelName: '',
-    _childView: null,
-    _modelToViewMap: null,
-    _template: null,
-    _emptyTemplate: null,
-    _childContext: null,
-    _renderWait: 0,
-    _delayedRender: null,
-    _delayedRenderTimeout: null,
+    collection: null,
+    childView: null,
+    template: null,
+    emptyTemplate: null,
+    __modelName: '',
+    __modelId: '',
+    __modelToViewMap: null,
+    __childContext: null,
+    __renderWait: 0,
+    __delayedRender: null,
+    __delayedRenderTimeout: null,
 
     /**
      * Initialize the list view object.
-     * Override to add more functionality but remember to call this.listViewSetup(args) first
+     * Override to add more functionality but remember to call ListView.prorotype.initialize.call(this, args) first
      * @method initialize
      * @param args {Object} - options argument
      *   @param args.childView {Backbone.View definition} - the class definition of the child view. This view will be instantiated
@@ -141,43 +142,31 @@
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
-      View.prototype.initialize.call(this, {preventDefault: true});
-      this.listViewSetup(args);
-      this.render();
-      this.activate();
-    },
-
-    /**
-     * Set up the list view object. See {#initialize()} to understand the arguments required
-     * @method listViewSetup
-     * @param args {Object} See initialize method for args documentation as they are identical
-     */
-    listViewSetup: function(args) {
       var initialModels, i, l, childView,
         injectionSite = this.$el;
       args = args || {};
-      this._modelName = args.childModel || 'model';
-      this._collection = args.collection;
-      this._childView = args.childView;
-      this._template = args.template;
-      this._childrenContainer = args.childrenContainer;
-      if (this._template && !this._childrenContainer) {
+      this.collection = args.collection;
+      this.template = args.template;
+      this.emptyTemplate = args.emptyTemplate;
+      this.childView = args.childView;
+      this.childrenContainer = args.childrenContainer;
+      if (this.template && !this.childrenContainer) {
         throw 'Children container is required when using a template';
       }
-      this._emptyTemplate = args.emptyTemplate;
       this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this._childContext = args.childContext;
-      this._modelToViewMap = {};
-      this._renderWait = args.renderWait || this._renderWait;
-      this._modelId = args.modelId || 'cid';
-      this._createChildViews();
-      this._delayedRender = aggregateRenders(this._renderWait, this);
+      this.__childContext = args.childContext;
+      this.__modelToViewMap = {};
+      this.__renderWait = args.renderWait || this.__renderWait;
+      this.__modelId = args.modelId || 'cid';
+      this.__modelName = args.childModel || 'model';
+      this.__createChildViews();
+      this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
       // if a 'changed' event happens, the model's view should handle re-rendering itself
-      this.listenTo(this._collection, 'remove', removeChildView, this);
-      this.listenTo(this._collection, 'add', addChildView, this);
-      this.listenTo(this._collection, 'sort', this._delayedRender, this);
-      this.listenTo(this._collection, 'reset', this.update, this);
+      this.listenTo(this.collection, 'remove', removeChildView, this);
+      this.listenTo(this.collection, 'add', addChildView, this);
+      this.listenTo(this.collection, 'sort', this.__delayedRender, this);
+      this.listenTo(this.collection, 'reset', this.update, this);
     },
 
     /**
@@ -189,17 +178,17 @@
     render: function() {
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
-      if (this._template) {
-        newDOM.html(this._template(this.prepare()));
-        injectionSite = newDOM.find('[inject=' + this._childrenContainer + ']');
+      if (this.template) {
+        newDOM.html(this.template(this.prepare()));
+        injectionSite = newDOM.find('[inject=' + this.childrenContainer + ']');
       } else {
         injectionSite = $('<span>');
         newDOM.append(injectionSite);
       }
       if (this.hasChildViews()) {
-        injectionSite.replaceWith(this._buildChildViewsFragment());
-      } else if (this._emptyTemplate) {
-        injectionSite.replaceWith(this._emptyTemplate(this.prepareEmpty()));
+        injectionSite.replaceWith(this.__buildChildViewsFragment());
+      } else if (this.emptyTemplate) {
+        injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
       this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
@@ -213,7 +202,7 @@
      */
     renderChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildView(model);
+        var childView = this.getChildViewFromModel(model);
         childView.render();
       }, this);
     },
@@ -244,7 +233,7 @@
      * @method modelsToRender
      */
     modelsToRender: function() {
-      return this._collection ? this._collection.models : [];
+      return this.collection ? this.collection.models : [];
     },
 
     /**
@@ -252,29 +241,31 @@
      * @method update
      */
     update: function() {
-      this._createChildViews();
-      this._delayedRender();
+      this.__createChildViews();
+      this.__delayedRender();
     },
 
     /**
      * Returns the view that corresponds to the model if one exists
      * @param model {Model} the model
      * @return the child view corresponding to the model
-     * @method getChildView
+     * @method getChildViewFromModel
      */
-    getChildView: function(model) {
-      return model ? this._childViews[this._modelToViewMap[model[this._modelId]]] : undefined;
+    getChildViewFromModel: function(model) {
+      return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
     },
+
+    /************** Private methods **************/
 
     /**
      * Creates a new child view if there doesn't exist one for a model
-     * @method _createChildViews
+     * @method __createChildViews
      */
-    _createChildViews: function() {
+    __createChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildView(model);
+        var childView = this.getChildViewFromModel(model);
         if (!childView) {
-          childView = this._createChildView(model);
+          childView = this.__createChildView(model);
           this.trigger('child-view-added', {model: model, view: childView});
         }
       }, this);
@@ -282,13 +273,13 @@
 
     /**
      * @return a DOM fragment with child view elements appended
-     * @method _buildChildViewsFragment
+     * @method __buildChildViewsFragment
      * @private
      */
-    _buildChildViewsFragment: function(renderAlso) {
+    __buildChildViewsFragment: function(renderAlso) {
       var injectionFragment = document.createDocumentFragment();
      _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildView(model);
+        var childView = this.getChildViewFromModel(model);
         if (childView) {
           injectionFragment.appendChild(childView.el);
         }
@@ -298,15 +289,15 @@
 
     /**
      * Creates a child view and stores a reference to it
-     * @method _createChildView
+     * @method __createChildView
      * @private
      * @param model {Backbone Model} the model to create the view from
      * @return {Backbone View} the new child view
      */
-    _createChildView: function(model) {
-      var childView = new this._childView(this._generateChildArgs(model));
+    __createChildView: function(model) {
+      var childView = new this.childView(this.__generateChildArgs(model));
       this.registerChildView(childView);
-      this._modelToViewMap[model.cid] = childView.cid;
+      this.__modelToViewMap[model.cid] = childView.cid;
       return childView;
     },
 
@@ -320,16 +311,16 @@
      *   },
      *   <modelName>: <modelObject>
      * }
-     * @method _generateChildArgs
+     * @method __generateChildArgs
      * @private
      * @param model the model for a child view
      * @return a context to be used by a child view
      */
-    _generateChildArgs: function(model) {
+    __generateChildArgs: function(model) {
       var args = {
-        'context': _.extend({}, _.result(this, '_childContext'))
+        'context': _.extend({}, _.result(this, '__childContext'))
       };
-      args[this._modelName] = model;
+      args[this.__modelName] = model;
       return args;
     }
   });

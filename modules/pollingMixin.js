@@ -24,15 +24,15 @@
      * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
      */
     pollTimeoutId: undefined,
-    _pollStarted: false,
-    _pollInterval: 5000,
+    __pollStarted: false,
+    __pollInterval: 5000,
 
     /**
      * Returns true if the poll is active
      * @method isPolling
      */
     isPolling: function() {
-      return this._pollStarted;
+      return this.__pollStarted;
     },
 
     /**
@@ -45,17 +45,17 @@
     startPolling: function(pollInterval) {
       var self = this;
       if (pollInterval) {
-        this._pollInterval = pollInterval;
+        this.__pollInterval = pollInterval;
       }
       // have only 1 poll going at a time
-      if (this._pollStarted) {
+      if (this.__pollStarted) {
         return;
       } else {
-        this._pollStarted = true;
-        this._poll();
+        this.__pollStarted = true;
+        this.__poll();
         this.pollTimeoutId = window.setInterval(function() {
-          self._poll();
-        }, this._pollInterval);
+          self.__poll();
+        }, this.__pollInterval);
       }
     },
 
@@ -65,7 +65,7 @@
      */
     stopPolling: function() {
       window.clearInterval(this.pollTimeoutId);
-      this._pollStarted = false;
+      this.__pollStarted = false;
     },
 
     /**
@@ -77,12 +77,14 @@
       this.fetch();
     },
 
+    /************** Private methods **************/
+
     /**
      * Private function to recursively call itself and poll for db updates.
      * @private
-     * @method _poll
+     * @method __poll
      */
-    _poll: function() {
+    __poll: function() {
       this.polledFetch();
     }
   };
