@@ -13,10 +13,12 @@
             './View', './ListView', './FormView',
             './templateRenderer',
             './handlebarsUtils',
+            './configure',
             './stickitUtils'],
            factory);
   } else if (typeof exports === 'object') {
     require('./stickitUtils');
+    require('./configure')
     module.exports = factory(require('./Cell'),
                              require('./Collection'),
                              require('./Events'),
