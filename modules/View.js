@@ -86,9 +86,9 @@
       this.unplug();
       if (this.template) {
         this.templateRender(this.$el, this.template, this.prepare());
-        this.plug();
-        this.delegateEvents();
       }
+      this.plug();
+      this.delegateEvents();
     },
 
     /**

@@ -107,7 +107,6 @@
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var ListView = View.extend({
-    className: '',
     collection: null,
     childView: null,
     template: null,

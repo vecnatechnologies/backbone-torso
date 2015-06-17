@@ -146,7 +146,7 @@
       this.unstickit();
     },
 
-        /**
+    /**
      * For use in a feedback's "then" callback
      * Checks to see if the form model's field is valid. If the field is invalid, it adds the class.
      * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
