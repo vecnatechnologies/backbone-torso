@@ -44,7 +44,8 @@
         return !_.contains(dontInclude, file);
       });
       var count = 0;
-      while (!_.isEmpty(dependencies) && count < 10) {
+      var threshold = 10;
+      while (!_.isEmpty(dependencies) && count <= threshold) {
         _.each(files, function(file) {
           if (!_.has(dependencies, file)) {
             fileList.push(file);
@@ -58,6 +59,9 @@
         });
         dependencies = _.omit(dependencies, _.isEmpty);
         count++;
+      }
+      if (count >= threshold) {
+        throw new Error('Bundle dependency list could not be created within the depth threshold');
       }
       return gulp.src(fileList)
         .pipe(bundlePipe());
