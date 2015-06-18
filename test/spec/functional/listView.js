@@ -316,7 +316,7 @@ describe('A List View', function() {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
-        threshold = 300;
+        threshold = 500;
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }

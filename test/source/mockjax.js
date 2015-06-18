@@ -44,5 +44,15 @@ module.exports = function($) {
       this.responseText = settings.data;
     }
   });
+
+  routes['/unified|post'] = $.mockjax({
+    url: '/unified',
+    dataType: 'json',
+    type: 'post',
+    responseTime: 100,
+    response: function(settings) {
+      this.responseText = settings.data;
+    }
+  })
   return routes;
 }

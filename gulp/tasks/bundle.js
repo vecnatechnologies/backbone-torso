@@ -35,7 +35,8 @@
     };
     var dontInclude = ['torso'];
     var fileList = [];
-    dir.files(__dirname + '/../../modules', function(err, files) {
+    var dirPath = __dirname + '/../../modules';
+    dir.files(dirPath, function(err, files) {
       if (err) throw err;
       files = _.map(files, function(filePath) {
         return path.basename(filePath, '.js');
@@ -45,7 +46,7 @@
       });
       var count = 0;
       var threshold = 10;
-      while (!_.isEmpty(dependencies) && count <= threshold) {
+      while (!_.isEmpty(files) && count <= threshold) {
         _.each(files, function(file) {
           if (!_.has(dependencies, file)) {
             fileList.push(file);
@@ -63,6 +64,9 @@
       if (count >= threshold) {
         throw new Error('Bundle dependency list could not be created within the depth threshold');
       }
+      fileList = _.map(fileList, function(filePath) {
+        return dirPath + '/' + filePath + '.js';
+      });
       return gulp.src(fileList)
         .pipe(bundlePipe());
     });

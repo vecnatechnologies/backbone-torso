@@ -1,456 +1,100 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    factory();
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.handlebarsUtils = factory();
+    root.Torso.Events = factory(root._, root.Backbone);
   }
-}(this, function() {
+}(this, function(_, Backbone) {
   'use strict';
 
-  return function(Handlebars) {
+  /**
+   * Generic Events.
+   * @module    Torso
+   * @class     Events
+   * @constructor
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  var Events = _.extend({}, Backbone.Events);
 
-    /**
-     * Extensions to handlebars helpers.
-     *
-     * @module    Torso
-     * @namespace Torso.Utils
-     * @class     handlebarsUtils
-     * @static
-     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-     */
-    var FEEDBACK_KEY = 'feedback',
-        MODEL_KEY = 'model';
-
-    /**
-     * Usage: {{label 'fieldName' value="suffix"}}
-     * Generates: for="field-name-suffix"
-     * @method Handlebars.helpers.labelFor
-     * @param field {String} The field name to convert to a compliant "for" attribute
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @param [option.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {String} Compliant HTML generating the "for" attribute
-     */
-    Handlebars.registerHelper('labelFor', function(field, options) {
-      return Handlebars.helpers.formAttr(field, 'for', options);
-    });
-
-    /**
-     * Usage: {{bindModel 'fieldName' value='suffix'}}
-     * Generates: id="field-name-suffix" name="field-name-suffix" data-model="fieldName" data-feedback="firstName"
-     * @method Handlebars.helpers.bindModel
-     * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {String} Compliant HTML generating the id, name, data-model, and data-feedback attributes
-     */
-    Handlebars.registerHelper('bindModel', function(field, options) {
-      return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
-    });
-
-    /**
-     * Usage: {{feedback 'fieldName'}}
-     * Generates: data-feedback="firstName"
-     * @method Handlebars.helpers.feedback
-     * @param field {String} The field name to convert to a compliant data-feedback attribute
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @return {String} Compliant HTML generating the data-feedback attribute
-     */
-    Handlebars.registerHelper('feedback', function(field, options) {
-      return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
-    });
-
-    /**
-     * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
-     * Generates: id="first-name-123_sub-demo" for="first-name-123_sub"
-     * @method Handlebars.helpers.formAttr
-     * @param field {String} The field name to convert to a compliant data-feedback attribute
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {String} Compliant HTML generating the data-feedback attribute
-     */
-    Handlebars.registerHelper('formAttr', function(field, attrs, options) {
-      var i, attrName,
-        value = (options.hash ? options.hash.value : undefined),
-        res = Handlebars.helpers.injectFieldIndices(field, options.hash),
-        attributes = '';
-      attrs = attrs.split(',');
-      for (i = 0; i < attrs.length; i++) {
-        attrName = attrs[i].trim();
-        if (attrName === FEEDBACK_KEY) {
-          attributes += 'data-feedback="' + res + '" ';
-        } else if (attrName === MODEL_KEY) {
-          attributes += 'data-model="' + res + '" ';
-        } else if (attrName === 'name') {
-          attributes += 'name="' + Handlebars.helpers.dasherize(res) + '" ';
-        } else if (attrName === 'id') {
-          attributes += 'id="' + Handlebars.helpers.dasherize(res);
-          if (value !== undefined) {
-            attributes += '-' + value;
-          }
-          attributes += '" ';
-        } else if (attrName === 'for') {
-          attributes += 'for="' + Handlebars.helpers.dasherize(res);
-          if (value !== undefined) {
-            attributes += '-' + value;
-          }
-          attributes += '" ';
-        }
-      }
-      if (value !== undefined) {
-        attributes += 'value="' + value +'"';
-      }
-      return new Handlebars.SafeString(attributes);
-    });
-
-    /**
-     * @method Handlebars.helpers.dasherize
-     * @param str {String} The input string to make HTML compliant (convert to dashes)
-     * @return {String} HTML complicant / dasherized string
-     */
-    Handlebars.registerHelper('dasherize', function(str) {
-      var camelCaseRemoved, dotsRemoved, bracesRemoved;
-      camelCaseRemoved = str.replace(/([A-Z])/g, function(rep) {
-        return '-' + rep.toLowerCase();
-      });
-      dotsRemoved = camelCaseRemoved.replace(/\./g, function() {
-        return '_';
-      });
-      bracesRemoved = dotsRemoved.replace(/\[[0-9]+\]/g, function(rep) {
-        return '-' + rep.substring(1, rep.length - 1);
-      });
-      return bracesRemoved;
-    });
-
-    /**
-     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});
-     * Generates: 'test[123]-thisIsRegular-y'
-     * @method injectFieldIndices
-     * @param field {String} The field name
-     * @param indexMap {Object} A map of variables
-     * @return {String} the field string with array variables substituted
-     */
-    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap) {
-      if (indexMap) {
-        return field.replace(/\[.+?\]/g, function(m) {
-          var newIndex = indexMap[m.substring(1, m.length - 1)];
-          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
-        });
-      } else {
-        return field;
-      }
-    });
-  };
+  return Events;
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'backbone.stickit'], factory);
+    define(['backbone'], factory);
   } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    factory(require('backbone'));
+    module.exports = factory(require('backbone'));
   } else {
-    factory(root.Backbone);
+    root.Torso = root.Torso || {};
+    root.Torso.Router = factory(root.Backbone);
   }
 }(this, function(Backbone) {
   'use strict';
-
   /**
-   * Extensions to stickit handlers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   * Backbone's router.
+   * @module Torso
+   * @class  Router
+   * @author kent.willis@vecna.com
    */
-  Backbone.Stickit.addHandler({
-    selector: 'input[type="radio"]',
-    events: ['change'],
-    update: function($el, val) {
-      $el.prop('checked', false);
-      $el.filter('[value="' + val + '"]').prop('checked', true);
-    },
-    getVal: function($el) {
-      return $el.filter(':checked').val();
-    }
-  });
+  return Backbone.Router.extend({});
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define([], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory();
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.templateRenderer = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
   }
-}(this, function(_, $) {
+}(this, function() {
   'use strict';
-
   /**
-   * Changes DOM Nodes that are different, and leaves others untouched.
-   *
-   * Algorithm:
-   * Delegates to a particular swapMethod, depending on the Node type.
-   * Recurses for nested Element Nodes only.
-   * There is always room for optimizing this method.
-   *
-   * @method hotswap
-   * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
-   * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
-   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellPersistenceRemoval
+   * @author kent.willis@vecna.com
    */
-  function hotswap(currentNode, newNode, ignoreElements) {
-    var newNodeType = newNode.nodeType,
-      currentNodeType = currentNode.nodeType,
-      swapMethod;
-
-    if(newNodeType !== currentNodeType) {
-      $(currentNode).replaceWith(newNode);
-    } else {
-      swapMethod = swapMethods[newNodeType] || swapMethods['default'];
-      swapMethod(currentNode, newNode, ignoreElements);
-    }
-  }
-
-  /*
-   * Swap method for Element Nodes
-   * @param currentNode {Element} The pre-existing DOM Element to update
-   * @param newNode {Element} The detached DOM Element representing the desired DOM Element subtree
-   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
-   */
-  function swapElementNodes(currentNode, newNode, ignoreElements) {
-    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
-      $currentNode = $(currentNode),
-      $newNode = $(newNode),
-      idx = 0;
-
-    shouldIgnore = _.some(ignoreElements, function(selector) {
-      return $currentNode.is(selector);
-    });
-
-    if (shouldIgnore) {
-      return;
-    }
-
-    // Handle tagname changes with full replacement
-    if (newNode.tagName !== currentNode.tagName) {
-      $currentNode.replaceWith(newNode);
-      return;
-    }
-
-    // Remove current attributes that have changed
-    currentAttributes = currentNode.attributes;
-    while (idx < currentAttributes.length) {
-      currentAttr = currentAttributes[idx].name;
-      if (!_.contains(currentAttr, newNode.attributes)) {
-        currentNode.removeAttribute(currentAttr);
-      }
-      idx++;
-    }
-
-    // Set new attributes
-    _.each(newNode.attributes, function(attrib) {
-      currentNode.setAttribute(attrib.name, attrib.value);
-    });
-
-    // Quick check to see if we need to bother comparing sub-levels
-    if ($currentNode.html() === $newNode.html()) {
-      return;
-    }
-
-    // Include all child nodes, including text and comment nodes
-    $newChildNodes = $newNode.contents();
-    $currChildNodes = $currentNode.contents();
-
-    // If the DOM lists are different sizes, perform a hard refresh
-    if ($newChildNodes.length !== $currChildNodes.length) {
-      $currentNode.html($newNode.html());
-      return;
-    }
-
-    // Perform a recursive hotswap for all children nodes
-    $currChildNodes.each(function(index, currChildNode) {
-      hotswap(currChildNode, $newChildNodes.get(index), ignoreElements);
-    });
-  }
-
-  /*
-   * Swap method for Text, Comment, and CDATA Section Nodes
-   * @param currentNode {Node} The pre-existing DOM Node to update
-   * @param newNode {Node} The detached DOM Node representing the desired DOM Node subtree
-   */
-  function updateIfNodeValueChanged(currentNode, newNode){
-    var nodeValueChanged = newNode.nodeValue !== currentNode.nodeValue;
-    if (nodeValueChanged) {
-      $(currentNode).replaceWith(newNode);
-    }
-  }
-
-  /*
-   * Map of nodeType to hot swap implementations.
-   * NodeTypes are hard-coded integers per the DOM Level 2 specification instead of
-   * references to constants defined on the window.Node object for IE8 compatibility
-   */
-  var swapMethods = {
-    1: swapElementNodes, // ELEMENT_NODE
-    3: updateIfNodeValueChanged, // TEXT_NODE
-    4: updateIfNodeValueChanged, // CDATA_SECTION_NODE
-    8: updateIfNodeValueChanged, // COMMENT_NODE
-    default: function(currentNode, newNode) {
-      $(currentNode).replaceWith(newNode);
-    }
-  };
-
-  /**
-   * Static Template Engine.
-   * All template renders should be piped through this method.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     templateRenderer
-   * @static
-   * @author    ariel.wexler@vecna.com
-   */
-  var templateRenderer = {
+  return {
     /**
-     * Performs efficient re-rendering of a template.
-     * @method render
-     * @param  $el {jQueryObject} The Element to render into
-     * @param  template {Handlebars Template} The HBS template to apply
-     * @param  context {Object} The context object to pass to the template
-     * @param  [opts] {Object} Other options
-     * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
-     * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
      */
-    render: function($el, template, context, opts) {
-      var newDOM,
-          newHTML = template(context),
-          el = $el.get(0);
-      opts = opts || {};
+    isModelCompatible: false,
 
-      if (opts.force) {
-        $el.html(newHTML);
-      } else {
-        newDOM = this.copyTopElement(el);
-        $(newDOM).html(newHTML);
-        this.hotswapKeepCaret(el, newDOM, opts.ignoreElements);
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
       }
     },
 
-    /**
-     * Call this.hotswap but also keeps the caret position the same
-     * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
-     * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
-     * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
-     * @method hotswapKeepCaret
-     */
-
-    hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
-      var currentCaret,
-          activeElement = document.activeElement;
-      if (activeElement && activeElement.hasAttribute('value') && this.supportsSelection(activeElement)) {
-        currentCaret = this.getCaretPosition(activeElement);
-      }
-      this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement && this.supportsSelection(activeElement)) {
-        this.setCaretPosition(activeElement, currentCaret);
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
       }
     },
 
-    // See above function declaration for method-level documentation
-    hotswap: hotswap,
-
-    /**
-     * Produces a copy of the element tag with attributes but with no contents
-     * @param el {Element} the DOM element to be copied
-     * @return {Element} a shallow copy of the element with no children but with attributes
-     * @method copyTopElement
-     */
-    copyTopElement: function(el) {
-      var newDOM = document.createElement(el.tagName);
-      _.each(el.attributes, function(attrib) {
-        newDOM.setAttribute(attrib.name, attrib.value);
-      });
-      return newDOM;
-    },
-
-    /**
-     * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
-     * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
-     * @param el {Element} the DOM element to check
-     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el
-     * @method supportsSelection
-     */
-    supportsSelection : function (el) {
-      return (/text|password|search|tel|url/).test(el.type);
-    },
-
-    /**
-     * Method that returns the current caret (cursor) position of a given element.
-     * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
-     * @method getCaretPosition
-     * @param elem {element} the DOM element to check caret position
-     * @return {Integer} the cursor index of the given element.
-     */
-    getCaretPosition: function(elem) {
-      // range {IE selection object}
-      // iCaretPos {Integer} will store the final caret position
-      var range,
-          iCaretPos = 0;
-      // IE Support
-      if (document.selection) {
-        // Set focus on the element
-        elem.focus();
-        // To get cursor position, get empty selection range
-        range = document.selection.createRange();
-        // Move selection start to 0 position
-        range.moveStart('character', -elem.value.length);
-        // The caret position is selection length
-        iCaretPos = range.text.length;
-      } else if (elem.selectionStart || elem.selectionStart === 0) {
-        // Firefox support
-        iCaretPos = elem.selectionStart;
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
       }
-      // Return results
-      return iCaretPos;
     },
 
-    /**
-     * Method that returns sets the current caret (cursor) position of a given element and puts it in focus.
-     * Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox
-     * @method setCaretPosition
-     * @param elem {element}
-     * @param caretPos {Integer} The caret index to set
-     * @return {Integer} the cursor index of the given element.
-     */
-    setCaretPosition: function(elem, caretPos) {
-      var range;
-      if (elem) {
-        if (elem.createTextRange) {
-          // IE support
-          range = elem.createTextRange();
-          range.move('character', caretPos);
-          range.select();
-        } else if (elem.selectionStart || elem.selectionStart === 0) {
-          // Firefox support
-          elem.focus();
-          elem.setSelectionRange(caretPos, caretPos);
-        } else {
-          // At least focus the element if nothing else
-          elem.focus();
-        }
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
       }
     }
   };
-
-  return templateRenderer;
 }));
 
 (function(root, factory) {
@@ -562,99 +206,6 @@
   return collectionLoadingMixin;
 }));
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
-  }
-}(this, function() {
-  /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  polling
-   * @author ariel.wexler@vecna.com
-   */
-  var pollingMixin = {
-    /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
-     */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
-
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.__poll();
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-      }
-    },
-
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
-    },
-
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
-    },
-
-    /************** Private methods **************/
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
-    }
-  };
-
-  return pollingMixin;
-}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
@@ -1079,57 +630,585 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'), require('jquery'));
+  } else {
+    factory(root.Backbone, root.$);
+  }
+}(this, function(Backbone, $) {
+  'use strict';
+  Backbone.$ = $;
+  return true;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Utils = root.Torso.Utils || {};
+    root.Torso.Utils.handlebarsUtils = factory();
+  }
+}(this, function() {
+  'use strict';
+
+  return function(Handlebars) {
+
+    /**
+     * Extensions to handlebars helpers.
+     *
+     * @module    Torso
+     * @namespace Torso.Utils
+     * @class     handlebarsUtils
+     * @static
+     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+     */
+    var FEEDBACK_KEY = 'feedback',
+        MODEL_KEY = 'model';
+
+    /**
+     * Usage: {{label 'fieldName' value="suffix"}}
+     * Generates: for="field-name-suffix"
+     * @method Handlebars.helpers.labelFor
+     * @param field {String} The field name to convert to a compliant "for" attribute
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @param [option.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {String} Compliant HTML generating the "for" attribute
+     */
+    Handlebars.registerHelper('labelFor', function(field, options) {
+      return Handlebars.helpers.formAttr(field, 'for', options);
+    });
+
+    /**
+     * Usage: {{bindModel 'fieldName' value='suffix'}}
+     * Generates: id="field-name-suffix" name="field-name-suffix" data-model="fieldName" data-feedback="firstName"
+     * @method Handlebars.helpers.bindModel
+     * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {String} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     */
+    Handlebars.registerHelper('bindModel', function(field, options) {
+      return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
+    });
+
+    /**
+     * Usage: {{feedback 'fieldName'}}
+     * Generates: data-feedback="firstName"
+     * @method Handlebars.helpers.feedback
+     * @param field {String} The field name to convert to a compliant data-feedback attribute
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @return {String} Compliant HTML generating the data-feedback attribute
+     */
+    Handlebars.registerHelper('feedback', function(field, options) {
+      return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
+    });
+
+    /**
+     * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
+     * Generates: id="first-name-123_sub-demo" for="first-name-123_sub"
+     * @method Handlebars.helpers.formAttr
+     * @param field {String} The field name to convert to a compliant data-feedback attribute
+     * @param options {<Handlebars context>} Always passed in as final argument
+     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {String} Compliant HTML generating the data-feedback attribute
+     */
+    Handlebars.registerHelper('formAttr', function(field, attrs, options) {
+      var i, attrName,
+        value = (options.hash ? options.hash.value : undefined),
+        res = Handlebars.helpers.injectFieldIndices(field, options.hash),
+        attributes = '';
+      attrs = attrs.split(',');
+      for (i = 0; i < attrs.length; i++) {
+        attrName = attrs[i].trim();
+        if (attrName === FEEDBACK_KEY) {
+          attributes += 'data-feedback="' + res + '" ';
+        } else if (attrName === MODEL_KEY) {
+          attributes += 'data-model="' + res + '" ';
+        } else if (attrName === 'name') {
+          attributes += 'name="' + Handlebars.helpers.dasherize(res) + '" ';
+        } else if (attrName === 'id') {
+          attributes += 'id="' + Handlebars.helpers.dasherize(res);
+          if (value !== undefined) {
+            attributes += '-' + value;
+          }
+          attributes += '" ';
+        } else if (attrName === 'for') {
+          attributes += 'for="' + Handlebars.helpers.dasherize(res);
+          if (value !== undefined) {
+            attributes += '-' + value;
+          }
+          attributes += '" ';
+        }
+      }
+      if (value !== undefined) {
+        attributes += 'value="' + value +'"';
+      }
+      return new Handlebars.SafeString(attributes);
+    });
+
+    /**
+     * @method Handlebars.helpers.dasherize
+     * @param str {String} The input string to make HTML compliant (convert to dashes)
+     * @return {String} HTML complicant / dasherized string
+     */
+    Handlebars.registerHelper('dasherize', function(str) {
+      var camelCaseRemoved, dotsRemoved, bracesRemoved;
+      camelCaseRemoved = str.replace(/([A-Z])/g, function(rep) {
+        return '-' + rep.toLowerCase();
+      });
+      dotsRemoved = camelCaseRemoved.replace(/\./g, function() {
+        return '_';
+      });
+      bracesRemoved = dotsRemoved.replace(/\[[0-9]+\]/g, function(rep) {
+        return '-' + rep.substring(1, rep.length - 1);
+      });
+      return bracesRemoved;
+    });
+
+    /**
+     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});
+     * Generates: 'test[123]-thisIsRegular-y'
+     * @method injectFieldIndices
+     * @param field {String} The field name
+     * @param indexMap {Object} A map of variables
+     * @return {String} the field string with array variables substituted
+     */
+    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap) {
+      if (indexMap) {
+        return field.replace(/\[.+?\]/g, function(m) {
+          var newIndex = indexMap[m.substring(1, m.length - 1)];
+          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+        });
+      } else {
+        return field;
+      }
+    });
+  };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
+    root.Torso.Mixins.polling = factory();
   }
 }(this, function() {
-  'use strict';
   /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
    * @namespace Torso.Mixins
-   * @class  cellPersistenceRemoval
-   * @author kent.willis@vecna.com
+   * @class  polling
+   * @author ariel.wexler@vecna.com
    */
-  return {
+  var pollingMixin = {
     /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
      */
-    isModelCompatible: false,
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
 
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.__poll();
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
       }
     },
 
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
+    },
+
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
+    }
+  };
+
+  return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    factory(require('backbone'));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: 'input[type="radio"]',
+    events: ['change'],
+    update: function($el, val) {
+      $el.prop('checked', false);
+      $el.filter('[value="' + val + '"]').prop('checked', true);
+    },
+    getVal: function($el) {
+      return $el.filter(':checked').val();
+    }
+  });
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('jquery'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Utils = root.Torso.Utils || {};
+    root.Torso.Utils.templateRenderer = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+  }
+}(this, function(_, $) {
+  'use strict';
+
+  /**
+   * Changes DOM Nodes that are different, and leaves others untouched.
+   *
+   * Algorithm:
+   * Delegates to a particular swapMethod, depending on the Node type.
+   * Recurses for nested Element Nodes only.
+   * There is always room for optimizing this method.
+   *
+   * @method hotswap
+   * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
+   * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
+   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   */
+  function hotswap(currentNode, newNode, ignoreElements) {
+    var newNodeType = newNode.nodeType,
+      currentNodeType = currentNode.nodeType,
+      swapMethod;
+
+    if(newNodeType !== currentNodeType) {
+      $(currentNode).replaceWith(newNode);
+    } else {
+      swapMethod = swapMethods[newNodeType] || swapMethods['default'];
+      swapMethod(currentNode, newNode, ignoreElements);
+    }
+  }
+
+  /*
+   * Swap method for Element Nodes
+   * @param currentNode {Element} The pre-existing DOM Element to update
+   * @param newNode {Element} The detached DOM Element representing the desired DOM Element subtree
+   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   */
+  function swapElementNodes(currentNode, newNode, ignoreElements) {
+    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
+      $currentNode = $(currentNode),
+      $newNode = $(newNode),
+      idx = 0;
+
+    shouldIgnore = _.some(ignoreElements, function(selector) {
+      return $currentNode.is(selector);
+    });
+
+    if (shouldIgnore) {
+      return;
+    }
+
+    // Handle tagname changes with full replacement
+    if (newNode.tagName !== currentNode.tagName) {
+      $currentNode.replaceWith(newNode);
+      return;
+    }
+
+    // Remove current attributes that have changed
+    currentAttributes = currentNode.attributes;
+    while (idx < currentAttributes.length) {
+      currentAttr = currentAttributes[idx].name;
+      if (!_.contains(currentAttr, newNode.attributes)) {
+        currentNode.removeAttribute(currentAttr);
+      }
+      idx++;
+    }
+
+    // Set new attributes
+    _.each(newNode.attributes, function(attrib) {
+      currentNode.setAttribute(attrib.name, attrib.value);
+    });
+
+    // Quick check to see if we need to bother comparing sub-levels
+    if ($currentNode.html() === $newNode.html()) {
+      return;
+    }
+
+    // Include all child nodes, including text and comment nodes
+    $newChildNodes = $newNode.contents();
+    $currChildNodes = $currentNode.contents();
+
+    // If the DOM lists are different sizes, perform a hard refresh
+    if ($newChildNodes.length !== $currChildNodes.length) {
+      $currentNode.html($newNode.html());
+      return;
+    }
+
+    // Perform a recursive hotswap for all children nodes
+    $currChildNodes.each(function(index, currChildNode) {
+      hotswap(currChildNode, $newChildNodes.get(index), ignoreElements);
+    });
+  }
+
+  /*
+   * Swap method for Text, Comment, and CDATA Section Nodes
+   * @param currentNode {Node} The pre-existing DOM Node to update
+   * @param newNode {Node} The detached DOM Node representing the desired DOM Node subtree
+   */
+  function updateIfNodeValueChanged(currentNode, newNode){
+    var nodeValueChanged = newNode.nodeValue !== currentNode.nodeValue;
+    if (nodeValueChanged) {
+      $(currentNode).replaceWith(newNode);
+    }
+  }
+
+  /*
+   * Map of nodeType to hot swap implementations.
+   * NodeTypes are hard-coded integers per the DOM Level 2 specification instead of
+   * references to constants defined on the window.Node object for IE8 compatibility
+   */
+  var swapMethods = {
+    1: swapElementNodes, // ELEMENT_NODE
+    3: updateIfNodeValueChanged, // TEXT_NODE
+    4: updateIfNodeValueChanged, // CDATA_SECTION_NODE
+    8: updateIfNodeValueChanged, // COMMENT_NODE
+    default: function(currentNode, newNode) {
+      $(currentNode).replaceWith(newNode);
+    }
+  };
+
+  /**
+   * Static Template Engine.
+   * All template renders should be piped through this method.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     templateRenderer
+   * @static
+   * @author    ariel.wexler@vecna.com
+   */
+  var templateRenderer = {
+    /**
+     * Performs efficient re-rendering of a template.
+     * @method render
+     * @param  $el {jQueryObject} The Element to render into
+     * @param  template {Handlebars Template} The HBS template to apply
+     * @param  context {Object} The context object to pass to the template
+     * @param  [opts] {Object} Other options
+     * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
+     * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
+     */
+    render: function($el, template, context, opts) {
+      var newDOM,
+          newHTML = template(context),
+          el = $el.get(0);
+      opts = opts || {};
+
+      if (opts.force) {
+        $el.html(newHTML);
+      } else {
+        newDOM = this.copyTopElement(el);
+        $(newDOM).html(newHTML);
+        this.hotswapKeepCaret(el, newDOM, opts.ignoreElements);
       }
     },
 
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
+    /**
+     * Call this.hotswap but also keeps the caret position the same
+     * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
+     * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
+     * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+     * @method hotswapKeepCaret
+     */
+
+    hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
+      var currentCaret,
+          activeElement = document.activeElement;
+      if (activeElement && activeElement.hasAttribute('value') && this.supportsSelection(activeElement)) {
+        currentCaret = this.getCaretPosition(activeElement);
+      }
+      this.hotswap(currentNode, newNode, ignoreElements);
+      if (activeElement && this.supportsSelection(activeElement)) {
+        this.setCaretPosition(activeElement, currentCaret);
       }
     },
 
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
+    // See above function declaration for method-level documentation
+    hotswap: hotswap,
+
+    /**
+     * Produces a copy of the element tag with attributes but with no contents
+     * @param el {Element} the DOM element to be copied
+     * @return {Element} a shallow copy of the element with no children but with attributes
+     * @method copyTopElement
+     */
+    copyTopElement: function(el) {
+      var newDOM = document.createElement(el.tagName);
+      _.each(el.attributes, function(attrib) {
+        newDOM.setAttribute(attrib.name, attrib.value);
+      });
+      return newDOM;
+    },
+
+    /**
+     * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
+     * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
+     * @param el {Element} the DOM element to check
+     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el
+     * @method supportsSelection
+     */
+    supportsSelection : function (el) {
+      return (/text|password|search|tel|url/).test(el.type);
+    },
+
+    /**
+     * Method that returns the current caret (cursor) position of a given element.
+     * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
+     * @method getCaretPosition
+     * @param elem {element} the DOM element to check caret position
+     * @return {Integer} the cursor index of the given element.
+     */
+    getCaretPosition: function(elem) {
+      // range {IE selection object}
+      // iCaretPos {Integer} will store the final caret position
+      var range,
+          iCaretPos = 0;
+      // IE Support
+      if (document.selection) {
+        // Set focus on the element
+        elem.focus();
+        // To get cursor position, get empty selection range
+        range = document.selection.createRange();
+        // Move selection start to 0 position
+        range.moveStart('character', -elem.value.length);
+        // The caret position is selection length
+        iCaretPos = range.text.length;
+      } else if (elem.selectionStart || elem.selectionStart === 0) {
+        // Firefox support
+        iCaretPos = elem.selectionStart;
+      }
+      // Return results
+      return iCaretPos;
+    },
+
+    /**
+     * Method that returns sets the current caret (cursor) position of a given element and puts it in focus.
+     * Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox
+     * @method setCaretPosition
+     * @param elem {element}
+     * @param caretPos {Integer} The caret index to set
+     * @return {Integer} the cursor index of the given element.
+     */
+    setCaretPosition: function(elem, caretPos) {
+      var range;
+      if (elem) {
+        if (elem.createTextRange) {
+          // IE support
+          range = elem.createTextRange();
+          range.move('character', caretPos);
+          range.select();
+        } else if (elem.selectionStart || elem.selectionStart === 0) {
+          // Firefox support
+          elem.focus();
+          elem.setSelectionRange(caretPos, caretPos);
+        } else {
+          // At least focus the element if nothing else
+          elem.focus();
+        }
       }
     }
   };
+
+  return templateRenderer;
 }));
 
 (function(root, factory) {
@@ -1153,94 +1232,6 @@
   _.extend(Cell.prototype, cellPersistenceRemovalMixin);
 
   return Cell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['./Cell'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('./Cell'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root.Torso.Cell);
-  }
-}(this, function(Cell) {
-  'use strict';
-  /**
-   * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @author kent.willis@vecna.com
-   */
-  var ServiceCell = Cell.extend({ });
-
-  return ServiceCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-  /**
-   * Backbone's router.
-   * @module Torso
-   * @class  Router
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.Router.extend({});
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Events = factory(root._, root.Backbone);
-  }
-}(this, function(_, Backbone) {
-  'use strict';
-
-  /**
-   * Generic Events.
-   * @module    Torso
-   * @class     Events
-   * @constructor
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var Events = _.extend({}, Backbone.Events);
-
-  return Events;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
 }));
 
 (function(root, factory) {
@@ -1297,6 +1288,32 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+  }
+}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedCell = Backbone.NestedModel.extend({});
+  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+
+  return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1323,28 +1340,751 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+    define(['./Cell'], factory);
   } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+    module.exports = factory(require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+    root.Torso.ServiceCell = factory(root.Torso.Cell);
   }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+}(this, function(Cell) {
+  'use strict';
+  /**
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
+   * @module    Torso
+   * @class  ServiceCell
+   * @author kent.willis@vecna.com
+   */
+  var ServiceCell = Cell.extend({ });
+
+  return ServiceCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './templateRenderer', './Cell'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
+  }
+}(this, function(_, Backbone, templateRenderer, Cell) {
   'use strict';
 
   /**
-   * Generic Nested Model
+   * Generic View that deals with:
+   * - Creation of private collections
+   * - Lifecycle of a view
    * @module    Torso
-   * @class     NestedModel
+   * @class     View
    * @constructor
-   * @author kent.willis@vecna.com
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
-  var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+  var View = Backbone.View.extend({
+    viewState: null,
+    template: null,
+    feedback: null,
+    feedbackModel: null, // TODO feedback model shouldn't be called a model if it's a cell
+    __childViews: null,
+    __isActive: false,
+    __isAttached: false,
+    __isDisposed: false,
+    __feedbackEvents: null,
+    /**
+     * Array of feedback when-then-to's. Example:
+     * [{
+     *   when: {'@fullName': ['change']},
+     *   then: function(event) { return {text: this.feedbackModel.get('fullName')};},
+     *   to: 'fullName-feedback'
+     * }]
+     * @private
+     * @property feedback
+     * @type Array
+     */
 
-  return NestedCell;
+    /**
+     * Overrides constructor to create needed fields and invoke activate/render after initialization
+     * @method constructor
+     * @override
+     */
+    constructor: function(options) {
+      options = options || {};
+      this.viewState = new Cell();
+      this.feedbackModel = new Cell();
+      this.__childViews = {};
+      this.__feedbackEvents = [];
+      Backbone.View.apply(this, arguments);
+      if (!options.noActivate) {
+        this.activate();
+      }
+    },
+
+    /**
+     * @return {Object} context for a render method. Defaults to:
+     *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
+     * @method prepare
+     */
+    prepare: function() {
+      if (this.model) {
+        return {
+          model: this.model.toJSON(),
+          view: this.viewState.toJSON()
+        };
+      } else {
+        return {
+          view: this.viewState.toJSON()
+        };
+      }
+    },
+
+    /**
+     * Rebuilds the html for this view's element. Should be able to be called at any time.
+     * Defaults to using this.templateRender. Assumes that this.template is a javascript
+     * function that accepted a single JSON context.
+     * @method render
+     */
+    render: function() {
+      this.unplug();
+      if (this.template) {
+        this.templateRender(this.$el, this.template, this.prepare());
+      }
+      this.plug();
+      this.delegateEvents();
+    },
+
+    /**
+     * Hotswap rendering system reroute method.
+     * @method templateRender
+     * See Torso.templateRenderer#render for params
+     */
+    templateRender: function(el, template, context, opts) {
+      this.detachChildViews();
+      templateRenderer.render(el, template, context, opts);
+    },
+
+    /**
+     * Binds DOM events with the view using events hash.
+     * Also adds feedback event bindings
+     * @method delegateEvents
+     * @override
+     */
+    delegateEvents: function() {
+      Backbone.View.prototype.delegateEvents.call(this);
+      this.__generateFeedbackBindings();
+      this.__generateFeedbackModelCallbacks();
+    },
+
+    /**
+     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
+     * After dispose is called, the view can be safely garbage collected. Called while
+     * recursively removing views from the hierarchy.
+     * @method dispose
+     */
+    dispose: function() {
+      this._dispose();
+
+      // Detach DOM and deactivate the view
+      this.detach();
+      this.deactivate();
+
+      // Clean up child views first
+      this.disposeChildViews();
+
+      // Remove view from DOM
+      this.remove();
+
+      // Unbind all local event bindings
+      this.off();
+      this.stopListening();
+      if (this.viewState) {
+        this.viewState.off();
+        this.viewState.stopListening();
+      }
+      // Delete the dom references
+      delete this.$el;
+      delete this.el;
+
+      this.__isDisposed = true;
+    },
+
+    /**
+     * Method to be invoked when dispose is called. By default calling dispose will remove the
+     * view's element, its on's, listenTo's, and any registered children.
+     * Override this method to destruct any extra
+     * @method _dispose
+     */
+    _dispose: _.noop,
+
+    /**
+     * Method to be invoked when deactivate is called. Use this method to turn off any
+     * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
+     * @method _deactivate
+     */
+    _deactivate: _.noop,
+
+    /**
+     * Method to be invoked when activate is called. Use this method to turn on any
+     * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
+     * @method _activate
+     */
+    _activate: _.noop,
+
+    /**
+     * @return {Boolean} true if this view has child views
+     * @method hasChildViews
+     */
+    hasChildViews: function() {
+      return !_.isEmpty(this.__childViews);
+    },
+
+    /**
+     * @return all of the child views this list view has registered
+     * @method getChildViews
+     */
+    getChildViews: function() {
+      return _.values(this.__childViews);
+    },
+
+    /**
+     * Returns the view that corresponds to the cid
+     * @param viewCID {cid} the view cid
+     * @return the child view corresponding to the cid
+     * @method getChildView
+     */
+    getChildView: function(viewCID) {
+      return this.__childViews[viewCID];
+    },
+
+    /**
+     * Default child view cleanup method that may be overriden.
+     * @method disposeChildViews
+     */
+    disposeChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.dispose();
+      });
+    },
+
+    /**
+     * Deactivates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     */
+    deactivateChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.deactivate();
+      });
+    },
+
+    /**
+     * Activates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     */
+    activateChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.activate();
+      });
+    },
+
+    /**
+     * Detach all child views
+     * Default method may be overriden.
+     * @method detachChildViews
+     */
+    detachChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.detach();
+      });
+    },
+
+    /**
+     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the child view as well.
+     * @param view {View} the child view
+     * @method registerChildView
+     */
+    registerChildView: function(view) {
+      this.__childViews[view.cid] = view;
+    },
+
+    /**
+     * Unbinds the child view - no recursive calls will be made to this child view
+     * @param view {View} the child view
+     * @method unregisterChildView
+     */
+    unregisterChildView: function(view) {
+      delete this.__childViews[view.cid];
+    },
+
+    /**
+     * Unregisters all child views
+     * @method unregisterChildViews
+     */
+    unregisterChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        this.unregisterChildView(view);
+      }, this);
+    },
+
+    /**
+     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
+     * Invokes attachChildView as the bulk of the functionality
+     * @method injectView
+     * @param injectionSite {String} The name of the injection site in the layout template
+     * @param view          {View}   The instantiated view object to inject
+     */
+    injectView: function(injectionSite, view) {
+      var injectionPoint = this.$('[inject=' + injectionSite + ']');
+      if (view && injectionPoint.size() > 0) {
+        this.attachChildView(injectionPoint, view);
+      }
+    },
+
+    /**
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @method attachChildView
+     */
+    attachChildView: function($el, view) {
+      view.detach();
+      this.registerChildView(view);
+      view.attach($el);
+    },
+
+    /**
+     * If attached, will detach the view from the DOM and calls deactivate
+     * @method detach
+     */
+    detach: function() {
+      if (this.isAttached()) {
+        // Detach view from DOM
+        if (this.injectionSite) {
+          this.$el.replaceWith(this.injectionSite);
+        } else {
+          this.$el.detach();
+        }
+        this.deactivate();
+        this.__isAttached = false;
+      }
+    },
+
+    /**
+     * If detached, will replace the element passed in with this view's element and activate the view.
+     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
+     * @method attach
+     */
+    attach: function($el) {
+      if (!this.isAttached()) {
+        // be safe and deactivate before attaching yourself
+        this.deactivate();
+        this.render();
+        this.injectionSite = $el.replaceWith(this.$el);
+        this.activate();
+        this.__isAttached = true;
+      }
+    },
+
+    /**
+     * @returns {Boolean} true if the view is attached
+     * @method isAttached
+     */
+    isAttached: function() {
+      return this.__isAttached;
+    },
+
+    /**
+     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
+     * and events that may affect user experience. Recursively invokes deactivate on child views
+     * @method deactivate
+     */
+    deactivate: function() {
+      this.deactivateChildViews();
+      if (this.isActive()) {
+        this.undelegateEvents();
+        this._deactivate();
+        this.__isActive = false;
+      }
+    },
+
+    /**
+     * Resets listeners and events in order for the view to be reattached to the visible DOM
+     * @method activate
+     */
+    activate: function() {
+      this.activateChildViews();
+      if (!this.isActive()) {
+        this.delegateEvents();
+        this._activate();
+        this.__isActive = true;
+      }
+    },
+
+        /**
+     * Before any DOM rendering is done, this method is called and removes any
+     * custom plugins including events that attached to the existing elements.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * @method unplug
+     */
+    unplug: _.noop,
+
+    /**
+     * After all DOM rendering is done, this method is called and attaches any
+     * custom plugins to the existing elements.  This method can be overwritten
+     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * @method plug
+     */
+    plug: _.noop,
+
+    /**
+     * @returns {Boolean} true if the view is active
+     * @method isActive
+     */
+    isActive: function() {
+      return this.__isActive;
+    },
+
+    /**
+     * @returns {Boolean} true if the view was disposed
+     * @method isDisposed
+     */
+    isDisposed: function() {
+      return this.__isDisposed;
+    },
+
+    /**
+     * Invokes a feedback entry's "then" method
+     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
+     * @param [evt] {Event} the event to be passed to the "then" method
+     * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
+     * @method invokeFeedback
+     */
+    invokeFeedback: function(to, evt, indexMap) {
+      var result,
+        feedbackToInvoke = _.find(this.feedback, function(feedback) {
+          var toToCheck = feedback.to;
+          if (_.isArray(toToCheck)) {
+            return _.contains(toToCheck, to);
+          } else {
+            return to === toToCheck;
+          }
+        }),
+        feedbackModelField = to;
+      if (feedbackToInvoke) {
+        if (indexMap) {
+          feedbackModelField = this.__substituteIndicesUsingMap(to, indexMap);
+        }
+        result = feedbackToInvoke.then.call(this, evt, indexMap);
+        this.__processFeedbackThenResult(result, feedbackModelField);
+      }
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Generates callbacks for changes in feedback model fields
+     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback model
+     * If feedbackModel.get('fullName') returns:
+     * { text: 'my text',
+     *   attr: {class: 'newClass'}
+     *   hide: [100, function() {...}]
+     * ...}
+     * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
+     * @private
+     * @method __generateFeedbackModelCallbacks
+     */
+    __generateFeedbackModelCallbacks: function() {
+      var self = this;
+      // Feedback one-way bindings
+      self.feedbackModel.off();
+      _.each(this.$('[data-feedback]'), function(element) {
+        var attr = $(element).data('feedback');
+        self.feedbackModel.on('change:' + attr, (function(field) {
+          return function() {
+            var $element,
+              state = self.feedbackModel.get(field);
+            if (!state) {
+              return;
+            }
+            $element = self.$el.find('[data-feedback="' + field + '"]');
+            _.each(state, function(value, key) {
+              var target;
+              if (_.first(key) === '_') {
+                target = self[key.slice(1)];
+              } else {
+                target = $element[key];
+              }
+              if (_.isArray(value)) {
+                target.apply($element, value);
+              } else if (value !== undefined) {
+                target.call($element, value);
+              }
+            });
+          };
+        })(attr));
+      });
+      _.each(self.feedbackModel.attributes, function(value, attr) {
+        self.feedbackModel.trigger('change:' + attr);
+      });
+    },
+
+    /**
+     * Processes the result of the then method. Adds to the feedback model.
+     * @param result {Object} the result of the then method
+     * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
+     * @private
+     * @method __processFeedbackThenResult
+     */
+    __processFeedbackThenResult: function(result, feedbackModelField) {
+      var newState = $.extend({}, result);
+      this.feedbackModel.set(feedbackModelField, newState, {silent: true});
+      this.feedbackModel.trigger('change:' + feedbackModelField);
+    },
+
+    /**
+     * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks
+     * Finds all feedback zones that match the "to" field, and binds the "when" events to invoke the "then" method
+     * @private
+     * @method __generateFeedbackBindings
+     */
+    __generateFeedbackBindings: function() {
+      var i,
+          self = this;
+
+      // Cleanup previous "on" events
+      for (i = 0; i < this.__feedbackEvents.length; i++) {
+        this.off(null, this.__feedbackEvents[i]);
+      }
+      this.__feedbackEvents = [];
+
+      // For each feedback configuration
+      _.each(this.feedback, function(declaration) {
+        var toEntries = [declaration.to];
+        if (_.isArray(declaration.to)) {
+          toEntries = declaration.to;
+        }
+        _.each(toEntries, function(to) {
+          var destinations = self.__getFeedbackDestinations(to),
+            destIndexTokens = self.__getAllIndexTokens(to);
+
+          // Iterate over all destinations
+          _.each(destinations, function(dest) {
+            var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
+            dest = $(dest);
+            fieldName = dest.data('feedback');
+            indices = self.__getAllIndexTokens(fieldName);
+            indexMap = {};
+            // Generates a mapping from variable name to value:
+            // If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
+            // then the map would look like: {x: 1, y: 4}
+            _.each(destIndexTokens, function(indexToken, i) {
+              indexMap[indexToken] = indices[i];
+            });
+            then = declaration.then;
+
+            // If the "then" clause is a string, assume it's a view method
+            if (_.isString(then)) {
+              then = self[then];
+            } else if (_.isArray(then)) {
+              // If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
+              args = then.slice();
+              method = args[0];
+              args.shift();
+              then = self[method].apply(self, args);
+            }
+
+            // track the indices for binding
+            bindInfo = {
+              feedbackModelField: fieldName,
+              fn: then,
+              indices: indexMap
+            };
+            // Iterate over all "when" clauses
+            whenEvents = self.__generateWhenEvents(declaration.when, indexMap);
+            _.each(whenEvents, function(eventKey) {
+              var match, delegateEventSplitter,
+                invokeThen = function(evt) {
+                  var i, args, result, newState;
+                  args = [evt];
+                  newState = {};
+                  args.push(bindInfo.indices);
+                  result = bindInfo.fn.apply(self, args);
+                  self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                };
+              delegateEventSplitter = /^(\S+)\s*(.*)$/;
+              match = eventKey.match(delegateEventSplitter);
+              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
+            });
+            // Special "on" listeners
+            _.each(declaration.when.on, function(eventKey) {
+              var invokeThen = function() {
+                var result,
+                    args = [{
+                      args: arguments,
+                      type: eventKey
+                    }];
+                args.push(bindInfo.indices);
+                result = bindInfo.fn.apply(self, args);
+                self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+              };
+              self.on(eventKey, invokeThen, self);
+              self.__feedbackEvents.push(invokeThen);
+            });
+          });
+        });
+      });
+    },
+
+    /**
+     * Returns all elements on the page that match the feedback mapping
+     * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
+     * @param dest {String} the string of the data-feedback
+     * @return {jQuery array} all elements on the page that match the feedback mapping
+     * @private
+     * @method __getFeedbackDestinations
+     */
+    __getFeedbackDestinations: function(dest) {
+      var self = this,
+          strippedField = this.__stripAllAttribute(dest),
+          destPrefix = dest,
+          firstArrayIndex = dest.indexOf('[');
+      if (firstArrayIndex > 0) {
+        destPrefix = dest.substring(0, firstArrayIndex);
+      }
+      // Tries to match as much as possible by using a prefix (the string before the array notation)
+      return this.$('[data-feedback^="' + destPrefix + '"]').filter(function() {
+        // Only take the elements that actually match after the array notation is converted to open notation ([x] -> [])
+        return self.__stripAllAttribute($(this).data('feedback')) === strippedField;
+      });
+    },
+
+    /**
+     * Generates the events needed to listen to the feedback's when methods. A when event is only created
+     * if the appropriate element exist on the page
+     * @param whenMap the collection of "when"'s for a given feedback
+     * @param indexMap map from variable names to values when substituting array notation
+     * @return the events that were generated
+     * @private
+     * @method __generateWhenEvents
+     */
+    __generateWhenEvents: function(whenMap, indexMap) {
+      var self = this,
+          events = [];
+      _.each(whenMap, function(whenEvents, whenField) {
+        var substitutedWhenField,
+            qualifiedFields = [whenField],
+            useAtNotation = (whenField.charAt(0) === '@');
+
+        if (whenField !== 'on') {
+          if (useAtNotation) {
+            whenField = whenField.substring(1);
+            // substitute indices in to "when" placeholders
+            // [] -> to all, [0] -> to specific, [x] -> [x's value]
+            substitutedWhenField = self.__substituteIndicesUsingMap(whenField, indexMap);
+            qualifiedFields = _.flatten(self.__generateSubAttributes(substitutedWhenField, self.model));
+          }
+          // For each qualified field
+          _.each(qualifiedFields, function(qualifiedField) {
+            _.each(whenEvents, function(eventType) {
+              var backboneEvent = eventType + ' ' + qualifiedField;
+              if (useAtNotation) {
+                backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
+              }
+              events.push(backboneEvent);
+            });
+          });
+        }
+      });
+      return events;
+    },
+
+    /**
+     * Returns an array of all the values and variables used within the array notations in a string
+     * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
+     * This does not handle or return any "open" array notations: []
+     * @private
+     * @method __getAllIndexTokens
+     */
+    __getAllIndexTokens: function(attr) {
+      return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
+        var token = arrayNotation.substring(1, arrayNotation.length - 1);
+        if (!isNaN(token)) {
+          result.push(parseInt(token, 10));
+        } else {
+          result.push(token);
+        }
+        return result;
+      }, []);
+    },
+
+    /**
+     * Replaces all array notations with open array notations.
+     * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
+     * @private
+     * @method __stripAllAttribute
+     */
+    __stripAllAttribute: function(attr) {
+      attr = attr.replace(/\[.+?\]/g, function() {
+        return '[]';
+      });
+      return attr;
+    },
+
+    /**
+     * Takes a map from variable name to value to be replaced and processes a string with them.
+     * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+     * @private
+     * @method __substituteIndicesUsingMap
+     */
+    __substituteIndicesUsingMap : function(dest, indexMap) {
+      var newIndex;
+      return dest.replace(/\[.?\]/g, function(arrayNotation) {
+        if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
+          return arrayNotation;
+        } else {
+          newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
+          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+        }
+      });
+    },
+
+    /**
+     * Generates an array of all the possible field accessors and their indices when using
+     * the "open" array notation:
+     *    foo[] -> ['foo[0]', 'foo[1]'].
+     * Will also perform nested arrays:
+     *    foo[][] -> ['foo[0][0]', foo[1][0]']
+     * @method __generateSubAttributes
+     * @private
+     * @param {String} attr The name of the attribute to expand according to the bound model
+     * @return {Array<String>} The fully expanded subattribute names
+     */
+    __generateSubAttributes: function(attr, model) {
+      var i, attrName, remainder, subAttrs, values,
+        firstBracket = attr.indexOf('[]');
+      if (firstBracket === -1) {
+        return [attr];
+      } else {
+        attrName = attr.substring(0, firstBracket);
+        remainder = attr.substring(firstBracket + 2);
+        subAttrs = [];
+        values = model.get(attrName);
+        if (!values) {
+          return [attr];
+        }
+        for (i = 0 ; i < values.length; i++) {
+          subAttrs.push(this.__generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
+        }
+        return subAttrs;
+      }
+    }
+
+    /************** End Feedback **************/
+  });
+
+  return View;
 }));
 
 (function(root, factory) {
@@ -2430,6 +3170,9 @@
     },
 
     /**
+     * If FormModel has a "url" property defined, it will invoke a save on the form model, and after successfully
+     * saving, will perform a push.
+     * If no "url" property is defined then the following behavior is used:
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
      * @param [options] {Object}
      *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
@@ -2438,7 +3181,8 @@
      *   @param [options.force=true] {Boolean} if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
-     * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
+     * @return when using a "url", a promise is returned for the save on this form model.
+         If not using a "url", a promise that will either resolve when all the models have successfully saved in which case the context returned
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
@@ -2446,76 +3190,22 @@
      */
     save: function(options) {
       var notTrackingResponse,
-        promise = new $.Deferred();
+        deferred = new $.Deferred(),
+        formModel = this;
       options = options || {};
       _.defaults(options, {
         rollback: true,
         force: true
       });
       if (this.isTrackingObjectModel()) {
-        (function(formModel) {
-          var staleModels,
-            responsesSucceeded = 0,
-            responsesFailed = 0,
-            responses = {},
-            oldValues = {},
-            models = formModel.__getAllModels(true),
-            numberOfSaves = models.length;
-          // If we're not forcing a save, then throw an error if the models are stale
-          if (!options.force) {
-            staleModels = formModel.checkIfModelsAreStale();
-            if (staleModels.length > 0) {
-              throw {
-                name: 'Stale data',
-                staleModels: staleModels
-              };
-            }
-          }
-          // Callback for each response
-          function responseCallback(response, model, success) {
-            // Add response to a hash that will eventually be returned through the promise
-            responses[model.cid] = {
-                success: success,
-                response: response
-              };
-            // If we have reached the total of number of expected responses, then resolve or reject the promise
-            if (responsesFailed + responsesSucceeded === numberOfSaves) {
-              if (responsesFailed > 0) {
-                // Rollback if any responses have failed
-                if (options.rollback) {
-                  _.each(formModel.__getAllModels(true), function(model) {
-                    model.set(oldValues[model.cid]);
-                    if (responses[model.cid].success) {
-                      model.save();
-                    }
-                  });
-                }
-                formModel.trigger('save-fail', responses);
-                promise.reject(responses);
-              } else {
-                formModel.trigger('save-success', responses);
-                promise.resolve(responses);
-              }
-            }
-          }
-          // Grab the current values of the object models
-          _.each(models, function(model) {
-            oldValues[model.cid] = formModel.__getTrackedModelFields(model);
+        if (_.has(formModel, 'url')) {
+          return NestedModel.prototype.save.apply(this, arguments).done(function() {
+            formModel.push();
           });
-          // Push the form model values to the object models
-          formModel.push();
-          // Call save on each object model
-          _.each(models, function(model) {
-            model.save().fail(function() {
-              responsesFailed++;
-              responseCallback(arguments, model, false);
-            }).done(function() {
-              responsesSucceeded++;
-              responseCallback(arguments, model, true);
-            });
-          });
-        })(this);
-        return promise.promise();
+        } else {
+          this.__saveToModels(deferred, options);
+          return deferred.promise();
+        }
       } else {
         // Return a response that is generated when this form model is not tracking an object model
         notTrackingResponse = {
@@ -2635,6 +3325,86 @@
     },
 
     /************** Private methods **************/
+
+    /**
+     * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
+     * @param [options] {Object}
+     *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
+     *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
+     *     to object models within the timing of this save method, the updates could be lost.
+     *   @param [options.force=true] {Boolean} if false, the form model will check to see if an update has been made
+     *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
+     *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
+     * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
+     *   is an array of the responses (order determined by first the array of models and then the array of models used by
+     *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
+     *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
+     * @private
+     * @method __saveToModels
+     */
+    __saveToModels: function(deferred, options) {
+      var staleModels,
+        formModel = this,
+        responsesSucceeded = 0,
+        responsesFailed = 0,
+        responses = {},
+        oldValues = {},
+        models = formModel.__getAllModels(true),
+        numberOfSaves = models.length;
+      // If we're not forcing a save, then throw an error if the models are stale
+      if (!options.force) {
+        staleModels = formModel.checkIfModelsAreStale();
+        if (staleModels.length > 0) {
+          throw {
+            name: 'Stale data',
+            staleModels: staleModels
+          };
+        }
+      }
+      // Callback for each response
+      function responseCallback(response, model, success) {
+        // Add response to a hash that will eventually be returned through the promise
+        responses[model.cid] = {
+            success: success,
+            response: response
+          };
+        // If we have reached the total of number of expected responses, then resolve or reject the promise
+        if (responsesFailed + responsesSucceeded === numberOfSaves) {
+          if (responsesFailed > 0) {
+            // Rollback if any responses have failed
+            if (options.rollback) {
+              _.each(formModel.__getAllModels(true), function(model) {
+                model.set(oldValues[model.cid]);
+                if (responses[model.cid].success) {
+                  model.save();
+                }
+              });
+            }
+            formModel.trigger('save-fail', responses);
+            deferred.reject(responses);
+          } else {
+            formModel.trigger('save-success', responses);
+            deferred.resolve(responses);
+          }
+        }
+      }
+      // Grab the current values of the object models
+      _.each(models, function(model) {
+        oldValues[model.cid] = formModel.__getTrackedModelFields(model);
+      });
+      // Push the form model values to the object models
+      formModel.push();
+      // Call save on each object model
+      _.each(models, function(model) {
+        model.save().fail(function() {
+          responsesFailed++;
+          responseCallback(arguments, model, false);
+        }).done(function() {
+          responsesSucceeded++;
+          responseCallback(arguments, model, true);
+        });
+      });
+    },
 
     /**
      * Updates a single attribute in this form model.
@@ -2949,733 +3719,6 @@
   _.extend(FormModel.prototype, validation.mixin);
 
   return FormModel;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
-  }
-}(this, function(_, Backbone, templateRenderer, Cell) {
-  'use strict';
-
-  /**
-   * Generic View that deals with:
-   * - Creation of private collections
-   * - Lifecycle of a view
-   * @module    Torso
-   * @class     View
-   * @constructor
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var View = Backbone.View.extend({
-    viewState: null,
-    template: null,
-    feedback: null,
-    feedbackModel: null, // TODO feedback model shouldn't be called a model if it's a cell
-    __childViews: null,
-    __isActive: false,
-    __isAttached: false,
-    __isDisposed: false,
-    __feedbackEvents: null,
-    /**
-     * Array of feedback when-then-to's. Example:
-     * [{
-     *   when: {'@fullName': ['change']},
-     *   then: function(event) { return {text: this.feedbackModel.get('fullName')};},
-     *   to: 'fullName-feedback'
-     * }]
-     * @private
-     * @property feedback
-     * @type Array
-     */
-
-    /**
-     * Overrides constructor to create needed fields and invoke activate/render after initialization
-     * @method constructor
-     * @override
-     */
-    constructor: function(options) {
-      options = options || {};
-      this.viewState = new Cell();
-      this.feedbackModel = new Cell();
-      this.__childViews = {};
-      this.__feedbackEvents = [];
-      Backbone.View.apply(this, arguments);
-      if (!options.noActivate) {
-        this.activate();
-      }
-    },
-
-    /**
-     * @return {Object} context for a render method. Defaults to:
-     *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
-     * @method prepare
-     */
-    prepare: function() {
-      if (this.model) {
-        return {
-          model: this.model.toJSON(),
-          view: this.viewState.toJSON()
-        };
-      } else {
-        return {
-          view: this.viewState.toJSON()
-        };
-      }
-    },
-
-    /**
-     * Rebuilds the html for this view's element. Should be able to be called at any time.
-     * Defaults to using this.templateRender. Assumes that this.template is a javascript
-     * function that accepted a single JSON context.
-     * @method render
-     */
-    render: function() {
-      this.unplug();
-      if (this.template) {
-        this.templateRender(this.$el, this.template, this.prepare());
-      }
-      this.plug();
-      this.delegateEvents();
-    },
-
-    /**
-     * Hotswap rendering system reroute method.
-     * @method templateRender
-     * See Torso.templateRenderer#render for params
-     */
-    templateRender: function(el, template, context, opts) {
-      this.detachChildViews();
-      templateRenderer.render(el, template, context, opts);
-    },
-
-    /**
-     * Binds DOM events with the view using events hash.
-     * Also adds feedback event bindings
-     * @method delegateEvents
-     * @override
-     */
-    delegateEvents: function() {
-      Backbone.View.prototype.delegateEvents.call(this);
-      this.__generateFeedbackBindings();
-      this.__generateFeedbackModelCallbacks();
-    },
-
-    /**
-     * Removes all listeners, disposes children views, stops listening to events, removes DOM.
-     * After dispose is called, the view can be safely garbage collected. Called while
-     * recursively removing views from the hierarchy.
-     * @method dispose
-     */
-    dispose: function() {
-      this._dispose();
-
-      // Detach DOM and deactivate the view
-      this.detach();
-      this.deactivate();
-
-      // Clean up child views first
-      this.disposeChildViews();
-
-      // Remove view from DOM
-      this.remove();
-
-      // Unbind all local event bindings
-      this.off();
-      this.stopListening();
-      if (this.viewState) {
-        this.viewState.off();
-        this.viewState.stopListening();
-      }
-      // Delete the dom references
-      delete this.$el;
-      delete this.el;
-
-      this.__isDisposed = true;
-    },
-
-    /**
-     * Method to be invoked when dispose is called. By default calling dispose will remove the
-     * view's element, its on's, listenTo's, and any registered children.
-     * Override this method to destruct any extra
-     * @method _dispose
-     */
-    _dispose: _.noop,
-
-    /**
-     * Method to be invoked when deactivate is called. Use this method to turn off any
-     * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
-     * @method _deactivate
-     */
-    _deactivate: _.noop,
-
-    /**
-     * Method to be invoked when activate is called. Use this method to turn on any
-     * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
-     * @method _activate
-     */
-    _activate: _.noop,
-
-    /**
-     * @return {Boolean} true if this view has child views
-     * @method hasChildViews
-     */
-    hasChildViews: function() {
-      return !_.isEmpty(this.__childViews);
-    },
-
-    /**
-     * @return all of the child views this list view has registered
-     * @method getChildViews
-     */
-    getChildViews: function() {
-      return _.values(this.__childViews);
-    },
-
-    /**
-     * Returns the view that corresponds to the cid
-     * @param viewCID {cid} the view cid
-     * @return the child view corresponding to the cid
-     * @method getChildView
-     */
-    getChildView: function(viewCID) {
-      return this.__childViews[viewCID];
-    },
-
-    /**
-     * Default child view cleanup method that may be overriden.
-     * @method disposeChildViews
-     */
-    disposeChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.dispose();
-      });
-    },
-
-    /**
-     * Deactivates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
-     */
-    deactivateChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.deactivate();
-      });
-    },
-
-    /**
-     * Activates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
-     */
-    activateChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.activate();
-      });
-    },
-
-    /**
-     * Detach all child views
-     * Default method may be overriden.
-     * @method detachChildViews
-     */
-    detachChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.detach();
-      });
-    },
-
-    /**
-     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
-     * be done to the child view as well.
-     * @param view {View} the child view
-     * @method registerChildView
-     */
-    registerChildView: function(view) {
-      this.__childViews[view.cid] = view;
-    },
-
-    /**
-     * Unbinds the child view - no recursive calls will be made to this child view
-     * @param view {View} the child view
-     * @method unregisterChildView
-     */
-    unregisterChildView: function(view) {
-      delete this.__childViews[view.cid];
-    },
-
-    /**
-     * Unregisters all child views
-     * @method unregisterChildViews
-     */
-    unregisterChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        this.unregisterChildView(view);
-      }, this);
-    },
-
-    /**
-     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
-     * Invokes attachChildView as the bulk of the functionality
-     * @method injectView
-     * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to inject
-     */
-    injectView: function(injectionSite, view) {
-      var injectionPoint = this.$('[inject=' + injectionSite + ']');
-      if (view && injectionPoint.size() > 0) {
-        this.attachChildView(injectionPoint, view);
-      }
-    },
-
-    /**
-     * Registers the child view if not already done so, then calls view.attach with the element argument
-     * @param $el {jQuery element} the element to attach to.
-     * @param view {View} the child view
-     * @method attachChildView
-     */
-    attachChildView: function($el, view) {
-      view.detach();
-      this.registerChildView(view);
-      view.attach($el);
-    },
-
-    /**
-     * If attached, will detach the view from the DOM and calls deactivate
-     * @method detach
-     */
-    detach: function() {
-      if (this.isAttached()) {
-        // Detach view from DOM
-        if (this.injectionSite) {
-          this.$el.replaceWith(this.injectionSite);
-        } else {
-          this.$el.detach();
-        }
-        this.deactivate();
-        this.__isAttached = false;
-      }
-    },
-
-    /**
-     * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
-     * @method attach
-     */
-    attach: function($el) {
-      if (!this.isAttached()) {
-        // be safe and deactivate before attaching yourself
-        this.deactivate();
-        this.render();
-        this.injectionSite = $el.replaceWith(this.$el);
-        this.activate();
-        this.__isAttached = true;
-      }
-    },
-
-    /**
-     * @returns {Boolean} true if the view is attached
-     * @method isAttached
-     */
-    isAttached: function() {
-      return this.__isAttached;
-    },
-
-    /**
-     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
-     * and events that may affect user experience. Recursively invokes deactivate on child views
-     * @method deactivate
-     */
-    deactivate: function() {
-      this.deactivateChildViews();
-      if (this.isActive()) {
-        this.undelegateEvents();
-        this._deactivate();
-        this.__isActive = false;
-      }
-    },
-
-    /**
-     * Resets listeners and events in order for the view to be reattached to the visible DOM
-     * @method activate
-     */
-    activate: function() {
-      this.activateChildViews();
-      if (!this.isActive()) {
-        this.delegateEvents();
-        this._activate();
-        this.__isActive = true;
-      }
-    },
-
-        /**
-     * Before any DOM rendering is done, this method is called and removes any
-     * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * @method unplug
-     */
-    unplug: _.noop,
-
-    /**
-     * After all DOM rendering is done, this method is called and attaches any
-     * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * @method plug
-     */
-    plug: _.noop,
-
-    /**
-     * @returns {Boolean} true if the view is active
-     * @method isActive
-     */
-    isActive: function() {
-      return this.__isActive;
-    },
-
-    /**
-     * @returns {Boolean} true if the view was disposed
-     * @method isDisposed
-     */
-    isDisposed: function() {
-      return this.__isDisposed;
-    },
-
-    /**
-     * Invokes a feedback entry's "then" method
-     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
-     * @param [evt] {Event} the event to be passed to the "then" method
-     * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
-     * @method invokeFeedback
-     */
-    invokeFeedback: function(to, evt, indexMap) {
-      var result,
-        feedbackToInvoke = _.find(this.feedback, function(feedback) {
-          var toToCheck = feedback.to;
-          if (_.isArray(toToCheck)) {
-            return _.contains(toToCheck, to);
-          } else {
-            return to === toToCheck;
-          }
-        }),
-        feedbackModelField = to;
-      if (feedbackToInvoke) {
-        if (indexMap) {
-          feedbackModelField = this.__substituteIndicesUsingMap(to, indexMap);
-        }
-        result = feedbackToInvoke.then.call(this, evt, indexMap);
-        this.__processFeedbackThenResult(result, feedbackModelField);
-      }
-    },
-
-    /************** Private methods **************/
-
-    /**
-     * Generates callbacks for changes in feedback model fields
-     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback model
-     * If feedbackModel.get('fullName') returns:
-     * { text: 'my text',
-     *   attr: {class: 'newClass'}
-     *   hide: [100, function() {...}]
-     * ...}
-     * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
-     * @private
-     * @method __generateFeedbackModelCallbacks
-     */
-    __generateFeedbackModelCallbacks: function() {
-      var self = this;
-      // Feedback one-way bindings
-      self.feedbackModel.off();
-      _.each(this.$('[data-feedback]'), function(element) {
-        var attr = $(element).data('feedback');
-        self.feedbackModel.on('change:' + attr, (function(field) {
-          return function() {
-            var $element,
-              state = self.feedbackModel.get(field);
-            if (!state) {
-              return;
-            }
-            $element = self.$el.find('[data-feedback="' + field + '"]');
-            _.each(state, function(value, key) {
-              var target;
-              if (_.first(key) === '_') {
-                target = self[key.slice(1)];
-              } else {
-                target = $element[key];
-              }
-              if (_.isArray(value)) {
-                target.apply($element, value);
-              } else if (value !== undefined) {
-                target.call($element, value);
-              }
-            });
-          };
-        })(attr));
-      });
-      _.each(self.feedbackModel.attributes, function(value, attr) {
-        self.feedbackModel.trigger('change:' + attr);
-      });
-    },
-
-    /**
-     * Processes the result of the then method. Adds to the feedback model.
-     * @param result {Object} the result of the then method
-     * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
-     * @private
-     * @method __processFeedbackThenResult
-     */
-    __processFeedbackThenResult: function(result, feedbackModelField) {
-      var newState = $.extend({}, result);
-      this.feedbackModel.set(feedbackModelField, newState, {silent: true});
-      this.feedbackModel.trigger('change:' + feedbackModelField);
-    },
-
-    /**
-     * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks
-     * Finds all feedback zones that match the "to" field, and binds the "when" events to invoke the "then" method
-     * @private
-     * @method __generateFeedbackBindings
-     */
-    __generateFeedbackBindings: function() {
-      var i,
-          self = this;
-
-      // Cleanup previous "on" events
-      for (i = 0; i < this.__feedbackEvents.length; i++) {
-        this.off(null, this.__feedbackEvents[i]);
-      }
-      this.__feedbackEvents = [];
-
-      // For each feedback configuration
-      _.each(this.feedback, function(declaration) {
-        var toEntries = [declaration.to];
-        if (_.isArray(declaration.to)) {
-          toEntries = declaration.to;
-        }
-        _.each(toEntries, function(to) {
-          var destinations = self.__getFeedbackDestinations(to),
-            destIndexTokens = self.__getAllIndexTokens(to);
-
-          // Iterate over all destinations
-          _.each(destinations, function(dest) {
-            var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
-            dest = $(dest);
-            fieldName = dest.data('feedback');
-            indices = self.__getAllIndexTokens(fieldName);
-            indexMap = {};
-            // Generates a mapping from variable name to value:
-            // If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
-            // then the map would look like: {x: 1, y: 4}
-            _.each(destIndexTokens, function(indexToken, i) {
-              indexMap[indexToken] = indices[i];
-            });
-            then = declaration.then;
-
-            // If the "then" clause is a string, assume it's a view method
-            if (_.isString(then)) {
-              then = self[then];
-            } else if (_.isArray(then)) {
-              // If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
-              args = then.slice();
-              method = args[0];
-              args.shift();
-              then = self[method].apply(self, args);
-            }
-
-            // track the indices for binding
-            bindInfo = {
-              feedbackModelField: fieldName,
-              fn: then,
-              indices: indexMap
-            };
-            // Iterate over all "when" clauses
-            whenEvents = self.__generateWhenEvents(declaration.when, indexMap);
-            _.each(whenEvents, function(eventKey) {
-              var match, delegateEventSplitter,
-                invokeThen = function(evt) {
-                  var i, args, result, newState;
-                  args = [evt];
-                  newState = {};
-                  args.push(bindInfo.indices);
-                  result = bindInfo.fn.apply(self, args);
-                  self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
-                };
-              delegateEventSplitter = /^(\S+)\s*(.*)$/;
-              match = eventKey.match(delegateEventSplitter);
-              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
-            });
-            // Special "on" listeners
-            _.each(declaration.when.on, function(eventKey) {
-              var invokeThen = function() {
-                var result,
-                    args = [{
-                      args: arguments,
-                      type: eventKey
-                    }];
-                args.push(bindInfo.indices);
-                result = bindInfo.fn.apply(self, args);
-                self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
-              };
-              self.on(eventKey, invokeThen, self);
-              self.__feedbackEvents.push(invokeThen);
-            });
-          });
-        });
-      });
-    },
-
-    /**
-     * Returns all elements on the page that match the feedback mapping
-     * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
-     * @param dest {String} the string of the data-feedback
-     * @return {jQuery array} all elements on the page that match the feedback mapping
-     * @private
-     * @method __getFeedbackDestinations
-     */
-    __getFeedbackDestinations: function(dest) {
-      var self = this,
-          strippedField = this.__stripAllAttribute(dest),
-          destPrefix = dest,
-          firstArrayIndex = dest.indexOf('[');
-      if (firstArrayIndex > 0) {
-        destPrefix = dest.substring(0, firstArrayIndex);
-      }
-      // Tries to match as much as possible by using a prefix (the string before the array notation)
-      return this.$('[data-feedback^="' + destPrefix + '"]').filter(function() {
-        // Only take the elements that actually match after the array notation is converted to open notation ([x] -> [])
-        return self.__stripAllAttribute($(this).data('feedback')) === strippedField;
-      });
-    },
-
-    /**
-     * Generates the events needed to listen to the feedback's when methods. A when event is only created
-     * if the appropriate element exist on the page
-     * @param whenMap the collection of "when"'s for a given feedback
-     * @param indexMap map from variable names to values when substituting array notation
-     * @return the events that were generated
-     * @private
-     * @method __generateWhenEvents
-     */
-    __generateWhenEvents: function(whenMap, indexMap) {
-      var self = this,
-          events = [];
-      _.each(whenMap, function(whenEvents, whenField) {
-        var substitutedWhenField,
-            qualifiedFields = [whenField],
-            useAtNotation = (whenField.charAt(0) === '@');
-
-        if (whenField !== 'on') {
-          if (useAtNotation) {
-            whenField = whenField.substring(1);
-            // substitute indices in to "when" placeholders
-            // [] -> to all, [0] -> to specific, [x] -> [x's value]
-            substitutedWhenField = self.__substituteIndicesUsingMap(whenField, indexMap);
-            qualifiedFields = _.flatten(self.__generateSubAttributes(substitutedWhenField, self.model));
-          }
-          // For each qualified field
-          _.each(qualifiedFields, function(qualifiedField) {
-            _.each(whenEvents, function(eventType) {
-              var backboneEvent = eventType + ' ' + qualifiedField;
-              if (useAtNotation) {
-                backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
-              }
-              events.push(backboneEvent);
-            });
-          });
-        }
-      });
-      return events;
-    },
-
-    /**
-     * Returns an array of all the values and variables used within the array notations in a string
-     * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
-     * This does not handle or return any "open" array notations: []
-     * @private
-     * @method __getAllIndexTokens
-     */
-    __getAllIndexTokens: function(attr) {
-      return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
-        var token = arrayNotation.substring(1, arrayNotation.length - 1);
-        if (!isNaN(token)) {
-          result.push(parseInt(token, 10));
-        } else {
-          result.push(token);
-        }
-        return result;
-      }, []);
-    },
-
-    /**
-     * Replaces all array notations with open array notations.
-     * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
-     * @private
-     * @method __stripAllAttribute
-     */
-    __stripAllAttribute: function(attr) {
-      attr = attr.replace(/\[.+?\]/g, function() {
-        return '[]';
-      });
-      return attr;
-    },
-
-    /**
-     * Takes a map from variable name to value to be replaced and processes a string with them.
-     * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
-     * @private
-     * @method __substituteIndicesUsingMap
-     */
-    __substituteIndicesUsingMap : function(dest, indexMap) {
-      var newIndex;
-      return dest.replace(/\[.?\]/g, function(arrayNotation) {
-        if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
-          return arrayNotation;
-        } else {
-          newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
-          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
-        }
-      });
-    },
-
-    /**
-     * Generates an array of all the possible field accessors and their indices when using
-     * the "open" array notation:
-     *    foo[] -> ['foo[0]', 'foo[1]'].
-     * Will also perform nested arrays:
-     *    foo[][] -> ['foo[0][0]', foo[1][0]']
-     * @method __generateSubAttributes
-     * @private
-     * @param {String} attr The name of the attribute to expand according to the bound model
-     * @return {Array<String>} The fully expanded subattribute names
-     */
-    __generateSubAttributes: function(attr, model) {
-      var i, attrName, remainder, subAttrs, values,
-        firstBracket = attr.indexOf('[]');
-      if (firstBracket === -1) {
-        return [attr];
-      } else {
-        attrName = attr.substring(0, firstBracket);
-        remainder = attr.substring(firstBracket + 2);
-        subAttrs = [];
-        values = model.get(attrName);
-        if (!values) {
-          return [attr];
-        }
-        for (i = 0 ; i < values.length; i++) {
-          subAttrs.push(this.__generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
-        }
-        return subAttrs;
-      }
-    }
-
-    /************** End Feedback **************/
-  });
-
-  return View;
 }));
 
 (function(root, factory) {

@@ -195,6 +195,9 @@
     },
 
     /**
+     * If FormModel has a "url" property defined, it will invoke a save on the form model, and after successfully
+     * saving, will perform a push.
+     * If no "url" property is defined then the following behavior is used:
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
      * @param [options] {Object}
      *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
@@ -203,7 +206,8 @@
      *   @param [options.force=true] {Boolean} if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
-     * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
+     * @return when using a "url", a promise is returned for the save on this form model.
+         If not using a "url", a promise that will either resolve when all the models have successfully saved in which case the context returned
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
@@ -211,76 +215,22 @@
      */
     save: function(options) {
       var notTrackingResponse,
-        promise = new $.Deferred();
+        deferred = new $.Deferred(),
+        formModel = this;
       options = options || {};
       _.defaults(options, {
         rollback: true,
         force: true
       });
       if (this.isTrackingObjectModel()) {
-        (function(formModel) {
-          var staleModels,
-            responsesSucceeded = 0,
-            responsesFailed = 0,
-            responses = {},
-            oldValues = {},
-            models = formModel.__getAllModels(true),
-            numberOfSaves = models.length;
-          // If we're not forcing a save, then throw an error if the models are stale
-          if (!options.force) {
-            staleModels = formModel.checkIfModelsAreStale();
-            if (staleModels.length > 0) {
-              throw {
-                name: 'Stale data',
-                staleModels: staleModels
-              };
-            }
-          }
-          // Callback for each response
-          function responseCallback(response, model, success) {
-            // Add response to a hash that will eventually be returned through the promise
-            responses[model.cid] = {
-                success: success,
-                response: response
-              };
-            // If we have reached the total of number of expected responses, then resolve or reject the promise
-            if (responsesFailed + responsesSucceeded === numberOfSaves) {
-              if (responsesFailed > 0) {
-                // Rollback if any responses have failed
-                if (options.rollback) {
-                  _.each(formModel.__getAllModels(true), function(model) {
-                    model.set(oldValues[model.cid]);
-                    if (responses[model.cid].success) {
-                      model.save();
-                    }
-                  });
-                }
-                formModel.trigger('save-fail', responses);
-                promise.reject(responses);
-              } else {
-                formModel.trigger('save-success', responses);
-                promise.resolve(responses);
-              }
-            }
-          }
-          // Grab the current values of the object models
-          _.each(models, function(model) {
-            oldValues[model.cid] = formModel.__getTrackedModelFields(model);
+        if (_.has(formModel, 'url')) {
+          return NestedModel.prototype.save.apply(this, arguments).done(function() {
+            formModel.push();
           });
-          // Push the form model values to the object models
-          formModel.push();
-          // Call save on each object model
-          _.each(models, function(model) {
-            model.save().fail(function() {
-              responsesFailed++;
-              responseCallback(arguments, model, false);
-            }).done(function() {
-              responsesSucceeded++;
-              responseCallback(arguments, model, true);
-            });
-          });
-        })(this);
-        return promise.promise();
+        } else {
+          this.__saveToModels(deferred, options);
+          return deferred.promise();
+        }
       } else {
         // Return a response that is generated when this form model is not tracking an object model
         notTrackingResponse = {
@@ -400,6 +350,86 @@
     },
 
     /************** Private methods **************/
+
+    /**
+     * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
+     * @param [options] {Object}
+     *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
+     *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
+     *     to object models within the timing of this save method, the updates could be lost.
+     *   @param [options.force=true] {Boolean} if false, the form model will check to see if an update has been made
+     *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
+     *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
+     * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
+     *   is an array of the responses (order determined by first the array of models and then the array of models used by
+     *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
+     *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
+     * @private
+     * @method __saveToModels
+     */
+    __saveToModels: function(deferred, options) {
+      var staleModels,
+        formModel = this,
+        responsesSucceeded = 0,
+        responsesFailed = 0,
+        responses = {},
+        oldValues = {},
+        models = formModel.__getAllModels(true),
+        numberOfSaves = models.length;
+      // If we're not forcing a save, then throw an error if the models are stale
+      if (!options.force) {
+        staleModels = formModel.checkIfModelsAreStale();
+        if (staleModels.length > 0) {
+          throw {
+            name: 'Stale data',
+            staleModels: staleModels
+          };
+        }
+      }
+      // Callback for each response
+      function responseCallback(response, model, success) {
+        // Add response to a hash that will eventually be returned through the promise
+        responses[model.cid] = {
+            success: success,
+            response: response
+          };
+        // If we have reached the total of number of expected responses, then resolve or reject the promise
+        if (responsesFailed + responsesSucceeded === numberOfSaves) {
+          if (responsesFailed > 0) {
+            // Rollback if any responses have failed
+            if (options.rollback) {
+              _.each(formModel.__getAllModels(true), function(model) {
+                model.set(oldValues[model.cid]);
+                if (responses[model.cid].success) {
+                  model.save();
+                }
+              });
+            }
+            formModel.trigger('save-fail', responses);
+            deferred.reject(responses);
+          } else {
+            formModel.trigger('save-success', responses);
+            deferred.resolve(responses);
+          }
+        }
+      }
+      // Grab the current values of the object models
+      _.each(models, function(model) {
+        oldValues[model.cid] = formModel.__getTrackedModelFields(model);
+      });
+      // Push the form model values to the object models
+      formModel.push();
+      // Call save on each object model
+      _.each(models, function(model) {
+        model.save().fail(function() {
+          responsesFailed++;
+          responseCallback(arguments, model, false);
+        }).done(function() {
+          responsesSucceeded++;
+          responseCallback(arguments, model, true);
+        });
+      });
+    },
 
     /**
      * Updates a single attribute in this form model.
