@@ -107,10 +107,37 @@
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var ListView = View.extend({
+    /**
+     * The collection that holds the models that this list view will track
+     * @property collection
+     * @type Collection
+     */
     collection: null,
+    /**
+     * The child view class definition that will be instantiated for each model in the list
+     * @property childView
+     * @type View
+     */
     childView: null,
+    /**
+     * The template that allows a list view to hold it's own HTML like filter buttons, etc.
+     * @property template
+     * @type HTML Template
+     */
     template: null,
+    /**
+     * If provided, this template that will be shown if the modelsToRender() method returns
+     * an empty list. If a childrenContainer is provided, the empty template will be rendered there.
+     * @property emptyTemplate
+     * @type HTML Template
+     */
     emptyTemplate: null,
+    /**
+     * (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
+     * @property childrenContainer
+     * @type String
+     */
+    childrenContainer: null,
     __modelName: '',
     __modelId: '',
     __modelToViewMap: null,
@@ -131,7 +158,7 @@
      *   @param [args.childContext] {Object or Function} - object or function that's passed to the child view's during initialization under the name "context". Can be used by the child view during their prepare method.
      *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
      *   @param [args.childrenContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
-     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template that will be shown if the modelsToRender() method returns
+     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns
      *                                             an empty list. If a childrenContainer is provided, the empty template will be
      *                                             rendered there.
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom

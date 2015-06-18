@@ -158,18 +158,18 @@
        * @param options {Object} - the object to hold the options needed by the base fetch method
        */
       collection.fetch = function(options) {
-        return this._loadWrapper(base.fetch, options);
+        return this.__loadWrapper(base.fetch, options);
       };
 
       /**
        * Base load function that will trigger a "load-begin" and a "load-complete" as
        * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       * @method _loadWrapper
+       * @method __loadWrapper
        * @param fetchMethod {Function} - the method to invoke a fetch
        * @param options {Object} - the object to hold the options needed by the fetchMethod
        * @return a promise when the fetch method has completed and the events have been triggered
        */
-      collection._loadWrapper = function(fetchMethod, options) {
+      collection.__loadWrapper = function(fetchMethod, options) {
         loading = true;
         collection.trigger('load-begin');
         return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
@@ -267,7 +267,7 @@
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           collection.fetch = function() {
-            return collection._loadWrapper(function() {
+            return collection.__loadWrapper(function() {
               if (myTrackedIds && myTrackedIds.length) {
                 return parentInstance.fetchByIds({idsToFetch: myTrackedIds, setOptions: {remove: false}});
               } else {
@@ -503,7 +503,7 @@
        */
       collection.fetchByIds = function(options) {
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
-        return collection._loadWrapper(function(args) {
+        return collection.__loadWrapper(function(args) {
           var requestedIds, idsToFetch;
           requestedIds = args.idsToFetch;
           if (collection.lazyFetch) {
@@ -1385,7 +1385,7 @@
     viewState: null,
     template: null,
     feedback: null,
-    feedbackModel: null, // TODO feedback model shouldn't be called a model if it's a cell
+    feedbackModel: null,
     __childViews: null,
     __isActive: false,
     __isAttached: false,
@@ -3830,10 +3830,37 @@
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var ListView = View.extend({
+    /**
+     * The collection that holds the models that this list view will track
+     * @property collection
+     * @type Collection
+     */
     collection: null,
+    /**
+     * The child view class definition that will be instantiated for each model in the list
+     * @property childView
+     * @type View
+     */
     childView: null,
+    /**
+     * The template that allows a list view to hold it's own HTML like filter buttons, etc.
+     * @property template
+     * @type HTML Template
+     */
     template: null,
+    /**
+     * If provided, this template that will be shown if the modelsToRender() method returns
+     * an empty list. If a childrenContainer is provided, the empty template will be rendered there.
+     * @property emptyTemplate
+     * @type HTML Template
+     */
     emptyTemplate: null,
+    /**
+     * (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
+     * @property childrenContainer
+     * @type String
+     */
+    childrenContainer: null,
     __modelName: '',
     __modelId: '',
     __modelToViewMap: null,
@@ -3854,7 +3881,7 @@
      *   @param [args.childContext] {Object or Function} - object or function that's passed to the child view's during initialization under the name "context". Can be used by the child view during their prepare method.
      *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
      *   @param [args.childrenContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
-     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template that will be shown if the modelsToRender() method returns
+     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns
      *                                             an empty list. If a childrenContainer is provided, the empty template will be
      *                                             rendered there.
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom

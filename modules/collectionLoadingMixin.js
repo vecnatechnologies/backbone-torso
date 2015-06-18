@@ -59,18 +59,18 @@
        * @param options {Object} - the object to hold the options needed by the base fetch method
        */
       collection.fetch = function(options) {
-        return this._loadWrapper(base.fetch, options);
+        return this.__loadWrapper(base.fetch, options);
       };
 
       /**
        * Base load function that will trigger a "load-begin" and a "load-complete" as
        * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       * @method _loadWrapper
+       * @method __loadWrapper
        * @param fetchMethod {Function} - the method to invoke a fetch
        * @param options {Object} - the object to hold the options needed by the fetchMethod
        * @return a promise when the fetch method has completed and the events have been triggered
        */
-      collection._loadWrapper = function(fetchMethod, options) {
+      collection.__loadWrapper = function(fetchMethod, options) {
         loading = true;
         collection.trigger('load-begin');
         return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {

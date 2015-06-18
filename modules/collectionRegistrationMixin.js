@@ -59,7 +59,7 @@
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           collection.fetch = function() {
-            return collection._loadWrapper(function() {
+            return collection.__loadWrapper(function() {
               if (myTrackedIds && myTrackedIds.length) {
                 return parentInstance.fetchByIds({idsToFetch: myTrackedIds, setOptions: {remove: false}});
               } else {
@@ -295,7 +295,7 @@
        */
       collection.fetchByIds = function(options) {
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
-        return collection._loadWrapper(function(args) {
+        return collection.__loadWrapper(function(args) {
           var requestedIds, idsToFetch;
           requestedIds = args.idsToFetch;
           if (collection.lazyFetch) {

@@ -23,7 +23,7 @@
     viewState: null,
     template: null,
     feedback: null,
-    feedbackModel: null, // TODO feedback model shouldn't be called a model if it's a cell
+    feedbackModel: null,
     __childViews: null,
     __isActive: false,
     __isAttached: false,
