@@ -217,7 +217,21 @@
    */
   var collectionRegistrationMixin = function(base) {
 
+<<<<<<< HEAD
     var cacheMixin, createRequesterCollectionClass;
+=======
+  /*
+   * Swap method for Element Nodes
+   * @param currentNode {Element} The pre-existing DOM Element to update
+   * @param newNode {Element} The detached DOM Element representing the desired DOM Element subtree
+   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   */
+  function swapElementNodes(currentNode, newNode, ignoreElements) {
+    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
+      $currentNode = $(currentNode),
+      $newNode = $(newNode),
+      idx = 0;
+>>>>>>> Update bundle distribution
 
     /**
      * Returns a new class of collection that inherits from the parent but not the cacheMixin
