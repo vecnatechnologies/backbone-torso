@@ -18,7 +18,7 @@
         .pipe($.uglify)
         .pipe(gulp.dest, paths.bundleDest);
 
-  gulp.task('bundle', function() {
+  gulp.task('bundle', function(done) {
     var dependencies = {
       'Cell'       : ['cellPersistenceRemovalMixin'],
       'Collection' : ['pollingMixin', 'collectionRegistrationMixin', 'collectionLoadingMixin'],
@@ -68,7 +68,9 @@
         return dirPath + '/' + filePath + '.js';
       });
       return gulp.src(fileList)
-        .pipe(bundlePipe());
+        .pipe(bundlePipe())
+        // when stream ends, call callback
+        .on('end', done); ;
     });
   });
   gulp.task('bundle:watch', ['bundle'], function() {

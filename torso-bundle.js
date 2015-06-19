@@ -1388,7 +1388,7 @@
     feedbackModel: null,
     __childViews: null,
     __isActive: false,
-    __isAttached: false,
+    __isAttachedToParent: false,
     __isDisposed: false,
     __feedbackEvents: null,
     /**
@@ -1473,6 +1473,95 @@
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackModelCallbacks();
+      _.each(this.__childViews, function(view) {
+        if (view.isAttachedToParent()) {
+          view.delegateEvents();
+        }
+      });
+    },
+
+    /**
+     * Unbinds DOM events from the view.
+     * @method undelegateEvents
+     * @override
+     */
+    undelegateEvents: function() {
+      Backbone.View.prototype.undelegateEvents.call(this);
+      _.each(this.__childViews, function(view) {
+        view.undelegateEvents();
+      });
+    },
+
+    /**
+     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
+     * Invokes attachChildView as the bulk of the functionality
+     * @method injectView
+     * @param injectionSite {String} The name of the injection site in the layout template
+     * @param view          {View}   The instantiated view object to
+     * @param [options] {Object} optionals options object
+     * @param   [options.noActivate=false] {Boolean} if set to true, the child view will not be activated upon attaching.
+     */
+    injectView: function(injectionSite, view, options) {
+      var injectionPoint = this.$('[inject=' + injectionSite + ']');
+      if (view && injectionPoint.size() > 0) {
+        this.attachChildView(injectionPoint, view, options);
+      }
+    },
+
+    /**
+     * If attached, will detach the view from the DOM and calls deactivate
+     * @method detach
+     */
+    detach: function() {
+      if (this.isAttachedToParent()) {
+        // Detach view from DOM
+        if (this.injectionSite) {
+          this.$el.replaceWith(this.injectionSite);
+        } else {
+          this.$el.detach();
+        }
+        this.undelegateEvents();
+        this.__isAttachedToParent = false;
+      }
+    },
+
+    /**
+     * If detached, will replace the element passed in with this view's element and activate the view.
+     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
+     * @method attach
+     */
+    attach: function($el) {
+      if (!this.isAttachedToParent()) {
+        this.render();
+        this.injectionSite = $el.replaceWith(this.$el);
+        this.delegateEvents();
+        this.__isAttachedToParent = true;
+      }
+    },
+
+    /**
+     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
+     * and events that may affect user experience. Recursively invokes deactivate on child views
+     * @method deactivate
+     */
+    deactivate: function() {
+      this.deactivateChildViews();
+      if (this.isActive()) {
+        this._deactivate();
+        this.__isActive = false;
+      }
+    },
+
+    /**
+     * Resets listeners and events in order for the view to be reattached to the visible DOM
+     * @method activate
+     */
+    activate: function() {
+      this.activateChildViews();
+      if (!this.isActive()) {
+        this._activate();
+        this.__isActive = true;
+      }
     },
 
     /**
@@ -1530,6 +1619,40 @@
      */
     _activate: _.noop,
 
+        /**
+     * Before any DOM rendering is done, this method is called and removes any
+     * custom plugins including events that attached to the existing elements.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * @method unplug
+     */
+    unplug: _.noop,
+
+    /**
+     * After all DOM rendering is done, this method is called and attaches any
+     * custom plugins to the existing elements.  This method can be overwritten
+     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * @method plug
+     */
+    plug: _.noop,
+
+    /**
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @param [options] {Object} optionals options object
+     * @param   [options.noActivate=false] {Boolean} if set to true, the child view will not be activated upon attaching.
+     * @method attachChildView
+     */
+    attachChildView: function($el, view, options) {
+      options = options || {};
+      view.detach();
+      this.registerChildView(view);
+      view.attach($el);
+      if (!options.noActivate) {
+        view.activate();
+      }
+    },
+
     /**
      * @return {Boolean} true if this view has child views
      * @method hasChildViews
@@ -1578,17 +1701,6 @@
     },
 
     /**
-     * Activates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
-     */
-    activateChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.activate();
-      });
-    },
-
-    /**
      * Detach all child views
      * Default method may be overriden.
      * @method detachChildViews
@@ -1596,6 +1708,17 @@
     detachChildViews: function() {
       _.each(this.__childViews, function(view) {
         view.detach();
+      });
+    },
+
+    /**
+     * Activates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     */
+    activateChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.activate();
       });
     },
 
@@ -1629,114 +1752,12 @@
     },
 
     /**
-     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
-     * Invokes attachChildView as the bulk of the functionality
-     * @method injectView
-     * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to inject
+     * @returns {Boolean} true if the view is attached to a parent
+     * @method isAttachedToParent
      */
-    injectView: function(injectionSite, view) {
-      var injectionPoint = this.$('[inject=' + injectionSite + ']');
-      if (view && injectionPoint.size() > 0) {
-        this.attachChildView(injectionPoint, view);
-      }
+    isAttachedToParent: function() {
+      return this.__isAttachedToParent;
     },
-
-    /**
-     * Registers the child view if not already done so, then calls view.attach with the element argument
-     * @param $el {jQuery element} the element to attach to.
-     * @param view {View} the child view
-     * @method attachChildView
-     */
-    attachChildView: function($el, view) {
-      view.detach();
-      this.registerChildView(view);
-      view.attach($el);
-    },
-
-    /**
-     * If attached, will detach the view from the DOM and calls deactivate
-     * @method detach
-     */
-    detach: function() {
-      if (this.isAttached()) {
-        // Detach view from DOM
-        if (this.injectionSite) {
-          this.$el.replaceWith(this.injectionSite);
-        } else {
-          this.$el.detach();
-        }
-        this.deactivate();
-        this.__isAttached = false;
-      }
-    },
-
-    /**
-     * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
-     * @method attach
-     */
-    attach: function($el) {
-      if (!this.isAttached()) {
-        // be safe and deactivate before attaching yourself
-        this.deactivate();
-        this.render();
-        this.injectionSite = $el.replaceWith(this.$el);
-        this.activate();
-        this.__isAttached = true;
-      }
-    },
-
-    /**
-     * @returns {Boolean} true if the view is attached
-     * @method isAttached
-     */
-    isAttached: function() {
-      return this.__isAttached;
-    },
-
-    /**
-     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
-     * and events that may affect user experience. Recursively invokes deactivate on child views
-     * @method deactivate
-     */
-    deactivate: function() {
-      this.deactivateChildViews();
-      if (this.isActive()) {
-        this.undelegateEvents();
-        this._deactivate();
-        this.__isActive = false;
-      }
-    },
-
-    /**
-     * Resets listeners and events in order for the view to be reattached to the visible DOM
-     * @method activate
-     */
-    activate: function() {
-      this.activateChildViews();
-      if (!this.isActive()) {
-        this.delegateEvents();
-        this._activate();
-        this.__isActive = true;
-      }
-    },
-
-        /**
-     * Before any DOM rendering is done, this method is called and removes any
-     * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * @method unplug
-     */
-    unplug: _.noop,
-
-    /**
-     * After all DOM rendering is done, this method is called and attaches any
-     * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * @method plug
-     */
-    plug: _.noop,
 
     /**
      * @returns {Boolean} true if the view is active

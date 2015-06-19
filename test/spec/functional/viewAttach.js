@@ -63,7 +63,7 @@ describe('A View being detached and attached', function() {
     expect(view.afterMyEvent).toHaveBeenCalled();
     expect(view.afterMyDeactivatableEvent).not.toHaveBeenCalled();
     view.trigger('myDeactivatableEvent');
-    expect(view.afterMyDeactivatableEvent).not.toHaveBeenCalled();
+    expect(view.afterMyDeactivatableEvent).toHaveBeenCalled();
     view.dispose();
   });
 
@@ -156,13 +156,13 @@ describe('A View being detached and attached', function() {
     expect(childView1.afterMyDeactivatableEvent).not.toHaveBeenCalled();
     expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
     view.trigger('myDeactivatableEvent');
-    expect(view.afterMyDeactivatableEvent).not.toHaveBeenCalled();
+    expect(view.afterMyDeactivatableEvent).toHaveBeenCalled();
     expect(childView1.afterMyDeactivatableEvent).not.toHaveBeenCalled();
     expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
 
     childView1.trigger('myDeactivatableEvent');
-    expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
-    expect(childView1.afterMyDeactivatableEvent).not.toHaveBeenCalled();
+    expect(view.afterMyDeactivatableEvent.calls.count()).toBe(1);
+    expect(childView1.afterMyDeactivatableEvent).toHaveBeenCalled();
     expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
 
     view.dispose();
@@ -184,13 +184,13 @@ describe('A View being detached and attached', function() {
     var childView1 = view.childView1;
     var childView2 = view.childView2;
     //TODO figure out the state of a child view being attached to a view that's been attached vs. not attached
-    expect(view.isAttached()).toBe(false);
-    expect(childView1.isAttached()).toBe(false);
-    expect(childView2.isAttached()).toBe(false);
+    expect(view.isAttachedToParent()).toBe(false);
+    expect(childView1.isAttachedToParent()).toBe(false);
+    expect(childView2.isAttachedToParent()).toBe(false);
     view.attach($('div.app'));
-    expect(view.isAttached()).toBe(true);
-    expect(childView1.isAttached()).toBe(true);
-    expect(childView2.isAttached()).toBe(true);
+    expect(view.isAttachedToParent()).toBe(true);
+    expect(childView1.isAttachedToParent()).toBe(true);
+    expect(childView2.isAttachedToParent()).toBe(true);
     view.template = Handlebars.compile("<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>");
     view.prepare = function() {return {};};
     view.render = function() {
