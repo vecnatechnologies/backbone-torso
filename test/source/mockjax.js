@@ -53,6 +53,25 @@ module.exports = function($) {
     response: function(settings) {
       this.responseText = settings.data;
     }
-  })
+  });
+
+  routes['/myModel/ids|post'] = $.mockjax({
+    url: '/myModel/ids',
+    dataType: 'json',
+    type: 'post',
+    responseTime: 100,
+    response: function(settings) {
+      var models = [],
+          data = JSON.parse(settings.data);
+      for (var i = 0; i < data.length; i++) {
+        models.push({
+          id: data[i],
+          count: i
+        });
+      }
+      this.responseText = models;
+    }
+  });
+
   return routes;
 }

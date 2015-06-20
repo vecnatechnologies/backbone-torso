@@ -183,7 +183,6 @@ describe('A View being detached and attached', function() {
     var view = new ParentView();
     var childView1 = view.childView1;
     var childView2 = view.childView2;
-    //TODO figure out the state of a child view being attached to a view that's been attached vs. not attached
     expect(view.isAttachedToParent()).toBe(false);
     expect(childView1.isAttachedToParent()).toBe(false);
     expect(childView2.isAttachedToParent()).toBe(false);

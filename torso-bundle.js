@@ -119,21 +119,16 @@
    */
   var collectionLoadingMixin = function(base) {
 
-    var loadingMixin,
-        baseSuper = base.super || function() {};
+    var loadingMixin;
 
-    loadingMixin = function(collection, options) {
-
-      var loadedOnceDeferred = options.loadedOnceDeferred,
-        loadedOnce = options.loadedOnce,
-        loading = options.loading;
+    loadingMixin = function(collection) {
 
       /**
        * @method hasLoadedOnce
        * @return true if this collection has ever loaded from a fetch call
        */
       collection.hasLoadedOnce = function() {
-        return loadedOnce;
+        return collection.loadedOnce;
       };
 
       /**
@@ -141,7 +136,7 @@
        * @return true if this collection is currently loading new values from the server
        */
       collection.isLoading = function() {
-        return loading;
+        return collection.loading;
       };
 
       /**
@@ -149,7 +144,7 @@
        * @return a promise that will resolve when the collection has loaded for the first time
        */
       collection.getLoadedOncePromise = function() {
-        return loadedOnceDeferred.promise();
+        return collection.loadedOnceDeferred.promise();
       };
 
       /**
@@ -158,7 +153,7 @@
        * @param options {Object} - the object to hold the options needed by the base fetch method
        */
       collection.fetch = function(options) {
-        return this.__loadWrapper(base.fetch, options);
+        return this.__loadWrapper(base.prototype.fetch, options);
       };
 
       /**
@@ -170,18 +165,18 @@
        * @return a promise when the fetch method has completed and the events have been triggered
        */
       collection.__loadWrapper = function(fetchMethod, options) {
-        loading = true;
+        collection.loading = true;
         collection.trigger('load-begin');
         return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
           collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
         }).fail(function(jqXHR, textStatus, errorThrown) {
           collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
         }).always(function() {
-          if (!loadedOnce) {
-            loadedOnce = true;
-            loadedOnceDeferred.resolve();
+          if (!collection.loadedOnce) {
+            collection.loadedOnce = true;
+            collection.loadedOnceDeferred.resolve();
           }
-          loading = false;
+          collection.loading = false;
         });
       };
     };
@@ -189,16 +184,15 @@
     return {
       /**
        * Adds the loading mixin to the collection
-       * @method super
-       * @param args {Object} the arguments to the base super method
+       * @method constructor
+       * @param args {Object} the arguments to the base constructor method
        */
-      super: function(args) {
-        baseSuper.call(this, args);
-        loadingMixin(this, {
-          loadedOnceDeferred: new $.Deferred(),
-          loadedOnce: false,
-          loading: false
-        });
+      constructor: function(args) {
+        base.call(this, args);
+        this.loadedOnceDeferred = new $.Deferred();
+        this.loadedOnce = false;
+        this.loading = false;
+        loadingMixin(this);
       }
     };
   };
@@ -229,8 +223,7 @@
    */
   var collectionRegistrationMixin = function(base) {
 
-    var cacheMixin, createRequesterCollectionClass,
-      baseSuper = base.super || function() {};
+    var cacheMixin, createRequesterCollectionClass;
 
     /**
      * Returns a new class of collection that inherits from the parent but not the cacheMixin
@@ -243,49 +236,47 @@
     createRequesterCollectionClass = function(parent, guid) {
       return parent.constructor.extend((function(parentClass, parentInstance, ownerKey) {
 
-        var requesterMixin,
-          baseParentSuper = parentClass.super;
-
         /**
          * A mixin that overrides base collection methods meant for cache's and tailors them
          * to a requester.
          * @method requesterMixin
          */
-        requesterMixin = function(collection, myTrackedIds) {
+        var requesterMixin = {
 
           /**
            * @method requesterMixin.getTrackedIds
            * @return {Array} array of ids that this collection is tracking
            */
-          collection.getTrackedIds = function() {
-            return myTrackedIds;
-          };
+          getTrackedIds: function() {
+            return this.trackedIds;
+          },
 
           /**
            * Will force the cache to fetch just the registered ids of this collection
            * @method requesterMixin.fetch
            * @return {Promise} promise that will resolve when the fetch is complete
            */
-          collection.fetch = function() {
-            return collection.__loadWrapper(function() {
-              if (myTrackedIds && myTrackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: myTrackedIds, setOptions: {remove: false}});
+          fetch: function() {
+            var requsterCollection = this;
+            return this.__loadWrapper(function() {
+              if (requsterCollection.trackedIds && requsterCollection.trackedIds.length) {
+                return parentInstance.fetchByIds({idsToFetch: requsterCollection.trackedIds, setOptions: {remove: false}});
               } else {
                 return $.Deferred().resolve().promise();
               }
             });
-          };
+          },
 
           /**
            * Override the Id registration system to route via the parent collection
            * @method requesterMixin.trackIds
            * @param ids The list of ids that this collection wants to track
            */
-          collection.trackIds = function(ids) {
-            collection.remove(_.difference(myTrackedIds, ids));
+          trackIds: function(ids) {
+            this.remove(_.difference(this.trackedIds, ids));
             parentInstance.registerIds(ids, ownerKey);
-            myTrackedIds = ids;
-          };
+            this.trackedIds = ids;
+          },
 
 
           /**
@@ -293,57 +284,40 @@
            * @method requesterMixin.addModelAndTrack
            * @param model {Backbone Model} the model to be added
            */
-          collection.addModelAndTrack = function(model) {
-            collection.add(model);
-            collection.trackNewId(model.id);
-          };
+          addModelAndTrack: function(model) {
+            this.add(model);
+            this.trackNewId(model.id);
+          },
 
           /**
            * Tracks a new id
            * @method requesterMixin.trackNewId
            * @param id {String or Number} the id attribute of the model
            */
-          collection.trackNewId = function(id) {
-            collection.trackIds(collection.getTrackedIds().concat(id));
-          };
+          trackNewId: function(id) {
+            this.trackIds(this.getTrackedIds().concat(id));
+          },
 
           /**
            * Will register the new ids and then ask the cache to fetch them
            * @method requesterMixin.fetchByIds
            * @return the promise of the fetch by ids
            */
-          collection.fetchByIds = function(newIds) {
-            collection.trackIds(newIds);
-            return collection.fetch();
-          };
+          fetchByIds: function(newIds) {
+            this.trackIds(newIds);
+            return this.fetch();
+          },
 
           /**
            * Handles the disposing of this collection as it relates to a requester collection.
            * @method requesterMixin.requesterDispose
            */
-          collection.requesterDispose = function() {
+          requesterDispose: function() {
             parentInstance.removeRequster(ownerKey);
-          };
-        };
-
-        return {
-          /**
-           * The super constructor / initialize method for requester collections.
-           * @method requesterMixin.super
-           */
-          super: function(args) {
-            args = args || {};
-            args.isRequester = true;
-            baseParentSuper.call(this, args);
-            requesterMixin(this, []);
-            this.listenTo(parentInstance, 'load-begin', function() {
-              this.trigger('cache-load-begin');
-            });
-            this.listenTo(parentInstance, 'load-complete', function() {
-              this.trigger('cache-load-complete');
-            });
           }
         };
+
+        return requesterMixin;
       })(parent.constructor.__super__, parent, guid));
     };
 
@@ -351,29 +325,10 @@
      * Adds functions to manage state of requesters
      * @method cacheMixin
      * @param collection {Collection} the collection to add this mixin
-     * @param options.requestMap {Object} the object to hold all request state
-     * @param options.collectionTrackedIds {Array} list of all ids this collection is tracking
-     * @param [options.getByIdsUrl='/ids'] {String} url path extension to the base collection.url that retrieves
-                                                    many models when posted to with the ids of those models.
-     * @param options.knownPrivateCollections {Object} map of all private collections that have registered ids [GUID -> collection]
      */
-    cacheMixin = function(collection, options) {
+    cacheMixin = function(collection) {
 
       //************* PRIVATE METHODS ************//
-
-      var setRequestedIds,
-        requestMap = options.requestMap,
-        collectionTrackedIds = options.collectionTrackedIds,
-        getByIdsUrl = options.getByIdsUrl || '/ids',
-        knownPrivateCollections = options.knownPrivateCollections;
-
-      /**
-       * If true, the collection will only fetch an object from the server once.
-       * @property lazyFetch
-       * @type boolean
-       * @default false
-       */
-      collection.lazyFetch = collection.lazyFetch  || false;
 
       /**
        * @private
@@ -381,8 +336,8 @@
        * @param guid {String} the global unique identifier for the requester
        * @param array {Array} the array of ids the requester wants
        */
-      setRequestedIds = function(guid, array) {
-        requestMap[guid] = {
+      var setRequestedIds = function(guid, array) {
+        collection.requestMap[guid] = {
           array: array,
           dict: _.object(_.map(array, function(id) { return [id, id]; }))
         };
@@ -396,7 +351,7 @@
        * @return {Array} an array of the ids the requester with the guid has requested
        */
       collection.getRequesterIds = function(guid) {
-        return requestMap[guid] && requestMap[guid].array;
+        return this.requestMap[guid] && this.requestMap[guid].array;
       };
 
       /**
@@ -406,7 +361,7 @@
        * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
        */
       collection.getRequesterIdsAsDictionary = function(guid) {
-        return requestMap[guid] && requestMap[guid].dict;
+        return this.requestMap[guid] && this.requestMap[guid].dict;
       };
 
       /**
@@ -415,16 +370,18 @@
        * @param guid {String} the global unique id of the requester
        */
       collection.removeRequster = function(guid) {
-        delete requestMap[guid];
-        delete knownPrivateCollections[guid];
+        delete this.requestMap[guid];
+        delete this.knownPrivateCollections[guid];
       };
 
       /**
+       * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
+       * TODO: should this return just the knownPrivateCollections
        * @method cacheMixin.getRequesters
        * @return {Array} an array of the all requesters in the form of their GUID's
        */
       collection.getRequesters = function()  {
-        return _.keys(requestMap);
+        return _.keys(this.requestMap);
       };
 
       /**
@@ -433,7 +390,7 @@
        * @return {Array} the corresponding requested Ids
        */
       collection.getAllRequestedIds = function() {
-        return collectionTrackedIds;
+        return this.collectionTrackedIds;
       };
 
       /**
@@ -445,10 +402,13 @@
        * @param guid {String} Identifier for the requesting view
        * @return {Collection} an new empty collection of the same type as "this"
        */
-      collection.createPrivateCollection = function(guid) {
+      collection.createPrivateCollection = function(guid, args) {
+        args = args || {};
+        args.isRequester = true;
+        args.parentInstance = collection;
         var RequesterClass = createRequesterCollectionClass(collection, guid);
-        knownPrivateCollections[guid] = new RequesterClass();
-        return knownPrivateCollections[guid];
+        this.knownPrivateCollections[guid] = new RequesterClass(null, args);
+        return this.knownPrivateCollections[guid];
       };
 
       /**
@@ -473,7 +433,7 @@
 
         // Create a new request list
         for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
-          storedIds = collection.getRequesterIds(requesters[requesterIdx]);
+          storedIds = this.getRequesterIds(requesters[requesterIdx]);
           for (i = 0; i < storedIds.length; i++) {
             distinctIds[storedIds[i]] = true;
           }
@@ -481,39 +441,56 @@
 
         // Convert the hash table of unique Ids to a list
         for (i in distinctIds) {
-          result.push(parseInt(i, 10));
+          result.push(i);
         }
-        collectionTrackedIds = result;
+        this.collectionTrackedIds = result;
 
         // Overrides the polling mixin's fetch method
-        collection.polledFetch = function() {
+        this.polledFetch = function() {
           collection.fetchByIds({
-            idsToFetch: collectionTrackedIds,
             setOptions: {remove: true}
           });
         };
       };
 
       /**
+       * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
+       * it will pass through to the default fetch.
+       * @override
+       * @method fetch
+       */
+      collection.fetch = function() {
+        if (this.fetchUsingTrackedIds) {
+          return this.fetchByIds({
+            setOptions: {remove: true}
+          });
+        } else {
+          return base.fetch();
+        }
+      };
+
+      /**
        * A custom fetch operation to only fetch the requested Ids.
        * @method cacheMixin.fetchByIds
-       * @param options.idsToFetch {Array} - A list of request Ids
-       * @param options.setOptions {Object} - if a set is made, then the setOptions will be passed into the set method
+       * @param [options] - argument options
+       * @param [options.idsToFetch=collection.collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
+       * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
        * @return {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(options) {
+        options = options || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
-        return collection.__loadWrapper(function(args) {
+        return this.__loadWrapper(function(options) {
           var requestedIds, idsToFetch;
-          requestedIds = args.idsToFetch;
+          requestedIds = options.idsToFetch || collection.collectionTrackedIds;
           if (collection.lazyFetch) {
             idsToFetch = _.difference(requestedIds, this.models.pluck('id'));
           } else {
             idsToFetch = requestedIds;
           }
           return $.ajax({
-              type:'POST',
-              url: collection.url + getByIdsUrl,
+              type: collection.fetchHttpAction,
+              url: collection.url + collection.getByIdsUrl,
               contentType: 'application/json; charset=utf-8',
               data: JSON.stringify(idsToFetch)
             }).done(
@@ -522,7 +499,7 @@
                 var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
                     requesterLength, requesters, model,
                     requestedIdsLength = requestedIds.length,
-                    setOptions = args.setOptions;
+                    setOptions = options.setOptions;
                 collection.set(collection.parse(data), setOptions);
                 // Set respective collection's models for requested ids only.
                 requesters = collection.getRequesters();
@@ -542,7 +519,7 @@
                       }
                     }
                   }
-                  privateCollection = knownPrivateCollections[requesters[requesterIdx]];
+                  privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
                   // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
                   privateCollection.set(models, {remove: false});
                 }
@@ -556,7 +533,7 @@
        * @param lazyFetch {boolean} the lazyFetch mode to set
        */
       collection.setLazyFetch = function(lazyFetch) {
-        collection.lazyFetch = lazyFetch;
+        this.lazyFetch = lazyFetch;
       };
 
       /**
@@ -565,39 +542,46 @@
        * @return {boolean} true if this collection fetches lazily.
        */
       collection.isLazyFetch = function() {
-        return collection.lazyFetch;
+        return this.lazyFetch;
       };
     };
 
     return {
       /**
-       * The super constructor / initialize method for collections.
+       * The constructor constructor / initialize method for collections.
        * Allocate new memory for the local references if they
        * were null when this method was called.
-       * @method super
+       * @param [options] {Object} - optional options object
+       * @param   [options.fetchHttpAction='POST'] {String} http action used to get objects by ids
+       * @param   [options.getByIdsUrl='/ids'] {String} path appended to collection.url to get objects by a list of ids
+       * @param   [options.lazyFetch=false] {Boolean} if set to true, the collection will assume that models do not change after first fetch
+       * @param   [options.fetchUsingTrackedIds=true] {Boolean} if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
+                                                               but will rather call the default fetch method.
+       * @method constructor
        */
-      super: function(args) {
-        args = args || {};
-        baseSuper.call(this, args);
-        this.isRequester = args && args.isRequester;
+      constructor: function(models, options) {
+        options = options || {};
+        base.call(this, models, options);
+        this.isRequester = options.isRequester;
+        this.parentInstance = options.parentInstance;
         if (!this.isRequester) {
-          cacheMixin(this, {
-            requestMap: {},
-            collectionTrackedIds: [],
-            knownPrivateCollections: {},
-            getByIdsUrl: args.getByIdsUrl
+          this.requestMap = {};
+          this.collectionTrackedIds = [];
+          this.knownPrivateCollections = {};
+          this.getByIdsUrl = options.getByIdsUrl || '/ids';
+          this.fetchHttpAction = 'POST';
+          this.lazyFetch = options.lazyFetch || false;
+          this.fetchUsingTrackedIds = options.fetchUsingTrackedIds !== false;
+          cacheMixin(this);
+        } else {
+          this.trackedIds = [];
+          this.listenTo(this.parentInstance, 'load-begin', function() {
+            this.trigger('cache-load-begin');
+          });
+          this.listenTo(this.parentInstance, 'load-complete', function() {
+            this.trigger('cache-load-complete');
           });
         }
-      },
-
-      /**
-       * The default initialize method should simply call the
-       * super constructor.
-       * @method initialize
-       * @param [args] {Object} Optional argument object
-       */
-      initialize: function(args) {
-        this.super(args);
       },
 
       /**
@@ -1255,8 +1239,8 @@
    */
   var Collection = Backbone.Collection.extend({});
   _.extend(Collection.prototype, pollingMixin);
-  _.extend(Collection.prototype, collectionRegistrationMixin(Collection.prototype));
-  _.extend(Collection.prototype, collectionLoadingMixin(Collection.prototype));
+  Collection = Collection.extend(collectionLoadingMixin(Collection));
+  Collection = Collection.extend(collectionRegistrationMixin(Collection));
 
   return Collection;
 }));
@@ -1459,6 +1443,8 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      // Detach just this view's child views for a more effective hotswap.
+      // The child views will be reattached by the render method.
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
     },
@@ -1680,7 +1666,7 @@
     },
 
     /**
-     * Default child view cleanup method that may be overriden.
+     * Disposes all child views recursively
      * @method disposeChildViews
      */
     disposeChildViews: function() {
@@ -1690,8 +1676,7 @@
     },
 
     /**
-     * Deactivates all child views
-     * Default method may be overriden.
+     * Deactivates all child views recursively
      * @method deactivateChildViews
      */
     deactivateChildViews: function() {
@@ -1701,8 +1686,7 @@
     },
 
     /**
-     * Detach all child views
-     * Default method may be overriden.
+     * Detach all child views. NOTE: this is not recursive - it will not separate the entire view tree.
      * @method detachChildViews
      */
     detachChildViews: function() {
@@ -1713,8 +1697,7 @@
 
     /**
      * Activates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
+     * @method activateChildViews
      */
     activateChildViews: function() {
       _.each(this.__childViews, function(view) {

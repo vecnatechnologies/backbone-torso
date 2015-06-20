@@ -97,6 +97,8 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      // Detach just this view's child views for a more effective hotswap.
+      // The child views will be reattached by the render method.
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
     },
@@ -318,7 +320,7 @@
     },
 
     /**
-     * Default child view cleanup method that may be overriden.
+     * Disposes all child views recursively
      * @method disposeChildViews
      */
     disposeChildViews: function() {
@@ -328,8 +330,7 @@
     },
 
     /**
-     * Deactivates all child views
-     * Default method may be overriden.
+     * Deactivates all child views recursively
      * @method deactivateChildViews
      */
     deactivateChildViews: function() {
@@ -339,8 +340,7 @@
     },
 
     /**
-     * Detach all child views
-     * Default method may be overriden.
+     * Detach all child views. NOTE: this is not recursive - it will not separate the entire view tree.
      * @method detachChildViews
      */
     detachChildViews: function() {
@@ -351,8 +351,7 @@
 
     /**
      * Activates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
+     * @method activateChildViews
      */
     activateChildViews: function() {
       _.each(this.__childViews, function(view) {

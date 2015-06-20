@@ -20,21 +20,16 @@
    */
   var collectionLoadingMixin = function(base) {
 
-    var loadingMixin,
-        baseSuper = base.super || function() {};
+    var loadingMixin;
 
-    loadingMixin = function(collection, options) {
-
-      var loadedOnceDeferred = options.loadedOnceDeferred,
-        loadedOnce = options.loadedOnce,
-        loading = options.loading;
+    loadingMixin = function(collection) {
 
       /**
        * @method hasLoadedOnce
        * @return true if this collection has ever loaded from a fetch call
        */
       collection.hasLoadedOnce = function() {
-        return loadedOnce;
+        return collection.loadedOnce;
       };
 
       /**
@@ -42,7 +37,7 @@
        * @return true if this collection is currently loading new values from the server
        */
       collection.isLoading = function() {
-        return loading;
+        return collection.loading;
       };
 
       /**
@@ -50,7 +45,7 @@
        * @return a promise that will resolve when the collection has loaded for the first time
        */
       collection.getLoadedOncePromise = function() {
-        return loadedOnceDeferred.promise();
+        return collection.loadedOnceDeferred.promise();
       };
 
       /**
@@ -59,7 +54,7 @@
        * @param options {Object} - the object to hold the options needed by the base fetch method
        */
       collection.fetch = function(options) {
-        return this.__loadWrapper(base.fetch, options);
+        return this.__loadWrapper(base.prototype.fetch, options);
       };
 
       /**
@@ -71,18 +66,18 @@
        * @return a promise when the fetch method has completed and the events have been triggered
        */
       collection.__loadWrapper = function(fetchMethod, options) {
-        loading = true;
+        collection.loading = true;
         collection.trigger('load-begin');
         return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
           collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
         }).fail(function(jqXHR, textStatus, errorThrown) {
           collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
         }).always(function() {
-          if (!loadedOnce) {
-            loadedOnce = true;
-            loadedOnceDeferred.resolve();
+          if (!collection.loadedOnce) {
+            collection.loadedOnce = true;
+            collection.loadedOnceDeferred.resolve();
           }
-          loading = false;
+          collection.loading = false;
         });
       };
     };
@@ -90,16 +85,15 @@
     return {
       /**
        * Adds the loading mixin to the collection
-       * @method super
-       * @param args {Object} the arguments to the base super method
+       * @method constructor
+       * @param args {Object} the arguments to the base constructor method
        */
-      super: function(args) {
-        baseSuper.call(this, args);
-        loadingMixin(this, {
-          loadedOnceDeferred: new $.Deferred(),
-          loadedOnce: false,
-          loading: false
-        });
+      constructor: function(args) {
+        base.call(this, args);
+        this.loadedOnceDeferred = new $.Deferred();
+        this.loadedOnce = false;
+        this.loading = false;
+        loadingMixin(this);
       }
     };
   };
