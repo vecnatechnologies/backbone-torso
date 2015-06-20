@@ -8,7 +8,7 @@ If you're new to torso, check out the [torso handbook](http://vecnatechnologies.
 
 If you want to jump right in,
 Torso has a [yeoman](http://www.yeoman.io) [torso generator](https://github.com/vecnatechnologies/generator-torso-brec) to get you off to a fast start.
-#### Install yoeman
+#### Install yeoman
 > npm install -g yo
 
 #### Install generator-torso-brec
@@ -41,12 +41,13 @@ Backbone offers an easy jumping off point, but there are many unanswered questio
 * Should the render method take arguments?
 * Does calling render change the state of the application?
 * When can I call render on this view?
-* Is there anyway to keep the functionality of the view going but not have it part of the DOM?
+* Is there any way to keep the functionality of the view going but not have it be part of the DOM?
 
 So many questions, each one can break functionality if they are inconsistent within your app. With Torso, we lay down the laws that answer questions just like these and keep your application consistent.
-Torso view's render methods never take arguments, can be called whenever, and they never change the state of the application. We'll explain how to make this possible and other rules in the [recipes](http://vecnatechnologies.github.io/backbone-torso/#recipes) section of the torso site.
+A Torso view's render methods never take arguments, can be called at any time, and never change the state of the application. We'll explain how to make this possible and other rules in the [recipes](http://vecnatechnologies.github.io/backbone-torso/#recipes) section of the torso site.
 
-### Want to help out? Checkout the [dev page](/docs/DEVELOPMENT.md)
+### Want to help out?
+Check out the [dev page](/docs/DEVELOPMENT.md).
 
 ## Credits
 Originally developed by [Vecna Technologies, Inc.](http://www.vecna.com/) and open sourced as part of its community service program. See the LICENSE file for more details.
