@@ -20,12 +20,26 @@
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var View = Backbone.View.extend({
-    _childViews: null,
     viewState: null,
     template: null,
-    _isActive: false,
-    _isAttached: false,
-    _isDisposed: false,
+    feedback: null,
+    feedbackModel: null,
+    __childViews: null,
+    __isActive: false,
+    __isAttachedToParent: false,
+    __isDisposed: false,
+    __feedbackEvents: null,
+    /**
+     * Array of feedback when-then-to's. Example:
+     * [{
+     *   when: {'@fullName': ['change']},
+     *   then: function(event) { return {text: this.feedbackModel.get('fullName')};},
+     *   to: 'fullName-feedback'
+     * }]
+     * @private
+     * @property feedback
+     * @type Array
+     */
 
     /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
@@ -34,11 +48,12 @@
      */
     constructor: function(options) {
       options = options || {};
-      this._childViews = {};
       this.viewState = new Cell();
+      this.feedbackModel = new Cell();
+      this.__childViews = {};
+      this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
-      if (!options.preventDefault) {
-        this.render();
+      if (!options.noActivate) {
         this.activate();
       }
     },
@@ -71,9 +86,9 @@
       this.unplug();
       if (this.template) {
         this.templateRender(this.$el, this.template, this.prepare());
-        this.delegateEvents();
       }
       this.plug();
+      this.delegateEvents();
     },
 
     /**
@@ -82,8 +97,111 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      // Detach just this view's child views for a more effective hotswap.
+      // The child views will be reattached by the render method.
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
+    },
+
+    /**
+     * Binds DOM events with the view using events hash.
+     * Also adds feedback event bindings
+     * @method delegateEvents
+     * @override
+     */
+    delegateEvents: function() {
+      Backbone.View.prototype.delegateEvents.call(this);
+      this.__generateFeedbackBindings();
+      this.__generateFeedbackModelCallbacks();
+      _.each(this.__childViews, function(view) {
+        if (view.isAttachedToParent()) {
+          view.delegateEvents();
+        }
+      });
+    },
+
+    /**
+     * Unbinds DOM events from the view.
+     * @method undelegateEvents
+     * @override
+     */
+    undelegateEvents: function() {
+      Backbone.View.prototype.undelegateEvents.call(this);
+      _.each(this.__childViews, function(view) {
+        view.undelegateEvents();
+      });
+    },
+
+    /**
+     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
+     * Invokes attachChildView as the bulk of the functionality
+     * @method injectView
+     * @param injectionSite {String} The name of the injection site in the layout template
+     * @param view          {View}   The instantiated view object to
+     * @param [options] {Object} optionals options object
+     * @param   [options.noActivate=false] {Boolean} if set to true, the child view will not be activated upon attaching.
+     */
+    injectView: function(injectionSite, view, options) {
+      var injectionPoint = this.$('[inject=' + injectionSite + ']');
+      if (view && injectionPoint.size() > 0) {
+        this.attachChildView(injectionPoint, view, options);
+      }
+    },
+
+    /**
+     * If attached, will detach the view from the DOM and calls deactivate
+     * @method detach
+     */
+    detach: function() {
+      if (this.isAttachedToParent()) {
+        // Detach view from DOM
+        if (this.injectionSite) {
+          this.$el.replaceWith(this.injectionSite);
+        } else {
+          this.$el.detach();
+        }
+        this.undelegateEvents();
+        this.__isAttachedToParent = false;
+      }
+    },
+
+    /**
+     * If detached, will replace the element passed in with this view's element and activate the view.
+     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
+     * @method attach
+     */
+    attach: function($el) {
+      if (!this.isAttachedToParent()) {
+        this.render();
+        this.injectionSite = $el.replaceWith(this.$el);
+        this.delegateEvents();
+        this.__isAttachedToParent = true;
+      }
+    },
+
+    /**
+     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
+     * and events that may affect user experience. Recursively invokes deactivate on child views
+     * @method deactivate
+     */
+    deactivate: function() {
+      this.deactivateChildViews();
+      if (this.isActive()) {
+        this._deactivate();
+        this.__isActive = false;
+      }
+    },
+
+    /**
+     * Resets listeners and events in order for the view to be reattached to the visible DOM
+     * @method activate
+     */
+    activate: function() {
+      this.activateChildViews();
+      if (!this.isActive()) {
+        this._activate();
+        this.__isActive = true;
+      }
     },
 
     /**
@@ -116,7 +234,7 @@
       delete this.$el;
       delete this.el;
 
-      this._isDisposed = true;
+      this.__isDisposed = true;
     },
 
     /**
@@ -141,188 +259,6 @@
      */
     _activate: _.noop,
 
-    /**
-     * @return {Boolean} true if this view has child views
-     * @method hasChildViews
-     */
-    hasChildViews: function() {
-      return !_.isEmpty(this._childViews);
-    },
-
-    /**
-     * @return all of the child views this list view has registered
-     * @method getChildViews
-     */
-    getChildViews: function() {
-      return _.values(this._childViews);
-    },
-
-    /**
-     * Default child view cleanup method that may be overriden.
-     * @method disposeChildViews
-     */
-    disposeChildViews: function() {
-      _.each(this._childViews, function(view) {
-        view.dispose();
-      });
-    },
-
-    /**
-     * Deactivates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
-     */
-    deactivateChildViews: function() {
-      _.each(this._childViews, function(view) {
-        view.deactivate();
-      });
-    },
-
-    /**
-     * Activates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
-     */
-    activateChildViews: function() {
-      _.each(this._childViews, function(view) {
-        view.activate();
-      });
-    },
-
-    /**
-     * Detach all child views
-     * Default method may be overriden.
-     * @method detachChildViews
-     */
-    detachChildViews: function() {
-      _.each(this._childViews, function(view) {
-        view.detach();
-      });
-    },
-
-    /**
-     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
-     * be done to the child view as well.
-     * @param view {View} the child view
-     * @method registerChildView
-     */
-    registerChildView: function(view) {
-      this._childViews[view.cid] = view;
-    },
-
-    /**
-     * Unbinds the child view - no recursive calls will be made to this child view
-     * @param view {View} the child view
-     * @method unregisterChildView
-     */
-    unregisterChildView: function(view) {
-      delete this._childViews[view.cid];
-    },
-
-    /**
-     * Unregisters all child views
-     * @method unregisterChildViews
-     */
-    unregisterChildViews: function() {
-      _.each(this._childViews, function(view) {
-        delete this._childViews[view.cid];
-      }, this);
-    },
-
-    /**
-     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
-     * Invokes attachChildView as the bulk of the functionality
-     * @method injectView
-     * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to inject
-     */
-    injectView: function(injectionSite, view) {
-      var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-      if (view && injectionPoint.size() > 0) {
-        this.attachChildView(injectionPoint, view);
-      }
-    },
-
-    /**
-     * Registers the child view if not already done so, then calls view.attach with the element argument
-     * @param $el {jQuery element} the element to attach to.
-     * @param view {View} the child view
-     * @method attachChildView
-     */
-    attachChildView: function($el, view) {
-      view.detach();
-      this.registerChildView(view);
-      view.attach($el);
-    },
-
-    /**
-     * If attached, will detach the view from the DOM and calls deactivate
-     * @method detach
-     */
-    detach: function() {
-      if (this.isAttached()) {
-        // Detach view from DOM
-        if (this.injectionSite) {
-          this.$el.replaceWith(this.injectionSite);
-        } else {
-          this.$el.detach();
-        }
-        this.deactivate();
-        this._isAttached = false;
-      }
-    },
-
-    /**
-     * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
-     * @method attach
-     */
-    attach: function($el) {
-      if (!this.isAttached()) {
-        // be safe and deactivate before attaching yourself
-        this.deactivate();
-        this.render();
-        this.injectionSite = $el.replaceWith(this.$el);
-        this.activate();
-        this._isAttached = true;
-      }
-    },
-
-    /**
-     * @returns {Boolean} true if the view is attached
-     * @method isAttached
-     */
-    isAttached: function() {
-      return this._isAttached;
-    },
-
-    /**
-     * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
-     * and events that may affect user experience. Recursively invokes deactivate on child views
-     * @method deactivate
-     */
-    deactivate: function() {
-      this.deactivateChildViews();
-      if (this.isActive()) {
-        this.undelegateEvents();
-        this._deactivate();
-        this._isActive = false;
-      }
-    },
-
-    /**
-     * Resets listeners and events in order for the view to be reattached to the visible DOM
-     * @method activate
-     */
-    activate: function() {
-      this.activateChildViews();
-      if (!this.isActive()) {
-        this.delegateEvents();
-        this._activate();
-        this._isActive = true;
-      }
-    },
-
         /**
      * Before any DOM rendering is done, this method is called and removes any
      * custom plugins including events that attached to the existing elements.
@@ -340,11 +276,132 @@
     plug: _.noop,
 
     /**
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @param [options] {Object} optionals options object
+     * @param   [options.noActivate=false] {Boolean} if set to true, the child view will not be activated upon attaching.
+     * @method attachChildView
+     */
+    attachChildView: function($el, view, options) {
+      options = options || {};
+      view.detach();
+      this.registerChildView(view);
+      view.attach($el);
+      if (!options.noActivate) {
+        view.activate();
+      }
+    },
+
+    /**
+     * @return {Boolean} true if this view has child views
+     * @method hasChildViews
+     */
+    hasChildViews: function() {
+      return !_.isEmpty(this.__childViews);
+    },
+
+    /**
+     * @return all of the child views this list view has registered
+     * @method getChildViews
+     */
+    getChildViews: function() {
+      return _.values(this.__childViews);
+    },
+
+    /**
+     * Returns the view that corresponds to the cid
+     * @param viewCID {cid} the view cid
+     * @return the child view corresponding to the cid
+     * @method getChildView
+     */
+    getChildView: function(viewCID) {
+      return this.__childViews[viewCID];
+    },
+
+    /**
+     * Disposes all child views recursively
+     * @method disposeChildViews
+     */
+    disposeChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.dispose();
+      });
+    },
+
+    /**
+     * Deactivates all child views recursively
+     * @method deactivateChildViews
+     */
+    deactivateChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.deactivate();
+      });
+    },
+
+    /**
+     * Detach all child views. NOTE: this is not recursive - it will not separate the entire view tree.
+     * @method detachChildViews
+     */
+    detachChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.detach();
+      });
+    },
+
+    /**
+     * Activates all child views
+     * @method activateChildViews
+     */
+    activateChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.activate();
+      });
+    },
+
+    /**
+     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the child view as well.
+     * @param view {View} the child view
+     * @method registerChildView
+     */
+    registerChildView: function(view) {
+      this.__childViews[view.cid] = view;
+    },
+
+    /**
+     * Unbinds the child view - no recursive calls will be made to this child view
+     * @param view {View} the child view
+     * @method unregisterChildView
+     */
+    unregisterChildView: function(view) {
+      delete this.__childViews[view.cid];
+    },
+
+    /**
+     * Unregisters all child views
+     * @method unregisterChildViews
+     */
+    unregisterChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        this.unregisterChildView(view);
+      }, this);
+    },
+
+    /**
+     * @returns {Boolean} true if the view is attached to a parent
+     * @method isAttachedToParent
+     */
+    isAttachedToParent: function() {
+      return this.__isAttachedToParent;
+    },
+
+    /**
      * @returns {Boolean} true if the view is active
      * @method isActive
      */
     isActive: function() {
-      return this._isActive;
+      return this.__isActive;
     },
 
     /**
@@ -352,8 +409,337 @@
      * @method isDisposed
      */
     isDisposed: function() {
-      return this._isDisposed;
+      return this.__isDisposed;
+    },
+
+    /**
+     * Invokes a feedback entry's "then" method
+     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
+     * @param [evt] {Event} the event to be passed to the "then" method
+     * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
+     * @method invokeFeedback
+     */
+    invokeFeedback: function(to, evt, indexMap) {
+      var result,
+        feedbackToInvoke = _.find(this.feedback, function(feedback) {
+          var toToCheck = feedback.to;
+          if (_.isArray(toToCheck)) {
+            return _.contains(toToCheck, to);
+          } else {
+            return to === toToCheck;
+          }
+        }),
+        feedbackModelField = to;
+      if (feedbackToInvoke) {
+        if (indexMap) {
+          feedbackModelField = this.__substituteIndicesUsingMap(to, indexMap);
+        }
+        result = feedbackToInvoke.then.call(this, evt, indexMap);
+        this.__processFeedbackThenResult(result, feedbackModelField);
+      }
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Generates callbacks for changes in feedback model fields
+     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback model
+     * If feedbackModel.get('fullName') returns:
+     * { text: 'my text',
+     *   attr: {class: 'newClass'}
+     *   hide: [100, function() {...}]
+     * ...}
+     * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
+     * @private
+     * @method __generateFeedbackModelCallbacks
+     */
+    __generateFeedbackModelCallbacks: function() {
+      var self = this;
+      // Feedback one-way bindings
+      self.feedbackModel.off();
+      _.each(this.$('[data-feedback]'), function(element) {
+        var attr = $(element).data('feedback');
+        self.feedbackModel.on('change:' + attr, (function(field) {
+          return function() {
+            var $element,
+              state = self.feedbackModel.get(field);
+            if (!state) {
+              return;
+            }
+            $element = self.$el.find('[data-feedback="' + field + '"]');
+            _.each(state, function(value, key) {
+              var target;
+              if (_.first(key) === '_') {
+                target = self[key.slice(1)];
+              } else {
+                target = $element[key];
+              }
+              if (_.isArray(value)) {
+                target.apply($element, value);
+              } else if (value !== undefined) {
+                target.call($element, value);
+              }
+            });
+          };
+        })(attr));
+      });
+      _.each(self.feedbackModel.attributes, function(value, attr) {
+        self.feedbackModel.trigger('change:' + attr);
+      });
+    },
+
+    /**
+     * Processes the result of the then method. Adds to the feedback model.
+     * @param result {Object} the result of the then method
+     * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
+     * @private
+     * @method __processFeedbackThenResult
+     */
+    __processFeedbackThenResult: function(result, feedbackModelField) {
+      var newState = $.extend({}, result);
+      this.feedbackModel.set(feedbackModelField, newState, {silent: true});
+      this.feedbackModel.trigger('change:' + feedbackModelField);
+    },
+
+    /**
+     * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks
+     * Finds all feedback zones that match the "to" field, and binds the "when" events to invoke the "then" method
+     * @private
+     * @method __generateFeedbackBindings
+     */
+    __generateFeedbackBindings: function() {
+      var i,
+          self = this;
+
+      // Cleanup previous "on" events
+      for (i = 0; i < this.__feedbackEvents.length; i++) {
+        this.off(null, this.__feedbackEvents[i]);
+      }
+      this.__feedbackEvents = [];
+
+      // For each feedback configuration
+      _.each(this.feedback, function(declaration) {
+        var toEntries = [declaration.to];
+        if (_.isArray(declaration.to)) {
+          toEntries = declaration.to;
+        }
+        _.each(toEntries, function(to) {
+          var destinations = self.__getFeedbackDestinations(to),
+            destIndexTokens = self.__getAllIndexTokens(to);
+
+          // Iterate over all destinations
+          _.each(destinations, function(dest) {
+            var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
+            dest = $(dest);
+            fieldName = dest.data('feedback');
+            indices = self.__getAllIndexTokens(fieldName);
+            indexMap = {};
+            // Generates a mapping from variable name to value:
+            // If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
+            // then the map would look like: {x: 1, y: 4}
+            _.each(destIndexTokens, function(indexToken, i) {
+              indexMap[indexToken] = indices[i];
+            });
+            then = declaration.then;
+
+            // If the "then" clause is a string, assume it's a view method
+            if (_.isString(then)) {
+              then = self[then];
+            } else if (_.isArray(then)) {
+              // If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
+              args = then.slice();
+              method = args[0];
+              args.shift();
+              then = self[method].apply(self, args);
+            }
+
+            // track the indices for binding
+            bindInfo = {
+              feedbackModelField: fieldName,
+              fn: then,
+              indices: indexMap
+            };
+            // Iterate over all "when" clauses
+            whenEvents = self.__generateWhenEvents(declaration.when, indexMap);
+            _.each(whenEvents, function(eventKey) {
+              var match, delegateEventSplitter,
+                invokeThen = function(evt) {
+                  var i, args, result, newState;
+                  args = [evt];
+                  newState = {};
+                  args.push(bindInfo.indices);
+                  result = bindInfo.fn.apply(self, args);
+                  self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                };
+              delegateEventSplitter = /^(\S+)\s*(.*)$/;
+              match = eventKey.match(delegateEventSplitter);
+              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
+            });
+            // Special "on" listeners
+            _.each(declaration.when.on, function(eventKey) {
+              var invokeThen = function() {
+                var result,
+                    args = [{
+                      args: arguments,
+                      type: eventKey
+                    }];
+                args.push(bindInfo.indices);
+                result = bindInfo.fn.apply(self, args);
+                self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+              };
+              self.on(eventKey, invokeThen, self);
+              self.__feedbackEvents.push(invokeThen);
+            });
+          });
+        });
+      });
+    },
+
+    /**
+     * Returns all elements on the page that match the feedback mapping
+     * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
+     * @param dest {String} the string of the data-feedback
+     * @return {jQuery array} all elements on the page that match the feedback mapping
+     * @private
+     * @method __getFeedbackDestinations
+     */
+    __getFeedbackDestinations: function(dest) {
+      var self = this,
+          strippedField = this.__stripAllAttribute(dest),
+          destPrefix = dest,
+          firstArrayIndex = dest.indexOf('[');
+      if (firstArrayIndex > 0) {
+        destPrefix = dest.substring(0, firstArrayIndex);
+      }
+      // Tries to match as much as possible by using a prefix (the string before the array notation)
+      return this.$('[data-feedback^="' + destPrefix + '"]').filter(function() {
+        // Only take the elements that actually match after the array notation is converted to open notation ([x] -> [])
+        return self.__stripAllAttribute($(this).data('feedback')) === strippedField;
+      });
+    },
+
+    /**
+     * Generates the events needed to listen to the feedback's when methods. A when event is only created
+     * if the appropriate element exist on the page
+     * @param whenMap the collection of "when"'s for a given feedback
+     * @param indexMap map from variable names to values when substituting array notation
+     * @return the events that were generated
+     * @private
+     * @method __generateWhenEvents
+     */
+    __generateWhenEvents: function(whenMap, indexMap) {
+      var self = this,
+          events = [];
+      _.each(whenMap, function(whenEvents, whenField) {
+        var substitutedWhenField,
+            qualifiedFields = [whenField],
+            useAtNotation = (whenField.charAt(0) === '@');
+
+        if (whenField !== 'on') {
+          if (useAtNotation) {
+            whenField = whenField.substring(1);
+            // substitute indices in to "when" placeholders
+            // [] -> to all, [0] -> to specific, [x] -> [x's value]
+            substitutedWhenField = self.__substituteIndicesUsingMap(whenField, indexMap);
+            qualifiedFields = _.flatten(self.__generateSubAttributes(substitutedWhenField, self.model));
+          }
+          // For each qualified field
+          _.each(qualifiedFields, function(qualifiedField) {
+            _.each(whenEvents, function(eventType) {
+              var backboneEvent = eventType + ' ' + qualifiedField;
+              if (useAtNotation) {
+                backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
+              }
+              events.push(backboneEvent);
+            });
+          });
+        }
+      });
+      return events;
+    },
+
+    /**
+     * Returns an array of all the values and variables used within the array notations in a string
+     * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
+     * This does not handle or return any "open" array notations: []
+     * @private
+     * @method __getAllIndexTokens
+     */
+    __getAllIndexTokens: function(attr) {
+      return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
+        var token = arrayNotation.substring(1, arrayNotation.length - 1);
+        if (!isNaN(token)) {
+          result.push(parseInt(token, 10));
+        } else {
+          result.push(token);
+        }
+        return result;
+      }, []);
+    },
+
+    /**
+     * Replaces all array notations with open array notations.
+     * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
+     * @private
+     * @method __stripAllAttribute
+     */
+    __stripAllAttribute: function(attr) {
+      attr = attr.replace(/\[.+?\]/g, function() {
+        return '[]';
+      });
+      return attr;
+    },
+
+    /**
+     * Takes a map from variable name to value to be replaced and processes a string with them.
+     * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+     * @private
+     * @method __substituteIndicesUsingMap
+     */
+    __substituteIndicesUsingMap : function(dest, indexMap) {
+      var newIndex;
+      return dest.replace(/\[.?\]/g, function(arrayNotation) {
+        if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
+          return arrayNotation;
+        } else {
+          newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
+          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+        }
+      });
+    },
+
+    /**
+     * Generates an array of all the possible field accessors and their indices when using
+     * the "open" array notation:
+     *    foo[] -> ['foo[0]', 'foo[1]'].
+     * Will also perform nested arrays:
+     *    foo[][] -> ['foo[0][0]', foo[1][0]']
+     * @method __generateSubAttributes
+     * @private
+     * @param {String} attr The name of the attribute to expand according to the bound model
+     * @return {Array<String>} The fully expanded subattribute names
+     */
+    __generateSubAttributes: function(attr, model) {
+      var i, attrName, remainder, subAttrs, values,
+        firstBracket = attr.indexOf('[]');
+      if (firstBracket === -1) {
+        return [attr];
+      } else {
+        attrName = attr.substring(0, firstBracket);
+        remainder = attr.substring(firstBracket + 2);
+        subAttrs = [];
+        values = model.get(attrName);
+        if (!values) {
+          return [attr];
+        }
+        for (i = 0 ; i < values.length; i++) {
+          subAttrs.push(this.__generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
+        }
+        return subAttrs;
+      }
     }
+
+    /************** End Feedback **************/
   });
 
   return View;

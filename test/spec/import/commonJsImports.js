@@ -75,6 +75,7 @@ commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', '/m
 commonJsImportTest('/modules/handlebarsUtils', []);
 commonJsImportTest('/modules/stickitUtils', ['backbone', 'backbone.stickit']);
 commonJsImportTest('/modules/templateRenderer', ['underscore', 'jquery']);
+commonJsImportTest('/modules/configure', ['backbone', 'jquery']);
 
 commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
                                '/modules/stickitUtils',
@@ -86,4 +87,4 @@ commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.s
                                '/modules/history',
                                '/modules/NestedCell', '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/ServiceCell',
                                '/modules/View', '/modules/ListView', '/modules/FormView',
-                               '/modules/templateRenderer', '/modules/handlebarsUtils']);
+                               '/modules/templateRenderer', '/modules/handlebarsUtils', '/modules/configure']);

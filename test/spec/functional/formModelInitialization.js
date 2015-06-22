@@ -65,12 +65,12 @@ describe('A Form Model during initialization', function() {
         }
       });
     myProfileFormModel = new MyProfileFormModel();
-    expect(myProfileFormModel._modelConfigs.length).toBe(2);
-    expect(myProfileFormModel._computed.length).toBe(2);
+    expect(myProfileFormModel.__modelConfigs.length).toBe(2);
+    expect(myProfileFormModel.__computed.length).toBe(2);
 
     formModel2 = new MyProfileFormModel({}, {model: testModel, fields: ['foo']});
-    expect(formModel2._modelConfigs.length).toBe(1);
-    expect(formModel2._computed.length).toBe(2);
+    expect(formModel2.__modelConfigs.length).toBe(1);
+    expect(formModel2.__computed.length).toBe(2);
 
     SimpleForm = FormModel.extend({
       tracking: {
@@ -80,9 +80,9 @@ describe('A Form Model during initialization', function() {
     });
 
     simpleForm = new SimpleForm({}, {models: [{model: testModel, fields: ['bar']}, {model: testModel2}]});
-    expect(simpleForm._modelConfigs.length).toBe(2);
-    expect(simpleForm._modelConfigs[0].fields[0]).toBe('bar');
-    expect(simpleForm._computed.length).toBe(0);
+    expect(simpleForm.__modelConfigs.length).toBe(2);
+    expect(simpleForm.__modelConfigs[0].fields[0]).toBe('bar');
+    expect(simpleForm.__computed.length).toBe(0);
   });
 
   it('can use nested backbone correctly', function() {

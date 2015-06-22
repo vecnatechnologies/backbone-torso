@@ -19,15 +19,18 @@ describe('A View being deactivated and activated', function() {
   it('can be deactivated correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
+    expect(view.isActive()).toBe(true);
     view.attach($('div.app'));
+    expect(view.isActive()).toBe(true);
     view.deactivate();
+    expect(view.isActive()).toBe(false);
     expect($('div.app').length).toBe(0);
     expect($('div.click').length).toBe(1);
     expect(view.$el).toBeDefined();
     $('div.app').append('<div>Dont trigger event!</div>');
     expect(view.myClick).not.toHaveBeenCalled();
     $('div').click().change();
-    expect(view.myClick).not.toHaveBeenCalled();
+    expect(view.myClick).toHaveBeenCalled();
     expect(view.afterMyEvent).not.toHaveBeenCalled();
     view.trigger('myEvent');
     expect(view.afterMyEvent).toHaveBeenCalled();
@@ -40,9 +43,9 @@ describe('A View being deactivated and activated', function() {
   it('can be activated correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
+    expect(view.isActive()).toBe(true);
     view.attach($('div.app'));
-    view.deactivate();
-    view.activate();
+    expect(view.isActive()).toBe(true);
     expect($('div.app').length).toBe(0);
     expect($('div.click').length).toBe(1);
     expect(view.myClick).not.toHaveBeenCalled();
@@ -124,9 +127,9 @@ describe('A View being deactivated and activated', function() {
     expect(childView1.myClick).not.toHaveBeenCalled();
     expect(childView2.myClick).not.toHaveBeenCalled();
     $('div').click().change();
-    expect(view.myClick).not.toHaveBeenCalled();
-    expect(childView1.myClick).not.toHaveBeenCalled();
-    expect(childView2.myClick).not.toHaveBeenCalled();
+    expect(view.myClick).toHaveBeenCalled();
+    expect(childView1.myClick).toHaveBeenCalled();
+    expect(childView2.myClick).toHaveBeenCalled();
 
     expect(view.afterMyEvent).not.toHaveBeenCalled();
     expect(childView1.afterMyEvent).not.toHaveBeenCalled();
@@ -165,7 +168,6 @@ describe('A View being deactivated and activated', function() {
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
     view.attach($('div.app'));
-    view.deactivate();
     expect($('div.parent').length).toBe(1);
     expect($('div.app').length).toBe(0);
     expect(view.$el).toBeDefined();
@@ -175,9 +177,9 @@ describe('A View being deactivated and activated', function() {
     expect(childView1.myClick).not.toHaveBeenCalled();
     expect(childView2.myClick).not.toHaveBeenCalled();
     $('div').click().change();
-    expect(view.myClick).not.toHaveBeenCalled();
-    expect(childView1.myClick).not.toHaveBeenCalled();
-    expect(childView2.myClick).not.toHaveBeenCalled();
+    expect(view.myClick).toHaveBeenCalled();
+    expect(childView1.myClick).toHaveBeenCalled();
+    expect(childView2.myClick).toHaveBeenCalled();
 
     expect(view.afterMyEvent).not.toHaveBeenCalled();
     expect(childView1.afterMyEvent).not.toHaveBeenCalled();
@@ -196,13 +198,12 @@ describe('A View being deactivated and activated', function() {
     expect(childView1.afterMyDeactivatableEvent).not.toHaveBeenCalled();
     expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
     view.trigger('myDeactivatableEvent');
-    expect(view.afterMyDeactivatableEvent).not.toHaveBeenCalled();
+    expect(view.afterMyDeactivatableEvent).toHaveBeenCalled();
     expect(childView1.afterMyDeactivatableEvent).not.toHaveBeenCalled();
     expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
 
     childView1.trigger('myDeactivatableEvent');
-    expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
-    expect(childView1.afterMyDeactivatableEvent).not.toHaveBeenCalled();
+    expect(childView1.afterMyDeactivatableEvent).toHaveBeenCalled();
     expect(childView2.afterMyDeactivatableEvent).not.toHaveBeenCalled();
 
     view.dispose();

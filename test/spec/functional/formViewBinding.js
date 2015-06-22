@@ -25,7 +25,7 @@ describe("A Form View's two-way binding", function() {
       view = new UpdateProfileFormView({
         model: model
       });
-      $('body').append(view.$el);
+      view.attach($('body'));
 
       done();
     });
