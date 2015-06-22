@@ -1092,7 +1092,7 @@
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
           activeElement = document.activeElement;
-      if (activeElement && activeElement.hasAttribute('value') && this.supportsSelection(activeElement)) {
+      if (activeElement && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
@@ -1242,6 +1242,31 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1264,31 +1289,6 @@
   _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
 
   return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
 }));
 
 (function(root, factory) {
