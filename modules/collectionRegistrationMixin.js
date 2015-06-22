@@ -257,13 +257,14 @@
        * @override
        * @method fetch
        */
-      collection.fetch = function() {
+      collection.fetch = function(options) {
+        options = options || {};
         if (this.fetchUsingTrackedIds) {
           return this.fetchByIds({
-            setOptions: {remove: true}
+            setOptions: _.extend({remove: true}, options)
           });
         } else {
-          return base.fetch();
+          return base.fetch(options);
         }
       };
 

@@ -178,6 +178,10 @@ describe('A Torso Collection', function() {
     var MyModel = Model.extend({});
     var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
     var cache = new MyCollection();
+    expect(cache.getLoadedOncePromise).toBeDefined();
+    expect(cache.hasLoadedOnce).toBeDefined();
+    expect(cache.isLoading).toBeDefined();
+    expect(cache.__loadWrapper).toBeDefined();
     var requester1 = cache.createPrivateCollection(1);
     requester1.trackNewId('1');
     expect(cache.isPolling()).toBe(false);
@@ -188,9 +192,10 @@ describe('A Torso Collection', function() {
     expect(cache.polledFetch.calls.count()).toEqual(4); // once when started, 3 times when polling
     cache.stopPolling();
     expect(cache.isPolling()).toBe(false);
+    jasmine.clock().uninstall();
   });
 
-  it('can trigger events when loading from server', function() {
+  it('can trigger events when loading from server', function(done) {
     var MyModel = Model.extend({});
     var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
     var cache = new MyCollection();
@@ -206,7 +211,9 @@ describe('A Torso Collection', function() {
     });
     expect(loadBeginCounter).toBe(0);
     expect(loadCompleteCounter).toBe(0);
+    expect(cache.hasLoadedOnce()).toBe(false);
     cache.fetch().done(function() {
+      expect(cache.hasLoadedOnce()).toBe(true);
       expect(loadBeginCounter).toBe(1);
       expect(loadCompleteCounter).toBe(1);
       done();
@@ -216,8 +223,52 @@ describe('A Torso Collection', function() {
       expect(true).toBe(false);
       done();
     });
+    expect(cache.isLoading()).toBe(true);
     expect(loadBeginCounter).toBe(1);
     expect(loadCompleteCounter).toBe(0);
+  });
+
+  it('can notify that a cache has started/stopped loading from a requester collection', function(done) {
+    var MyModel = Model.extend({});
+    var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
+    var cache = new MyCollection();
+    var collection = cache.createPrivateCollection(1);
+    var loadBeginCounter = 0;
+    var loadCompleteCounter = 0;
+    var cacheLoadBeginCounter = 0;
+    var cacheLoadCompleteCounter = 0;
+    collection.trackNewId('1');
+    // load-begin -> cache-load-begin -> FETCHING -> cache-load-complete -> load-complete
+    collection.on('load-begin', function() {
+      expect(cacheLoadBeginCounter).toBe(0);
+      loadBeginCounter++;
+    });
+    collection.on('load-complete', function() {
+      loadCompleteCounter++;
+    });
+    collection.on('cache-load-begin', function() {
+      cacheLoadBeginCounter++;
+    });
+    collection.on('cache-load-complete', function() {
+      expect(loadCompleteCounter).toBe(0);
+      cacheLoadCompleteCounter++;
+    });
+    collection.fetch().done(function() {
+      expect(loadBeginCounter).toBe(1);
+      expect(loadCompleteCounter).toBe(1);
+      expect(cacheLoadBeginCounter).toBe(1);
+      expect(cacheLoadCompleteCounter).toBe(1);
+      done();
+    }).fail(function(response) {
+      console.log(response);
+      console.log('Failed to fetch from cache');
+      expect(true).toBe(false);
+      done();
+    });
+    expect(loadBeginCounter).toBe(1);
+    expect(loadCompleteCounter).toBe(0);
+    expect(cacheLoadBeginCounter).toBe(1);
+    expect(cacheLoadCompleteCounter).toBe(0);
   });
 
   it('can release untracked models', function(done) {
@@ -255,7 +306,7 @@ describe('A Torso Collection', function() {
     });
   });
 
-  xit('can track ids that are longs/ints', function() {
+  xit('can track ids that are longs/ints', function(done) {
     //TODO this doesn't work. Id's come back as strings.
     var MyModel = Model.extend({});
     var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
@@ -264,6 +315,7 @@ describe('A Torso Collection', function() {
     requester1.trackNewId(1);
     cache.fetch().done(function() {
       expect(requester1.models[0].id).toBe(1);
+      done();
     }).fail(function(response) {
       console.log(response);
       console.log('Failed to fetch from cache');
