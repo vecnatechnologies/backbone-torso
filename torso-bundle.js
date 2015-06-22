@@ -351,7 +351,21 @@
         };
       };
 
+<<<<<<< HEAD
       //*********** PUBLIC METHODS ************//
+=======
+    hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
+      var currentCaret,
+          activeElement = document.activeElement;
+      if (activeElement && this.supportsSelection(activeElement)) {
+        currentCaret = this.getCaretPosition(activeElement);
+      }
+      this.hotswap(currentNode, newNode, ignoreElements);
+      if (activeElement && this.supportsSelection(activeElement)) {
+        this.setCaretPosition(activeElement, currentCaret);
+      }
+    },
+>>>>>>> Small fix to templateRender caret selection
 
       /**
        * @method cacheMixin.getRequesterIds
