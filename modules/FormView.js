@@ -390,11 +390,11 @@
      * @method  _generateSelectOptions
      * @param element {Element} The select element to generate options for
      * @param opts {Object} Additional behavior options for the bindings
-     * @param [options.modelFormat] {Object} The function called before setting model values
+     * @param [opts.modelFormat] {Object} The function called before setting model values
      * @private
      * @return {<Stickit select options hash>}
      */
-    _generateSelectOptions: function(element, opts) {
+    __generateSelectOptions: function(element, opts) {
       var collection = [],
           options = $(element).children('option');
 
