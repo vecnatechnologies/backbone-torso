@@ -231,8 +231,8 @@
             fieldBinding = self._generateModelFieldBinding(attr, options);
 
         //add select options
-        if $(element).is('select') {
-          fieldBinding.selectOptions = self._generateSelectOptions(element, options);
+        if ($(element).is('select')) {
+          fieldBinding.selectOptions = self.__generateSelectOptions(element, options);
         }
         self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
       });
