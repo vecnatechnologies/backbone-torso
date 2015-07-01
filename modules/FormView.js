@@ -400,7 +400,7 @@
 
       _.each(options, function(option) {
         collection.push({'label': $(option).text(),
-                          'value': opts.modelFormat ? opts.modelFormat.apply(this, $(option).val()) : $(option).val()});
+                          'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
       });
 
       return {collection: collection,
