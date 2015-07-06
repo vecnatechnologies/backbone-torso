@@ -387,7 +387,7 @@
     },
 
     /**
-     * @method  _generateSelectOptions
+     * @method  __generateSelectOptions
      * @param element {Element} The select element to generate options for
      * @param opts {Object} Additional behavior options for the bindings
      * @param [opts.modelFormat] {Object} The function called before setting model values
