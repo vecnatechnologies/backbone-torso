@@ -622,6 +622,28 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     factory();
@@ -766,28 +788,6 @@
       }
     });
   };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
 }));
 
 (function(root, factory) {
@@ -4043,10 +4043,22 @@
      * @return {Backbone View} the new child view
      */
     __createChildView: function(model) {
-      var childView = new this.childView(this.__generateChildArgs(model));
+      var ChildViewClass = this._getChildViewClass(model),
+          childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerChildView(childView);
       this.__modelToViewMap[model.cid] = childView.cid;
       return childView;
+    },
+
+    /**
+     * Returns a View Class, can be overridden so that
+     * a listView's children can be rendered with different Views if necessary
+     *
+     * @param  {Object} model gives information on the individual children, such as what view to render
+     * @return {Torso.View} a child's View Class
+     */
+    _getChildViewClass: function(model){
+      return this.childView;
     },
 
     /**
