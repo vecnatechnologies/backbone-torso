@@ -16,14 +16,13 @@ module.exports = function(window) {
       this.$el.html('<div class="click">test</div>');
     },
     initialize: function() {
-      this.super();
+      window.Torso.View.prototype.initialize.call(this);
       this.on('myEvent', this.afterMyEvent);
-      this.render();
     },
-    activateCallback: function() {
+    _activate: function() {
       this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);
     },
-    deactivateCallback: function() {
+    _deactivate: function() {
       this.off('myDeactivatableEvent');
     },
     myClick: _.noop,

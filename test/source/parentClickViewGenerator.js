@@ -22,16 +22,14 @@ module.exports = function(window) {
       this.injectView('two', this.childView2);
     },
     initialize: function() {
-      this.super();
       this.childView1 = new ChildView1();
       this.childView2 = new ChildView2();
       this.on('myEvent', this.afterMyEvent);
-      this.render();
     },
-    activateCallback: function() {
+    _activate: function() {
       this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);
     },
-    deactivateCallback: function() {
+    _deactivate: function() {
       this.off('myDeactivatableEvent');
     },
     myClick: _.noop,

@@ -54,7 +54,7 @@ describe('A Form Model saving', function() {
     var anotherTestModel = new TestModel(),
       testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: anotherTestModel, fields: ['bar']}]});
     expect(testFormModel.get('foo')).toBe(123);
-    expect(testFormModel._cache[testModel.cid]).toBe('{"foo":123}');
+    expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":123}');
     testModel.set('foo', 555);
     try {
       testFormModel.save({force: false});
@@ -257,16 +257,64 @@ describe('A Form Model saving', function() {
     });
   });
 
+  it('can save to a single url for multiple models', function(done) {
+    var testModel2 = new TestModel2(),
+      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}]});
+    testFormModel.url = '/unified';
+    testFormModel.set('foo', 444);
+    testFormModel.set('pieces', 4);
+    testFormModel.save().done(function() {
+      expect(testModel.get('foo')).toBe(444);
+      expect(testModel2.get('pieces')).toBe(4);
+      done();
+    }).fail(function(responses) {
+      console.log('Should not have failed the save');
+      expect(true).toBe(false);
+      done();
+    });
+  });
+
+  it('can save to a single url for multiple models and not change models on fail', function(done) {
+    var testModel2 = new TestModel2(),
+      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}]});
+    testFormModel.url = '/unified';
+    env.window.$.mockjax.clear(env.routes['/unified|post']);
+    env.window.$.mockjax({
+      url: '/unified',
+      dataType: 'json',
+      type: 'post',
+      status: 404,
+      responseTime: 100,
+      response: function() {
+        this.responseText = {
+          'error': '404'
+        };
+      }
+    });
+    testFormModel.set('foo', 444);
+    testFormModel.set('pieces', 4);
+    testFormModel.save().done(function(res) {
+      console.log(res);
+      console.log('Should not have succeeded the save');
+      expect(true).toBe(false);
+      done();
+    }).fail(function(responses) {
+      expect(testModel.get('foo')).toBe(123);
+      expect(testModel2.get('pieces')).toBe(5);
+      done();
+    });
+  });
+
   //*********** Cache *************//
 
   it('can cache the most recent pulls from the object models to compare against', function() {
     var anotherTestModel = new TestModel(),
       testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: anotherTestModel, fields: ['bar']}]});
     expect(testFormModel.get('foo')).toBe(123);
-    expect(testFormModel._cache[testModel.cid]).toBe('{"foo":123}');
+    expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":123}');
     testFormModel.startUpdating();
     testModel.set('foo', 555);
-    expect(testFormModel._cache[testModel.cid]).toBe('{"foo":555}');
+    expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":555}');
     testFormModel.stopUpdating();
   });
 
@@ -280,10 +328,10 @@ describe('A Form Model saving', function() {
       }]
     });
     expect(combinedFormModel.get('baz')).toBe('test');
-    expect(combinedFormModel._cache[testModel.cid]).toBe('{"bar":"test"}');
+    expect(combinedFormModel.__cache[testModel.cid]).toBe('{"bar":"test"}');
     combinedFormModel.startUpdating();
     testModel.set('bar', 'new value');
-    expect(combinedFormModel._cache[testModel.cid]).toBe('{"bar":"new value"}');
+    expect(combinedFormModel.__cache[testModel.cid]).toBe('{"bar":"new value"}');
     combinedFormModel.stopUpdating();
   });
 });

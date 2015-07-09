@@ -19,8 +19,8 @@
    */
   var Collection = Backbone.Collection.extend({});
   _.extend(Collection.prototype, pollingMixin);
-  _.extend(Collection.prototype, collectionRegistrationMixin(Collection.prototype));
-  _.extend(Collection.prototype, collectionLoadingMixin(Collection.prototype));
+  Collection = Collection.extend(collectionLoadingMixin(Collection));
+  Collection = Collection.extend(collectionRegistrationMixin(Collection));
 
   return Collection;
 }));

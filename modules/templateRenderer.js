@@ -44,12 +44,10 @@
    * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
    */
   function swapElementNodes(currentNode, newNode, ignoreElements) {
-    var $currentNode = $(currentNode),
+    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
+      $currentNode = $(currentNode),
       $newNode = $(newNode),
-      shouldIgnore,
-      $currChildNodes,
-      $newChildNodes,
-      currentAttributes;
+      idx = 0;
 
     shouldIgnore = _.some(ignoreElements, function(selector) {
       return $currentNode.is(selector);
@@ -65,10 +63,14 @@
       return;
     }
 
-    // Remove current attributes
+    // Remove current attributes that have changed
     currentAttributes = currentNode.attributes;
-    while (currentAttributes.length > 0) {
-      currentNode.removeAttribute(currentAttributes[0].name);
+    while (idx < currentAttributes.length) {
+      currentAttr = currentAttributes[idx].name;
+      if (!_.contains(currentAttr, newNode.attributes)) {
+        currentNode.removeAttribute(currentAttr);
+      }
+      idx++;
     }
 
     // Set new attributes
@@ -171,11 +173,11 @@
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
           activeElement = document.activeElement;
-      if (activeElement && activeElement.hasAttribute('value')) {
+      if (activeElement && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement) {
+      if (activeElement && this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },
@@ -195,6 +197,17 @@
         newDOM.setAttribute(attrib.name, attrib.value);
       });
       return newDOM;
+    },
+
+    /**
+     * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
+     * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
+     * @param el {Element} the DOM element to check
+     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el
+     * @method supportsSelection
+     */
+    supportsSelection : function (el) {
+      return (/text|password|search|tel|url/).test(el.type);
     },
 
     /**

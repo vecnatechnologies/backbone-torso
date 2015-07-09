@@ -33,6 +33,8 @@ module.exports = function() {
           reject(error)
         }
 
+        // TODO add handlebarsUtils import function to window/ on torso. then here, add handlebars from window to handlebarsUtils
+        window.Torso.Utils.handlebarsUtils(window.Handlebars);
         // This sync is needed because TestView.js imports a compiled .hbs file outside of the window's scope so it uses a different
         // Set of handlebars helpers.
         window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {

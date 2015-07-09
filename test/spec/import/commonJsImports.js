@@ -51,13 +51,13 @@ commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
 
 commonJsImportTest('/modules/collectionLoadingMixin', ['jquery']);
 commonJsImportTest('/modules/collectionRegistrationMixin', ['underscore', 'jquery']);
-commonJsImportTest('/modules/pollingMixin', ['jquery']);
-commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone', 'jquery',
+commonJsImportTest('/modules/pollingMixin', []);
+commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone',
                                          '/modules/pollingMixin', '/modules/NestedModel']);
 
-commonJsImportTest('/modules/Model', ['underscore', 'backbone', 'jquery', '/modules/pollingMixin']);
+commonJsImportTest('/modules/Model', ['underscore', 'backbone', '/modules/pollingMixin']);
 commonJsImportTest('/modules/NestedCell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin', 'backbone-nested']);
-commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', 'jquery', '/modules/pollingMixin']);
+commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', '/modules/pollingMixin']);
 commonJsImportTest('/modules/FormModel', ['underscore', 'jquery', 'backbone-nested', 'backbone',
                                         '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation']);
 
@@ -65,20 +65,20 @@ commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/
 commonJsImportTest('/modules/Router', ['backbone']);
 commonJsImportTest('/modules/history', ['backbone']);
 commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
-                                   '/modules/guidManager', '/modules/templateRenderer']);
+                                   '/modules/templateRenderer']);
 commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
-                                       '/modules/guidManager', '/modules/templateRenderer', '/modules/View',
+                                       '/modules/templateRenderer', '/modules/View',
                                        '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel', 'backbone.stickit']);
 commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', '/modules/Cell', '/modules/cellPersistenceRemovalMixin',
-                                       '/modules/guidManager', '/modules/templateRenderer', '/modules/View']);
+                                       '/modules/templateRenderer', '/modules/View']);
 
-commonJsImportTest('/modules/guidManager', []);
-commonJsImportTest('/modules/handlebarsUtils', ['handlebars']);
+commonJsImportTest('/modules/handlebarsUtils', []);
 commonJsImportTest('/modules/stickitUtils', ['backbone', 'backbone.stickit']);
 commonJsImportTest('/modules/templateRenderer', ['underscore', 'jquery']);
+commonJsImportTest('/modules/configure', ['backbone', 'jquery']);
 
-commonJsImportTest('/modules/torso', ['handlebars', 'backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
-                               '/modules/handlebarsUtils', '/modules/stickitUtils',
+commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
+                               '/modules/stickitUtils',
                                '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin', '/modules/cellPersistenceRemovalMixin', '/modules/validation',
                                '/modules/Cell',
                                '/modules/Collection',
@@ -87,4 +87,4 @@ commonJsImportTest('/modules/torso', ['handlebars', 'backbone', 'backbone-nested
                                '/modules/history',
                                '/modules/NestedCell', '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/ServiceCell',
                                '/modules/View', '/modules/ListView', '/modules/FormView',
-                               '/modules/guidManager', '/modules/templateRenderer']);
+                               '/modules/templateRenderer', '/modules/handlebarsUtils', '/modules/configure']);

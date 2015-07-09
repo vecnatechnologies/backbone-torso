@@ -22,8 +22,8 @@ describe('Global Module imports', function() {
         ['Torso', 'Router'],
         ['Torso', 'history'],
         ['Torso', 'Utils'],
-        ['Torso', 'Utils', 'guidManager'],
         ['Torso', 'Utils', 'templateRenderer'],
+        ['Torso', 'Utils', 'handlebarsUtils'],
         ['Torso', 'validation'],
         ['Torso', 'View'],
         ['Torso', 'ListView'],
@@ -33,7 +33,6 @@ describe('Global Module imports', function() {
   beforeAll(function(done) {
     require('./importEnv')('testEnv').done(function(pageWindow) {
       window = pageWindow;
-      console.log(window.Torso.Cell);
       done();
     });
   });

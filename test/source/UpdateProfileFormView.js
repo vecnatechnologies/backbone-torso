@@ -50,7 +50,7 @@ module.exports = function(TorsoFormView, _) {
     prepare: function() {
       return _.extend({
         weekdays: this.weekdays
-      }, UpdateProfileFormView.__super__.prepare.call(this));
+      }, TorsoFormView.prototype.prepare.call(this));
     },
 
     weekdays: ['M', 'T', 'W', 'R', 'F'],
