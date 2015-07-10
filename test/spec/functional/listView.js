@@ -433,4 +433,38 @@ describe('A List View', function() {
     myListView.renderChildViews();
     expect(myListView.render.calls.count()).toBe(renderCount);
   });
+
+  it('has children which render different views', function(){
+    var model = new Model({type: 'type1'}),
+        model2 = new Model({type: 'type2'});
+    myCollection.add(model);
+    myCollection.add(model2);
+    var listViewTemplate = Handlebars.compile('<div><div inject="inject-spot"></div></div>'),
+        childTemplate = Handlebars.compile('<div></div>'),
+        childViewClass1 = View.extend({
+          className: 'childViewClass1',
+          template: childTemplate
+        }),
+        ListViewClass = ListView.extend({
+          className: 'ListViewTest',
+          _getChildViewClass: function(model){
+            var childType = model.get('type');
+            if(childType === 'type1'){
+              return childViewClass1;
+            } else {
+              return this._childView;
+            }
+          }
+        }),
+        listView = new ListViewClass({
+          template: listViewTemplate,
+          collection: myCollection,
+          childView: ItemView,
+          childrenContainer: 'inject-spot'
+        });
+    listView.render();
+    $('body').append(listView.$el);
+    expect($('.childViewClass1').length).toBe(1);
+
+  });
 });
