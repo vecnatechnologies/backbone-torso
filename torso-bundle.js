@@ -3662,11 +3662,23 @@
      * @return {Backbone View} the new child view
      */
     _createChildView: function(model) {
-      var childView = this.registerChildView(new this._childView(this._generateChildArgs(model)));
+      var ChildViewClass = this._getChildViewClass(model),
+          childView = this.registerChildView(new ChildViewClass(this._generateChildArgs(model)));
       this._modelToViewMap[model.cid] = childView.cid;
       return childView;
     },
 
+
+    /**
+     * Returns a View Class, can be overridden so that
+     * a listView's children can be rendered with different Views if necessary
+     *
+     * @param  {Object} model gives information on the individual children, such as what view to render
+     * @return {Torso.View} a child's View Class
+     */
+    _getChildViewClass: function(model){
+      return this._childView;
+    },
     /**
      * Method to generate arguments when creating a child view. Override this method
      * to change the arguments for a given child view.
