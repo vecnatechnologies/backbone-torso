@@ -248,7 +248,7 @@ describe('A List View', function() {
   it('can sort a large list in a reasonable time', function() {
     var startTime, endTime, i,
         numberOfViews = 1000,
-        threshold = 300;
+        threshold = 500;
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }
@@ -312,7 +312,7 @@ describe('A List View', function() {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
-        threshold = 300;
+        threshold = 500;
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
