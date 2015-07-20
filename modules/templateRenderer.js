@@ -64,13 +64,16 @@
     }
 
     // Remove current attributes that have changed
+    // This is necessary, because some types of attributes cannot be removed
+    // without causing a browser error.
     currentAttributes = currentNode.attributes;
     while (idx < currentAttributes.length) {
       currentAttr = currentAttributes[idx].name;
-      if (!_.contains(currentAttr, newNode.attributes)) {
+      if (newNode.getAttribute(currentAttr)) {
+        idx++;
+      } else {
         currentNode.removeAttribute(currentAttr);
       }
-      idx++;
     }
 
     // Set new attributes

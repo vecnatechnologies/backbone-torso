@@ -259,6 +259,7 @@
             return this.trackedIds;
           },
 
+<<<<<<< HEAD
           /**
            * Will force the cache to fetch just the registered ids of this collection
            * @method requesterMixin.fetch
@@ -274,6 +275,20 @@
               }
             });
           },
+=======
+    // Remove current attributes that have changed
+    // This is necessary, because some types of attributes cannot be removed
+    // without causing a browser error.
+    currentAttributes = currentNode.attributes;
+    while (idx < currentAttributes.length) {
+      currentAttr = currentAttributes[idx].name;
+      if (newNode.getAttribute(currentAttr)) {
+        idx++;
+      } else {
+        currentNode.removeAttribute(currentAttr);
+      }
+    }
+>>>>>>> LoadingMixin fetch did not return the loading promise. Also a template render bug with DOM attribute swapping was patched.
 
           /**
            * Override the Id registration system to route via the parent collection
@@ -551,12 +566,22 @@
       };
 
       /**
+<<<<<<< HEAD
        * Sets the lazyFetch mode. When enabled, the collection will assume models don't change, and only fetch each model from the server once.
        * @method setLazyFetch
        * @param lazyFetch {boolean} the lazyFetch mode to set
        */
       collection.setLazyFetch = function(lazyFetch) {
         this.lazyFetch = lazyFetch;
+=======
+       * Wraps the base fetch in a wrapper that manages loaded states
+       * @method fetch
+       * @param options {Object} - the object to hold the options needed by the base fetch method
+       * @return {Promise} The loadWrapper promise
+       */
+      collection.fetch = function(options) {
+        return this._loadWrapper(base.fetch, options);
+>>>>>>> LoadingMixin fetch did not return the loading promise. Also a template render bug with DOM attribute swapping was patched.
       };
 
       /**

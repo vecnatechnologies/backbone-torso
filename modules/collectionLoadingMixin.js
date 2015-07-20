@@ -60,6 +60,7 @@
        * Wraps the base fetch in a wrapper that manages loaded states
        * @method fetch
        * @param options {Object} - the object to hold the options needed by the base fetch method
+       * @return {Promise} The loadWrapper promise
        */
       fetch: function(options) {
         return this.__loadWrapper(base.prototype.fetch, options);
