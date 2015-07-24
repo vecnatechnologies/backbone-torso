@@ -56,6 +56,62 @@
       if (!options.noActivate) {
         this.activate();
       }
+      this.updateDelegateEvents();
+
+    },
+
+
+    updateDelegateEvents: function(){
+      var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
+      Backbone.View.prototype.delegateEvents = function(events){
+        var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+        if (!(events || (events = _.result(this, 'events')))) return this;
+        this.undelegateEvents();
+
+        var trackEvents = function(method){
+          var self = this;
+          var methodCopy = method;
+          var eventInfo = {};
+          var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+          eventInfo.UUID = UUID;
+          method = _.bind(function(){
+            var before = Date.now();
+            methodCopy.call(self);
+            var after = Date.now();
+            eventInfo.loadTime = after-before;
+            this.trigger('clickTime', eventInfo);
+            console.log(eventInfo);
+          },this);
+
+          return method;
+          };
+
+        for (var key in events) {
+          var method = events[key];
+          if (!_.isFunction(method)) method = this[events[key]];
+          if (!method) continue;
+
+          var match = key.match(delegateEventSplitter);
+          var eventName = match[1], selector = match[2];
+
+          // method = _.bind(method, this);
+          trackEvents = _.bind(trackEvents,this);
+          method = trackEvents(method);          
+
+          // var trackEventObject = trackEvents(key);
+          // match = trackEventObject.match;
+          // eventName = trackEventObject.eventName;
+          // method = trackEventObject.method;
+
+          eventName += '.delegateEvents' + this.cid;
+          if (selector === '') {
+            this.$el.on(eventName, method);
+          } else {
+            this.$el.on(eventName, selector, method);
+          }
+        }
+        return this;
+      };
     },
 
     /**

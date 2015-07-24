@@ -24,6 +24,33 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './ServiceCell', './View'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'), require('./View'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Logger = factory(root._, root.Backbone, root.Torso.ServiceCell, root.Torso.View);
+  }
+}(this, function(_, Backbone, ServiceCell, View) {
+  'use strict';
+
+  var Logger = ServiceCell.extend({ 
+
+  	initialize: function(){
+      var testView = new View();
+      this.listenTo(testView, 'someTrigger', this.clickListener);
+  		this.listenTo(View, 'clickTime', this.clickListener);
+  	},
+  	clickListener: function(eventInfo){
+  		console.log(eventInfo);
+  	},
+  });
+
+  return Logger;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('backbone'));
@@ -1242,31 +1269,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1315,6 +1317,53 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+
+  var Model = Backbone.Model.extend({
+  //   fetch: function(options){
+  //     var backboneFetch = Backbone.Model.prototype.fetch;
+  //     Backbone.Model.prototype.fetch = function(options){
+  //       console.log('beginning of fetch', Date.now());
+  //       var origSuccess = options.success;
+  //       var optionsMod = Object.create(options);
+  //       optionsMod.success = function(){
+  //         origSuccess.call(resp);
+  //         console.log('end of fetch request');
+  //       };
+  //       backboneFetch.call(optionsMod);
+  //     };
+  //   },
+
+      // console.log('beginning of fetch');
+      // options = _.extend({parse: true}, options);
+      // var model = this;
+      // var success = options.success;
+      // options.success = function(resp) {
+      //   var serverAttrs = options.parse ? model.parse(resp, options) : resp;
+      //   if (!model.set(serverAttrs, options)) return false;
+      //   if (success) success.call(options.context, model, resp, options);
+      //   model.trigger('sync', model, resp, options);
+      //   console.log('end of fetch function');
+      // };
+      // wrapError(this, options);
+      // return this.sync('read', this, options);
+  });
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
 }));
 
 (function(root, factory) {
@@ -1397,6 +1446,62 @@
       if (!options.noActivate) {
         this.activate();
       }
+      this.updateDelegateEvents();
+
+    },
+
+
+    updateDelegateEvents: function(){
+      var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
+      Backbone.View.prototype.delegateEvents = function(events){
+        var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+        if (!(events || (events = _.result(this, 'events')))) return this;
+        this.undelegateEvents();
+
+        var trackEvents = function(method){
+          var self = this;
+          var methodCopy = method;
+          var eventInfo = {};
+          var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+          eventInfo.UUID = UUID;
+          method = _.bind(function(){
+            var before = Date.now();
+            methodCopy.call(self);
+            var after = Date.now();
+            eventInfo.loadTime = after-before;
+            this.trigger('clickTime', eventInfo);
+            console.log(eventInfo);
+          },this);
+
+          return method;
+          };
+
+        for (var key in events) {
+          var method = events[key];
+          if (!_.isFunction(method)) method = this[events[key]];
+          if (!method) continue;
+
+          var match = key.match(delegateEventSplitter);
+          var eventName = match[1], selector = match[2];
+
+          // method = _.bind(method, this);
+          trackEvents = _.bind(trackEvents,this);
+          method = trackEvents(method);          
+
+          // var trackEventObject = trackEvents(key);
+          // match = trackEventObject.match;
+          // eventName = trackEventObject.eventName;
+          // method = trackEventObject.method;
+
+          eventName += '.delegateEvents' + this.cid;
+          if (selector === '') {
+            this.$el.on(eventName, method);
+          } else {
+            this.$el.on(eventName, selector, method);
+          }
+        }
+        return this;
+      };
     },
 
     /**

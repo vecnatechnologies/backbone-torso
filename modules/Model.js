@@ -10,14 +10,36 @@
 }(this, function(_, Backbone, pollingMixin) {
   'use strict';
 
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
+
+  var Model = Backbone.Model.extend({
+  //   fetch: function(options){
+  //     var backboneFetch = Backbone.Model.prototype.fetch;
+  //     Backbone.Model.prototype.fetch = function(options){
+  //       console.log('beginning of fetch', Date.now());
+  //       var origSuccess = options.success;
+  //       var optionsMod = Object.create(options);
+  //       optionsMod.success = function(){
+  //         origSuccess.call(resp);
+  //         console.log('end of fetch request');
+  //       };
+  //       backboneFetch.call(optionsMod);
+  //     };
+  //   },
+
+      // console.log('beginning of fetch');
+      // options = _.extend({parse: true}, options);
+      // var model = this;
+      // var success = options.success;
+      // options.success = function(resp) {
+      //   var serverAttrs = options.parse ? model.parse(resp, options) : resp;
+      //   if (!model.set(serverAttrs, options)) return false;
+      //   if (success) success.call(options.context, model, resp, options);
+      //   model.trigger('sync', model, resp, options);
+      //   console.log('end of fetch function');
+      // };
+      // wrapError(this, options);
+      // return this.sync('read', this, options);
+  });
   _.extend(Model.prototype, pollingMixin);
 
   return Model;
