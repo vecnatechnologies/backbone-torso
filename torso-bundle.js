@@ -37,28 +37,29 @@
   var Logger = ServiceCell.extend({ 
 
   	initialize: function(){
-      var testView = new View();
-      this.listenTo(testView, 'someTrigger', this.clickListener);
-  		this.listenTo(View, 'clickTime', this.clickListener);
+      var log = {};
+      this.mypublic = "am i public";
+      this.publicFunction = this.clickListenerPrivate;
   	},
-  	clickListener: function(eventInfo){
+
+  	clickListenerPrivate: function(eventInfo){
   		console.log(eventInfo);
   	},
   });
 
-  return Logger;
+  return new Logger();
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
+    module.exports = factory(require('underscore'),require('backbone'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root.Backbone);
+    root.Torso.Router = factory(root._, root.Backbone);
   }
-}(this, function(Backbone) {
+}(this, function(_, Backbone) {
   'use strict';
   /**
    * Backbone's router.
@@ -66,7 +67,39 @@
    * @class  Router
    * @author kent.willis@vecna.com
    */
-  return Backbone.Router.extend({});
+
+  var Router = Backbone.Router.extend({
+
+    route: function(route, name, callback) {
+      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+      if (_.isFunction(name)) {
+        callback = name;
+        name = '';
+      }
+      if (!callback) callback = this[name];
+      var router = this;
+      Backbone.history.route(route, function(fragment) {
+
+        var eventInfo = {};
+        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        eventInfo.UUID = UUID;
+        var before = Date.now();
+
+        var args = router._extractParameters(route, fragment);
+        router.execute(callback, args);
+        router.trigger.apply(router, ['route:' + name].concat(args));
+        router.trigger('route', name, args);
+        Backbone.history.trigger('route', router, name, args);
+        
+        var after = Date.now();
+        eventInfo.routeChange = after-before;
+        console.log(eventInfo);
+      });
+      return this;
+    },
+  });
+
+  return Router;
 }));
 
 (function(root, factory) {
@@ -1269,6 +1302,57 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+
+  var Model = Backbone.Model.extend({
+
+    wrapError: function(options){
+      var error = options.error;
+      options.error = function(resp) {
+        if (error) error(model, resp, options);
+        model.trigger('error', model, resp, options);
+      };
+    },
+
+    fetch: function(options){
+      var eventInfo = {};
+      var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      eventInfo.UUID = UUID;
+      var before = Date.now();
+      
+      options = options ? _.clone(options) : {};
+      if (options.parse === void 0) options.parse = true;
+      var model = this;
+      var success = options.success;
+      options.success = function(resp) {
+        if (!model.set(model.parse(resp, options), options)) return false;
+        if (success) success(model, resp, options);
+        var after = Date.now();
+        eventInfo.fetchTime = after-before;
+        console.log(eventInfo);
+        
+      };
+      this.wrapError(this, options);
+      return this.sync('read', this,options);
+    },
+
+  });
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1321,53 +1405,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-
-  var Model = Backbone.Model.extend({
-  //   fetch: function(options){
-  //     var backboneFetch = Backbone.Model.prototype.fetch;
-  //     Backbone.Model.prototype.fetch = function(options){
-  //       console.log('beginning of fetch', Date.now());
-  //       var origSuccess = options.success;
-  //       var optionsMod = Object.create(options);
-  //       optionsMod.success = function(){
-  //         origSuccess.call(resp);
-  //         console.log('end of fetch request');
-  //       };
-  //       backboneFetch.call(optionsMod);
-  //     };
-  //   },
-
-      // console.log('beginning of fetch');
-      // options = _.extend({parse: true}, options);
-      // var model = this;
-      // var success = options.success;
-      // options.success = function(resp) {
-      //   var serverAttrs = options.parse ? model.parse(resp, options) : resp;
-      //   if (!model.set(serverAttrs, options)) return false;
-      //   if (success) success.call(options.context, model, resp, options);
-      //   model.trigger('sync', model, resp, options);
-      //   console.log('end of fetch function');
-      // };
-      // wrapError(this, options);
-      // return this.sync('read', this, options);
-  });
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['./Cell'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('./Cell'));
@@ -1390,14 +1427,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './Logger'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./Logger'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.Logger);
   }
-}(this, function(_, Backbone, templateRenderer, Cell) {
+}(this, function(_, Backbone, templateRenderer, Cell, Logger) {
   'use strict';
 
   /**
@@ -1447,9 +1484,7 @@
         this.activate();
       }
       this.updateDelegateEvents();
-
     },
-
 
     updateDelegateEvents: function(){
       var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
@@ -1464,13 +1499,17 @@
           var eventInfo = {};
           var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
           eventInfo.UUID = UUID;
+
           method = _.bind(function(){
+            console.log('start click');
             var before = Date.now();
             methodCopy.call(self);
             var after = Date.now();
             eventInfo.loadTime = after-before;
             this.trigger('clickTime', eventInfo);
             console.log(eventInfo);
+            console.log('end click');
+            // Logger.clickListener(eventInfo);
           },this);
 
           return method;
@@ -1545,8 +1584,10 @@
     templateRender: function(el, template, context, opts) {
       // Detach just this view's child views for a more effective hotswap.
       // The child views will be reattached by the render method.
+      console.log('start templateREnder');
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
+      console.log('end template Render');
     },
 
     /**
