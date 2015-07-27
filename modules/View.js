@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './Logger'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./Logger'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.Logger);
   }
-}(this, function(_, Backbone, templateRenderer, Cell) {
+}(this, function(_, Backbone, templateRenderer, Cell, Logger) {
   'use strict';
 
   /**
@@ -57,9 +57,7 @@
         this.activate();
       }
       this.updateDelegateEvents();
-
     },
-
 
     updateDelegateEvents: function(){
       var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
@@ -74,13 +72,17 @@
           var eventInfo = {};
           var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
           eventInfo.UUID = UUID;
+
           method = _.bind(function(){
+            console.log('start click');
             var before = Date.now();
             methodCopy.call(self);
             var after = Date.now();
             eventInfo.loadTime = after-before;
             this.trigger('clickTime', eventInfo);
             console.log(eventInfo);
+            console.log('end click');
+            // Logger.clickListener(eventInfo);
           },this);
 
           return method;
@@ -155,8 +157,10 @@
     templateRender: function(el, template, context, opts) {
       // Detach just this view's child views for a more effective hotswap.
       // The child views will be reattached by the render method.
+      console.log('start templateREnder');
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
+      console.log('end template Render');
     },
 
     /**

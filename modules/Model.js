@@ -12,33 +12,37 @@
 
 
   var Model = Backbone.Model.extend({
-  //   fetch: function(options){
-  //     var backboneFetch = Backbone.Model.prototype.fetch;
-  //     Backbone.Model.prototype.fetch = function(options){
-  //       console.log('beginning of fetch', Date.now());
-  //       var origSuccess = options.success;
-  //       var optionsMod = Object.create(options);
-  //       optionsMod.success = function(){
-  //         origSuccess.call(resp);
-  //         console.log('end of fetch request');
-  //       };
-  //       backboneFetch.call(optionsMod);
-  //     };
-  //   },
 
-      // console.log('beginning of fetch');
-      // options = _.extend({parse: true}, options);
-      // var model = this;
-      // var success = options.success;
-      // options.success = function(resp) {
-      //   var serverAttrs = options.parse ? model.parse(resp, options) : resp;
-      //   if (!model.set(serverAttrs, options)) return false;
-      //   if (success) success.call(options.context, model, resp, options);
-      //   model.trigger('sync', model, resp, options);
-      //   console.log('end of fetch function');
-      // };
-      // wrapError(this, options);
-      // return this.sync('read', this, options);
+    wrapError: function(options){
+      var error = options.error;
+      options.error = function(resp) {
+        if (error) error(model, resp, options);
+        model.trigger('error', model, resp, options);
+      };
+    },
+
+    fetch: function(options){
+      var eventInfo = {};
+      var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      eventInfo.UUID = UUID;
+      var before = Date.now();
+      
+      options = options ? _.clone(options) : {};
+      if (options.parse === void 0) options.parse = true;
+      var model = this;
+      var success = options.success;
+      options.success = function(resp) {
+        if (!model.set(model.parse(resp, options), options)) return false;
+        if (success) success(model, resp, options);
+        var after = Date.now();
+        eventInfo.fetchTime = after-before;
+        console.log(eventInfo);
+        
+      };
+      this.wrapError(this, options);
+      return this.sync('read', this,options);
+    },
+
   });
   _.extend(Model.prototype, pollingMixin);
 

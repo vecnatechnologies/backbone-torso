@@ -13,14 +13,15 @@
   var Logger = ServiceCell.extend({ 
 
   	initialize: function(){
-      var testView = new View();
-      this.listenTo(testView, 'someTrigger', this.clickListener);
-  		this.listenTo(View, 'clickTime', this.clickListener);
+      var log = {};
+      this.mypublic = "am i public";
+      this.publicFunction = this.clickListenerPrivate;
   	},
-  	clickListener: function(eventInfo){
+
+  	clickListenerPrivate: function(eventInfo){
   		console.log(eventInfo);
   	},
   });
 
-  return Logger;
+  return new Logger();
 }));
