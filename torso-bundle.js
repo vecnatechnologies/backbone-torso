@@ -24,42 +24,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './ServiceCell', './View'], factory);
+    define(['underscore', 'backbone', './Logger'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'), require('./View'));
+    module.exports = factory(require('underscore'),require('backbone'), require('./Logger'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Logger = factory(root._, root.Backbone, root.Torso.ServiceCell, root.Torso.View);
+    root.Torso.Router = factory(root._, root.Backbone, root.Logger);
   }
-}(this, function(_, Backbone, ServiceCell, View) {
-  'use strict';
-
-  var Logger = ServiceCell.extend({ 
-
-  	initialize: function(){
-      var log = {};
-      this.mypublic = "am i public";
-      this.publicFunction = this.clickListenerPrivate;
-  	},
-
-  	clickListenerPrivate: function(eventInfo){
-  		console.log(eventInfo);
-  	},
-  });
-
-  return new Logger();
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'),require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root._, root.Backbone);
-  }
-}(this, function(_, Backbone) {
+}(this, function(_, Backbone, Logger) {
   'use strict';
   /**
    * Backbone's router.
@@ -81,9 +53,9 @@
       Backbone.history.route(route, function(fragment) {
 
         var eventInfo = {};
-        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        eventInfo.UUID = UUID;
-        var before = Date.now();
+        eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        eventInfo.before = Date.now();
+        eventInfo.type = "routeChange";  
 
         var args = router._extractParameters(route, fragment);
         router.execute(callback, args);
@@ -91,9 +63,9 @@
         router.trigger('route', name, args);
         Backbone.history.trigger('route', router, name, args);
         
-        var after = Date.now();
-        eventInfo.routeChange = after-before;
-        console.log(eventInfo);
+        eventInfo.after = Date.now();
+        eventInfo.loadTime = eventInfo.after-eventInfo.before;
+        Logger.track(eventInfo); 
       });
       return this;
     },
@@ -830,6 +802,37 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './ServiceCell'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Logger = factory(root._, root.Backbone, root.Torso.ServiceCell);
+  }
+}(this, function(_, Backbone, ServiceCell) {
+  'use strict';
+
+  var Logger = ServiceCell.extend({ 
+
+    log : {}, 
+
+  	track: function(eventInfo){
+  		console.log(eventInfo);
+      var currentTime = Date.now();
+      this.log[Date.now()] = eventInfo;
+  	},
+
+    getLog: function(){
+      return this.log;
+    }
+
+  });
+
+  return new Logger();
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('backbone'));
@@ -1302,14 +1305,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
+    define(['underscore', 'backbone', './pollingMixin', './Logger'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./Logger'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Logger);
   }
-}(this, function(_, Backbone, pollingMixin) {
+}(this, function(_, Backbone, pollingMixin, Logger) {
   'use strict';
 
 
@@ -1324,10 +1327,11 @@
     },
 
     fetch: function(options){
+
       var eventInfo = {};
-      var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      eventInfo.UUID = UUID;
-      var before = Date.now();
+      eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      eventInfo.before = Date.now();
+      eventInfo.type = "fetch";    
       
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
@@ -1336,10 +1340,11 @@
       options.success = function(resp) {
         if (!model.set(model.parse(resp, options), options)) return false;
         if (success) success(model, resp, options);
-        var after = Date.now();
-        eventInfo.fetchTime = after-before;
-        console.log(eventInfo);
-        
+
+        eventInfo.after = Date.now();
+        eventInfo.loadTime = eventInfo.after-eventInfo.before;
+        Logger.track(eventInfo); 
+
       };
       this.wrapError(this, options);
       return this.sync('read', this,options);
@@ -1483,6 +1488,7 @@
       if (!options.noActivate) {
         this.activate();
       }
+      
       this.updateDelegateEvents();
     },
 
@@ -1497,19 +1503,15 @@
           var self = this;
           var methodCopy = method;
           var eventInfo = {};
-          var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-          eventInfo.UUID = UUID;
+          eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+          eventInfo.type = "click";
 
           method = _.bind(function(){
-            console.log('start click');
-            var before = Date.now();
+            eventInfo.before = Date.now();
             methodCopy.call(self);
-            var after = Date.now();
-            eventInfo.loadTime = after-before;
-            this.trigger('clickTime', eventInfo);
-            console.log(eventInfo);
-            console.log('end click');
-            // Logger.clickListener(eventInfo);
+            eventInfo.after = Date.now();
+            eventInfo.loadTime = eventInfo.after-eventInfo.before;
+            Logger.track(eventInfo);
           },this);
 
           return method;
@@ -1523,14 +1525,8 @@
           var match = key.match(delegateEventSplitter);
           var eventName = match[1], selector = match[2];
 
-          // method = _.bind(method, this);
           trackEvents = _.bind(trackEvents,this);
           method = trackEvents(method);          
-
-          // var trackEventObject = trackEvents(key);
-          // match = trackEventObject.match;
-          // eventName = trackEventObject.eventName;
-          // method = trackEventObject.method;
 
           eventName += '.delegateEvents' + this.cid;
           if (selector === '') {
@@ -1584,10 +1580,19 @@
     templateRender: function(el, template, context, opts) {
       // Detach just this view's child views for a more effective hotswap.
       // The child views will be reattached by the render method.
-      console.log('start templateREnder');
+      
+      var eventInfo = {};
+      eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      eventInfo.before = Date.now();
+      eventInfo.type = "templateRender";      
+
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
-      console.log('end template Render');
+
+      eventInfo.after = Date.now();
+      eventInfo.loadTime = eventInfo.after-eventInfo.before;
+      Logger.track(eventInfo);      
+
     },
 
     /**

@@ -1,26 +1,29 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './ServiceCell', './View'], factory);
+    define(['underscore', 'backbone', './ServiceCell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'), require('./View'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Logger = factory(root._, root.Backbone, root.Torso.ServiceCell, root.Torso.View);
+    root.Torso.Logger = factory(root._, root.Backbone, root.Torso.ServiceCell);
   }
-}(this, function(_, Backbone, ServiceCell, View) {
+}(this, function(_, Backbone, ServiceCell) {
   'use strict';
 
   var Logger = ServiceCell.extend({ 
 
-  	initialize: function(){
-      var log = {};
-      this.mypublic = "am i public";
-      this.publicFunction = this.clickListenerPrivate;
+    log : {}, 
+
+  	track: function(eventInfo){
+  		console.log(eventInfo);
+      var currentTime = Date.now();
+      this.log[Date.now()] = eventInfo;
   	},
 
-  	clickListenerPrivate: function(eventInfo){
-  		console.log(eventInfo);
-  	},
+    getLog: function(){
+      return this.log;
+    }
+
   });
 
   return new Logger();

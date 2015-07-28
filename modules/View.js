@@ -56,6 +56,7 @@
       if (!options.noActivate) {
         this.activate();
       }
+      
       this.updateDelegateEvents();
     },
 
@@ -70,19 +71,15 @@
           var self = this;
           var methodCopy = method;
           var eventInfo = {};
-          var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-          eventInfo.UUID = UUID;
+          eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+          eventInfo.type = "click";
 
           method = _.bind(function(){
-            console.log('start click');
-            var before = Date.now();
+            eventInfo.before = Date.now();
             methodCopy.call(self);
-            var after = Date.now();
-            eventInfo.loadTime = after-before;
-            this.trigger('clickTime', eventInfo);
-            console.log(eventInfo);
-            console.log('end click');
-            // Logger.clickListener(eventInfo);
+            eventInfo.after = Date.now();
+            eventInfo.loadTime = eventInfo.after-eventInfo.before;
+            Logger.track(eventInfo);
           },this);
 
           return method;
@@ -96,14 +93,8 @@
           var match = key.match(delegateEventSplitter);
           var eventName = match[1], selector = match[2];
 
-          // method = _.bind(method, this);
           trackEvents = _.bind(trackEvents,this);
           method = trackEvents(method);          
-
-          // var trackEventObject = trackEvents(key);
-          // match = trackEventObject.match;
-          // eventName = trackEventObject.eventName;
-          // method = trackEventObject.method;
 
           eventName += '.delegateEvents' + this.cid;
           if (selector === '') {
@@ -157,10 +148,19 @@
     templateRender: function(el, template, context, opts) {
       // Detach just this view's child views for a more effective hotswap.
       // The child views will be reattached by the render method.
-      console.log('start templateREnder');
+      
+      var eventInfo = {};
+      eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      eventInfo.before = Date.now();
+      eventInfo.type = "templateRender";      
+
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
-      console.log('end template Render');
+
+      eventInfo.after = Date.now();
+      eventInfo.loadTime = eventInfo.after-eventInfo.before;
+      Logger.track(eventInfo);      
+
     },
 
     /**

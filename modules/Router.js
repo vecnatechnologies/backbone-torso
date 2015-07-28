@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone'], factory);
+    define(['underscore', 'backbone', './Logger'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'),require('backbone'));
+    module.exports = factory(require('underscore'),require('backbone'), require('./Logger'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root._, root.Backbone);
+    root.Torso.Router = factory(root._, root.Backbone, root.Logger);
   }
-}(this, function(_, Backbone) {
+}(this, function(_, Backbone, Logger) {
   'use strict';
   /**
    * Backbone's router.
@@ -29,9 +29,9 @@
       Backbone.history.route(route, function(fragment) {
 
         var eventInfo = {};
-        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        eventInfo.UUID = UUID;
-        var before = Date.now();
+        eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        eventInfo.before = Date.now();
+        eventInfo.type = "routeChange";  
 
         var args = router._extractParameters(route, fragment);
         router.execute(callback, args);
@@ -39,9 +39,9 @@
         router.trigger('route', name, args);
         Backbone.history.trigger('route', router, name, args);
         
-        var after = Date.now();
-        eventInfo.routeChange = after-before;
-        console.log(eventInfo);
+        eventInfo.after = Date.now();
+        eventInfo.loadTime = eventInfo.after-eventInfo.before;
+        Logger.track(eventInfo); 
       });
       return this;
     },
