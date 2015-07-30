@@ -28,10 +28,14 @@
       var router = this;
       Backbone.history.route(route, function(fragment) {
 
-        var eventInfo = {};
-        eventInfo.UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        eventInfo.before = Date.now();
-        eventInfo.type = "routeChange";  
+        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        Logger.track({
+          UUID : UUID,
+          type : "routeChange",
+          state: "start",
+          route: name,
+          before: Date.now(),
+        });
 
         var args = router._extractParameters(route, fragment);
         router.execute(callback, args);
@@ -39,9 +43,12 @@
         router.trigger('route', name, args);
         Backbone.history.trigger('route', router, name, args);
         
-        eventInfo.after = Date.now();
-        eventInfo.loadTime = eventInfo.after-eventInfo.before;
-        Logger.track(eventInfo); 
+        Logger.track({
+          UUID: UUID,
+          after: Date.now(),
+          state: "end",
+        });
+
       });
       return this;
     },
