@@ -56,45 +56,49 @@
       if (!options.noActivate) {
         this.activate();
       }
-      
       this.updateDelegateEvents();
     },
 
+
+    /**
+    * @param method {function} callback method of event
+    * @param eventName {String} description of event type 
+    * @return modified mehtod with before/after signals sent to Logger
+    * @method trackEvents
+    */
+    trackEvents : function(method, eventName){
+      var self = this;
+      var methodCopy = method;
+      method = _.bind(function(){
+        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        Logger.track({
+          UUID : UUID,
+          type : "clickEvent",
+          state: "start",
+          eventName: eventName,
+          time: Date.now(),
+        });
+        methodCopy.call(self);
+        Logger.track({
+          UUID: UUID,
+          time: Date.now(),
+          state: "end",
+        });
+      },this);
+      return method;
+      },
+
+    /**
+    * updates Backbone's delegateEvents to bind signals to Logger to all callback 
+    * functions in the View's list of events
+    * @method updateDelegateEvents
+    */
     updateDelegateEvents: function(){
       var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
       Backbone.View.prototype.delegateEvents = function(events){
         var delegateEventSplitter = /^(\S+)\s*(.*)$/;
         if (!(events || (events = _.result(this, 'events')))) return this;
         this.undelegateEvents();
-
-        var trackEvents = function(method, eventName){
-          var self = this;
-          var methodCopy = method;
-          // var eventInfo = {};
-
-
-          method = _.bind(function(){
-            var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-            Logger.track({
-              UUID : UUID,
-              type : "clickEvent",
-              state: "start",
-              eventName: eventName,
-              time: Date.now(),
-            });
-
-            methodCopy.call(self);
-
-            Logger.track({
-              UUID: UUID,
-              time: Date.now(),
-              state: "end",
-            });
-
-          },this);
-
-          return method;
-          };
 
         for (var key in events) {
           var method = events[key];
@@ -104,8 +108,8 @@
           var match = key.match(delegateEventSplitter);
           var eventName = match[1], selector = match[2];
 
-          trackEvents = _.bind(trackEvents,this);
-          method = trackEvents(method, eventName);          
+          this.trackEvents = _.bind(this.trackEvents,this);
+          method = this.trackEvents(method, eventName);          
 
           eventName += '.delegateEvents' + this.cid;
           if (selector === '') {
@@ -164,6 +168,7 @@
         pageName = opts.pageName;
       }
 
+      newrelic.setCustomAttribute('pageName', pageName);
       var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
       Logger.track({
         UUID : UUID,
@@ -175,7 +180,6 @@
 
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
-
 
       Logger.track({
         UUID: UUID,

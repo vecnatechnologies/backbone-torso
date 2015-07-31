@@ -18,6 +18,9 @@
 
   var Router = Backbone.Router.extend({
 
+    /**
+    * overridden the route function to send start and end times to Logger
+    */
     route: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
@@ -28,6 +31,7 @@
       var router = this;
       Backbone.history.route(route, function(fragment) {
 
+        newrelic.setCustomAttribute('route', name);
         var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
         Logger.track({
           UUID : UUID,

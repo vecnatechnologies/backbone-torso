@@ -44,29 +44,38 @@
     _sessionEnd: null,
     _sessionID: null,
 
-
+    /**
+    * saves information about event and wraps start and end signals in 'session' 
+    * @ param {JSON object} contains tracking information (including state: 'start' or 'end', uuid, sessionID)
+    * @ method track
+    */
   	track: function(eventInfo){
-      if (this._isClosed){
-        this.resetSession();
-        if (eventInfo.state=="start"){
-          this.openSession(eventInfo);
-          this.startEvent(eventInfo);
-        }
-      } else {
-        if (eventInfo.state == "start") {
-          this.startEvent(eventInfo);
-        }
-        else if (eventInfo.state == "end"){
-            this.endEvent(eventInfo);
-            if (Object.keys(this.unclosed).length === 0){
-              this.closeSession();
-            }
+      if (eventInfo.state){
+        if (this._isClosed){
+          this.resetSession();
+          if (eventInfo.state == "start") {
+            this.openSession(eventInfo);
+            this.startEvent(eventInfo);
+          }
+        } else {
+          if (eventInfo.state == "start") {
+            this.startEvent(eventInfo);
+          }
+          else if (eventInfo.state == "end") {
+              this.endEvent(eventInfo);
+              if (Object.keys(this.unclosed).length === 0) {
+                this.closeSession();
+              }
+          }
         }
       }
-  		console.log(eventInfo);
-      var currentTime = Date.now();
   	},
 
+    /**
+    * tracks information about the 'start' of events
+    * @param {JSON object} contains tracking information including UUID and time
+    * @method startEvent
+    */
     startEvent: function(eventInfo){
       var uuid = eventInfo.UUID;
       eventInfo.sessionID = this._sessionID; //check if event info has sessionID property and throw error
@@ -75,10 +84,15 @@
       this.unclosed[uuid] = eventInfo;
     },
 
+    /**
+    * tracks information about the 'end' of events
+    * @param {JSON object} contains information about the tracked event, including UUID, time, state
+    * @method endEvent
+    */
     endEvent: function(eventInfo){
       var uuid = eventInfo.UUID;
       var totalEvent = this.unclosed[uuid];
-      var duration = eventInfo.time - totalEvent.startTime; //CHANGE THIS
+      var duration = eventInfo.time - totalEvent.startTime; 
       totalEvent.duration = duration;
       totalEvent.endTime = eventInfo.time;
       this._sessionEnd = eventInfo.time;
@@ -87,6 +101,11 @@
       delete this.unclosed[uuid];
     },
 
+    /**
+    * tracks information about the beginning of sessions
+    * @param {JSON object} contains information about the tracked event
+    * @method openSession
+    */
     openSession: function(eventInfo){
       this._isClosed = false;
       var sessionID = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
@@ -94,6 +113,10 @@
       this._sessionStart = eventInfo.time;
     },
 
+    /**
+    * tracks information about the end of a session. resets all relevant parameters
+    * @method closeSession
+    */
     closeSession: function(){
       var sessionEvent = {sessionID: this._sessionID, type: "session"};
       var sessionDuration = this._sessionEnd - this._sessionStart;
@@ -109,15 +132,24 @@
       this.resetSession();
     },
 
+    /**
+    * reset all relevant parameters to prepare for new session
+    * @method resetSession
+    */
     resetSession: function(){
       this.log = {};
       this.unclosed = {};
+      this.sessions = [];
       this._isClosed = true;
       this._sessionStart = null;
       this._sessionEnd = null;
       this._sessionID = null;
     }, 
 
+    /**
+    * send all information from the session to new relic
+    * @method sendToNewRelic
+    */
     sendToNewRelic: function(){
       var sessionLength = this.sessions.length;
       for (var i = 0; i < sessionLength; i++){
@@ -125,21 +157,32 @@
         var actionName = evt.type;
         newrelic.addPageAction(actionName, evt);
       }
-      this.sessions = []; //change this after demo
     },
 
+    /**
+    * @return {JSON object} current log
+    */
     getLog: function(){
       return this.log;
     },
 
+    /**
+    * @return {Boolean} true if session is closed
+    */
     isClosed: function(){
       return this._isClosed;
     },
 
+    /**
+    * @return list of sessions
+    */
     getSessions: function(){
       return this.sessions;
     },
 
+    /**
+    * @return information on sessions that are not closed
+    */
     getUnclosed: function(){
       return this.unclosed;
     },
@@ -169,6 +212,9 @@
 
   var Router = Backbone.Router.extend({
 
+    /**
+    * overridden the route function to send start and end times to Logger
+    */
     route: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
@@ -179,6 +225,7 @@
       var router = this;
       Backbone.history.route(route, function(fragment) {
 
+        newrelic.setCustomAttribute('route', name);
         var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
         Logger.track({
           UUID : UUID,
@@ -1429,17 +1476,17 @@
       };
     },
 
+    /** 
+    * Overridden to send before and after signals to Logger
+    */
     fetch: function(options){
-
       var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-
       Logger.track({
         UUID : UUID,
         type : "fetch",
         state: "start",
         time: Date.now(),
       });
-
 
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
@@ -1598,45 +1645,49 @@
       if (!options.noActivate) {
         this.activate();
       }
-      
       this.updateDelegateEvents();
     },
 
+
+    /**
+    * @param method {function} callback method of event
+    * @param eventName {String} description of event type 
+    * @return modified mehtod with before/after signals sent to Logger
+    * @method trackEvents
+    */
+    trackEvents : function(method, eventName){
+      var self = this;
+      var methodCopy = method;
+      method = _.bind(function(){
+        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        Logger.track({
+          UUID : UUID,
+          type : "clickEvent",
+          state: "start",
+          eventName: eventName,
+          time: Date.now(),
+        });
+        methodCopy.call(self);
+        Logger.track({
+          UUID: UUID,
+          time: Date.now(),
+          state: "end",
+        });
+      },this);
+      return method;
+      },
+
+    /**
+    * updates Backbone's delegateEvents to bind signals to Logger to all callback 
+    * functions in the View's list of events
+    * @method updateDelegateEvents
+    */
     updateDelegateEvents: function(){
       var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
       Backbone.View.prototype.delegateEvents = function(events){
         var delegateEventSplitter = /^(\S+)\s*(.*)$/;
         if (!(events || (events = _.result(this, 'events')))) return this;
         this.undelegateEvents();
-
-        var trackEvents = function(method, eventName){
-          var self = this;
-          var methodCopy = method;
-          // var eventInfo = {};
-
-
-          method = _.bind(function(){
-            var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-            Logger.track({
-              UUID : UUID,
-              type : "clickEvent",
-              state: "start",
-              eventName: eventName,
-              time: Date.now(),
-            });
-
-            methodCopy.call(self);
-
-            Logger.track({
-              UUID: UUID,
-              time: Date.now(),
-              state: "end",
-            });
-
-          },this);
-
-          return method;
-          };
 
         for (var key in events) {
           var method = events[key];
@@ -1646,8 +1697,8 @@
           var match = key.match(delegateEventSplitter);
           var eventName = match[1], selector = match[2];
 
-          trackEvents = _.bind(trackEvents,this);
-          method = trackEvents(method, eventName);          
+          this.trackEvents = _.bind(this.trackEvents,this);
+          method = this.trackEvents(method, eventName);          
 
           eventName += '.delegateEvents' + this.cid;
           if (selector === '') {
@@ -1706,6 +1757,7 @@
         pageName = opts.pageName;
       }
 
+      newrelic.setCustomAttribute('pageName', pageName);
       var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
       Logger.track({
         UUID : UUID,
@@ -1717,7 +1769,6 @@
 
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
-
 
       Logger.track({
         UUID: UUID,

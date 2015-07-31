@@ -21,21 +21,17 @@
       };
     },
 
+    /** 
+    * Overridden to send before and after signals to Logger
+    */
     fetch: function(options){
-
       var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-
       Logger.track({
         UUID : UUID,
         type : "fetch",
         state: "start",
-<<<<<<< HEAD
         time: Date.now(),
-=======
-        before: Date.now(),
->>>>>>> a1ffbe8a847864200479446e9f56cce5cbc4a27c
       });
-
 
       options = options ? _.clone(options) : {};
       if (options.parse === void 0) options.parse = true;
@@ -47,11 +43,7 @@
 
         Logger.track({
           UUID: UUID,
-<<<<<<< HEAD
           time: Date.now(),
-=======
-          after: Date.now(),
->>>>>>> a1ffbe8a847864200479446e9f56cce5cbc4a27c
           state: "end",
         });
 
