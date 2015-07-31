@@ -20,6 +20,7 @@
     _sessionEnd: null,
     _sessionID: null,
 
+
   	track: function(eventInfo){
       if (this._isClosed){
         this.resetSession();
@@ -48,7 +49,6 @@
       eventInfo.startTime = eventInfo.time;
       delete eventInfo.time;
       this.unclosed[uuid] = eventInfo;
-
     },
 
     endEvent: function(eventInfo){
@@ -100,7 +100,6 @@
         var evt = this.sessions[i];
         var actionName = evt.type;
         newrelic.addPageAction(actionName, evt);
-        console.log('after supposed to send to nr');
       }
       this.sessions = []; //change this after demo
     },
