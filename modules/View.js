@@ -111,7 +111,7 @@
      * assigned a unique requester Id.  Private collections have all
      * the functionality of the original collection, but are automatically
      * managed by the parent (passed in) collection.  That is, any view
-     * using a provate collection should only have to worry about registering
+     * using a private collection should only have to worry about registering
      * Ids of interest, and the rest is managed behind the scenes.
      * @method createPrivateCollection
      * @param  parentCollection {Collection} The parent collection to mimic and link to
