@@ -279,7 +279,7 @@
           var requestedIds, idsToFetch;
           requestedIds = args.idsToFetch;
           if (collection.lazyFetch) {
-            idsToFetch = _.difference(requestedIds, this.models.pluck('id'));
+            idsToFetch = _.difference(requestedIds, _.pluck(this.models, 'id'));
           } else {
             idsToFetch = requestedIds;
           }
