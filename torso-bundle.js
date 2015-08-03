@@ -986,7 +986,7 @@
           var requestedIds, idsToFetch;
           requestedIds = args.idsToFetch;
           if (collection.lazyFetch) {
-            idsToFetch = _.difference(requestedIds, this.models.pluck('id'));
+            idsToFetch = _.difference(requestedIds, _.pluck(this.models, 'id'));
           } else {
             idsToFetch = requestedIds;
           }
@@ -3101,7 +3101,7 @@
      * assigned a unique requester Id.  Private collections have all
      * the functionality of the original collection, but are automatically
      * managed by the parent (passed in) collection.  That is, any view
-     * using a provate collection should only have to worry about registering
+     * using a private collection should only have to worry about registering
      * Ids of interest, and the rest is managed behind the scenes.
      * @method createPrivateCollection
      * @param  parentCollection {Collection} The parent collection to mimic and link to
