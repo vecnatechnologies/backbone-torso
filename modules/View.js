@@ -23,7 +23,7 @@
     viewState: null,
     template: null,
     feedback: null,
-    feedbackModel: null,
+    feedbackCell: null,
     __childViews: null,
     __isActive: false,
     __isAttachedToParent: false,
@@ -33,7 +33,7 @@
      * Array of feedback when-then-to's. Example:
      * [{
      *   when: {'@fullName': ['change']},
-     *   then: function(event) { return {text: this.feedbackModel.get('fullName')};},
+     *   then: function(event) { return {text: this.feedbackCell.get('fullName')};},
      *   to: 'fullName-feedback'
      * }]
      * @private
@@ -49,7 +49,7 @@
     constructor: function(options) {
       options = options || {};
       this.viewState = new Cell();
-      this.feedbackModel = new Cell();
+      this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
@@ -112,7 +112,7 @@
     delegateEvents: function() {
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
-      this.__generateFeedbackModelCallbacks();
+      this.__generateFeedbackCellCallbacks();
       _.each(this.__childViews, function(view) {
         if (view.isAttachedToParent()) {
           view.delegateEvents();
@@ -429,40 +429,40 @@
             return to === toToCheck;
           }
         }),
-        feedbackModelField = to;
+        feedbackCellField = to;
       if (feedbackToInvoke) {
         if (indexMap) {
-          feedbackModelField = this.__substituteIndicesUsingMap(to, indexMap);
+          feedbackCellField = this.__substituteIndicesUsingMap(to, indexMap);
         }
         result = feedbackToInvoke.then.call(this, evt, indexMap);
-        this.__processFeedbackThenResult(result, feedbackModelField);
+        this.__processFeedbackThenResult(result, feedbackCellField);
       }
     },
 
     /************** Private methods **************/
 
     /**
-     * Generates callbacks for changes in feedback model fields
-     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback model
-     * If feedbackModel.get('fullName') returns:
+     * Generates callbacks for changes in feedback cell fields
+     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback cell
+     * If feedbackCell.get('fullName') returns:
      * { text: 'my text',
      *   attr: {class: 'newClass'}
      *   hide: [100, function() {...}]
      * ...}
      * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
      * @private
-     * @method __generateFeedbackModelCallbacks
+     * @method __generateFeedbackCellCallbacks
      */
-    __generateFeedbackModelCallbacks: function() {
+    __generateFeedbackCellCallbacks: function() {
       var self = this;
       // Feedback one-way bindings
-      self.feedbackModel.off();
+      self.feedbackCell.off();
       _.each(this.$('[data-feedback]'), function(element) {
         var attr = $(element).data('feedback');
-        self.feedbackModel.on('change:' + attr, (function(field) {
+        self.feedbackCell.on('change:' + attr, (function(field) {
           return function() {
             var $element,
-              state = self.feedbackModel.get(field);
+              state = self.feedbackCell.get(field);
             if (!state) {
               return;
             }
@@ -483,22 +483,22 @@
           };
         })(attr));
       });
-      _.each(self.feedbackModel.attributes, function(value, attr) {
-        self.feedbackModel.trigger('change:' + attr);
+      _.each(self.feedbackCell.attributes, function(value, attr) {
+        self.feedbackCell.trigger('change:' + attr);
       });
     },
 
     /**
-     * Processes the result of the then method. Adds to the feedback model.
+     * Processes the result of the then method. Adds to the feedback cell.
      * @param result {Object} the result of the then method
-     * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
+     * @param feedbackCellField {Object} the name of the feedbackCellField, typically the "to" value.
      * @private
      * @method __processFeedbackThenResult
      */
-    __processFeedbackThenResult: function(result, feedbackModelField) {
+    __processFeedbackThenResult: function(result, feedbackCellField) {
       var newState = $.extend({}, result);
-      this.feedbackModel.set(feedbackModelField, newState, {silent: true});
-      this.feedbackModel.trigger('change:' + feedbackModelField);
+      this.feedbackCell.set(feedbackCellField, newState, {silent: true});
+      this.feedbackCell.trigger('change:' + feedbackCellField);
     },
 
     /**
@@ -555,7 +555,7 @@
 
             // track the indices for binding
             bindInfo = {
-              feedbackModelField: fieldName,
+              feedbackCellField: fieldName,
               fn: then,
               indices: indexMap
             };
@@ -569,7 +569,7 @@
                   newState = {};
                   args.push(bindInfo.indices);
                   result = bindInfo.fn.apply(self, args);
-                  self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                  self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
                 };
               delegateEventSplitter = /^(\S+)\s*(.*)$/;
               match = eventKey.match(delegateEventSplitter);
@@ -585,7 +585,7 @@
                     }];
                 args.push(bindInfo.indices);
                 result = bindInfo.fn.apply(self, args);
-                self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
               };
               self.on(eventKey, invokeThen, self);
               self.__feedbackEvents.push(invokeThen);

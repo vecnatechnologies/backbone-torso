@@ -99,103 +99,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.collectionLoading = factory((root.jQuery || root.Zepto || root.ender || root.$));
-  }
-}(this, function($) {
-  /**
-   * Loading logic.
-   *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  collectionLoadingMixin
-   * @author kent.willis@vecna.com
-   */
-  var collectionLoadingMixin = function(base) {
-
-    return {
-      /**
-       * Adds the loading mixin to the collection
-       * @method constructor
-       * @param args {Object} the arguments to the base constructor method
-       */
-      constructor: function(args) {
-        base.call(this, args);
-        this.loadedOnceDeferred = new $.Deferred();
-        this.loadedOnce = false;
-        this.loading = false;
-      },
-
-      /**
-       * @method hasLoadedOnce
-       * @return true if this collection has ever loaded from a fetch call
-       */
-      hasLoadedOnce: function() {
-        return this.loadedOnce;
-      },
-
-      /**
-       * @method isLoading
-       * @return true if this collection is currently loading new values from the server
-       */
-      isLoading: function() {
-        return this.loading;
-      },
-
-      /**
-       * @method getLoadedOncePromise
-       * @return a promise that will resolve when the collection has loaded for the first time
-       */
-      getLoadedOncePromise: function() {
-        return this.loadedOnceDeferred.promise();
-      },
-
-      /**
-       * Wraps the base fetch in a wrapper that manages loaded states
-       * @method fetch
-       * @param options {Object} - the object to hold the options needed by the base fetch method
-       */
-      fetch: function(options) {
-        return this.__loadWrapper(base.prototype.fetch, options);
-      },
-
-      /**
-       * Base load function that will trigger a "load-begin" and a "load-complete" as
-       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       * @method __loadWrapper
-       * @param fetchMethod {Function} - the method to invoke a fetch
-       * @param options {Object} - the object to hold the options needed by the fetchMethod
-       * @return a promise when the fetch method has completed and the events have been triggered
-       */
-      __loadWrapper: function(fetchMethod, options) {
-        var collection = this;
-        this.loading = true;
-        this.trigger('load-begin');
-        return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
-          collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-          collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
-        }).always(function() {
-          if (!collection.loadedOnce) {
-            collection.loadedOnce = true;
-            collection.loadedOnceDeferred.resolve();
-          }
-          collection.loading = false;
-        });
-      }
-    };
-  };
-
-  return collectionLoadingMixin;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('jquery'));
@@ -217,21 +120,7 @@
    */
   var collectionRegistrationMixin = function(base) {
 
-<<<<<<< HEAD
     var cacheMixin, createRequesterCollectionClass;
-=======
-  /*
-   * Swap method for Element Nodes
-   * @param currentNode {Element} The pre-existing DOM Element to update
-   * @param newNode {Element} The detached DOM Element representing the desired DOM Element subtree
-   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
-   */
-  function swapElementNodes(currentNode, newNode, ignoreElements) {
-    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
-      $currentNode = $(currentNode),
-      $newNode = $(newNode),
-      idx = 0;
->>>>>>> Update bundle distribution
 
     /**
      * Returns a new class of collection that inherits from the parent but not the cacheMixin
@@ -259,7 +148,6 @@
             return this.trackedIds;
           },
 
-<<<<<<< HEAD
           /**
            * Will force the cache to fetch just the registered ids of this collection
            * @method requesterMixin.fetch
@@ -275,20 +163,6 @@
               }
             });
           },
-=======
-    // Remove current attributes that have changed
-    // This is necessary, because some types of attributes cannot be removed
-    // without causing a browser error.
-    currentAttributes = currentNode.attributes;
-    while (idx < currentAttributes.length) {
-      currentAttr = currentAttributes[idx].name;
-      if (newNode.getAttribute(currentAttr)) {
-        idx++;
-      } else {
-        currentNode.removeAttribute(currentAttr);
-      }
-    }
->>>>>>> LoadingMixin fetch did not return the loading promise. Also a template render bug with DOM attribute swapping was patched.
 
           /**
            * Override the Id registration system to route via the parent collection
@@ -366,21 +240,7 @@
         };
       };
 
-<<<<<<< HEAD
       //*********** PUBLIC METHODS ************//
-=======
-    hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
-      var currentCaret,
-          activeElement = document.activeElement;
-      if (activeElement && this.supportsSelection(activeElement)) {
-        currentCaret = this.getCaretPosition(activeElement);
-      }
-      this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement && this.supportsSelection(activeElement)) {
-        this.setCaretPosition(activeElement, currentCaret);
-      }
-    },
->>>>>>> Small fix to templateRender caret selection
 
       /**
        * @method cacheMixin.getRequesterIds
@@ -566,22 +426,12 @@
       };
 
       /**
-<<<<<<< HEAD
        * Sets the lazyFetch mode. When enabled, the collection will assume models don't change, and only fetch each model from the server once.
        * @method setLazyFetch
        * @param lazyFetch {boolean} the lazyFetch mode to set
        */
       collection.setLazyFetch = function(lazyFetch) {
         this.lazyFetch = lazyFetch;
-=======
-       * Wraps the base fetch in a wrapper that manages loaded states
-       * @method fetch
-       * @param options {Object} - the object to hold the options needed by the base fetch method
-       * @return {Promise} The loadWrapper promise
-       */
-      collection.fetch = function(options) {
-        return this._loadWrapper(base.fetch, options);
->>>>>>> LoadingMixin fetch did not return the loading promise. Also a template render bug with DOM attribute swapping was patched.
       };
 
       /**
@@ -660,6 +510,104 @@
 
   return collectionRegistrationMixin;
 }));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('jquery'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.collectionLoading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+  }
+}(this, function($) {
+  /**
+   * Loading logic.
+   *
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  collectionLoadingMixin
+   * @author kent.willis@vecna.com
+   */
+  var collectionLoadingMixin = function(base) {
+
+    return {
+      /**
+       * Adds the loading mixin to the collection
+       * @method constructor
+       * @param args {Object} the arguments to the base constructor method
+       */
+      constructor: function(args) {
+        base.call(this, args);
+        this.loadedOnceDeferred = new $.Deferred();
+        this.loadedOnce = false;
+        this.loading = false;
+      },
+
+      /**
+       * @method hasLoadedOnce
+       * @return true if this collection has ever loaded from a fetch call
+       */
+      hasLoadedOnce: function() {
+        return this.loadedOnce;
+      },
+
+      /**
+       * @method isLoading
+       * @return true if this collection is currently loading new values from the server
+       */
+      isLoading: function() {
+        return this.loading;
+      },
+
+      /**
+       * @method getLoadedOncePromise
+       * @return a promise that will resolve when the collection has loaded for the first time
+       */
+      getLoadedOncePromise: function() {
+        return this.loadedOnceDeferred.promise();
+      },
+
+      /**
+       * Wraps the base fetch in a wrapper that manages loaded states
+       * @method fetch
+       * @param options {Object} - the object to hold the options needed by the base fetch method
+       * @return {Promise} The loadWrapper promise
+       */
+      fetch: function(options) {
+        return this.__loadWrapper(base.prototype.fetch, options);
+      },
+
+      /**
+       * Base load function that will trigger a "load-begin" and a "load-complete" as
+       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       * @method __loadWrapper
+       * @param fetchMethod {Function} - the method to invoke a fetch
+       * @param options {Object} - the object to hold the options needed by the fetchMethod
+       * @return a promise when the fetch method has completed and the events have been triggered
+       */
+      __loadWrapper: function(fetchMethod, options) {
+        var collection = this;
+        this.loading = true;
+        this.trigger('load-begin');
+        return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
+          collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
+        }).always(function() {
+          if (!collection.loadedOnce) {
+            collection.loadedOnce = true;
+            collection.loadedOnceDeferred.resolve();
+          }
+          collection.loading = false;
+        });
+      }
+    };
+  };
+
+  return collectionLoadingMixin;
+}));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone', 'jquery'], factory);
@@ -1036,13 +984,16 @@
     }
 
     // Remove current attributes that have changed
+    // This is necessary, because some types of attributes cannot be removed
+    // without causing a browser error.
     currentAttributes = currentNode.attributes;
     while (idx < currentAttributes.length) {
       currentAttr = currentAttributes[idx].name;
-      if (!_.contains(currentAttr, newNode.attributes)) {
+      if (newNode.getAttribute(currentAttr)) {
+        idx++;
+      } else {
         currentNode.removeAttribute(currentAttr);
       }
-      idx++;
     }
 
     // Set new attributes
@@ -1417,7 +1368,7 @@
     viewState: null,
     template: null,
     feedback: null,
-    feedbackModel: null,
+    feedbackCell: null,
     __childViews: null,
     __isActive: false,
     __isAttachedToParent: false,
@@ -1427,7 +1378,7 @@
      * Array of feedback when-then-to's. Example:
      * [{
      *   when: {'@fullName': ['change']},
-     *   then: function(event) { return {text: this.feedbackModel.get('fullName')};},
+     *   then: function(event) { return {text: this.feedbackCell.get('fullName')};},
      *   to: 'fullName-feedback'
      * }]
      * @private
@@ -1443,7 +1394,7 @@
     constructor: function(options) {
       options = options || {};
       this.viewState = new Cell();
-      this.feedbackModel = new Cell();
+      this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
@@ -1506,7 +1457,7 @@
     delegateEvents: function() {
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
-      this.__generateFeedbackModelCallbacks();
+      this.__generateFeedbackCellCallbacks();
       _.each(this.__childViews, function(view) {
         if (view.isAttachedToParent()) {
           view.delegateEvents();
@@ -1823,40 +1774,40 @@
             return to === toToCheck;
           }
         }),
-        feedbackModelField = to;
+        feedbackCellField = to;
       if (feedbackToInvoke) {
         if (indexMap) {
-          feedbackModelField = this.__substituteIndicesUsingMap(to, indexMap);
+          feedbackCellField = this.__substituteIndicesUsingMap(to, indexMap);
         }
         result = feedbackToInvoke.then.call(this, evt, indexMap);
-        this.__processFeedbackThenResult(result, feedbackModelField);
+        this.__processFeedbackThenResult(result, feedbackCellField);
       }
     },
 
     /************** Private methods **************/
 
     /**
-     * Generates callbacks for changes in feedback model fields
-     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback model
-     * If feedbackModel.get('fullName') returns:
+     * Generates callbacks for changes in feedback cell fields
+     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback cell
+     * If feedbackCell.get('fullName') returns:
      * { text: 'my text',
      *   attr: {class: 'newClass'}
      *   hide: [100, function() {...}]
      * ...}
      * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
      * @private
-     * @method __generateFeedbackModelCallbacks
+     * @method __generateFeedbackCellCallbacks
      */
-    __generateFeedbackModelCallbacks: function() {
+    __generateFeedbackCellCallbacks: function() {
       var self = this;
       // Feedback one-way bindings
-      self.feedbackModel.off();
+      self.feedbackCell.off();
       _.each(this.$('[data-feedback]'), function(element) {
         var attr = $(element).data('feedback');
-        self.feedbackModel.on('change:' + attr, (function(field) {
+        self.feedbackCell.on('change:' + attr, (function(field) {
           return function() {
             var $element,
-              state = self.feedbackModel.get(field);
+              state = self.feedbackCell.get(field);
             if (!state) {
               return;
             }
@@ -1877,22 +1828,22 @@
           };
         })(attr));
       });
-      _.each(self.feedbackModel.attributes, function(value, attr) {
-        self.feedbackModel.trigger('change:' + attr);
+      _.each(self.feedbackCell.attributes, function(value, attr) {
+        self.feedbackCell.trigger('change:' + attr);
       });
     },
 
     /**
-     * Processes the result of the then method. Adds to the feedback model.
+     * Processes the result of the then method. Adds to the feedback cell.
      * @param result {Object} the result of the then method
-     * @param feedbackModelField {Object} the name of the feedbackModelField, typically the "to" value.
+     * @param feedbackCellField {Object} the name of the feedbackCellField, typically the "to" value.
      * @private
      * @method __processFeedbackThenResult
      */
-    __processFeedbackThenResult: function(result, feedbackModelField) {
+    __processFeedbackThenResult: function(result, feedbackCellField) {
       var newState = $.extend({}, result);
-      this.feedbackModel.set(feedbackModelField, newState, {silent: true});
-      this.feedbackModel.trigger('change:' + feedbackModelField);
+      this.feedbackCell.set(feedbackCellField, newState, {silent: true});
+      this.feedbackCell.trigger('change:' + feedbackCellField);
     },
 
     /**
@@ -1949,7 +1900,7 @@
 
             // track the indices for binding
             bindInfo = {
-              feedbackModelField: fieldName,
+              feedbackCellField: fieldName,
               fn: then,
               indices: indexMap
             };
@@ -1963,7 +1914,7 @@
                   newState = {};
                   args.push(bindInfo.indices);
                   result = bindInfo.fn.apply(self, args);
-                  self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                  self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
                 };
               delegateEventSplitter = /^(\S+)\s*(.*)$/;
               match = eventKey.match(delegateEventSplitter);
@@ -1979,7 +1930,7 @@
                     }];
                 args.push(bindInfo.indices);
                 result = bindInfo.fn.apply(self, args);
-                self.__processFeedbackThenResult(result, bindInfo.feedbackModelField);
+                self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
               };
               self.on(eventKey, invokeThen, self);
               self.__feedbackEvents.push(invokeThen);
