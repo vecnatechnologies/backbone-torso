@@ -368,7 +368,7 @@
           this.collectionTrackedIds = [];
           this.knownPrivateCollections = {};
           this.getByIdsUrl = options.getByIdsUrl || '/ids';
-          this.fetchHttpAction = 'POST';
+          this.fetchHttpAction = options.fetchHttpAction || 'POST';
           this.lazyFetch = options.lazyFetch || false;
           this.fetchUsingTrackedIds = options.fetchUsingTrackedIds !== false;
           cacheMixin(this);
