@@ -234,35 +234,19 @@
     * overridden the route function to send start and end times to EventTracker
     */
     route: function(route, name, callback) {
+      
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
         callback = name;
         name = '';
       }
       if (!callback) callback = this[name];
-      var router = this;
-      Backbone.history.route(route, function(fragment) {
-
-        var trackingInfo = EventTracker.track({
-          state: "start",
-          type: "routeChange",
-          route: name,
-        });
-
-        var args = router._extractParameters(route, fragment);
-        router.execute(callback, args);
-        router.trigger.apply(router, ['route:' + name].concat(args));
-        router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
-        
-        EventTracker.track({
-          UUID: trackingInfo.uuid,
-          time: Date.now(),
-          state: "end",
-        });
-
-      });
-      return this;
+      var callbackCopy = function(){
+        console.log('start route, '+ name + ' ' + Date.now());
+        callback.call(this);
+        console.log('end route, ' + name + ' ' + Date.now());
+      };
+      Backbone.Router.prototype.route.apply(this,[route,name,callbackCopy]);
     },
   });
 
@@ -1019,40 +1003,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'backbone.stickit'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    factory(require('backbone'));
-  } else {
-    factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Extensions to stickit handlers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  Backbone.Stickit.addHandler({
-    selector: 'input[type="radio"]',
-    events: ['change'],
-    update: function($el, val) {
-      $el.prop('checked', false);
-      $el.filter('[value="' + val + '"]').prop('checked', true);
-    },
-    getVal: function($el) {
-      return $el.filter(':checked').val();
-    }
-  });
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -1144,6 +1094,40 @@
 
   return pollingMixin;
 }));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    factory(require('backbone'));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: 'input[type="radio"]',
+    events: ['change'],
+    update: function($el, val) {
+      $el.prop('checked', false);
+      $el.filter('[value="' + val + '"]').prop('checked', true);
+    },
+    getVal: function($el) {
+      return $el.filter(':checked').val();
+    }
+  });
+}));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
@@ -1638,7 +1622,7 @@
       if (!options.noActivate) {
         this.activate();
       }
-      this.updateDelegateEvents();
+      // this.updateDelegateEvents();
     },
 
 
@@ -1660,6 +1644,7 @@
           type: "clickEvent",
           eventName: eventName,
         });
+        console.log('overridden start');
 
         methodCopy.call(self);
 
@@ -1677,33 +1662,28 @@
     * functions in the View's list of events
     * @method updateDelegateEvents
     */
-    updateDelegateEvents: function(){
-      var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
-      Backbone.View.prototype.delegateEvents = function(events){
-        var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-        if (!(events || (events = _.result(this, 'events')))) return this;
-        this.undelegateEvents();
+    delegateEvents: function(events){
+      var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+      if (!(events||(events = _.result(this,'events')))) return this;
+      var eventsClone = _.extend({},events);
+      for (var key in eventsClone) {
+        var method = eventsClone[key];
+        if (!_.isFunction(method)) method = this[eventsClone[key]];
+        if (!method) continue;      
+        this.trackEvents = _.bind(this.trackEvents, this);
+        var methodNew = this.trackEvents(method, '');
+        eventsClone[key] = methodNew;
+      }
 
-        for (var key in events) {
-          var method = events[key];
-          if (!_.isFunction(method)) method = this[events[key]];
-          if (!method) continue;
+      Backbone.View.prototype.delegateEvents.call(this, eventsClone);
 
-          var match = key.match(delegateEventSplitter);
-          var eventName = match[1], selector = match[2];
-
-          this.trackEvents = _.bind(this.trackEvents,this);
-          method = this.trackEvents(method, eventName);          
-
-          eventName += '.delegateEvents' + this.cid;
-          if (selector === '') {
-            this.$el.on(eventName, method);
-          } else {
-            this.$el.on(eventName, selector, method);
-          }
+      this.__generateFeedbackBindings();
+      this.__generateFeedbackModelCallbacks();
+      _.each(this.__childViews, function(view) {
+        if (view.isAttachedToParent()) {
+          view.delegateEvents();
         }
-        return this;
-      };
+      });
     },
 
     /**
@@ -1777,16 +1757,16 @@
      * @method delegateEvents
      * @override
      */
-    delegateEvents: function() {
-      Backbone.View.prototype.delegateEvents.call(this);
-      this.__generateFeedbackBindings();
-      this.__generateFeedbackModelCallbacks();
-      _.each(this.__childViews, function(view) {
-        if (view.isAttachedToParent()) {
-          view.delegateEvents();
-        }
-      });
-    },
+    // delegateEvents: function() {
+    //   Backbone.View.prototype.delegateEvents.call(this);
+    //   this.__generateFeedbackBindings();
+    //   this.__generateFeedbackModelCallbacks();
+    //   _.each(this.__childViews, function(view) {
+    //     if (view.isAttachedToParent()) {
+    //       view.delegateEvents();
+    //     }
+    //   });
+    // },
 
     /**
      * Unbinds DOM events from the view.

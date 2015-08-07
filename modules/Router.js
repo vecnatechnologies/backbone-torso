@@ -22,35 +22,19 @@
     * overridden the route function to send start and end times to EventTracker
     */
     route: function(route, name, callback) {
+      
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
         callback = name;
         name = '';
       }
       if (!callback) callback = this[name];
-      var router = this;
-      Backbone.history.route(route, function(fragment) {
-
-        var trackingInfo = EventTracker.track({
-          state: "start",
-          type: "routeChange",
-          route: name,
-        });
-
-        var args = router._extractParameters(route, fragment);
-        router.execute(callback, args);
-        router.trigger.apply(router, ['route:' + name].concat(args));
-        router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
-        
-        EventTracker.track({
-          UUID: trackingInfo.uuid,
-          time: Date.now(),
-          state: "end",
-        });
-
-      });
-      return this;
+      var callbackCopy = function(){
+        console.log('start route, '+ name + ' ' + Date.now());
+        callback.call(this);
+        console.log('end route, ' + name + ' ' + Date.now());
+      };
+      Backbone.Router.prototype.route.apply(this,[route,name,callbackCopy]);
     },
   });
 

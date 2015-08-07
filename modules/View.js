@@ -56,7 +56,7 @@
       if (!options.noActivate) {
         this.activate();
       }
-      this.updateDelegateEvents();
+      // this.updateDelegateEvents();
     },
 
 
@@ -95,33 +95,28 @@
     * functions in the View's list of events
     * @method updateDelegateEvents
     */
-    updateDelegateEvents: function(){
-      var backboneDelegateEvents = Backbone.View.prototype.delegateEvents;
-      Backbone.View.prototype.delegateEvents = function(events){
-        var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-        if (!(events || (events = _.result(this, 'events')))) return this;
-        this.undelegateEvents();
+    delegateEvents: function(events){
+      var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+      if (!(events||(events = _.result(this,'events')))) return this;
+      var eventsClone = _.extend({},events);
+      for (var key in eventsClone) {
+        var method = eventsClone[key];
+        if (!_.isFunction(method)) method = this[eventsClone[key]];
+        if (!method) continue;      
+        this.trackEvents = _.bind(this.trackEvents, this);
+        var methodNew = this.trackEvents(method, '');
+        eventsClone[key] = methodNew;
+      }
 
-        for (var key in events) {
-          var method = events[key];
-          if (!_.isFunction(method)) method = this[events[key]];
-          if (!method) continue;
+      Backbone.View.prototype.delegateEvents.call(this, eventsClone);
 
-          var match = key.match(delegateEventSplitter);
-          var eventName = match[1], selector = match[2];
-
-          this.trackEvents = _.bind(this.trackEvents,this);
-          method = this.trackEvents(method, eventName);          
-
-          eventName += '.delegateEvents' + this.cid;
-          if (selector === '') {
-            this.$el.on(eventName, method);
-          } else {
-            this.$el.on(eventName, selector, method);
-          }
+      this.__generateFeedbackBindings();
+      this.__generateFeedbackModelCallbacks();
+      _.each(this.__childViews, function(view) {
+        if (view.isAttachedToParent()) {
+          view.delegateEvents();
         }
-        return this;
-      };
+      });
     },
 
     /**
@@ -195,16 +190,16 @@
      * @method delegateEvents
      * @override
      */
-    delegateEvents: function() {
-      Backbone.View.prototype.delegateEvents.call(this);
-      this.__generateFeedbackBindings();
-      this.__generateFeedbackModelCallbacks();
-      _.each(this.__childViews, function(view) {
-        if (view.isAttachedToParent()) {
-          view.delegateEvents();
-        }
-      });
-    },
+    // delegateEvents: function() {
+    //   Backbone.View.prototype.delegateEvents.call(this);
+    //   this.__generateFeedbackBindings();
+    //   this.__generateFeedbackModelCallbacks();
+    //   _.each(this.__childViews, function(view) {
+    //     if (view.isAttachedToParent()) {
+    //       view.delegateEvents();
+    //     }
+    //   });
+    // },
 
     /**
      * Unbinds DOM events from the view.
