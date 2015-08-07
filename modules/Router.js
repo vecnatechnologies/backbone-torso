@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './Logger'], factory);
+    define(['underscore', 'backbone', './EventTracker'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'),require('backbone'), require('./Logger'));
+    module.exports = factory(require('underscore'),require('backbone'), require('./EventTracker'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root._, root.Backbone, root.Logger);
+    root.Torso.Router = factory(root._, root.Backbone, root.EventTracker);
   }
-}(this, function(_, Backbone, Logger) {
+}(this, function(_, Backbone, EventTracker) {
   'use strict';
   /**
    * Backbone's router.
@@ -19,7 +19,7 @@
   var Router = Backbone.Router.extend({
 
     /**
-    * overridden the route function to send start and end times to Logger
+    * overridden the route function to send start and end times to EventTracker
     */
     route: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
@@ -31,14 +31,10 @@
       var router = this;
       Backbone.history.route(route, function(fragment) {
 
-        newrelic.setCustomAttribute('route', name);
-        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        Logger.track({
-          UUID : UUID,
-          type : "routeChange",
+        var trackingInfo = EventTracker.track({
           state: "start",
+          type: "routeChange",
           route: name,
-          time: Date.now(),
         });
 
         var args = router._extractParameters(route, fragment);
@@ -47,8 +43,8 @@
         router.trigger('route', name, args);
         Backbone.history.trigger('route', router, name, args);
         
-        Logger.track({
-          UUID: UUID,
+        EventTracker.track({
+          UUID: trackingInfo.uuid,
           time: Date.now(),
           state: "end",
         });

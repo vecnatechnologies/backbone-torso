@@ -1,5 +1,193 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './ServiceCell'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.EventTracker = factory(root._, root.Backbone, root.Torso.ServiceCell);
+  }
+}(this, function(_, Backbone, ServiceCell) {
+  'use strict';
+
+  var EventTracker = ServiceCell.extend({ 
+
+    log : {}, 
+    sessions: [],
+    unclosed: {},
+    debug : false,
+    _isClosed: true,
+    _sessionStart: null,
+    _sessionEnd: null,
+    _sessionID: null,
+    _ajaxSession: [],
+
+
+    initialize: function(options){
+      this.options = options;
+      if (options){
+        if ('debug' in options){
+          this.debug = options.debug;
+          this.allSessions = {};
+        }  
+      }
+    },
+
+    /**
+    * saves information about event and wraps start and end signals in 'session' 
+    * @param eventInfo {JSON object} contains tracking information (including state: 'start' or 'end', uuid, sessionID)
+    * @return trackingInfo {JSON object} contains information about event to be passed back in 'end' signal
+    * @method track
+    */
+  	track: function(eventInfo) {
+      var trackingInfo = {};
+      if (eventInfo.state) {
+        if (this._isClosed) {
+          if(!this.debug){
+            this.resetSession();
+          }
+          if (eventInfo.state == "start") {
+            this.openSession(eventInfo);
+            _.extend(trackingInfo, this.startEvent(eventInfo));
+          }
+        } else {
+            if (eventInfo.state == "start") {
+              this.startEvent(eventInfo);
+            }
+            else if (eventInfo.state == "end") {
+                this.endEvent(eventInfo);
+                if (Object.keys(this.unclosed).length === 0) {
+                  this.closeSession();
+                }
+            }
+          }
+      }
+      else{
+        _.extend(trackingInfo, this.startEvent(eventInfo));
+      }
+      return trackingInfo;
+  	},
+
+    /**
+    * generate and returns uuid
+    * @return {String} unique identifier
+    */
+    getUUID : function(){
+      return (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+    },
+
+    /**
+    * tracks information about the 'start' of events
+    * @param eventInfo {JSON object} contains tracking information including UUID and time
+    * @method startEvent
+    */
+    startEvent: function(eventInfo) {
+      var uuid = eventInfo.UUID;      
+      eventInfo.UUID = this.getUUID;
+      eventInfo.sessionID = this._sessionID; //check if event info has sessionID property and throw error
+      eventInfo.startTime = Date.now();
+      this.unclosed[uuid] = eventInfo;
+      return {UUID: uuid};
+    },
+
+    /**
+    * tracks information about the 'end' of events
+    * @param eventInfo {JSON object} contains information about the tracked event, including UUID, time, state
+    * @method endEvent
+    */
+    endEvent: function(eventInfo) {
+      var uuid = eventInfo.UUID;
+      var totalEvent = this.unclosed[uuid];
+      var endTime = Date.now();
+      var duration = endTime - totalEvent.startTime;
+      totalEvent.duration = duration;
+      totalEvent.endTime = endTime;
+      this._sessionEnd = endTime;
+
+      delete totalEvent.state;
+      this.log[uuid] = totalEvent;
+      delete this.unclosed[uuid];
+    },
+
+    /**
+    * tracks information about the beginning of sessions
+    * @param eventInfo {JSON object} contains information about the tracked event
+    * @method openSession
+    */
+    openSession: function(eventInfo) {
+      this._isClosed = false;
+      var sessionID = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      this._sessionID = sessionID;
+      this._sessionStart = Date.now();
+    },
+
+    /**
+    * tracks information about the end of a session. resets all relevant parameters
+    * @method closeSession
+    */
+    closeSession: function() {
+      var sessionEvent = {sessionID: this._sessionID, type: "session"};
+      var sessionDuration = this._sessionEnd - this._sessionStart;
+      sessionEvent.sessionDuration = sessionDuration;
+      this.sessions.push(sessionEvent);
+      for (var key in this.log) {
+        this.log[key].sessionDuration = sessionDuration;
+        this.sessions.push(this.log[key]);
+        delete this.log[key];
+      }
+      this._isClosed = true;
+      // this.resetSession();
+    },
+
+    /**
+    * reset all relevant parameters to prepare for new session
+    * @method resetSession
+    */
+    resetSession: function() {
+      this.log = {};
+      this.unclosed = {};
+      this.sessions = [];
+      this._isClosed = true;
+      this._sessionStart = null;
+      this._sessionEnd = null;
+      this._sessionID = null;
+    }, 
+
+    /**
+    * @return {JSON object} current log
+    */
+    getLog: function() {
+      return this.log;
+    },
+
+    /**
+    * @return {Boolean} true if session is closed
+    */
+    isClosed: function() {
+      return this._isClosed;
+    },
+
+    /**
+    * @return {array} list of sessions
+    */
+    getSessions: function() {
+      return this.sessions;
+    },
+
+    /**
+    * @return {Boolean} information on sessions that are not closed
+    */
+    getUnclosed: function() {
+      return this.unclosed;
+    },
+
+  });
+
+  return new EventTracker({debug:true});
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('backbone'));
@@ -24,184 +212,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './ServiceCell'], factory);
+    define(['underscore', 'backbone', './EventTracker'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'));
+    module.exports = factory(require('underscore'),require('backbone'), require('./EventTracker'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Logger = factory(root._, root.Backbone, root.Torso.ServiceCell);
+    root.Torso.Router = factory(root._, root.Backbone, root.EventTracker);
   }
-}(this, function(_, Backbone, ServiceCell) {
-  'use strict';
-
-  var Logger = ServiceCell.extend({ 
-
-    log : {}, 
-    sessions: [],
-    unclosed: {},
-    _isClosed: true,
-    _sessionStart: null,
-    _sessionEnd: null,
-    _sessionID: null,
-
-    /**
-    * saves information about event and wraps start and end signals in 'session' 
-    * @ param {JSON object} contains tracking information (including state: 'start' or 'end', uuid, sessionID)
-    * @ method track
-    */
-  	track: function(eventInfo){
-      if (eventInfo.state){
-        if (this._isClosed){
-          this.resetSession();
-          if (eventInfo.state == "start") {
-            this.openSession(eventInfo);
-            this.startEvent(eventInfo);
-          }
-        } else {
-          if (eventInfo.state == "start") {
-            this.startEvent(eventInfo);
-          }
-          else if (eventInfo.state == "end") {
-              this.endEvent(eventInfo);
-              if (Object.keys(this.unclosed).length === 0) {
-                this.closeSession();
-              }
-          }
-        }
-      }
-  	},
-
-    /**
-    * tracks information about the 'start' of events
-    * @param {JSON object} contains tracking information including UUID and time
-    * @method startEvent
-    */
-    startEvent: function(eventInfo){
-      var uuid = eventInfo.UUID;
-      eventInfo.sessionID = this._sessionID; //check if event info has sessionID property and throw error
-      eventInfo.startTime = eventInfo.time;
-      delete eventInfo.time;
-      this.unclosed[uuid] = eventInfo;
-    },
-
-    /**
-    * tracks information about the 'end' of events
-    * @param {JSON object} contains information about the tracked event, including UUID, time, state
-    * @method endEvent
-    */
-    endEvent: function(eventInfo){
-      var uuid = eventInfo.UUID;
-      var totalEvent = this.unclosed[uuid];
-      var duration = eventInfo.time - totalEvent.startTime; 
-      totalEvent.duration = duration;
-      totalEvent.endTime = eventInfo.time;
-      this._sessionEnd = eventInfo.time;
-      delete totalEvent.state;
-      this.log[uuid] = totalEvent;
-      delete this.unclosed[uuid];
-    },
-
-    /**
-    * tracks information about the beginning of sessions
-    * @param {JSON object} contains information about the tracked event
-    * @method openSession
-    */
-    openSession: function(eventInfo){
-      this._isClosed = false;
-      var sessionID = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      this._sessionID = sessionID;
-      this._sessionStart = eventInfo.time;
-    },
-
-    /**
-    * tracks information about the end of a session. resets all relevant parameters
-    * @method closeSession
-    */
-    closeSession: function(){
-      var sessionEvent = {sessionID: this._sessionID, type: "session"};
-      var sessionDuration = this._sessionEnd - this._sessionStart;
-      sessionEvent.sessionDuration = sessionDuration;
-      this.sessions.push(sessionEvent);
-      for (var key in this.log){
-        this.log[key].sessionDuration = sessionDuration;
-        this.sessions.push(this.log[key]);
-        delete this.log[key];
-      }
-      this._isClosed = true;
-      this.sendToNewRelic();
-      this.resetSession();
-    },
-
-    /**
-    * reset all relevant parameters to prepare for new session
-    * @method resetSession
-    */
-    resetSession: function(){
-      this.log = {};
-      this.unclosed = {};
-      this.sessions = [];
-      this._isClosed = true;
-      this._sessionStart = null;
-      this._sessionEnd = null;
-      this._sessionID = null;
-    }, 
-
-    /**
-    * send all information from the session to new relic
-    * @method sendToNewRelic
-    */
-    sendToNewRelic: function(){
-      var sessionLength = this.sessions.length;
-      for (var i = 0; i < sessionLength; i++){
-        var evt = this.sessions[i];
-        var actionName = evt.type;
-        newrelic.addPageAction(actionName, evt);
-      }
-    },
-
-    /**
-    * @return {JSON object} current log
-    */
-    getLog: function(){
-      return this.log;
-    },
-
-    /**
-    * @return {Boolean} true if session is closed
-    */
-    isClosed: function(){
-      return this._isClosed;
-    },
-
-    /**
-    * @return list of sessions
-    */
-    getSessions: function(){
-      return this.sessions;
-    },
-
-    /**
-    * @return information on sessions that are not closed
-    */
-    getUnclosed: function(){
-      return this.unclosed;
-    },
-
-  });
-
-  return new Logger();
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './Logger'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'),require('backbone'), require('./Logger'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root._, root.Backbone, root.Logger);
-  }
-}(this, function(_, Backbone, Logger) {
+}(this, function(_, Backbone, EventTracker) {
   'use strict';
   /**
    * Backbone's router.
@@ -213,7 +231,7 @@
   var Router = Backbone.Router.extend({
 
     /**
-    * overridden the route function to send start and end times to Logger
+    * overridden the route function to send start and end times to EventTracker
     */
     route: function(route, name, callback) {
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
@@ -225,14 +243,10 @@
       var router = this;
       Backbone.history.route(route, function(fragment) {
 
-        newrelic.setCustomAttribute('route', name);
-        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        Logger.track({
-          UUID : UUID,
-          type : "routeChange",
+        var trackingInfo = EventTracker.track({
           state: "start",
+          type: "routeChange",
           route: name,
-          time: Date.now(),
         });
 
         var args = router._extractParameters(route, fragment);
@@ -241,8 +255,8 @@
         router.trigger('route', name, args);
         Backbone.history.trigger('route', router, name, args);
         
-        Logger.track({
-          UUID: UUID,
+        EventTracker.track({
+          UUID: trackingInfo.uuid,
           time: Date.now(),
           state: "end",
         });
@@ -1005,6 +1019,40 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    factory(require('backbone'));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: 'input[type="radio"]',
+    events: ['change'],
+    update: function($el, val) {
+      $el.prop('checked', false);
+      $el.filter('[value="' + val + '"]').prop('checked', true);
+    },
+    getVal: function($el) {
+      return $el.filter(':checked').val();
+    }
+  });
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -1096,40 +1144,6 @@
 
   return pollingMixin;
 }));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'backbone.stickit'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    factory(require('backbone'));
-  } else {
-    factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Extensions to stickit handlers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  Backbone.Stickit.addHandler({
-    selector: 'input[type="radio"]',
-    events: ['change'],
-    update: function($el, val) {
-      $el.prop('checked', false);
-      $el.filter('[value="' + val + '"]').prop('checked', true);
-    },
-    getVal: function($el) {
-      return $el.filter(':checked').val();
-    }
-  });
-}));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
@@ -1455,59 +1469,38 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', './Logger'], factory);
+    define(['underscore', 'backbone', './pollingMixin', './EventTracker'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./Logger'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./EventTracker'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Logger);
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.EventTracker);
   }
-}(this, function(_, Backbone, pollingMixin, Logger) {
+}(this, function(_, Backbone, pollingMixin, EventTracker) {
   'use strict';
 
 
   var Model = Backbone.Model.extend({
 
-    wrapError: function(options){
-      var error = options.error;
-      options.error = function(resp) {
-        if (error) error(model, resp, options);
-        model.trigger('error', model, resp, options);
-      };
-    },
-
-    /** 
-    * Overridden to send before and after signals to Logger
-    */
     fetch: function(options){
-      var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      Logger.track({
-        UUID : UUID,
+      var trackingInfo = EventTracker.track({
         type : "fetch",
         state: "start",
-        time: Date.now(),
       });
-
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
-      var model = this;
+      var newOptions = $.extend({}, options);
       var success = options.success;
-      options.success = function(resp) {
-        if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
-
-        Logger.track({
-          UUID: UUID,
-          time: Date.now(),
-          state: "end",
+      newOptions.success = function(model, resp, options){
+        if (success) success(resp);
+        EventTracker.track({
+          UUID:trackingInfo.UUID,
+          state: 'end',
         });
-
       };
-      this.wrapError(this, options);
-      return this.sync('read', this,options);
-    },
+      Backbone.Model.prototype.fetch.apply(this, [newOptions]);
+    }
 
   });
+  
   _.extend(Model.prototype, pollingMixin);
 
   return Model;
@@ -1589,14 +1582,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell', './Logger'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './EventTracker'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./Logger'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./EventTracker'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.Logger);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.EventTracker);
   }
-}(this, function(_, Backbone, templateRenderer, Cell, Logger) {
+}(this, function(_, Backbone, templateRenderer, Cell, EventTracker) {
   'use strict';
 
   /**
@@ -1650,26 +1643,28 @@
 
 
     /**
+    * called by updateDelegateEvents to wrap callback functions of event calls
+    * with EventTracker signals
     * @param method {function} callback method of event
     * @param eventName {String} description of event type 
-    * @return modified mehtod with before/after signals sent to Logger
+    * @return modified mehtod with before/after signals sent to EventTracker
     * @method trackEvents
     */
     trackEvents : function(method, eventName){
       var self = this;
       var methodCopy = method;
       method = _.bind(function(){
-        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        Logger.track({
-          UUID : UUID,
-          type : "clickEvent",
+
+        var trackingInfo = EventTracker.track({
           state: "start",
+          type: "clickEvent",
           eventName: eventName,
-          time: Date.now(),
         });
+
         methodCopy.call(self);
-        Logger.track({
-          UUID: UUID,
+
+        EventTracker.track({
+          UUID: trackingInfo.uuid,
           time: Date.now(),
           state: "end",
         });
@@ -1678,7 +1673,7 @@
       },
 
     /**
-    * updates Backbone's delegateEvents to bind signals to Logger to all callback 
+    * updates Backbone's delegateEvents to bind signals to EventTracker to all callback 
     * functions in the View's list of events
     * @method updateDelegateEvents
     */
@@ -1758,20 +1753,18 @@
       }
 
       newrelic.setCustomAttribute('pageName', pageName);
-      var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      Logger.track({
-        UUID : UUID,
-        type : "templateRender",
-        state: "start",
-        pageName: pageName,
-        time: Date.now(),
-      });
 
+      var trackingInfo = EventTracker.track({
+          state: "start",
+          type: "templateRender",
+          pageName: pageName,
+        });
+    
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
 
-      Logger.track({
-        UUID: UUID,
+      EventTracker.track({
+        UUID: trackingInfo.uuid,
         time: Date.now(),
         state: "end",
       });
