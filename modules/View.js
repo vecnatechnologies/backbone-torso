@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell', './Logger'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './EventTracker'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./Logger'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./EventTracker'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.Logger);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.EventTracker);
   }
-}(this, function(_, Backbone, templateRenderer, Cell, Logger) {
+}(this, function(_, Backbone, templateRenderer, Cell, EventTracker) {
   'use strict';
 
   /**
@@ -61,26 +61,28 @@
 
 
     /**
+    * called by updateDelegateEvents to wrap callback functions of event calls
+    * with EventTracker signals
     * @param method {function} callback method of event
     * @param eventName {String} description of event type 
-    * @return modified mehtod with before/after signals sent to Logger
+    * @return modified mehtod with before/after signals sent to EventTracker
     * @method trackEvents
     */
     trackEvents : function(method, eventName){
       var self = this;
       var methodCopy = method;
       method = _.bind(function(){
-        var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        Logger.track({
-          UUID : UUID,
-          type : "clickEvent",
+
+        var trackingInfo = EventTracker.track({
           state: "start",
+          type: "clickEvent",
           eventName: eventName,
-          time: Date.now(),
         });
+
         methodCopy.call(self);
-        Logger.track({
-          UUID: UUID,
+
+        EventTracker.track({
+          UUID: trackingInfo.uuid,
           time: Date.now(),
           state: "end",
         });
@@ -89,7 +91,7 @@
       },
 
     /**
-    * updates Backbone's delegateEvents to bind signals to Logger to all callback 
+    * updates Backbone's delegateEvents to bind signals to EventTracker to all callback 
     * functions in the View's list of events
     * @method updateDelegateEvents
     */
@@ -169,20 +171,18 @@
       }
 
       newrelic.setCustomAttribute('pageName', pageName);
-      var UUID = "uuid-"+(new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      Logger.track({
-        UUID : UUID,
-        type : "templateRender",
-        state: "start",
-        pageName: pageName,
-        time: Date.now(),
-      });
 
+      var trackingInfo = EventTracker.track({
+          state: "start",
+          type: "templateRender",
+          pageName: pageName,
+        });
+    
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
 
-      Logger.track({
-        UUID: UUID,
+      EventTracker.track({
+        UUID: trackingInfo.uuid,
         time: Date.now(),
         state: "end",
       });
