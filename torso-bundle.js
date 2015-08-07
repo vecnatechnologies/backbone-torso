@@ -406,12 +406,16 @@
 
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
+          currentNodeContainsActiveElement = false,
           activeElement = document.activeElement;
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (activeElement && currentNode && $.contains(activeElement, currentNode)) {
+        currentNodeContainsActiveElement = true;
+      }
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },
@@ -3929,6 +3933,12 @@
         var attr = $(element).data('model'),
             options = self._getFieldOptions(attr),
             fieldBinding = self._generateModelFieldBinding(attr, options);
+
+        //add select options
+        if ($(element).is('select')) {
+          fieldBinding.selectOptions = self.__generateSelectOptions(element, options);
+        }
+
         self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
       });
     },
@@ -4056,7 +4066,7 @@
     /**
      * @method _generateModelFieldBinding
      * @param field {String} A specific model field
-     * @param options {Object} Additional heavior options for the bindings
+     * @param options {Object} Additional beavior options for the bindings
      * @param [options.modelFormat] {Object} The function called before setting model values
      * @param [options.viewFormat] {Object} The function called before setting view values
      * @private
@@ -4080,6 +4090,27 @@
         }
       };
     },
+
+    /**
+     * @method  __generateSelectOptions
+     * @param element {Element} The select element to generate options for
+     * @param opts {Object} Additional behavior options for the bindings
+     * @param [opts.modelFormat] {Object} The function called before setting model values
+     * @private
+     * @return {<Stickit select options hash>}
+     */
+    __generateSelectOptions: function(element, opts) {
+      var collection = [],
+          options = $(element).children('option');
+
+      _.each(options, function(option) {
+        collection.push({'label': $(option).text(), 'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
+      });
+
+      return {collection: collection,
+              labelPath: 'label',
+              valuePath: 'value'};
+     },
 
     /**
      * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks

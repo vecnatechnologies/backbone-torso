@@ -175,12 +175,16 @@
 
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
+          currentNodeContainsActiveElement = false,
           activeElement = document.activeElement;
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (activeElement && currentNode && $.contains(activeElement, currentNode)) {
+        currentNodeContainsActiveElement = true;
+      }
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },
