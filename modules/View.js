@@ -165,7 +165,6 @@
           this._detached();
           _.each(this.__childViews, function(view) {
             view._detached();
-            view.undelegateEvents();
           });
         }
         this.undelegateEvents();
