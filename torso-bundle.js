@@ -99,6 +99,104 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('jquery'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.collectionLoading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+  }
+}(this, function($) {
+  /**
+   * Loading logic.
+   *
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  collectionLoadingMixin
+   * @author kent.willis@vecna.com
+   */
+  var collectionLoadingMixin = function(base) {
+
+    return {
+      /**
+       * Adds the loading mixin to the collection
+       * @method constructor
+       * @param args {Object} the arguments to the base constructor method
+       */
+      constructor: function(args) {
+        base.call(this, args);
+        this.loadedOnceDeferred = new $.Deferred();
+        this.loadedOnce = false;
+        this.loading = false;
+      },
+
+      /**
+       * @method hasLoadedOnce
+       * @return true if this collection has ever loaded from a fetch call
+       */
+      hasLoadedOnce: function() {
+        return this.loadedOnce;
+      },
+
+      /**
+       * @method isLoading
+       * @return true if this collection is currently loading new values from the server
+       */
+      isLoading: function() {
+        return this.loading;
+      },
+
+      /**
+       * @method getLoadedOncePromise
+       * @return a promise that will resolve when the collection has loaded for the first time
+       */
+      getLoadedOncePromise: function() {
+        return this.loadedOnceDeferred.promise();
+      },
+
+      /**
+       * Wraps the base fetch in a wrapper that manages loaded states
+       * @method fetch
+       * @param options {Object} - the object to hold the options needed by the base fetch method
+       * @return {Promise} The loadWrapper promise
+       */
+      fetch: function(options) {
+        return this.__loadWrapper(base.prototype.fetch, options);
+      },
+
+      /**
+       * Base load function that will trigger a "load-begin" and a "load-complete" as
+       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       * @method __loadWrapper
+       * @param fetchMethod {Function} - the method to invoke a fetch
+       * @param options {Object} - the object to hold the options needed by the fetchMethod
+       * @return a promise when the fetch method has completed and the events have been triggered
+       */
+      __loadWrapper: function(fetchMethod, options) {
+        var collection = this;
+        this.loading = true;
+        this.trigger('load-begin');
+        return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
+          collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
+        }).always(function() {
+          if (!collection.loadedOnce) {
+            collection.loadedOnce = true;
+            collection.loadedOnceDeferred.resolve();
+          }
+          collection.loading = false;
+        });
+      }
+    };
+  };
+
+  return collectionLoadingMixin;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('jquery'));
@@ -467,7 +565,7 @@
           this.collectionTrackedIds = [];
           this.knownPrivateCollections = {};
           this.getByIdsUrl = options.getByIdsUrl || '/ids';
-          this.fetchHttpAction = 'POST';
+          this.fetchHttpAction = options.fetchHttpAction || 'POST';
           this.lazyFetch = options.lazyFetch || false;
           this.fetchUsingTrackedIds = options.fetchUsingTrackedIds !== false;
           cacheMixin(this);
@@ -510,104 +608,6 @@
 
   return collectionRegistrationMixin;
 }));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.collectionLoading = factory((root.jQuery || root.Zepto || root.ender || root.$));
-  }
-}(this, function($) {
-  /**
-   * Loading logic.
-   *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  collectionLoadingMixin
-   * @author kent.willis@vecna.com
-   */
-  var collectionLoadingMixin = function(base) {
-
-    return {
-      /**
-       * Adds the loading mixin to the collection
-       * @method constructor
-       * @param args {Object} the arguments to the base constructor method
-       */
-      constructor: function(args) {
-        base.call(this, args);
-        this.loadedOnceDeferred = new $.Deferred();
-        this.loadedOnce = false;
-        this.loading = false;
-      },
-
-      /**
-       * @method hasLoadedOnce
-       * @return true if this collection has ever loaded from a fetch call
-       */
-      hasLoadedOnce: function() {
-        return this.loadedOnce;
-      },
-
-      /**
-       * @method isLoading
-       * @return true if this collection is currently loading new values from the server
-       */
-      isLoading: function() {
-        return this.loading;
-      },
-
-      /**
-       * @method getLoadedOncePromise
-       * @return a promise that will resolve when the collection has loaded for the first time
-       */
-      getLoadedOncePromise: function() {
-        return this.loadedOnceDeferred.promise();
-      },
-
-      /**
-       * Wraps the base fetch in a wrapper that manages loaded states
-       * @method fetch
-       * @param options {Object} - the object to hold the options needed by the base fetch method
-       * @return {Promise} The loadWrapper promise
-       */
-      fetch: function(options) {
-        return this.__loadWrapper(base.prototype.fetch, options);
-      },
-
-      /**
-       * Base load function that will trigger a "load-begin" and a "load-complete" as
-       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       * @method __loadWrapper
-       * @param fetchMethod {Function} - the method to invoke a fetch
-       * @param options {Object} - the object to hold the options needed by the fetchMethod
-       * @return a promise when the fetch method has completed and the events have been triggered
-       */
-      __loadWrapper: function(fetchMethod, options) {
-        var collection = this;
-        this.loading = true;
-        this.trigger('load-begin');
-        return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
-          collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-          collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
-        }).always(function() {
-          if (!collection.loadedOnce) {
-            collection.loadedOnce = true;
-            collection.loadedOnceDeferred.resolve();
-          }
-          collection.loading = false;
-        });
-      }
-    };
-  };
-
-  return collectionLoadingMixin;
-}));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone', 'jquery'], factory);
@@ -1345,14 +1345,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell'], factory);
+    define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
+    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
   }
-}(this, function(_, Backbone, templateRenderer, Cell) {
+}(this, function(_, $, Backbone, templateRenderer, Cell) {
   'use strict';
 
   /**
@@ -1498,12 +1498,20 @@
      * @method detach
      */
     detach: function() {
+      var wasAttachedToDOM = this.isAttached();
       if (this.isAttachedToParent()) {
         // Detach view from DOM
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
         } else {
           this.$el.detach();
+        }
+        if (wasAttachedToDOM) {
+          this._detached();
+          _.each(this.__childViews, function(view) {
+            view._detached();
+            view.undelegateEvents();
+          });
         }
         this.undelegateEvents();
         this.__isAttachedToParent = false;
@@ -1520,6 +1528,12 @@
         this.render();
         this.injectionSite = $el.replaceWith(this.$el);
         this.delegateEvents();
+        if (this.isAttached()) {
+          this._attached();
+          _.each(this.__childViews, function(view) {
+            view._attached();
+          });
+        }
         this.__isAttachedToParent = true;
       }
     },
@@ -1604,10 +1618,25 @@
      */
     _activate: _.noop,
 
+    /**
+     * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
+     * after the DOM has been attached to the document. The default implementation is a no-op.
+     * @method _attached
+     */
+    _attached: _.noop,
+
+    /**
+     * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
+     * after the view has been removed from the document. The default implementation is a no-op.
+     * @method _detached
+     */
+    _detached: _.noop,
+
         /**
      * Before any DOM rendering is done, this method is called and removes any
      * custom plugins including events that attached to the existing elements.
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
      * @method unplug
      */
     unplug: _.noop,
@@ -1616,6 +1645,7 @@
      * After all DOM rendering is done, this method is called and attaches any
      * custom plugins to the existing elements.  This method can be overwritten
      * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
      * @method plug
      */
     plug: _.noop,
@@ -1739,6 +1769,15 @@
      */
     isAttachedToParent: function() {
       return this.__isAttachedToParent;
+    },
+
+    /**
+     * NOTE: depends on a global variable "document"
+     * @returns {Boolean} true if the view is attached to the DOM
+     * @method isAttached
+     */
+    isAttached: function() {
+      return $.contains(document, this.$el[0]);
     },
 
     /**
@@ -2084,7 +2123,7 @@
       }
     }
 
-    /************** End Feedback **************/
+    /************** End Private methods **************/
   });
 
   return View;

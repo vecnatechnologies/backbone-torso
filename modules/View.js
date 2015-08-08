@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell'], factory);
+    define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
+    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
   }
-}(this, function(_, Backbone, templateRenderer, Cell) {
+}(this, function(_, $, Backbone, templateRenderer, Cell) {
   'use strict';
 
   /**
@@ -153,12 +153,20 @@
      * @method detach
      */
     detach: function() {
+      var wasAttachedToDOM = this.isAttached();
       if (this.isAttachedToParent()) {
         // Detach view from DOM
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
         } else {
           this.$el.detach();
+        }
+        if (wasAttachedToDOM) {
+          this._detached();
+          _.each(this.__childViews, function(view) {
+            view._detached();
+            view.undelegateEvents();
+          });
         }
         this.undelegateEvents();
         this.__isAttachedToParent = false;
@@ -175,6 +183,12 @@
         this.render();
         this.injectionSite = $el.replaceWith(this.$el);
         this.delegateEvents();
+        if (this.isAttached()) {
+          this._attached();
+          _.each(this.__childViews, function(view) {
+            view._attached();
+          });
+        }
         this.__isAttachedToParent = true;
       }
     },
@@ -259,10 +273,25 @@
      */
     _activate: _.noop,
 
+    /**
+     * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
+     * after the DOM has been attached to the document. The default implementation is a no-op.
+     * @method _attached
+     */
+    _attached: _.noop,
+
+    /**
+     * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
+     * after the view has been removed from the document. The default implementation is a no-op.
+     * @method _detached
+     */
+    _detached: _.noop,
+
         /**
      * Before any DOM rendering is done, this method is called and removes any
      * custom plugins including events that attached to the existing elements.
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
      * @method unplug
      */
     unplug: _.noop,
@@ -271,6 +300,7 @@
      * After all DOM rendering is done, this method is called and attaches any
      * custom plugins to the existing elements.  This method can be overwritten
      * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
      * @method plug
      */
     plug: _.noop,
@@ -394,6 +424,15 @@
      */
     isAttachedToParent: function() {
       return this.__isAttachedToParent;
+    },
+
+    /**
+     * NOTE: depends on a global variable "document"
+     * @returns {Boolean} true if the view is attached to the DOM
+     * @method isAttached
+     */
+    isAttached: function() {
+      return $.contains(document, this.$el[0]);
     },
 
     /**
@@ -739,7 +778,7 @@
       }
     }
 
-    /************** End Feedback **************/
+    /************** End Private methods **************/
   });
 
   return View;
