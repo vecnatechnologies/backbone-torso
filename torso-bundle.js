@@ -1373,6 +1373,7 @@
     __isActive: false,
     __isAttachedToParent: false,
     __isDisposed: false,
+    __attachedCallbackInvoked: false,
     __feedbackEvents: null,
     /**
      * Array of feedback when-then-to's. Example:
@@ -1498,7 +1499,6 @@
      * @method detach
      */
     detach: function() {
-      var wasAttachedToDOM = this.isAttached();
       if (this.isAttachedToParent()) {
         // Detach view from DOM
         if (this.injectionSite) {
@@ -1506,12 +1506,7 @@
         } else {
           this.$el.detach();
         }
-        if (wasAttachedToDOM) {
-          this._detached();
-          _.each(this.__childViews, function(view) {
-            view._detached();
-          });
-        }
+        this.invokeDetached();
         this.undelegateEvents();
         this.__isAttachedToParent = false;
       }
@@ -1527,11 +1522,8 @@
         this.render();
         this.injectionSite = $el.replaceWith(this.$el);
         this.delegateEvents();
-        if (this.isAttached()) {
-          this._attached();
-          _.each(this.__childViews, function(view) {
-            view._attached();
-          });
+        if (!this.__attachedCallbackInvoked && this.isAttached()) {
+          this.invokeAttached();
         }
         this.__isAttachedToParent = true;
       }
@@ -1820,6 +1812,38 @@
         result = feedbackToInvoke.then.call(this, evt, indexMap);
         this.__processFeedbackThenResult(result, feedbackCellField);
       }
+    },
+
+    /**
+     * Call this method when a view is attached to the DOM. It is recursive to child views, but checks whether each child view is attached.
+     * @method invokeAttached
+     */
+    invokeAttached: function() {
+      // Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.
+      if (!this.__attachedCallbackInvoked) {
+        this._attached();
+        this.__attachedCallbackInvoked = true;
+        _.each(this.__childViews, function(view) {
+          if (view.isAttachedToParent()) {
+            view.invokeAttached();
+          }
+        });
+      }
+    },
+
+    /**
+     * Call this method when a view is detached from the DOM. It is recursive to child views.
+     * @method invokeDetached
+     */
+    invokeDetached: function() {
+      // No need to check if child views are actually detached, because if parent is detached, children are detached.
+      if (this.__attachedCallbackInvoked) {
+        this._detached();
+        this.__attachedCallbackInvoked = false;
+      }
+      _.each(this.__childViews, function(view) {
+        view.invokeDetached();
+      });
     },
 
     /************** Private methods **************/
