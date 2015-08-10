@@ -231,10 +231,10 @@
   var Router = Backbone.Router.extend({
 
     /**
-    * overridden the route function to send start and end times to EventTracker
+    * overridden the route function to trigger start and end signals
     */
     route: function(route, name, callback) {
-      
+      var routeName = route;
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
         callback = name;
@@ -242,9 +242,20 @@
       }
       if (!callback) callback = this[name];
       var callbackCopy = function(){
-        console.log('start route, '+ name + ' ' + Date.now());
+        var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        this.trigger('routeTiming', 
+          { uuid: uuid,
+            route: routeName, 
+            type: 'route',
+            state:'start',
+            time: Date.now(),
+          });
         callback.call(this);
-        console.log('end route, ' + name + ' ' + Date.now());
+        this.trigger('routetiming',
+          { uuid: uuid,
+            state:'end',
+            time: Date.now(),
+          });
       };
       Backbone.Router.prototype.route.apply(this,[route,name,callbackCopy]);
     },
@@ -1467,17 +1478,21 @@
   var Model = Backbone.Model.extend({
 
     fetch: function(options){
-      var trackingInfo = EventTracker.track({
-        type : "fetch",
-        state: "start",
+      var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      this.trigger('fetchTiming', {
+        uuid: uuid,
+        type: 'fetch',
+        state: 'start',
+        time: Date.now(),
       });
       var newOptions = $.extend({}, options);
       var success = options.success;
       newOptions.success = function(model, resp, options){
         if (success) success(resp);
-        EventTracker.track({
-          UUID:trackingInfo.UUID,
+        this.trigger('fetchTiming', {
+          uuid: uuid,
           state: 'end',
+          time: Date.now(),
         });
       };
       Backbone.Model.prototype.fetch.apply(this, [newOptions]);
@@ -1628,39 +1643,43 @@
 
     /**
     * called by updateDelegateEvents to wrap callback functions of event calls
-    * with EventTracker signals
+    * with event triggers
     * @param method {function} callback method of event
     * @param eventName {String} description of event type 
-    * @return modified mehtod with before/after signals sent to EventTracker
+    * @return modified mehtod with before/after event triggers
     * @method trackEvents
     */
     trackEvents : function(method, eventName){
       var self = this;
       var methodCopy = method;
       method = _.bind(function(){
-
-        var trackingInfo = EventTracker.track({
-          state: "start",
-          type: "clickEvent",
+        var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        this.trigger('clickEventTiming', {
+          uuid: uuid,
+          type: 'clickEvent',
+          state: 'start',
           eventName: eventName,
+          time: Date.now(),
         });
-        console.log('overridden start');
 
         methodCopy.call(self);
 
-        EventTracker.track({
-          UUID: trackingInfo.uuid,
+        this.trigger('routetiming', {
+          uuid: uuid,
+          state:'end',
           time: Date.now(),
-          state: "end",
         });
       },this);
       return method;
-      },
+      },     
 
     /**
-    * updates Backbone's delegateEvents to bind signals to EventTracker to all callback 
+    * updates Backbone's delegateEvents to bind triggers to all event callback functions 
+    * Binds DOM events with the view using events hash.
+    * Also adds feedback event bindings
     * functions in the View's list of events
     * @method updateDelegateEvents
+    * @override
     */
     delegateEvents: function(events){
       var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -1721,6 +1740,7 @@
 
     /**
      * Hotswap rendering system reroute method.
+     * triggers templateRenderTiming on view to track render times
      * @method templateRender
      * See Torso.templateRenderer#render for params
      */
@@ -1732,41 +1752,24 @@
         pageName = opts.pageName;
       }
 
-      newrelic.setCustomAttribute('pageName', pageName);
-
-      var trackingInfo = EventTracker.track({
-          state: "start",
-          type: "templateRender",
-          pageName: pageName,
-        });
+      var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      this.trigger('templateRenderTiming', {
+        uuid: uuid,
+        type: 'templateRender',
+        state: 'start',
+        pageName: pageName,
+        time: Date.now(),
+      });
     
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
 
-      EventTracker.track({
-        UUID: trackingInfo.uuid,
+      this.trigger('templateRenderTiming', {
+        uuid: uuid,
+        state: 'end',
         time: Date.now(),
-        state: "end",
       });
-
     },
-
-    /**
-     * Binds DOM events with the view using events hash.
-     * Also adds feedback event bindings
-     * @method delegateEvents
-     * @override
-     */
-    // delegateEvents: function() {
-    //   Backbone.View.prototype.delegateEvents.call(this);
-    //   this.__generateFeedbackBindings();
-    //   this.__generateFeedbackModelCallbacks();
-    //   _.each(this.__childViews, function(view) {
-    //     if (view.isAttachedToParent()) {
-    //       view.delegateEvents();
-    //     }
-    //   });
-    // },
 
     /**
      * Unbinds DOM events from the view.

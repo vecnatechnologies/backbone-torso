@@ -19,10 +19,10 @@
   var Router = Backbone.Router.extend({
 
     /**
-    * overridden the route function to send start and end times to EventTracker
+    * overridden the route function to trigger start and end signals
     */
     route: function(route, name, callback) {
-      
+      var routeName = route;
       if (!_.isRegExp(route)) route = this._routeToRegExp(route);
       if (_.isFunction(name)) {
         callback = name;
@@ -30,9 +30,20 @@
       }
       if (!callback) callback = this[name];
       var callbackCopy = function(){
-        console.log('start route, '+ name + ' ' + Date.now());
+        var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+        this.trigger('routeTiming', 
+          { uuid: uuid,
+            route: routeName, 
+            type: 'route',
+            state:'start',
+            time: Date.now(),
+          });
         callback.call(this);
-        console.log('end route, ' + name + ' ' + Date.now());
+        this.trigger('routetiming',
+          { uuid: uuid,
+            state:'end',
+            time: Date.now(),
+          });
       };
       Backbone.Router.prototype.route.apply(this,[route,name,callbackCopy]);
     },

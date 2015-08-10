@@ -14,17 +14,21 @@
   var Model = Backbone.Model.extend({
 
     fetch: function(options){
-      var trackingInfo = EventTracker.track({
-        type : "fetch",
-        state: "start",
+      var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
+      this.trigger('fetchTiming', {
+        uuid: uuid,
+        type: 'fetch',
+        state: 'start',
+        time: Date.now(),
       });
       var newOptions = $.extend({}, options);
       var success = options.success;
       newOptions.success = function(model, resp, options){
         if (success) success(resp);
-        EventTracker.track({
-          UUID:trackingInfo.UUID,
+        this.trigger('fetchTiming', {
+          uuid: uuid,
           state: 'end',
+          time: Date.now(),
         });
       };
       Backbone.Model.prototype.fetch.apply(this, [newOptions]);
