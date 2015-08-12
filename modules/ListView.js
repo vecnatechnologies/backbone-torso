@@ -144,6 +144,7 @@
       this.super();
       this.listViewSetup(args);
       this.render();
+      this.activate();
     },
 
     /**
