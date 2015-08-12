@@ -1,193 +1,5 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './ServiceCell'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./ServiceCell'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.EventTracker = factory(root._, root.Backbone, root.Torso.ServiceCell);
-  }
-}(this, function(_, Backbone, ServiceCell) {
-  'use strict';
-
-  var EventTracker = ServiceCell.extend({ 
-
-    log : {}, 
-    sessions: [],
-    unclosed: {},
-    debug : false,
-    _isClosed: true,
-    _sessionStart: null,
-    _sessionEnd: null,
-    _sessionID: null,
-    _ajaxSession: [],
-
-
-    initialize: function(options){
-      this.options = options;
-      if (options){
-        if ('debug' in options){
-          this.debug = options.debug;
-          this.allSessions = {};
-        }  
-      }
-    },
-
-    /**
-    * saves information about event and wraps start and end signals in 'session' 
-    * @param eventInfo {JSON object} contains tracking information (including state: 'start' or 'end', uuid, sessionID)
-    * @return trackingInfo {JSON object} contains information about event to be passed back in 'end' signal
-    * @method track
-    */
-  	track: function(eventInfo) {
-      var trackingInfo = {};
-      if (eventInfo.state) {
-        if (this._isClosed) {
-          if(!this.debug){
-            this.resetSession();
-          }
-          if (eventInfo.state == "start") {
-            this.openSession(eventInfo);
-            _.extend(trackingInfo, this.startEvent(eventInfo));
-          }
-        } else {
-            if (eventInfo.state == "start") {
-              this.startEvent(eventInfo);
-            }
-            else if (eventInfo.state == "end") {
-                this.endEvent(eventInfo);
-                if (Object.keys(this.unclosed).length === 0) {
-                  this.closeSession();
-                }
-            }
-          }
-      }
-      else{
-        _.extend(trackingInfo, this.startEvent(eventInfo));
-      }
-      return trackingInfo;
-  	},
-
-    /**
-    * generate and returns uuid
-    * @return {String} unique identifier
-    */
-    getUUID : function(){
-      return (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-    },
-
-    /**
-    * tracks information about the 'start' of events
-    * @param eventInfo {JSON object} contains tracking information including UUID and time
-    * @method startEvent
-    */
-    startEvent: function(eventInfo) {
-      var uuid = eventInfo.UUID;      
-      eventInfo.UUID = this.getUUID;
-      eventInfo.sessionID = this._sessionID; //check if event info has sessionID property and throw error
-      eventInfo.startTime = Date.now();
-      this.unclosed[uuid] = eventInfo;
-      return {UUID: uuid};
-    },
-
-    /**
-    * tracks information about the 'end' of events
-    * @param eventInfo {JSON object} contains information about the tracked event, including UUID, time, state
-    * @method endEvent
-    */
-    endEvent: function(eventInfo) {
-      var uuid = eventInfo.UUID;
-      var totalEvent = this.unclosed[uuid];
-      var endTime = Date.now();
-      var duration = endTime - totalEvent.startTime;
-      totalEvent.duration = duration;
-      totalEvent.endTime = endTime;
-      this._sessionEnd = endTime;
-
-      delete totalEvent.state;
-      this.log[uuid] = totalEvent;
-      delete this.unclosed[uuid];
-    },
-
-    /**
-    * tracks information about the beginning of sessions
-    * @param eventInfo {JSON object} contains information about the tracked event
-    * @method openSession
-    */
-    openSession: function(eventInfo) {
-      this._isClosed = false;
-      var sessionID = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      this._sessionID = sessionID;
-      this._sessionStart = Date.now();
-    },
-
-    /**
-    * tracks information about the end of a session. resets all relevant parameters
-    * @method closeSession
-    */
-    closeSession: function() {
-      var sessionEvent = {sessionID: this._sessionID, type: "session"};
-      var sessionDuration = this._sessionEnd - this._sessionStart;
-      sessionEvent.sessionDuration = sessionDuration;
-      this.sessions.push(sessionEvent);
-      for (var key in this.log) {
-        this.log[key].sessionDuration = sessionDuration;
-        this.sessions.push(this.log[key]);
-        delete this.log[key];
-      }
-      this._isClosed = true;
-      // this.resetSession();
-    },
-
-    /**
-    * reset all relevant parameters to prepare for new session
-    * @method resetSession
-    */
-    resetSession: function() {
-      this.log = {};
-      this.unclosed = {};
-      this.sessions = [];
-      this._isClosed = true;
-      this._sessionStart = null;
-      this._sessionEnd = null;
-      this._sessionID = null;
-    }, 
-
-    /**
-    * @return {JSON object} current log
-    */
-    getLog: function() {
-      return this.log;
-    },
-
-    /**
-    * @return {Boolean} true if session is closed
-    */
-    isClosed: function() {
-      return this._isClosed;
-    },
-
-    /**
-    * @return {array} list of sessions
-    */
-    getSessions: function() {
-      return this.sessions;
-    },
-
-    /**
-    * @return {Boolean} information on sessions that are not closed
-    */
-    getUnclosed: function() {
-      return this.unclosed;
-    },
-
-  });
-
-  return new EventTracker({debug:true});
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('backbone'));
@@ -212,14 +24,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './EventTracker'], factory);
+    define(['underscore', 'backbone', './Events'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'),require('backbone'), require('./EventTracker'));
+    module.exports = factory(require('underscore'),require('backbone'), require('./Events'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root._, root.Backbone, root.EventTracker);
+    root.Torso.Router = factory(root._, root.Backbone, root.Events);
   }
-}(this, function(_, Backbone, EventTracker) {
+}(this, function(_, Backbone, Events) {
   'use strict';
   /**
    * Backbone's router.
@@ -229,6 +41,13 @@
    */
 
   var Router = Backbone.Router.extend({
+
+    constructor: function(){
+      Backbone.Router.apply(this, arguments);
+      this.__applyTimingEventListeners(['pre-route', 'post-route']);
+      // this.on('pre-route', function(args) {Events.trigger('pre-route', args);});
+      // this.on('post-route', function(args) {Events.trigger('post-route', args);});
+    }, 
 
     /**
     * overridden the route function to trigger start and end signals
@@ -242,23 +61,41 @@
       }
       if (!callback) callback = this[name];
       var callbackCopy = function(){
-        var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        this.trigger('routeTiming', 
+        var uuid = _.uniqueId();
+        this.trigger('pre-route', 
           { uuid: uuid,
             route: routeName, 
-            type: 'route',
-            state:'start',
             time: Date.now(),
           });
         callback.call(this);
-        this.trigger('routetiming',
+        this.trigger('post-route',
           { uuid: uuid,
-            state:'end',
             time: Date.now(),
           });
       };
       Backbone.Router.prototype.route.apply(this,[route,name,callbackCopy]);
     },
+
+    /************** Private methods **************/
+
+    /**
+    * sends event triggers to Torso.Events
+    * @param array of timing event names
+    * @method applyTimingEventListeners
+    */
+    __applyTimingEventListeners: function(timingEvents) {
+      var sendToEvents = function(evt) { 
+        var currentEvent = timingEvents[evt];
+        this.on(currentEvent, function(info) {
+          Events.trigger(currentEvent, info);
+        });
+      };
+      sendToEvents = _.bind(sendToEvents, this);
+      for (var evt in timingEvents) {
+        sendToEvents(evt);
+      }
+    },
+
   });
 
   return Router;
@@ -1464,39 +1301,67 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', './EventTracker'], factory);
+    define(['underscore', 'backbone', './pollingMixin', './Events'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./EventTracker'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./Events'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.EventTracker);
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Events);
   }
-}(this, function(_, Backbone, pollingMixin, EventTracker) {
+}(this, function(_, Backbone, pollingMixin, Events) {
   'use strict';
 
 
   var Model = Backbone.Model.extend({
 
-    fetch: function(options){
-      var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      this.trigger('fetchTiming', {
+    /**
+     * Overrides constructor to apply timing event triggers to Torso.Events
+     * @method constructor
+     * @override
+     */
+    constructor: function() {
+      Backbone.Model.apply(this,arguments);
+      this.__applyTimingEventListeners(['pre-fetch', 'post-fetch']);
+    },   
+
+    fetch: function(options) {
+      var uuid = _.uniqueId();
+      this.trigger('pre-fetch', {
         uuid: uuid,
-        type: 'fetch',
-        state: 'start',
         time: Date.now(),
       });
       var newOptions = $.extend({}, options);
       var success = options.success;
       newOptions.success = function(model, resp, options){
         if (success) success(resp);
-        this.trigger('fetchTiming', {
+        this.trigger('post-fetch', {
           uuid: uuid,
-          state: 'end',
           time: Date.now(),
         });
       };
       Backbone.Model.prototype.fetch.apply(this, [newOptions]);
-    }
+    },
+
+    /************** Private methods **************/
+
+    /**
+    * sends event triggers to Torso.Events
+    * @param array of timing event names
+    * @method applyTimingEventListeners
+    */
+    __applyTimingEventListeners: function(timingEvents) {
+      var sendToEvents = function(evt) { 
+        var currentEvent = timingEvents[evt];
+        this.on(currentEvent, function(info) {
+          Events.trigger(currentEvent, info);
+        });
+      };
+      sendToEvents = _.bind(sendToEvents, this);
+      for (var evt in timingEvents) {
+        sendToEvents(evt);
+      }
+    },
+
 
   });
   
@@ -1581,14 +1446,14 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell', './EventTracker'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './Events'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./EventTracker'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./Events'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.EventTracker);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.Events);
   }
-}(this, function(_, Backbone, templateRenderer, Cell, EventTracker) {
+}(this, function(_, Backbone, templateRenderer, Cell, Events) {
   'use strict';
 
   /**
@@ -1633,55 +1498,22 @@
       this.feedbackModel = new Cell();
       this.__childViews = {};
       this.__feedbackEvents = [];
+      this.__applyTimingEventListeners(['pre-dom-event-callback', 'post-dom-event-callback', 'pre-render', 'post-render']);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
       }
-      // this.updateDelegateEvents();
-    },
-
-
-    /**
-    * called by updateDelegateEvents to wrap callback functions of event calls
-    * with event triggers
-    * @param method {function} callback method of event
-    * @param eventName {String} description of event type 
-    * @return modified mehtod with before/after event triggers
-    * @method trackEvents
-    */
-    trackEvents : function(method, eventName){
-      var self = this;
-      var methodCopy = method;
-      method = _.bind(function(){
-        var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        this.trigger('clickEventTiming', {
-          uuid: uuid,
-          type: 'clickEvent',
-          state: 'start',
-          eventName: eventName,
-          time: Date.now(),
-        });
-
-        methodCopy.call(self);
-
-        this.trigger('routetiming', {
-          uuid: uuid,
-          state:'end',
-          time: Date.now(),
-        });
-      },this);
-      return method;
-      },     
+    },   
 
     /**
     * updates Backbone's delegateEvents to bind triggers to all event callback functions 
     * Binds DOM events with the view using events hash.
     * Also adds feedback event bindings
     * functions in the View's list of events
-    * @method updateDelegateEvents
+    * @method delegateEvents 
     * @override
     */
-    delegateEvents: function(events){
+    delegateEvents: function(events) {
       var delegateEventSplitter = /^(\S+)\s*(.*)$/;
       if (!(events||(events = _.result(this,'events')))) return this;
       var eventsClone = _.extend({},events);
@@ -1689,8 +1521,8 @@
         var method = eventsClone[key];
         if (!_.isFunction(method)) method = this[eventsClone[key]];
         if (!method) continue;      
-        this.trackEvents = _.bind(this.trackEvents, this);
-        var methodNew = this.trackEvents(method, '');
+        this.__wrapDelegatedEvents = _.bind(this.__wrapDelegatedEvents, this);
+        var methodNew = this.__wrapDelegatedEvents(method, '');
         eventsClone[key] = methodNew;
       }
 
@@ -1752,11 +1584,9 @@
         pageName = opts.pageName;
       }
 
-      var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      this.trigger('templateRenderTiming', {
+      var uuid = _.uniqueId();
+      this.trigger('pre-template-render-timing', {
         uuid: uuid,
-        type: 'templateRender',
-        state: 'start',
         pageName: pageName,
         time: Date.now(),
       });
@@ -1764,9 +1594,8 @@
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
 
-      this.trigger('templateRenderTiming', {
+      this.trigger('post-template-render-timing', {
         uuid: uuid,
-        state: 'end',
         time: Date.now(),
       });
     },
@@ -2091,6 +1920,55 @@
     },
 
     /************** Private methods **************/
+
+
+    /**
+    * sends event triggers to Torso.Events
+    * @param array of timing event names
+    * @method applyTimingEventListeners
+    */
+    __applyTimingEventListeners: function(timingEvents) {
+      var sendToEvents = function(evt) { 
+        var currentEvent = timingEvents[evt];
+        this.on(currentEvent, function(info) {
+          Events.trigger(currentEvent, info);
+        });
+      };
+      sendToEvents = _.bind(sendToEvents, this);
+      for (var evt in timingEvents) {
+        sendToEvents(evt);
+      }
+    },
+
+
+    /**
+    * called by updateDelegateEvents to wrap callback functions of event calls
+    * with event triggers
+    * @param method {function} callback method of event
+    * @param eventName {String} description of event type 
+    * @return modified mehtod with before/after event triggers
+    * @method __wrapDelegatedEvents
+    */
+    __wrapDelegatedEvents: function(method, eventName) {
+      var self = this;
+      var methodCopy = method;
+      method = _.bind(function(){
+        var uuid = _.uniqueId();
+        this.trigger('pre-dom-event-callback', {
+          uuid: uuid,
+          eventName: eventName,
+          time: Date.now(),
+        });
+
+        methodCopy.call(self);
+
+        this.trigger('post-dom-event-callback', {
+          uuid: uuid,    
+          time: Date.now(),
+        });
+      },this);
+      return method;
+      },  
 
     /**
      * Generates callbacks for changes in feedback model fields

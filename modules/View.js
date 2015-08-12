@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell', './EventTracker'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './Events'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./EventTracker'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./Events'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.EventTracker);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.Events);
   }
-}(this, function(_, Backbone, templateRenderer, Cell, EventTracker) {
+}(this, function(_, Backbone, templateRenderer, Cell, Events) {
   'use strict';
 
   /**
@@ -52,55 +52,22 @@
       this.feedbackModel = new Cell();
       this.__childViews = {};
       this.__feedbackEvents = [];
+      this.__applyTimingEventListeners(['pre-dom-event-callback', 'post-dom-event-callback', 'pre-render', 'post-render']);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
       }
-      // this.updateDelegateEvents();
-    },
-
-
-    /**
-    * called by updateDelegateEvents to wrap callback functions of event calls
-    * with event triggers
-    * @param method {function} callback method of event
-    * @param eventName {String} description of event type 
-    * @return modified mehtod with before/after event triggers
-    * @method trackEvents
-    */
-    trackEvents : function(method, eventName){
-      var self = this;
-      var methodCopy = method;
-      method = _.bind(function(){
-        var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-        this.trigger('clickEventTiming', {
-          uuid: uuid,
-          type: 'clickEvent',
-          state: 'start',
-          eventName: eventName,
-          time: Date.now(),
-        });
-
-        methodCopy.call(self);
-
-        this.trigger('routetiming', {
-          uuid: uuid,
-          state:'end',
-          time: Date.now(),
-        });
-      },this);
-      return method;
-      },     
+    },   
 
     /**
     * updates Backbone's delegateEvents to bind triggers to all event callback functions 
     * Binds DOM events with the view using events hash.
     * Also adds feedback event bindings
     * functions in the View's list of events
-    * @method updateDelegateEvents
+    * @method delegateEvents 
     * @override
     */
-    delegateEvents: function(events){
+    delegateEvents: function(events) {
       var delegateEventSplitter = /^(\S+)\s*(.*)$/;
       if (!(events||(events = _.result(this,'events')))) return this;
       var eventsClone = _.extend({},events);
@@ -108,8 +75,8 @@
         var method = eventsClone[key];
         if (!_.isFunction(method)) method = this[eventsClone[key]];
         if (!method) continue;      
-        this.trackEvents = _.bind(this.trackEvents, this);
-        var methodNew = this.trackEvents(method, '');
+        this.__wrapDelegatedEvents = _.bind(this.__wrapDelegatedEvents, this);
+        var methodNew = this.__wrapDelegatedEvents(method, '');
         eventsClone[key] = methodNew;
       }
 
@@ -171,11 +138,9 @@
         pageName = opts.pageName;
       }
 
-      var uuid = (new Date()).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16);
-      this.trigger('templateRenderTiming', {
+      var uuid = _.uniqueId();
+      this.trigger('pre-template-render-timing', {
         uuid: uuid,
-        type: 'templateRender',
-        state: 'start',
         pageName: pageName,
         time: Date.now(),
       });
@@ -183,9 +148,8 @@
       this.detachChildViews();
       templateRenderer.render(el, template, context, opts);
 
-      this.trigger('templateRenderTiming', {
+      this.trigger('post-template-render-timing', {
         uuid: uuid,
-        state: 'end',
         time: Date.now(),
       });
     },
@@ -510,6 +474,55 @@
     },
 
     /************** Private methods **************/
+
+
+    /**
+    * sends event triggers to Torso.Events
+    * @param array of timing event names
+    * @method applyTimingEventListeners
+    */
+    __applyTimingEventListeners: function(timingEvents) {
+      var sendToEvents = function(evt) { 
+        var currentEvent = timingEvents[evt];
+        this.on(currentEvent, function(info) {
+          Events.trigger(currentEvent, info);
+        });
+      };
+      sendToEvents = _.bind(sendToEvents, this);
+      for (var evt in timingEvents) {
+        sendToEvents(evt);
+      }
+    },
+
+
+    /**
+    * called by updateDelegateEvents to wrap callback functions of event calls
+    * with event triggers
+    * @param method {function} callback method of event
+    * @param eventName {String} description of event type 
+    * @return modified mehtod with before/after event triggers
+    * @method __wrapDelegatedEvents
+    */
+    __wrapDelegatedEvents: function(method, eventName) {
+      var self = this;
+      var methodCopy = method;
+      method = _.bind(function(){
+        var uuid = _.uniqueId();
+        this.trigger('pre-dom-event-callback', {
+          uuid: uuid,
+          eventName: eventName,
+          time: Date.now(),
+        });
+
+        methodCopy.call(self);
+
+        this.trigger('post-dom-event-callback', {
+          uuid: uuid,    
+          time: Date.now(),
+        });
+      },this);
+      return method;
+      },  
 
     /**
      * Generates callbacks for changes in feedback model fields
