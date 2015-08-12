@@ -108,7 +108,7 @@
    */
   var ListView = View.extend({
     className: '',
-    _collection: null,
+    collection: null,
     _modelName: '',
     _childView: null,
     _modelToViewMap: null,
@@ -157,10 +157,10 @@
         injectionSite = this.$el;
       args = args || {};
       this._modelName = args.childModel || 'model';
-      this._collection = args.collection;
-      this._childView = args.childView;
-      this._template = args.template;
-      this._childrenContainer = args.childrenContainer;
+      this.collection = args.collection || this.collection;
+      this._childView = args.childView || this.childView;
+      this._template = args.template || this.template;
+      this._childrenContainer = args.childrenContainer || this.childrenContainer;
       if (this._template && !this._childrenContainer) {
         throw 'Children container is required when using a template';
       }
@@ -174,10 +174,10 @@
       this._delayedRender = aggregateRenders(this._renderWait, this);
 
       // if a 'changed' event happens, the model's view should handle re-rendering itself
-      this.listenTo(this._collection, 'remove', removeChildView, this);
-      this.listenTo(this._collection, 'add', addChildView, this);
-      this.listenTo(this._collection, 'sort', this._delayedRender, this);
-      this.listenTo(this._collection, 'reset', this.update, this);
+      this.listenTo(this.collection, 'remove', removeChildView, this);
+      this.listenTo(this.collection, 'add', addChildView, this);
+      this.listenTo(this.collection, 'sort', this._delayedRender, this);
+      this.listenTo(this.collection, 'reset', this.update, this);
     },
 
     /**
@@ -244,7 +244,7 @@
      * @method modelsToRender
      */
     modelsToRender: function() {
-      return this._collection ? this._collection.models : [];
+      return this.collection ? this.collection.models : [];
     },
 
     /**
