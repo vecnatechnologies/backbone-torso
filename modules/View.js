@@ -37,7 +37,7 @@
     super: function() {
       this.generateGUID();
       this._childViews = {};
-      this.viewState = new Cell();
+      this.viewState = this.viewState || new Cell();
     },
 
     /**
