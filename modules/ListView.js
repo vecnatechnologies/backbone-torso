@@ -158,9 +158,9 @@
       args = args || {};
       this._modelName = args.childModel || 'model';
       this.collection = args.collection || this.collection;
-      this._childView = args.childView || this.childView;
-      this._template = args.template || this.template;
-      this._childrenContainer = args.childrenContainer || this.childrenContainer;
+      this._childView = args.childView || this._childView;
+      this._template = args.template || this._template;
+      this._childrenContainer = args.childrenContainer || this._childrenContainer;
       if (this._template && !this._childrenContainer) {
         throw 'Children container is required when using a template';
       }
