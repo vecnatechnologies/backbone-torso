@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="stylesheet" type="text/css" href="app.css">
+  </head>
+<body>
+  <div class="app"></div>
+  <!--
+    If you are using Browserify, like this demo project is, then somewhere in your project
+    you need require('backbone-torso') (see router.js) and all of the torso modules will be loaded.
+   -->
+  <script type="text/javascript" src="app.js"></script>
+
+  <!--
+    If you are using Browserify or Require.js and only want a few modules, just grab the module you want:
+    require('backbone-torso/modules/theModuleIWant')
+  -->
+
+  <!--
+    If you are not using javascript modules and want to bring in all the torso modules,
+    bring in torso-bundle.min.js
+
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="backbone.js"></script>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="torso-bundle.min.js"></script>
+  -->
+
+  <!--
+    If you are not using javascript modules and want to bring in just a few of the torso modules,
+    bring in the module, and all of its dependencies. For any given torso module, you can check what
+    other modules it depends on by looking at the UMD block at the top of the module file.
+
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="backbone.js"></script>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="modules/templateRenderer.js"></script>
+    <script type="text/javascript" src="modules/cellPersistenceRemovalMixin.js"></script>
+    <script type="text/javascript" src="modules/Cell.js"></script>
+    <script type="text/javascript" src="modules/View.js"></script>
+  -->
+</body>
+</html>

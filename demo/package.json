@@ -1,0 +1,25 @@
+{
+  "name": "torso-demo",
+  "version": "0.1.0",
+  "dependencies": {
+    "backbone-torso": "0.2.1",
+    "brec-tables": "0.2.5"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "quick-sip": "0.1.3",
+    "aliasify": "^1.7.2",
+    "hbsfy": "^2.2.1",
+    "handlebars": "3.0.0"
+  },
+  "aliasify": {
+    "aliases": {
+      "torso": "backbone-torso",
+      "jquery": "backbone-torso/node_modules/jquery",
+      "brec-base": "brec-tables/node_modules/brec-base"
+    }
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
