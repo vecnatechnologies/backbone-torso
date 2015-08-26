@@ -3,7 +3,6 @@ target
 .settings
 .project
 node_modules
-dist
 *.swp
 docs/js/
 testSandbox/
