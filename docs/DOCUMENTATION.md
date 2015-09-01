@@ -39,13 +39,13 @@ By doing this we hit our first goal because there is only one instance of any mo
 
 ##Nested Properties
 
-Because models, cells, and services all store state using Backbone's Model property infrastructure, they all fall prey to its limitations. Most notably it's inability to listen to or trigger events on property changes that occur within an array or object. Torso includes the backbone-nested (https://github.com/afeld/backbone-nested) model provided by github user afeld. This nested model fixes this problem but at a performance price. Nested property listening is very convenient when needed, but if you expect to update the properties with high frequency, this can be costly. Torso offers the choice between a nested version and a non-nested version of both model and a cell. Currently, there is not nested service option, but extending NestedCell, will get you what you want (as a service is a simple extension of cell).
+Because models, cells, and services all store state using Backbone's Model property infrastructure, they all fall prey to its limitations. Most notably its inability to listen to or trigger events on property changes that occur within an array or object. Torso includes the backbone-nested (https://github.com/afeld/backbone-nested) model provided by github user afeld. This nested model fixes this problem but at a performance price. Nested property listening is very convenient when needed, but if you expect to update the properties with high frequency, this can be costly. Torso offers the choice between a nested version and a non-nested version of both model and a cell. Currently, there is not nested service option, but extending NestedCell, will get you what you want (as a service is a simple extension of cell).
 
 ##Views
 
 A view is responsible for connecting a piece of DOM to some data in the application. A standalone view that controls a div is pretty straight-forward and many examples of how to use Backbone show this use-case. However, the more complicated an application gets, the more you have to figure out how views connect to one another.
 
-Views are often self-delegating. Often a view will decide to transition to another view or delegate part of it's data-to-DOM relationship to another view. A router can help when the user transitions between two top-level views (read more in the Perspective section), but typically a view has to figure out how to interact with other views.
+Views are often self-delegating. Often a view will decide to transition to another view or delegate part of its data-to-DOM relationship to another view. A router can help when the user transitions between two top-level views (read more in the Perspective section), but typically a view has to figure out how to interact with other views.
 
 A view has the power to create/dispose, activate/deactivate, and attach/detach any other view. These actions are the phase changes in the life cycle of a view. While not disposed, a view can be in three states: 
 
@@ -59,7 +59,7 @@ Initializing a view will do a few things: generate the container DOM element, se
 
 You can put listeners and intervals in the initialize method of your view if you want them to continue to happen even if the view is dormant. NOTE: any setup you do in ```initialize``` or ```_activate``` should be removed in the ```_dispose``` or ```_deactivate``` callbacks. The notable exception is that dispose will automatically remove all listeners in the view.
 
-After being created, the view doesn't have any DOM but it's auto-generated container element. Creating new DOM comes from the render method. It's sole purpose is to make sure that the view's DOM fragment is exactly correct. It's not responsible for putting the view's DOM fragment on the DOM tree – that's what attach is for. Torso provides a templateRender function on the view that attempts to intelligently swap any updates into the current DOM fragment without regenerating it from scratch. It requires a “template” object that can take an object as a context and produces a string representation of the DOM. Typically Handlebars.js is used to achieve this.
+After being created, the view doesn't have any DOM but its auto-generated container element. Creating new DOM comes from the render method. Its sole purpose is to make sure that the view's DOM fragment is exactly correct. It's not responsible for putting the view's DOM fragment on the DOM tree – that's what attach is for. Torso provides a templateRender function on the view that attempts to intelligently swap any updates into the current DOM fragment without regenerating it from scratch. It requires a “template” object that can take an object as a context and produces a string representation of the DOM. Typically Handlebars.js is used to achieve this.
 
 Views should never update DOM directly (e.g. grab elements using jQuery and change the element directly). Views should always change its state and re-render. Updating the DOM directly will cause the DOM to become unsynced on the next render. In a torso application, render can be invoked at any time by any other player in the application (e.g. other views, services, etc.). Thus, you need to make sure that the template can regenerate the DOM at any point in its life.
 
@@ -91,7 +91,8 @@ Noted earlier, views should change their internal state and rerender if they wan
 
 The feedback field on a view is an array of “when-then-to”s or sometimes shortened to when-then's. Unsurprisingly enough, each when-then has three fields: a when, a then, and a to. 
 
-The “When” is map that determines the timing of the feedback. An entry can take 3 forms: 
+The “When” is a map that determines the timing of the feedback. An entry can take 3 forms: 
+
   1) Standard DOM events – very similar to the events field on a Backbone view. The key is the DOM jQuery selector and the value is an array of event types (e.g. 'click', 'hover', etc). 
   
 Example: ```{'.foo': ['click']}```
@@ -108,8 +109,8 @@ The “Then” is a function that will perform some manipulations on the DOM. It
 
 The “To” will tell the view which element should be modified by the “Then”. It can be an array of strings or a single string. Either way, each string should correspond to the value of the “data-feedback” attribute. If you “to” is ```myFeedbackTarget``` then it will modify any element or elements that have ```data-feedback='myFeedbackTarget'```
 
-The reason for the when-then's is to be able to handle on-the-fly DOM manipulations. Because the changes were captures as directives (and stored inside a cell), on future render calls, these changes can be reapplied after rerendering.
-Admittedly, it would be better if there was a React-like mechanism of calling render and it only makes spot changes where necessary. And to be fair, Torso has a templateRenderer module that attempts to do this. While Torso's templateRenderer does a great job of comparing the newly created DOM to existin DOM, it can be costly if you are invoking it on every keyup while the use is typing in a form. Thus, feedback solves that problem and gives a useful API to control real-time interactions with the user.
+The reason for the when-then's is to be able to handle on-the-fly DOM manipulations. Because the changes were captured as directives (and stored inside a cell), on future render calls, these changes can be reapplied after rerendering.
+Admittedly, it would be better if there was a React-like mechanism of calling render and it only makes spot changes where necessary. And to be fair, Torso has a templateRenderer module that attempts to do this. While Torso's templateRenderer does a great job of comparing the newly created DOM to existing DOM, it can be costly if you are invoking it on every keyup while the use is typing in a form. Thus, feedback solves that problem and gives a useful API to control real-time interactions with the user.
 
 Another nice feature of the feedback module in Torso views, is that it can handle array notation and object notation. It uses backbone-nested-like syntax and lets a developer decide with great specificity which element to trigger changes on and when. Object notation are simple to handle: when: ```{'@car.color': ['change']}``` will invoke the “then” function if the model nested property 'color' is updated. For arrays, we have to get a little more tricky. Assigning variable names to any array index in a “when” lets us reference them later in a “then” or “to”.
 Example: 
