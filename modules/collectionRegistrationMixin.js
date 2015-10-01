@@ -232,8 +232,10 @@
         // Create a new request list
         for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
           storedIds = this.getRequesterIds(requesters[requesterIdx]);
-          for (i = 0; i < storedIds.length; i++) {
-            distinctIds[storedIds[i]] = true;
+          if (!_.isUndefined(storedIds)) {
+            for (i = 0; i < storedIds.length; i++) {
+              distinctIds[storedIds[i]] = true;
+            }
           }
         }
 
