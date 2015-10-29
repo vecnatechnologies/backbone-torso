@@ -288,25 +288,9 @@
      * Registers the child view if not already done so, then calls view.attach with the element argument
      * @param $el {jQuery element} the element to attach to.
      * @param view {View} the child view
-     * @param global {Boolean} The view is a global view instead of a child view
-     *                         (global views are not disposed when the parent is disposed)
      * @method attachChildView
      */
-    attachChildView: function($el, view, global) {
-      view.detach();
-      this.registerChildView(view);
-      view.attach($el);
-    },
-
-    /**
-     * Registers the child view if not already done so, then calls view.attach with the element argument
-     * @param $el {jQuery element} the element to attach to.
-     * @param view {View} the child view
-     * @param global {Boolean} The view is a global view instead of a child view
-     *                         (global views are not disposed when the parent is disposed)
-     * @method attachChildView
-     */
-    attachChildView: function($el, view, global) {
+    attachChildView: function($el, view) {
       view.detach();
       this.registerChildView(view);
       view.attach($el);
