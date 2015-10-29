@@ -254,15 +254,16 @@
      * Attaches a child view by finding the element with the attribute inject=<injectionSite>
      * Invokes attachChildView as the bulk of the functionality
      * @method injectView
-     * @param injectionSite  {String}  The name of the injection site in the layout template
-     * @param view           {View}    The instantiated view object to inject
-     * @param [shared=false] {Boolean} The view is a shared view instead of a child view
-     *                                 (shared views are not disposed when the parent is disposed)
+     * @param injectionSite {String} The name of the injection site in the layout template
+     * @param view {View} The instantiated view object to inject
+     * @param [options={}] {Object} Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
      */
-    injectView: function(injectionSite, view, shared) {
+    injectView: function(injectionSite, view, options) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
       if (view && injectionPoint.size() > 0) {
-        this.attachView(injectionPoint, view, shared);
+        this.attachView(injectionPoint, view, options);
       }
     },
 
@@ -270,13 +271,19 @@
      * Registers the child or shared view if not already done so, then calls view.attach with the element argument
      * @param $el {jQuery element} the element to attach to.
      * @param view {View} the child view
-     * @param [shared=false] {Boolean} The view is a shared view instead of a child view
-     *                                 (shared views are not disposed when the parent is disposed)
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
      * @method attachView
      */
-    attachView: function($el, view, shared) {
+    attachView: function($el, view, options) {
+      var defaultOptions = {
+        shared: false
+      };
+      options = _.extend(defaultOptions, options);
+
       view.detach();
-      if (shared) {
+      if (options.shared) {
         this.registerSharedView(view);
       } else {
         this.registerChildView(view);
