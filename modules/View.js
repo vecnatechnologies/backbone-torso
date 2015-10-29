@@ -102,8 +102,8 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
-      this.detachChildViews();
-      this.detachSharedViews();
+      this.detachTrackedViews({ shared: false });
+      this.detachTrackedViews({ shared: true });
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -171,17 +171,83 @@
     /**
      * @return {Boolean} true if this view has child views
      * @method hasChildViews
+     * @deprecated 0.3.x - use this.hasTrackedViews({ shared: false }); instead
      */
     hasChildViews: function() {
-      return !_.isEmpty(this._childViews);
+      return this.hasTrackedViews({ shared: false });
     },
 
     /**
      * @return all of the child views this list view has registered
      * @method getChildViews
+     * @deprecated 0.3.x - use this.getTrackedViews({ shared: false }); instead
      */
     getChildViews: function() {
-      return _.values(this._childViews);
+      return this.getTrackedViews({ shared: false });
+    },
+
+    /**
+     * Deactivates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     * @deprecated 0.3.x - use this.deactivateTrackedViews({ shared: false }); instead
+     */
+    deactivateChildViews: function() {
+      this.deactivateTrackedViews({ shared: false });
+    },
+
+    /**
+     * Activates all child views
+     * Default method may be overriden.
+     * @method deactivateChildViews
+     * @deprecated 0.3.x - use this.activateTrackedViews({ shared: false }); instead
+     */
+    activateChildViews: function() {
+      this.activateTrackedViews({ shared: false });
+    },
+
+    /**
+     * Detach all child views
+     * Default method may be overriden.
+     * @method detachChildViews
+     * @deprecated 0.3.x - use this.detachTrackedViews({ shared: false }); instead
+     */
+    detachChildViews: function() {
+      this.detachTrackedViews({ shared: false });
+    },
+
+    /**
+     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the child view as well.
+     * @param view {View} the child view
+     * @return {View} the child view
+     * @method registerChildView
+     * @deprecated 0.3.x - use this.registerTrackedView(view, { shared: false }); instead
+     */
+    registerChildView: function(view) {
+      return this.registerTrackedView(view, { shared: false });
+    },
+
+    /**
+     * Unbinds the child view - no recursive calls will be made to this child view
+     * @param view {View} the child view
+     * @return {View} the child view
+     * @method unregisterChildView
+     * @deprecated 0.3.x - use this.unregisterTrackedView(view, { shared: false }); instead
+     */
+    unregisterChildView: function(view) {
+      return this.unregisterTrackedView(view, { shared: false });
+    },
+
+    /**
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @method attachChildView
+     * @deprecated 0.3.x - use this.attachView($el, view, { shared: false }); instead
+     */
+    attachChildView: function($el, view) {
+      this.attachView($el, view, { shared: false });
     },
 
     /**
@@ -192,62 +258,6 @@
       _.each(this._childViews, function(view) {
         view.dispose();
       });
-    },
-
-    /**
-     * Deactivates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
-     */
-    deactivateChildViews: function() {
-      _.each(this._childViews, function(view) {
-        view.deactivate();
-      });
-    },
-
-    /**
-     * Activates all child views
-     * Default method may be overriden.
-     * @method deactivateChildViews
-     */
-    activateChildViews: function() {
-      _.each(this._childViews, function(view) {
-        view.activate();
-      });
-    },
-
-    /**
-     * Detach all child views
-     * Default method may be overriden.
-     * @method detachChildViews
-     */
-    detachChildViews: function() {
-      _.each(this._childViews, function(view) {
-        view.detach();
-      });
-    },
-
-    /**
-     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
-     * be done to the child view as well.
-     * @param view {View} the child view
-     * @return {View} the child view
-     * @method registerChildView
-     */
-    registerChildView: function(view) {
-      this._childViews[view.cid] = view;
-      return view;
-    },
-
-    /**
-     * Unbinds the child view - no recursive calls will be made to this child view
-     * @param view {View} the child view
-     * @return {View} the child view
-     * @method unregisterChildView
-     */
-    unregisterChildView: function(view) {
-      delete this._childViews[view.cid];
-      return view;
     },
 
     /**
@@ -277,90 +287,109 @@
      * @method attachView
      */
     attachView: function($el, view, options) {
-      var defaultOptions = {
-        shared: false
-      };
-      options = _.extend(defaultOptions, options);
-
       view.detach();
-      if (options.shared) {
-        this.registerSharedView(view);
-      } else {
-        this.registerChildView(view);
-      }
+      this.registerTrackedView(view, options);
       view.attach($el);
     },
 
     /**
-     * Registers the child view if not already done so, then calls view.attach with the element argument
-     * @param $el {jQuery element} the element to attach to.
-     * @param view {View} the child view
-     * @method attachChildView
+     * Gets the hash from id to views of the correct views given the options.
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
+     * @method __getTrackedViewsHash
      */
-    attachChildView: function($el, view) {
-      view.detach();
-      this.registerChildView(view);
-      view.attach($el);
+    __getTrackedViewsHash: function(options) {
+      options = options || {};
+      if (options.shared) {
+        return this._sharedViews;
+      } else {
+        return this._childViews;
+      }
     },
 
     /**
      * @return {Boolean} true if this view has shared views
-     * @method hasSharedViews
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
+     * @method hasTrackedViews
      */
-    hasSharedViews: function() {
-      return !_.isEmpty(this._sharedViews);
+    hasTrackedViews: function(options) {
+      var trackedViewsHash = this.__getTrackedViewsHash(options);
+      return !_.isEmpty(trackedViewsHash);
     },
 
     /**
      * @return all of the shared views this list view has registered
-     * @method getSharedViews
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
+     * @method getTrackedViews
      */
-    getSharedViews: function() {
-      return _.values(this._sharedViews);
+    getTrackedViews: function(options) {
+      var trackedViewsHash = this.__getTrackedViewsHash(options);
+      return _.values(trackedViewsHash);
     },
 
     /**
-     * Binds the view as a shared view - any recursive calls like activate, deactivate, or dispose will
-     * be done to the shared view as well.  Except dispose.
+     * Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the tracked view as well.  Except dispose for shared views.
      *
      * @param view {View} the shared view
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
      * @return {View} the shared view
-     * @method registerSharedView
+     * @method registerTrackedView
      */
-    registerSharedView: function(view) {
-      this._sharedViews[view.cid] = view;
+    registerTrackedView: function(view, options) {
+      var trackedViewsHash = this.__getTrackedViewsHash(options);
+      trackedViewsHash[view.cid] = view;
       return view;
     },
 
     /**
-     * Unbinds the shared view - no recursive calls will be made to this shared view
+     * Unbinds the tracked view - no recursive calls will be made to this shared view
      * @param view {View} the shared view
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
      * @return {View} the shared view
-     * @method unregisterSharedView
+     * @method unregisterTrackedView
      */
-    unregisterSharedView: function(view) {
-      delete this._sharedViews[view.cid];
+    unregisterTrackedView: function(view, options) {
+      var trackedViewsHash = this.__getTrackedViewsHash(options);
+      delete trackedViewsHash[view.cid];
       return view;
     },
 
     /**
-     * Deactivates all shared views
+     * Deactivates all tracked views
      *
-     * @method deactivateSharedViews
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
+     * @method deactivateTrackedViews
      */
-    deactivateSharedViews: function() {
-      _.each(this._sharedViews, function(view) {
+    deactivateTrackedViews: function(options) {
+      var trackedViewsHash = this.__getTrackedViewsHash(options);
+      _.each(trackedViewsHash, function(view) {
         view.deactivate();
       });
     },
 
     /**
-     * Activates all shared views
+     * Activates all tracked views
      *
-     * @method activateSharedViews
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
+     * @method activateTrackedViews
      */
-    activateSharedViews: function() {
-      _.each(this._sharedViews, function(view) {
+    activateTrackedViews: function(options) {
+      var trackedViewsHash = this.__getTrackedViewsHash(options);
+      _.each(trackedViewsHash, function(view) {
         view.activate();
       });
     },
@@ -368,10 +397,14 @@
     /**
      * Detach all shared views
      *
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
      * @method detachSharedViews
      */
-    detachSharedViews: function() {
-      _.each(this._sharedViews, function(view) {
+    detachTrackedViews: function(options) {
+      var trackedViewsHash = this.__getTrackedViewsHash(options);
+      _.each(trackedViewsHash, function(view) {
         view.detach();
       });
     },
@@ -423,8 +456,8 @@
      * @method deactivate
      */
     deactivate: function() {
-      this.deactivateChildViews();
-      this.deactivateSharedViews();
+      this.deactivateTrackedViews({ shared: false });
+      this.deactivateTrackedViews({ shared: true });
       if (this.isActive()) {
         this.undelegateEvents();
         this.deactivateCallback();
@@ -437,8 +470,8 @@
      * @method activate
      */
     activate: function() {
-      this.activateChildViews();
-      this.activateSharedViews();
+      this.activateTrackedViews({ shared: false });
+      this.activateTrackedViews({ shared: true });
       if (!this.isActive()) {
         this.delegateEvents();
         this.activateCallback();
