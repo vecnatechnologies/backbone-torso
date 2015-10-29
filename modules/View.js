@@ -254,10 +254,10 @@
      * Attaches a child view by finding the element with the attribute inject=<injectionSite>
      * Invokes attachChildView as the bulk of the functionality
      * @method injectView
-     * @param injectionSite {String}  The name of the injection site in the layout template
-     * @param view          {View}    The instantiated view object to inject
-     * @param shared        {Boolean} The view is a shared view instead of a child view
-     *                                (shared views are not disposed when the parent is disposed)
+     * @param injectionSite  {String}  The name of the injection site in the layout template
+     * @param view           {View}    The instantiated view object to inject
+     * @param [shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                 (shared views are not disposed when the parent is disposed)
      */
     injectView: function(injectionSite, view, shared) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
@@ -270,8 +270,8 @@
      * Registers the child or shared view if not already done so, then calls view.attach with the element argument
      * @param $el {jQuery element} the element to attach to.
      * @param view {View} the child view
-     * @param shared {Boolean} The view is a shared view instead of a child view
-     *                         (shared views are not disposed when the parent is disposed)
+     * @param [shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                 (shared views are not disposed when the parent is disposed)
      * @method attachView
      */
     attachView: function($el, view, shared) {
