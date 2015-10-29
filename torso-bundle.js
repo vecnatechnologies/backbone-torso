@@ -3258,7 +3258,7 @@
 
     /**
      * Attaches a child view by finding the element with the attribute inject=<injectionSite>
-     * Invokes attachChildView as the bulk of the functionality
+     * Invokes attachView as the bulk of the functionality
      * @method injectView
      * @param injectionSite {String} The name of the injection site in the layout template
      * @param view {View} The instantiated view object to inject
@@ -3567,10 +3567,10 @@
       var childView = this.getChildView(model);
       if (childView) {
         childView.dispose();
-        this.unregisterChildView(childView);
+        this.unregisterTrackedView(childView, { shared: false });
         delete this._modelToViewMap[model.cid];
         this.trigger('child-view-removed', {model: model, view: childView});
-        if (!this.hasChildViews()) {
+        if (!this.hasTrackedViews({ shared: false })) {
           this._delayedRender();
         }
       }
@@ -3589,7 +3589,7 @@
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
         this._createChildViews();
-        if (!this.hasChildViews()) {
+        if (!this.hasTrackedViews({ shared: false })) {
           this._delayedRender();
         } else {
           breakDelayedRender(this);
@@ -3704,7 +3704,7 @@
         injectionSite = $('<span>');
         newDOM.append(injectionSite);
       }
-      if (this.hasChildViews()) {
+      if (this.hasTrackedViews({ shared: false })) {
         injectionSite.replaceWith(this._buildChildViewsFragment());
       } else if (this._emptyTemplate) {
         injectionSite.replaceWith(this._emptyTemplate(this.prepareEmpty()));
@@ -3812,7 +3812,7 @@
      * @return {Backbone View} the new child view
      */
     _createChildView: function(model) {
-      var childView = this.registerChildView(new this._childView(this._generateChildArgs(model)));
+      var childView = this.registerTrackedView(new this._childView(this._generateChildArgs(model)), { shared: false });
       this._modelToViewMap[model.cid] = childView.cid;
       return childView;
     },

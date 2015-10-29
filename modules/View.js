@@ -262,7 +262,7 @@
 
     /**
      * Attaches a child view by finding the element with the attribute inject=<injectionSite>
-     * Invokes attachChildView as the bulk of the functionality
+     * Invokes attachView as the bulk of the functionality
      * @method injectView
      * @param injectionSite {String} The name of the injection site in the layout template
      * @param view {View} The instantiated view object to inject
