@@ -23,6 +23,7 @@
   var View = Backbone.View.extend({
     _GUID: null,
     _childViews: null,
+    _globalViews: null,
     viewState: null,
     template: null,
     _isActive: false,
@@ -37,6 +38,7 @@
     super: function() {
       this.generateGUID();
       this._childViews = {};
+      this._globalViews = {};
       this.viewState = this.viewState || new Cell();
     },
 
@@ -101,6 +103,7 @@
      */
     templateRender: function(el, template, context, opts) {
       this.detachChildViews();
+      this.detachGlobalViews();
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -128,6 +131,7 @@
      * @method cleanupSelf
      */
     cleanupSelf: function() {
+      // Detach handles cleaning up global views.
       this.detach();
 
       // Clean up child views first
@@ -273,6 +277,95 @@
     },
 
     /**
+     * Attaches a view by finding the element with the attribute inject=<injectionSite>
+     *
+     * @method _injectGlobalView
+     * @param injectionSite {String} The name of the injection site in the layout template
+     * @param view          {View}   The instantiated view object to inject
+     */
+    injectGlobalView: function(injectionSite, view) {
+      var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
+      if (view && injectionPoint.size() > 0) {
+        view.detach();
+        this.registerGlobalView(view);
+        view.attach(injectionPoint);
+      }
+    },
+
+    /**
+     * @return {Boolean} true if this view has global views
+     * @method hasGlobalViews
+     */
+    hasGlobalViews: function() {
+      return !_.isEmpty(this._globalViews);
+    },
+
+    /**
+     * @return all of the global views this list view has registered
+     * @method getGlobalViews
+     */
+    getGlobalViews: function() {
+      return _.values(this._globalViews);
+    },
+
+    /**
+     * Binds the view as a global view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the global view as well.  Except dispose.
+     *
+     * @param view {View} the global view
+     * @return {View} the global view
+     * @method registerGlobalView
+     */
+    registerGlobalView: function(view) {
+      this._globalViews[view.cid] = view;
+      return view;
+    },
+
+    /**
+     * Unbinds the global view - no recursive calls will be made to this global view
+     * @param view {View} the global view
+     * @return {View} the global view
+     * @method unregisterGlobalView
+     */
+    unregisterGlobalView: function(view) {
+      delete this._globalViews[view.cid];
+      return view;
+    },
+
+    /**
+     * Deactivates all global views
+     *
+     * @method deactivateGlobalViews
+     */
+    deactivateGlobalViews: function() {
+      _.each(this._globalViews, function(view) {
+        view.deactivate();
+      });
+    },
+
+    /**
+     * Activates all global views
+     *
+     * @method activateGlobalViews
+     */
+    activateGlobalViews: function() {
+      _.each(this._globalViews, function(view) {
+        view.activate();
+      });
+    },
+
+    /**
+     * Detach all global views
+     *
+     * @method detachGlobalViews
+     */
+    detachGlobalViews: function() {
+      _.each(this._globalViews, function(view) {
+        view.detach();
+      });
+    },
+
+    /**
      * If attached, will detach the view from the DOM and calls deactivate
      * @method detach
      */
@@ -320,6 +413,7 @@
      */
     deactivate: function() {
       this.deactivateChildViews();
+      this.deactivateGlobalViews();
       if (this.isActive()) {
         this.undelegateEvents();
         this.deactivateCallback();
@@ -333,6 +427,7 @@
      */
     activate: function() {
       this.activateChildViews();
+      this.activateGlobalViews();
       if (!this.isActive()) {
         this.delegateEvents();
         this.activateCallback();
