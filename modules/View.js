@@ -254,13 +254,15 @@
      * Attaches a child view by finding the element with the attribute inject=<injectionSite>
      * Invokes attachChildView as the bulk of the functionality
      * @method injectView
-     * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to inject
+     * @param injectionSite {String}  The name of the injection site in the layout template
+     * @param view          {View}    The instantiated view object to inject
+     * @param global        {Boolean} The view is a global view instead of a child view
+     *                                (global views are not disposed when the parent is disposed)
      */
-    injectView: function(injectionSite, view) {
+    injectView: function(injectionSite, view, global) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
       if (view && injectionPoint.size() > 0) {
-        this.attachChildView(injectionPoint, view);
+        this.attachView(injectionPoint, view, global);
       }
     },
 
@@ -268,28 +270,46 @@
      * Registers the child view if not already done so, then calls view.attach with the element argument
      * @param $el {jQuery element} the element to attach to.
      * @param view {View} the child view
+     * @param global {Boolean} The view is a global view instead of a child view
+     *                         (global views are not disposed when the parent is disposed)
+     * @method attachView
+     */
+    attachView: function($el, view, global) {
+      view.detach();
+      if (global) {
+        this.registerGlobalView(view);
+      } else {
+        this.registerChildView(view);
+      }
+      view.attach($el);
+    },
+
+    /**
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @param global {Boolean} The view is a global view instead of a child view
+     *                         (global views are not disposed when the parent is disposed)
      * @method attachChildView
      */
-    attachChildView: function($el, view) {
+    attachChildView: function($el, view, global) {
       view.detach();
       this.registerChildView(view);
       view.attach($el);
     },
 
     /**
-     * Attaches a view by finding the element with the attribute inject=<injectionSite>
-     *
-     * @method _injectGlobalView
-     * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to inject
+     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * @param $el {jQuery element} the element to attach to.
+     * @param view {View} the child view
+     * @param global {Boolean} The view is a global view instead of a child view
+     *                         (global views are not disposed when the parent is disposed)
+     * @method attachChildView
      */
-    injectGlobalView: function(injectionSite, view) {
-      var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
-      if (view && injectionPoint.size() > 0) {
-        view.detach();
-        this.registerGlobalView(view);
-        view.attach(injectionPoint);
-      }
+    attachChildView: function($el, view, global) {
+      view.detach();
+      this.registerChildView(view);
+      view.attach($el);
     },
 
     /**
