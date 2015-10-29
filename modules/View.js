@@ -23,7 +23,7 @@
   var View = Backbone.View.extend({
     _GUID: null,
     _childViews: null,
-    _globalViews: null,
+    _sharedViews: null,
     viewState: null,
     template: null,
     _isActive: false,
@@ -38,7 +38,7 @@
     super: function() {
       this.generateGUID();
       this._childViews = {};
-      this._globalViews = {};
+      this._sharedViews = {};
       this.viewState = this.viewState || new Cell();
     },
 
@@ -103,7 +103,7 @@
      */
     templateRender: function(el, template, context, opts) {
       this.detachChildViews();
-      this.detachGlobalViews();
+      this.detachSharedViews();
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -131,7 +131,7 @@
      * @method cleanupSelf
      */
     cleanupSelf: function() {
-      // Detach handles cleaning up global views.
+      // Detach handles cleaning up shared views.
       this.detach();
 
       // Clean up child views first
@@ -256,28 +256,28 @@
      * @method injectView
      * @param injectionSite {String}  The name of the injection site in the layout template
      * @param view          {View}    The instantiated view object to inject
-     * @param global        {Boolean} The view is a global view instead of a child view
-     *                                (global views are not disposed when the parent is disposed)
+     * @param shared        {Boolean} The view is a shared view instead of a child view
+     *                                (shared views are not disposed when the parent is disposed)
      */
-    injectView: function(injectionSite, view, global) {
+    injectView: function(injectionSite, view, shared) {
       var injectionPoint = this.$el.find('[inject=' + injectionSite + ']');
       if (view && injectionPoint.size() > 0) {
-        this.attachView(injectionPoint, view, global);
+        this.attachView(injectionPoint, view, shared);
       }
     },
 
     /**
-     * Registers the child view if not already done so, then calls view.attach with the element argument
+     * Registers the child or shared view if not already done so, then calls view.attach with the element argument
      * @param $el {jQuery element} the element to attach to.
      * @param view {View} the child view
-     * @param global {Boolean} The view is a global view instead of a child view
-     *                         (global views are not disposed when the parent is disposed)
+     * @param shared {Boolean} The view is a shared view instead of a child view
+     *                         (shared views are not disposed when the parent is disposed)
      * @method attachView
      */
-    attachView: function($el, view, global) {
+    attachView: function($el, view, shared) {
       view.detach();
-      if (global) {
-        this.registerGlobalView(view);
+      if (shared) {
+        this.registerSharedView(view);
       } else {
         this.registerChildView(view);
       }
@@ -297,74 +297,74 @@
     },
 
     /**
-     * @return {Boolean} true if this view has global views
-     * @method hasGlobalViews
+     * @return {Boolean} true if this view has shared views
+     * @method hasSharedViews
      */
-    hasGlobalViews: function() {
-      return !_.isEmpty(this._globalViews);
+    hasSharedViews: function() {
+      return !_.isEmpty(this._sharedViews);
     },
 
     /**
-     * @return all of the global views this list view has registered
-     * @method getGlobalViews
+     * @return all of the shared views this list view has registered
+     * @method getSharedViews
      */
-    getGlobalViews: function() {
-      return _.values(this._globalViews);
+    getSharedViews: function() {
+      return _.values(this._sharedViews);
     },
 
     /**
-     * Binds the view as a global view - any recursive calls like activate, deactivate, or dispose will
-     * be done to the global view as well.  Except dispose.
+     * Binds the view as a shared view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the shared view as well.  Except dispose.
      *
-     * @param view {View} the global view
-     * @return {View} the global view
-     * @method registerGlobalView
+     * @param view {View} the shared view
+     * @return {View} the shared view
+     * @method registerSharedView
      */
-    registerGlobalView: function(view) {
-      this._globalViews[view.cid] = view;
+    registerSharedView: function(view) {
+      this._sharedViews[view.cid] = view;
       return view;
     },
 
     /**
-     * Unbinds the global view - no recursive calls will be made to this global view
-     * @param view {View} the global view
-     * @return {View} the global view
-     * @method unregisterGlobalView
+     * Unbinds the shared view - no recursive calls will be made to this shared view
+     * @param view {View} the shared view
+     * @return {View} the shared view
+     * @method unregisterSharedView
      */
-    unregisterGlobalView: function(view) {
-      delete this._globalViews[view.cid];
+    unregisterSharedView: function(view) {
+      delete this._sharedViews[view.cid];
       return view;
     },
 
     /**
-     * Deactivates all global views
+     * Deactivates all shared views
      *
-     * @method deactivateGlobalViews
+     * @method deactivateSharedViews
      */
-    deactivateGlobalViews: function() {
-      _.each(this._globalViews, function(view) {
+    deactivateSharedViews: function() {
+      _.each(this._sharedViews, function(view) {
         view.deactivate();
       });
     },
 
     /**
-     * Activates all global views
+     * Activates all shared views
      *
-     * @method activateGlobalViews
+     * @method activateSharedViews
      */
-    activateGlobalViews: function() {
-      _.each(this._globalViews, function(view) {
+    activateSharedViews: function() {
+      _.each(this._sharedViews, function(view) {
         view.activate();
       });
     },
 
     /**
-     * Detach all global views
+     * Detach all shared views
      *
-     * @method detachGlobalViews
+     * @method detachSharedViews
      */
-    detachGlobalViews: function() {
-      _.each(this._globalViews, function(view) {
+    detachSharedViews: function() {
+      _.each(this._sharedViews, function(view) {
         view.detach();
       });
     },
@@ -417,7 +417,7 @@
      */
     deactivate: function() {
       this.deactivateChildViews();
-      this.deactivateGlobalViews();
+      this.deactivateSharedViews();
       if (this.isActive()) {
         this.undelegateEvents();
         this.deactivateCallback();
@@ -431,7 +431,7 @@
      */
     activate: function() {
       this.activateChildViews();
-      this.activateGlobalViews();
+      this.activateSharedViews();
       if (!this.isActive()) {
         this.delegateEvents();
         this.activateCallback();
