@@ -59,10 +59,10 @@
       var childView = this.getChildViewFromModel(model);
       if (childView) {
         childView.dispose();
-        this.unregisterChildView(childView);
+        this.unregisterTrackedView(childView, { shared: false });
         delete this.__modelToViewMap[model.cid];
         this.trigger('child-view-removed', {model: model, view: childView});
-        if (!this.hasChildViews()) {
+        if (!this.hasTrackedViews({ shared: false })) {
           this.__delayedRender();
         }
       }
@@ -81,7 +81,7 @@
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
         this.__createChildViews();
-        if (!this.hasChildViews()) {
+        if (!this.hasTrackedViews({ shared: false })) {
           this.__delayedRender();
         } else {
           breakDelayedRender(this);
@@ -211,7 +211,7 @@
         injectionSite = $('<span>');
         newDOM.append(injectionSite);
       }
-      if (this.hasChildViews()) {
+      if (this.hasTrackedViews({ shared: false })) {
         injectionSite.replaceWith(this.__buildChildViewsFragment());
       } else if (this.emptyTemplate) {
         injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
@@ -322,7 +322,7 @@
      */
     __createChildView: function(model) {
       var childView = new this.childView(this.__generateChildArgs(model));
-      this.registerChildView(childView);
+      this.registerTrackedView(childView, { shared: false });
       this.__modelToViewMap[model.cid] = childView.cid;
       return childView;
     },
