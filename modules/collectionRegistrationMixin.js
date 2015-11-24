@@ -291,7 +291,7 @@
           }
           return $.ajax({
               type: collection.fetchHttpAction,
-              url: collection.url + collection.getByIdsUrl,
+              url: _.result(collection, 'url') + collection.getByIdsUrl,
               contentType: 'application/json; charset=utf-8',
               data: JSON.stringify(idsToFetch)
             }).done(
