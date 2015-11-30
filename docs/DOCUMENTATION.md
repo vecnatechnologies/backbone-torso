@@ -1,23 +1,18 @@
 # Table Of Contents
  - [Application Flow](#application-flow)
-    - [Backend Server](#backend-server)
-    - [Data Layer](#data-layer)
-    - [Service Layer](#service-layer)
     - [Router](#router)
     - [Perspectives](#perspectives)
-    - [Widgets](#widgets)
     - [Views](#views)
+    - [Widgets](#widgets)
 
 - [Data Layer](#data-layer)
     - [Cells](#cells)
     - [Models](#models)
-        - [Regular](#regular)
         - [Nested](#nested)
         - [Form](#form)
             - [Feedback](#feedback)
             - [Validation](#validation)
     - [Collections](#collections)
-        - [Regular](#regular-1)
         - [Polling](#polling)
         - [Requesters](#requesters)
         - [Caches](#caches)
@@ -52,9 +47,6 @@ There are certainly times where a view (or model, service, etc.) might want to b
 
 It's recommended to name events as verbs of what just happened (e.g. submit-button-clicked) and let other components decide how to react. It's also recommended to add the triggering view (or model, service) as part of the event payload. This information can be used to determine the origin of the event, which now became hidden by going through an application-level event bus. In some cases, it makes sense to prefix the triggered name with the origin of the event in order to give granularity to who might want to receive the event.
 
-## Backend Server
-## Data Layer
-## Service Layer
 ## Router
 Torso uses the basic Backbone router. Nothing new or fancy was added. However, we do have a recommended router recipe you can follow which can be found https://github.com/vecnatechnologies/generator-torso-brec. It just adds a method that helps switch between perspectives:
 
@@ -78,7 +70,6 @@ Using this method is as simple as: ```this.switchPerspective(myNewPerspective);`
 ## Perspectives
 Single page applications are markedly different from the conventional html-based request-response dialogue of early days web sites. Now that the frontend application is producing the DOM, there isn't the natural distinction from one page to another. The frontend app could follow the same behavior by generating “web page”-like views and simulate a normal website user flow. These “web page” views are given the name “perspective” in Torso. This helps developers create a distinction between an actual web page created by the server and a Torso-generated web page. Typically the Torso router is responsible for moving between perspective views. Perspectives are often parents to many child views that help form the page.
 
-## Widgets
 ## Views
 A view is responsible for connecting a piece of DOM to some data in the application. A standalone view that controls a div is pretty straight-forward and many examples of how to use Backbone show this use-case. However, the more complicated an application gets, the more you have to figure out how views connect to one another.
 
@@ -108,6 +99,8 @@ If you override the render method make sure to use the templateRender and call u
 
 It's important to know that a child view does not have a reference to the parent view and therefore can be moved very easily between parents. This is useful for views that function like widgets and need to be portable between perspectives.
 
+## Widgets
+
 
 # Data Layer
 ## Cells
@@ -136,7 +129,6 @@ While this is the recommended practice, Torso does not have tests for model's cr
 
 By doing this we hit our first goal because there is only one instance of any model, the one sitting in the cache. We get our second goal because any save/fetch happens on the single instance of the model and any fetches/saves can be controlled by the cache itself. Saving each model separately allows you to make small quick changes and satisfying our third goal. Lastly, creating transactions will require a bit of work as each model can save by itself. Look at Form Models for more on this.
 
-### Regular
 ### Nested
 Because models, cells, and services all store state using Backbone's Model property infrastructure, they all fall prey to its limitations. Most notably its inability to listen to or trigger events on property changes that occur within an array or object. Torso includes the backbone-nested (https://github.com/afeld/backbone-nested) model provided by github user afeld. This nested model fixes this problem but at a performance price. Nested property listening is very convenient when needed, but if you expect to update the properties with high frequency, this can be costly. Torso offers the choice between a nested version and a non-nested version of both model and a cell. Currently, there is not nested service option, but extending NestedCell, will get you what you want (as a service is a simple extension of cell).
 
@@ -273,7 +265,6 @@ A cache can continually poll for new updates using the method ```startPolling(po
 
 A cache will trigger the event ```'load-begin'``` if a fetch is invoked. It will trigger a follow-up ```'load-complete'``` when the complete is finished regardless if it was successful or not. Immediately after a cache triggers a ```'load-begin'```, any requester collections created from that cache will trigger ```'cache-load-begin'```. When the cache  emits a ```'load-complete'```, the requester collections will follow-up with a ```'cache-load-begin'```. Depending on the order of the listeners and when the requester collection was made, you could experience different ordering of the events. Typically, the order is: load-begin -> cache-load-begin -> FETCHING -> cache-load-complete -> load-complete.
 
-### Regular
 ### Polling
 ### Requesters
 ### Caches
@@ -293,7 +284,7 @@ Services are usually invoked by views or by events given off by models or views.
 # View Layer
 ## MVCVM explanation
 ## Life Cycle
-## Prepare vs. Render
+## Prepare vs Render
 ## Templates & Hotswapper
 ## Events
 
