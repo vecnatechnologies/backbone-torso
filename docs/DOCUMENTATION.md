@@ -1,5 +1,3 @@
-# Torso Documentation
-
 # Table Of Contents
  - [Application Flow](#application-flow)
     - [Backend Server](#backend-server)
@@ -19,10 +17,10 @@
             - [Feedback](#feedback)
             - [Validation](#validation)
     - [Collections](#collections)
-        - [Regular](#collection-regular)
-        - [Polling](#colleciton-polling)
-        - [Requesters](#collection-requesters)
-        - [Caches](#collection-caches)
+        - [Regular](#regular-1)
+        - [Polling](#polling)
+        - [Requesters](#requesters)
+        - [Caches](#caches)
 
 - [Service Layer](#service-layer)
     - [Service Cell](#service-cell)
@@ -32,8 +30,8 @@
 - [View Layer](#view-layer)
     - [MVCVM explanation](#mvcvm-explanation)
     - [Life Cycle](#life-cycle)
-    - [Prepare vs. Render](#prepare-vs.-render)
-    - [Templates & Hotswapper](#templates)
+    - [Prepare vs. Render](#prepare-vs-render)
+    - [Templates & Hotswapper](#templates--hotswapper)
     - [Events](#events)
 
 - [Testing](#testing)
