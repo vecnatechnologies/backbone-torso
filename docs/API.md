@@ -2,14 +2,18 @@
 
 ## View
 #### Building block of the UI
-Methods:
+
 - All of [Backbone's View API](http://backbonejs.org/#View)
 - **viewState**
-    #### Overridden methods from Backbone.View
+
+Overridden methods from Backbone.View
+
 - constructor / initialize
 - delegateEvents
 - undelegateEvents
-    ### DOM generation / rendering
+
+DOM generation / rendering
+
 - template
 - **prepare**
 - **render**
@@ -17,10 +21,14 @@ Methods:
 - **injectView**
 - plug
 - unplug
-    ### Feedback
+
+Feedback
+
 - **feedback**
 - invokeFeedback
-    ### Life cycle methods
+
+Life cycle methods
+
 - detach
 - attach
 - deactivate
@@ -30,12 +38,16 @@ Methods:
 - **\_deactivate**
 - **\_attached**
 - **\_detached**
-    ### Life cycle state methods
+
+Life cycle state methods
+
 - isAttached
 - isAttachedToParent
 - isActive
 - isDisposed
-    ### Child view methods
+
+Child view methods
+
 - attachChildView
 - hasChildViews
 - getChildViews
@@ -48,7 +60,7 @@ Methods:
 
 ## List View
 #### Auto-manages many views based on a collection of models/cells
-Methods:
+
 - All of Torso.View API
 - **collection**
 - **childView**
@@ -60,18 +72,22 @@ Methods:
 - **modelsToRender**
 - update
 - getChildViewFromModel
-    ### Overridden methods from View
+
+Overridden methods from View
+
 - initialize
 - render
 - prepare
-    ### Configuration set by initialize parameters only
+
+Configuration set by initialize parameters only
+
 - childModel
 - modelId
 - renderWait
 
 ## Form View
 #### View that uses a Form Model to do 2-way binding
-Methods:
+
 - All of Torso.View API
 - fields
 - \_bindings
@@ -81,7 +97,9 @@ Methods:
 - invalid
 - \_success
 - \_errors
-    ### Overridden methods from View
+
+Overridden methods from View
+
 - prepare
 - initialize
 - delegateEvents
@@ -89,14 +107,18 @@ Methods:
 
 ## Model
 #### Server-backed, event-producing object
-Methods:
+
 - All of [Backbone's Model API](http://backbonejs.org/#Model)
-    ### Added polling api
+
+Added polling api
+
 - isPolling
 - startPolling
 - stopPolling
 - polledFetch
-    ### Loading api
+
+Loading api
+
 - hasLoadedOnce
 - isLoading
 - getLoadedOncePromise
@@ -110,7 +132,7 @@ Torso.Model = Torso.Model.extend(Torso.Mixins.collectionLoading(Torso.Model));
 
 ## Form Model
 #### Mediates between a model and an HTML form
-Methods:
+
 - All of Torso.Model API
 - initialize
 - **push**
@@ -119,15 +141,21 @@ Methods:
 - **validation**
 - labels
 - mapping
-    ### Add model bindings
+
+Add model bindings
+
 - addModel
 - addComputed
-    ### State inspecting methods
+
+State inspecting methods
+
 - isTrackingObjectModel
 - isUpdating
 - isModelStale
 - checkIfModelsAreStale
-    ### Auto-updating methods
+
+Auto-updating methods
+
 - startUpdating
 - stopUpdating
 - listenToModelField
@@ -139,7 +167,9 @@ Methods:
 A cell has the exact same API as a Model except the functions concerning server-connection are now no-op's.
 
 - All of Torso.Model API
-    ### No-op functions
+
+No-op functions
+
 - save
 - fetch
 - sync
@@ -154,18 +184,24 @@ No added methods.
 
 ## (Cache) Collection
 - All of [Backbone's Collection API](http://backbonejs.org/#Collection)
-    ### Added cache api
+
+Added cache api
+
 - **createPrivateCollection**
 - registerIds
 - fetch
 - fetchByIds
-    ### Cache helper methods
+
+Cache helper methods
+
 - setRequesterIds
 - getRequesterIdsAsDictionary
 - removeRequester
 - getRequesters
 - getAllRequestedIds
-    ### Added polling api
+
+Added polling api
+
 - isPolling
 - startPolling
 - stopPolling
@@ -180,7 +216,9 @@ No added methods.
 - trackNewId
 - fetchByIds
 - requesterDispose
-    ### Added polling api
+
+Added polling api
+
 - isPolling
 - startPolling
 - stopPolling
