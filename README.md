@@ -29,7 +29,7 @@ Torso has a [yeoman](http://www.yeoman.io) [torso generator](https://github.com/
 > yo torso `<name of project>`
 
 ### What's in it?  
-The yeoman generator will have created a simple application. You can open the browser at localhost:3000 if gulp watch is on or open file:///<path to project>/dist/index.html to see the "hello world". Before you start building more views, you'll need to familiarize yourself with torso's [philosophy](http://vecnatechnologies.github.io/backbone-torso/#philosophy) and [recipies](http://vecnatechnologies.github.io/backbone-torso/#recipes).
+The yeoman generator will have created a simple application. You can open the browser at `localhost:3000` if gulp watch is on or open `file:///<path to project>/dist/index.html` to see the "hello world". Before you start building more views, you'll need to familiarize yourself with torso's [philosophy](http://vecnatechnologies.github.io/backbone-torso/#philosophy) and [recipies](http://vecnatechnologies.github.io/backbone-torso/#recipes).
 
 First, the [handbook](http://vecnatechnologies.github.io/backbone-torso) (handbook is IN PROGRESS) will equip you with a set of rules on how to create small components with clear interfaces that still work well when things get complicated. After that, Torso has many choose-what-you-want [modules](http://vecnatechnologies.github.io/backbone-torso/#modules). These additions to Backbone's base building blocks include form handling, data validation tools, polling caches, sub-view management, and more. Torso simplifies the design process and eases the nightmare of building complicated web apps.
 
