@@ -26,7 +26,7 @@ Torso has a [yeoman](http://www.yeoman.io) [torso generator](https://github.com/
 
 #### Create a new project
 > cd path/to/project  
-> yo torso <name of project>
+> yo torso `<name of project>`
 
 ### What's in it?  
 The yeoman generator will have created a simple application. You can open the browser at localhost:3000 if gulp watch is on or open file:///<path to project>/dist/index.html to see the "hello world". Before you start building more views, you'll need to familiarize yourself with torso's [philosophy](http://vecnatechnologies.github.io/backbone-torso/#philosophy) and [recipies](http://vecnatechnologies.github.io/backbone-torso/#recipes).
