@@ -25,7 +25,7 @@ Torso has a [yeoman](http://www.yeoman.io) [torso generator](https://github.com/
 > npm install -g generator-torso
 
 #### Create a new project
-> cd path/to/project
+> cd path/to/project  
 > yo torso <name of project>
 
 ### What's in it?  
