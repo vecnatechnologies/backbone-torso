@@ -178,6 +178,8 @@ Backbone offers an easy jumping off point, but there are many unanswered questio
 So many questions, each one can break functionality if they are inconsistent within your app. With Torso, we lay down the laws that answer questions just like these and keep your application consistent.
 A Torso view's render methods never take arguments, can be called at any time, and never change the state of the application. We'll explain how to make this possible and other rules in the [recipes](http://vecnatechnologies.github.io/backbone-torso/#recipes) section of the torso site.
 
+We are still working on moving the rules-of-thumb dictated by Torso to github, so we appologize if it's not clear what they are. We'll be working to make them available and clear. In the meantime, please ask any questions you might have by entering an issue.
+
 ### Want to help out?
 Check out the [dev page](/docs/DEVELOPMENT.md).
 
