@@ -29,9 +29,131 @@ Torso has a [yeoman](http://www.yeoman.io) [torso generator](https://github.com/
 > yo torso `<name of project>`
 
 ### What's in it?  
-The yeoman generator will have created a simple application. You can open the browser at `localhost:3000` if gulp watch is on or open `file:///<path to project>/dist/index.html` to see the "hello world". Before you start building more views, you'll need to familiarize yourself with torso's [philosophy](http://vecnatechnologies.github.io/backbone-torso/#philosophy) and [recipies](http://vecnatechnologies.github.io/backbone-torso/#recipes).
+The yeoman generator will have created a simple application. You can open the browser at `localhost:3000` if gulp watch is on or open `file:///<path to project>/dist/index.html` to see the "hello world".
 
-First, the [handbook](http://vecnatechnologies.github.io/backbone-torso) (handbook is IN PROGRESS) will equip you with a set of rules on how to create small components with clear interfaces that still work well when things get complicated. After that, Torso has many choose-what-you-want [modules](http://vecnatechnologies.github.io/backbone-torso/#modules). These additions to Backbone's base building blocks include form handling, data validation tools, polling caches, sub-view management, and more. Torso simplifies the design process and eases the nightmare of building complicated web apps.
+Torso has many choose-what-you-want [modules](http://vecnatechnologies.github.io/backbone-torso/#modules). These additions to Backbone's base building blocks include form handling, data validation tools, polling caches, sub-view management, and more. Torso simplifies the design process and eases the nightmare of building complicated web apps.
+
+### What does it look like?
+
+**2-way bindings for forms**:
+
+form-template.hbs
+```
+// The HTML form for a name field. Just add a data-model attribute to an input or select tag
+<form>
+  <label for="name">Name</label>
+  <input name="name" type="text" data-model="name"></input>
+  <button id="submit">Submit</button>
+</form>
+```
+
+MyFormView.js
+```
+Torso.FormView.extend({
+  template: require('./form-template.hbs'),
+
+  events: {
+    'click #submit': 'submit'
+  },
+
+  initialize: function(personModel) {
+    Torso.FormView.prototype.initialize.call(this);
+    this.personModel = personModel;
+    // The form view's model can act as the mediator between the html form and another model.
+    this.model.addModel({model: this.personModel, fields: ['name']});
+  },
+
+  submit: function() {
+    console.log(this.personModel.toJSON()); // {}
+    this.model.push();
+    console.log(this.personModel.toJSON()); // {name: 'text from your input'}
+  }
+})
+```
+
+**Feedback**
+
+feedback-template.hbs
+```
+<input type="text" class="my-input"></input>
+<div data-feedback="input-feedback"></div>
+// Just add a data-feedback attribute to re-render that element at times you choose
+```
+
+MyView.js
+```
+Torso.View.extend({
+  template: require('./feedback-template.hbs'),
+  feedback: [{
+    when: {
+      '.my-input': ['keyup']
+    },
+    then: function(event) {
+      return {
+        text: 'You wrote: ' + this.$el.find('.my-input').val()
+      };
+    },
+    to: 'input-feedback'
+  }]
+})
+```
+
+**Rendering**
+
+my-template.hbs
+```
+<div class="{{view.color}}">
+  {{index}}: {{model.name}}
+</div>
+```
+
+MyView.js
+```
+Torso.View.extend({
+  template: require('./my-template.hbs'),
+
+  initialize: function() {
+    this.model = new Torso.Model({name: 'Bob'});
+    this.viewState.set('color', 'blue');
+    // because viewState is a cell you can also do:
+    // this.listenTo(this.viewState, 'change:color', this.render);
+  },
+
+  prepare: function() {
+    var context = Torso.View.prototype.prepare.call(this);
+    console.log(context); // {model: {name: 'Bob'}, view: {color: 'blue'}}
+    context.index = 1;
+    return context;
+  }
+
+  // if you only need model and viewState, no need to override prepare
+})
+```
+
+
+**Child View**
+
+parent-view-template.hbs
+```
+<div>I'm a parent</div>
+<div inject="my-child-view"></div>
+```
+
+ParentView.js
+```
+Torso.View.extend({
+  template: require('./parent-view-template.hbs'),
+
+  initialize: function() {
+    this.childView = new ChildView();
+  },
+
+  render: function() {
+    Torso.View.prototype.render.call(this);
+    this.injectView('my-child-view', this.childView);
+  }
+})
+```
 
 ### Philosophy
 You might have heard "convention over configuration" as a way to hide framework implementation and reduce code. Typically, if you have desires to do something that lies just over the edge of convention approaching the unconventional, those frameworks are a headache to get working. Torso is a how-to for "configuration using convention". The goal of Torso is to define some abstractions, rules of thumb, and conventions that sit on top of an unopinionated framework like Backbone, that allows us to move quickly through the easy bits and flexibility to handle the edge cases. Think of Torso as more of a practiced martial art than a weapon to wield.
