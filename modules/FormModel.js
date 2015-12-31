@@ -223,7 +223,7 @@
         force: true
       });
       if (this.isTrackingObjectModel()) {
-        if (_.has(formModel, 'url')) {
+        if (formModel.url) {
           return NestedModel.prototype.save.apply(this, arguments).done(function() {
             formModel.push();
           });
