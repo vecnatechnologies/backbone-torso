@@ -1536,11 +1536,7 @@
       if (!this.isAttachedToParent()) {
         this.render();
         this.injectionSite = $el.replaceWith(this.$el);
-        this.delegateEvents();
-        if (!this.__attachedCallbackInvoked && this.isAttached()) {
-          this.invokeAttached();
-        }
-        this.__isAttachedToParent = true;
+        this.__cleanupAfterReplacingInjectionSite();
       }
     },
 
@@ -2035,6 +2031,23 @@
     },
 
     /************** Private methods **************/
+
+    /**
+     * After a view's DOM element replaces an injection site, there is logic that must be performed,
+     * including delegating events, invoking the attached callback if necessary and marking the view as
+     * attached to a parent. This method performs all of these cleanup tasks.
+     * @private
+     * @method __cleanupAfterReplacingInjectionSite
+     */
+    __cleanupAfterReplacingInjectionSite: function() {
+      if (!this.isAttachedToParent()) {
+        this.delegateEvents();
+        if (!this.__attachedCallbackInvoked && this.isAttached()) {
+          this.invokeAttached();
+        }
+        this.__isAttachedToParent = true;
+      }
+    },
 
     /**
      * Generates callbacks for changes in feedback cell fields
@@ -4209,13 +4222,18 @@
         newDOM.append(injectionSite);
       }
       if (this.hasTrackedViews({ shared: false })) {
-        injectionSite.replaceWith(this.__buildChildViewsFragment());
+        injectionSite.replaceWith(this.__emptyAndRebuildChildViewsFragment());
       } else if (this.emptyTemplate) {
         injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
       this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
       this.delegateEvents();
+      _.each(this.modelsToRender(), function(model) {
+        var childView = this.getChildViewFromModel(model);
+        childView.__cleanupAfterReplacingInjectionSite();
+        childView.activate();
+      }, this);
       this.trigger('render-complete');
     },
 
@@ -4295,15 +4313,23 @@
     },
 
     /**
+     * Creates a DOM fragment with each child view appended in the order defined by
+     * modelsToRender(). This will clear the List View's DOM and invoke the necessary
+     * detach, register and render logic on each child view.
      * @return a DOM fragment with child view elements appended
-     * @method __buildChildViewsFragment
+     * @method __emptyAndRebuildChildViewsFragment
      * @private
      */
-    __buildChildViewsFragment: function(renderAlso) {
+    __emptyAndRebuildChildViewsFragment: function(renderAlso) {
       var injectionFragment = document.createDocumentFragment();
+      // Clearing the DOM will reduce the repaints needed as we detach each child view.
+      this.$el.empty();
      _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
         if (childView) {
+          childView.detach();
+          this.registerTrackedView(childView);
+          childView.render();
           injectionFragment.appendChild(childView.el);
         }
       }, this);
