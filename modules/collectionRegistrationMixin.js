@@ -84,6 +84,7 @@
            */
           addModelAndTrack: function(model) {
             this.add(model);
+            parentInstance.add(model);
             this.trackNewId(model.id);
           },
 
