@@ -95,6 +95,22 @@
     },
 
     /**
+     * Alias to this.viewState.get()
+     * @method get
+     */
+    get: function() {
+      return this.viewState.get.apply(this.viewState, arguments);
+    },
+
+    /**
+     * Alias to this.viewState.set()
+     * @method set
+     */
+    set: function() {
+      return this.viewState.set.apply(this.viewState, arguments);
+    },
+
+    /**
      * Hotswap rendering system reroute method.
      * @method templateRender
      * See Torso.templateRenderer#render for params
