@@ -80,6 +80,7 @@
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
+        var previouslyEmpty = _.isEmpty(this.__modelToViewMap);
         this.__createChildViews();
         if (!this.hasTrackedViews({ shared: false })) {
           this.__delayedRender();
@@ -88,9 +89,9 @@
           childView = this.getChildViewFromModel(model);
           viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
           viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
-          if (viewAfter) {
+          if (!previouslyEmpty && viewAfter) {
             viewAfter.$el.before(childView.$el);
-          } else if (viewBefore) {
+          } else if (!previouslyEmpty && viewBefore) {
             viewBefore.$el.after(childView.$el);
           } else {
             this.__delayedRender();
