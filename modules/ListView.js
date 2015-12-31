@@ -233,13 +233,18 @@
         newDOM.append(injectionSite);
       }
       if (this.hasTrackedViews({ shared: false })) {
-        injectionSite.replaceWith(this.__buildChildViewsFragment());
+        injectionSite.replaceWith(this.__emptyAndRebuildChildViewsFragment());
       } else if (this.emptyTemplate) {
         injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
       this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
       this.delegateEvents();
+      _.each(this.modelsToRender(), function(model) {
+        var childView = this.getChildViewFromModel(model);
+        childView.__cleanupAfterReplacingInjectionSite();
+        childView.activate();
+      }, this);
       this.trigger('render-complete');
     },
 
@@ -319,15 +324,23 @@
     },
 
     /**
+     * Creates a DOM fragment with each child view appended in the order defined by
+     * modelsToRender(). This will clear the List View's DOM and invoke the necessary
+     * detach, register and render logic on each child view.
      * @return a DOM fragment with child view elements appended
-     * @method __buildChildViewsFragment
+     * @method __emptyAndRebuildChildViewsFragment
      * @private
      */
-    __buildChildViewsFragment: function(renderAlso) {
+    __emptyAndRebuildChildViewsFragment: function(renderAlso) {
       var injectionFragment = document.createDocumentFragment();
+      // Clearing the DOM will reduce the repaints needed as we detach each child view.
+      this.$el.empty();
      _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
         if (childView) {
+          childView.detach();
+          this.registerTrackedView(childView);
+          childView.render();
           injectionFragment.appendChild(childView.el);
         }
       }, this);

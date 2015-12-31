@@ -189,11 +189,7 @@
       if (!this.isAttachedToParent()) {
         this.render();
         this.injectionSite = $el.replaceWith(this.$el);
-        this.delegateEvents();
-        if (!this.__attachedCallbackInvoked && this.isAttached()) {
-          this.invokeAttached();
-        }
-        this.__isAttachedToParent = true;
+        this.__cleanupAfterReplacingInjectionSite();
       }
     },
 
@@ -688,6 +684,23 @@
     },
 
     /************** Private methods **************/
+
+    /**
+     * After a view's DOM element replaces an injection site, there is logic that must be performed,
+     * including delegating events, invoking the attached callback if necessary and marking the view as
+     * attached to a parent. This method performs all of these cleanup tasks.
+     * @private
+     * @method __cleanupAfterReplacingInjectionSite
+     */
+    __cleanupAfterReplacingInjectionSite: function() {
+      if (!this.isAttachedToParent()) {
+        this.delegateEvents();
+        if (!this.__attachedCallbackInvoked && this.isAttached()) {
+          this.invokeAttached();
+        }
+        this.__isAttachedToParent = true;
+      }
+    },
 
     /**
      * Generates callbacks for changes in feedback cell fields
