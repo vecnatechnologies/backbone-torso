@@ -1,6 +1,6 @@
 {
   "name": "backbone-torso",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/vecnatechnologies/backbone-torso"
@@ -12,10 +12,6 @@
     "doc": "gulp doc",
     "watch": "gulp watch",
     "clean": "gulp clean"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/vecnatechnologies/backbone-torso"
   },
   "main": "modules/torso.js",
   "dependencies": {
@@ -64,14 +60,18 @@
   "engines": {
     "node": ">=0.8.0"
   },
-  "contributors": [{
-    "name": "Kent Willis",
-    "email": "kentmw@gmail.com"
-  }, {
-    "name": "Ariel Wexler",
-    "email": "arielwex@gmail.com"
-  }, {
-    "name": "Josh Young",
-    "email": "jyoung@vecna.com"
-  }]
+  "contributors": [
+    {
+      "name": "Kent Willis",
+      "email": "kentmw@gmail.com"
+    },
+    {
+      "name": "Ariel Wexler",
+      "email": "arielwex@gmail.com"
+    },
+    {
+      "name": "Josh Young",
+      "email": "jyoung@vecna.com"
+    }
+  ]
 }
