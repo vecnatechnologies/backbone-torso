@@ -4144,19 +4144,21 @@
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     initialize: function(args) {
-      var initialModels, i, l, childView,
-        injectionSite = this.$el;
       args = args || {};
-      this.collection = args.collection;
-      this.template = args.template;
-      this.emptyTemplate = args.emptyTemplate;
-      this.childView = args.childView;
-      this.childrenContainer = args.childrenContainer;
+
+      var initialModels, i, l, childView,
+          injectionSite = this.$el,
+          collection = args.collection || this.collection;
+
+      this.template = args.template || this.template;
+      this.emptyTemplate = args.emptyTemplate || this.emptyTemplate;
+      this.childView = args.childView || this.childView;
+      this.childrenContainer = args.childrenContainer || this.childrenContainer;
       if (this.template && !this.childrenContainer) {
         throw 'Children container is required when using a template';
       }
       this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this.__childContext = args.childContext;
+      this.__childContext = args.childContext || this.__childContext;
       this.__modelToViewMap = {};
       this.__renderWait = args.renderWait || this.__renderWait;
       this.__modelId = args.modelId || 'cid';
@@ -4164,7 +4166,26 @@
       this.__createChildViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
-      // if a 'changed' event happens, the model's view should handle re-rendering itself
+      if (collection) {
+        this.setCollection(collection, true);
+      }
+    },
+
+    /**
+     * Sets the collection from which this view generates child views.
+     * This method will attach all necessary event listeners to the new collection to auto-generate child views
+     * and has the option of removing listeners on a previous collection.
+     *
+     * @method setCollection
+     * @param collection {Backbone.Collection instance} the new collection that this list view should use.
+     * @param [preserveListeners=false] {Boolean} whether to clear existing event listeners that this view has on the previous collection (false).
+     *                                            or to preserve any existing listeners on the view's previous collection (true).
+     */
+    setCollection: function(collection, preserveListeners) {
+      if (this.collection && !preserveListeners) {
+        this.stopListening(this.collection);
+      }
+      this.collection = collection;
       this.listenTo(this.collection, 'remove', removeChildView, this);
       this.listenTo(this.collection, 'add', addChildView, this);
       this.listenTo(this.collection, 'sort', this.__delayedRender, this);
