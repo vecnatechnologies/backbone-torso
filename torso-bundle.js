@@ -488,7 +488,7 @@
           }
           return $.ajax({
               type: collection.fetchHttpAction,
-              url: collection.url + collection.getByIdsUrl,
+              url: _.result(collection, 'url') + collection.getByIdsUrl,
               contentType: 'application/json; charset=utf-8',
               data: JSON.stringify(idsToFetch)
             }).done(
@@ -627,7 +627,7 @@
   if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
-    factory();
+    module.exports = factory();
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
