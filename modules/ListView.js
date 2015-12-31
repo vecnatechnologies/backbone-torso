@@ -80,6 +80,7 @@
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
+        var noChildViews = _.isEmpty(this.__modelToViewMap);
         this.__createChildViews();
         if (!this.hasTrackedViews({ shared: false })) {
           this.__delayedRender();
@@ -88,11 +89,16 @@
           childView = this.getChildViewFromModel(model);
           viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
           viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
-          if (viewAfter) {
-            viewAfter.$el.before(childView.$el);
-          } else if (viewBefore) {
-            viewBefore.$el.after(childView.$el);
+          if (!noChildViews) {
+            if (viewAfter) {
+              viewAfter.$el.before(childView.$el);
+            } else if (viewBefore) {
+              viewBefore.$el.after(childView.$el);
+            } else {
+              this.__delayedRender();
+            }
           } else {
+            // If there were no child views before, and now there are one or more, we should re-render
             this.__delayedRender();
           }
         }
