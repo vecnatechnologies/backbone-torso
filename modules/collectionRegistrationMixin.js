@@ -267,7 +267,7 @@
             setOptions: _.extend({remove: true}, options)
           });
         } else {
-          return base.fetch(options);
+          return base.prototype.fetch.apply(this, options);
         }
       };
 
