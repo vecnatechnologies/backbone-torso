@@ -274,6 +274,20 @@ describe('A Form Model saving', function() {
     });
   });
 
+  it('can save to a single url with no tracking models', function(done) {
+    var testFormModel = new FormModel({});
+    testFormModel.url = '/unified';
+    testFormModel.set('foo', 444);
+    testFormModel.save().done(function() {
+      expect(testFormModel.get('foo')).toBe(444);
+      done();
+    }).fail(function(responses) {
+      console.log('Should not have failed the save');
+      expect(true).toBe(false);
+      done();
+    });
+  });
+
   it('can save to a single url for multiple models and not change models on fail', function(done) {
     var testModel2 = new TestModel2(),
       testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}]});
