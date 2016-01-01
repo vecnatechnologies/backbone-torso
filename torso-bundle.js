@@ -796,6 +796,40 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    factory(require('backbone'));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: 'input[type="radio"]',
+    events: ['change'],
+    update: function($el, val) {
+      $el.prop('checked', false);
+      $el.filter('[value="' + val + '"]').prop('checked', true);
+    },
+    getVal: function($el) {
+      return $el.filter(':checked').val();
+    }
+  });
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -887,40 +921,6 @@
 
   return pollingMixin;
 }));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'backbone.stickit'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    factory(require('backbone'));
-  } else {
-    factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Extensions to stickit handlers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  Backbone.Stickit.addHandler({
-    selector: 'input[type="radio"]',
-    events: ['change'],
-    update: function($el, val) {
-      $el.prop('checked', false);
-      $el.filter('[value="' + val + '"]').prop('checked', true);
-    },
-    getVal: function($el) {
-      return $el.filter(':checked').val();
-    }
-  });
-}));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
@@ -1274,32 +1274,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
-  }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
-
-  return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1322,6 +1296,32 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+  }
+}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedCell = Backbone.NestedModel.extend({});
+  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+
+  return NestedCell;
 }));
 
 (function(root, factory) {
@@ -4121,9 +4121,11 @@
      */
     collection: null,
     /**
-     * The child view class definition that will be instantiated for each model in the list
+     * The child view class definition that will be instantiated for each model in the list.
+     * childView can also be a function that takes a model and returns a view class. This allows
+     * for different view classes depending on the model.
      * @property childView
-     * @type View
+     * @type View or Function
      */
     childView: null,
     /**
@@ -4158,8 +4160,9 @@
      * Override to add more functionality but remember to call ListView.prorotype.initialize.call(this, args) first
      * @method initialize
      * @param args {Object} - options argument
-     *   @param args.childView {Backbone.View definition} - the class definition of the child view. This view will be instantiated
-     *                                                     for every model returned by modelsToRender()
+     *   @param args.childView {Backbone.View definition or Function} - the class definition of the child view. This view will be instantiated
+     *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
+     *                                                     this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
      *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
      *                                                          might provide a default collection. Can be private or public collection
      *   @param [args.childContext] {Object or Function} - object or function that's passed to the child view's during initialization under the name "context". Can be used by the child view during their prepare method.
@@ -4362,7 +4365,11 @@
      * @return {Backbone View} the new child view
      */
     __createChildView: function(model) {
-      var childView = new this.childView(this.__generateChildArgs(model));
+      var ChildViewClass = this.childView;
+      if (!_.isFunction(this.childView.extend)) {
+        ChildViewClass = this.childView(model);
+      }
+      var childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerTrackedView(childView, { shared: false });
       this.__modelToViewMap[model.cid] = childView.cid;
       return childView;
