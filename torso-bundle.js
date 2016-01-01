@@ -613,19 +613,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'), require('jquery'));
-  } else {
-    factory(root.Backbone, root.$);
-  }
-}(this, function(Backbone, $) {
-  'use strict';
-  Backbone.$ = $;
-  return true;
-}));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -886,6 +873,19 @@
   };
 
   return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'), require('jquery'));
+  } else {
+    factory(root.Backbone, root.$);
+  }
+}(this, function(Backbone, $) {
+  'use strict';
+  Backbone.$ = $;
+  return true;
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -4377,7 +4377,7 @@
       }
       childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerTrackedView(childView, { shared: false });
-      this.__modelToViewMap[model.cid] = childView.cid;
+      this.__modelToViewMap[model[this.__modelId]] = childView.cid;
       return childView;
     },
 
