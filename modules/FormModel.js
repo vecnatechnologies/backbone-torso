@@ -234,7 +234,6 @@
           formModel.push();
         });
       } else if (this.isTrackingObjectModel()) {
-        console.log('saving in models');
         this.__saveToModels(deferred, options);
         return deferred.promise();
       } else {

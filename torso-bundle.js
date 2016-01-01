@@ -626,28 +626,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -792,6 +770,28 @@
       }
     });
   };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
 }));
 
 (function(root, factory) {
@@ -3492,7 +3492,6 @@
           formModel.push();
         });
       } else if (this.isTrackingObjectModel()) {
-        console.log('saving in models');
         this.__saveToModels(deferred, options);
         return deferred.promise();
       } else {
@@ -4371,11 +4370,12 @@
      * @return {Backbone View} the new child view
      */
     __createChildView: function(model) {
-      var ChildViewClass = this.childView;
+      var childView,
+        ChildViewClass = this.childView;
       if (!_.isFunction(this.childView.extend)) {
         ChildViewClass = this.childView(model);
       }
-      var childView = new ChildViewClass(this.__generateChildArgs(model));
+      childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerTrackedView(childView, { shared: false });
       this.__modelToViewMap[model.cid] = childView.cid;
       return childView;

@@ -359,11 +359,12 @@
      * @return {Backbone View} the new child view
      */
     __createChildView: function(model) {
-      var ChildViewClass = this.childView;
+      var childView,
+        ChildViewClass = this.childView;
       if (!_.isFunction(this.childView.extend)) {
         ChildViewClass = this.childView(model);
       }
-      var childView = new ChildViewClass(this.__generateChildArgs(model));
+      childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerTrackedView(childView, { shared: false });
       this.__modelToViewMap[model.cid] = childView.cid;
       return childView;
