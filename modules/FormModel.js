@@ -53,7 +53,7 @@
     defaultMapping: null,
 
     /**
-     * Initializes the form model. Can take in attributes to set initially. These will override any pulled values from object models
+     * Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models
      * on initialization. On initialization the object model's values will be pulled once.
      * For the options, here are needed definitions:
      * Model Configuration: {
@@ -70,7 +70,7 @@
      *   push: {Function} a callback that will be invoked when pushing data to the Object model. It will take a single argument,
      *     an array of all the models defined in the the model configuration array: _.pluck(computedConfig.models, 'model')
      * }
-     * @method initialize
+     * @method constructor
      * @param [options] {Object}
      *   @param [options.models] {Array} list of model configurations. These will dictate what fields from the Object model will be
      *     used during the pulling and pushing. Will be ignored if options.model exists.
@@ -84,7 +84,8 @@
      *   @param [options.validation] {Object} A Backbone.Validation plugin hash to dictate the validation rules
      *   @param [options.labels] {Object} A Backbone.Validation plugin hash to dictate the attribute labels
      */
-    initialize: function(attributes, options) {
+    constructor: function(attributes, options) {
+      NestedModel.apply(this, arguments);
       options = options || {};
       this.__computed = [];
       this.__cache = {};
