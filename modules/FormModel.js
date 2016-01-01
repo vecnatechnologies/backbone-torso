@@ -199,6 +199,8 @@
      * saving, will perform a push.
      * If no "url" property is defined then the following behavior is used:
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
+     * NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise
+     * with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}
      * @param [options] {Object}
      *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
      *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
@@ -214,7 +216,7 @@
      * @method save
      */
     save: function(options) {
-      var notTrackingResponse,
+      var notTrackingResponse, url,
         deferred = new $.Deferred(),
         formModel = this;
       options = options || {};
@@ -222,15 +224,18 @@
         rollback: true,
         force: true
       });
-      if (this.isTrackingObjectModel()) {
-        if (formModel.url) {
-          return NestedModel.prototype.save.apply(this, arguments).done(function() {
-            formModel.push();
-          });
-        } else {
-          this.__saveToModels(deferred, options);
-          return deferred.promise();
-        }
+      try {
+        url = _.result(formModel, 'url');
+      } catch (e) {
+        // no url attached to this form model. Continue by pushing to models.
+      }
+      if (url) {
+        return NestedModel.prototype.save.apply(formModel, arguments).done(function() {
+          formModel.push();
+        });
+      } else if (this.isTrackingObjectModel()) {
+        this.__saveToModels(deferred, options);
+        return deferred.promise();
       } else {
         // Return a response that is generated when this form model is not tracking an object model
         notTrackingResponse = {

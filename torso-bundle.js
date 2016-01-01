@@ -3457,6 +3457,8 @@
      * saving, will perform a push.
      * If no "url" property is defined then the following behavior is used:
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
+     * NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise
+     * with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}
      * @param [options] {Object}
      *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
      *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
@@ -3472,7 +3474,7 @@
      * @method save
      */
     save: function(options) {
-      var notTrackingResponse,
+      var notTrackingResponse, url,
         deferred = new $.Deferred(),
         formModel = this;
       options = options || {};
@@ -3480,15 +3482,18 @@
         rollback: true,
         force: true
       });
-      if (this.isTrackingObjectModel()) {
-        if (formModel.url) {
-          return NestedModel.prototype.save.apply(this, arguments).done(function() {
-            formModel.push();
-          });
-        } else {
-          this.__saveToModels(deferred, options);
-          return deferred.promise();
-        }
+      try {
+        url = _.result(formModel, 'url');
+      } catch (e) {
+        // no url attached to this form model. Continue by pushing to models.
+      }
+      if (url) {
+        return NestedModel.prototype.save.apply(formModel, arguments).done(function() {
+          formModel.push();
+        });
+      } else if (this.isTrackingObjectModel()) {
+        this.__saveToModels(deferred, options);
+        return deferred.promise();
       } else {
         // Return a response that is generated when this form model is not tracking an object model
         notTrackingResponse = {
@@ -4121,9 +4126,11 @@
      */
     collection: null,
     /**
-     * The child view class definition that will be instantiated for each model in the list
+     * The child view class definition that will be instantiated for each model in the list.
+     * childView can also be a function that takes a model and returns a view class. This allows
+     * for different view classes depending on the model.
      * @property childView
-     * @type View
+     * @type View or Function
      */
     childView: null,
     /**
@@ -4158,8 +4165,9 @@
      * Override to add more functionality but remember to call ListView.prorotype.initialize.call(this, args) first
      * @method initialize
      * @param args {Object} - options argument
-     *   @param args.childView {Backbone.View definition} - the class definition of the child view. This view will be instantiated
-     *                                                     for every model returned by modelsToRender()
+     *   @param args.childView {Backbone.View definition or Function} - the class definition of the child view. This view will be instantiated
+     *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
+     *                                                     this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
      *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
      *                                                          might provide a default collection. Can be private or public collection
      *   @param [args.childContext] {Object or Function} - object or function that's passed to the child view's during initialization under the name "context". Can be used by the child view during their prepare method.
@@ -4362,7 +4370,12 @@
      * @return {Backbone View} the new child view
      */
     __createChildView: function(model) {
-      var childView = new this.childView(this.__generateChildArgs(model));
+      var childView,
+        ChildViewClass = this.childView;
+      if (!_.isFunction(this.childView.extend)) {
+        ChildViewClass = this.childView(model);
+      }
+      childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerTrackedView(childView, { shared: false });
       this.__modelToViewMap[model.cid] = childView.cid;
       return childView;
