@@ -366,7 +366,7 @@
       }
       childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerTrackedView(childView, { shared: false });
-      this.__modelToViewMap[model.cid] = childView.cid;
+      this.__modelToViewMap[model[this.__modelId]] = childView.cid;
       return childView;
     },
 
