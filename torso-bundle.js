@@ -613,6 +613,19 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'), require('jquery'));
+  } else {
+    factory(root.Backbone, root.$);
+  }
+}(this, function(Backbone, $) {
+  'use strict';
+  Backbone.$ = $;
+  return true;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -781,19 +794,6 @@
   return Backbone.history;
 }));
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'), require('jquery'));
-  } else {
-    factory(root.Backbone, root.$);
-  }
-}(this, function(Backbone, $) {
-  'use strict';
-  Backbone.$ = $;
-  return true;
-}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -1546,7 +1546,7 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el {jQuery element} the element to attach to. This element will be replaced will this view
+     * @param $el {jQuery element} the element to attach to. This element will be replaced with this view
      * @param [options] {Object} optional options
      * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
      *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
