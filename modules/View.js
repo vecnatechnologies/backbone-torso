@@ -198,13 +198,25 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
+     * @param [$el] {jQuery element} the element to attach to. This element will be replaced with this view.
+     *                               If options.replaceMethod is provided, then this parameter is ignored.
+     * @param [options] {Object} optional options
+     * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
+     *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
+     * @param   [options.discardInjectionSite=false] {Booleon} if set to true, the injection site is not saved.
      * @method attach
      */
-    attach: function($el) {
+    attach: function($el, options) {
+      options = options || {};
+      var injectionSite,
+        replaceMethod = options.replaceMethod,
+        discardInjectionSite = options.discardInjectionSite;
       if (!this.isAttachedToParent()) {
         this.render();
-        this.injectionSite = $el.replaceWith(this.$el);
+        this.injectionSite = replaceMethod ? replaceMethod(this.$el) : $el.replaceWith(this.$el);
+        if (discardInjectionSite) {
+          this.injectionSite = undefined;
+        }
         this.__cleanupAfterReplacingInjectionSite();
       }
     },
@@ -343,7 +355,7 @@
      * Registers the child or shared view if not already done so, then calls view.attach with the element argument
      * @param $el {jQuery element} the element to attach to.
      * @param view {View} the view
-     * @param [options] {Object} optionals options object
+     * @param [options] {Object} optional options object
      *   @param [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
      *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
      *                                           (shared views are not disposed when the parent is disposed)
@@ -353,7 +365,7 @@
       options = options || {};
       view.detach();
       this.registerTrackedView(view, options);
-      view.attach($el);
+      view.attach($el, options);
       if (!options.noActivate) {
         view.activate();
       }

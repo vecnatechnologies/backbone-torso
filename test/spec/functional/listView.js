@@ -32,10 +32,6 @@ describe('A List View', function() {
         template: Handlebars.compile('<div class="item-details">{{model.cid}}</div>'),
         initialize: function(args) {
           this.model = args.item;
-          this.render();
-        },
-        prepare: function() {
-          return {model: this.model};
         },
         className: 'item',
         render: function() {
