@@ -229,6 +229,19 @@ describe('A List View', function() {
     myCollection.add(model);
   });
 
+  it('can remove stale views during a reset', function(done) {
+    var model = new Model();
+    myCollection.add(model);
+    var childView = myListView.getChildViewFromModel(model);
+    myListView.on('child-view-removed', function(data) {
+      expect(data.model.cid).toBe(model.cid);
+      expect(data.view.cid).toBe(childView.cid);
+      expect(childView.isDisposed()).toBe(true);
+      done();
+    });
+    myCollection.reset(new Model());
+  });
+
   it('can reorder child views when the collection order changes', function() {
     var model = new Model({order: 3});
     myCollection.add(model);
