@@ -44,61 +44,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellPersistenceRemoval
-   * @author kent.willis@vecna.com
-   */
-  return {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('jquery'));
@@ -193,6 +138,61 @@
   };
 
   return collectionLoadingMixin;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellPersistenceRemoval
+   * @author kent.willis@vecna.com
+   */
+  return {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
 }));
 
 (function(root, factory) {
@@ -613,6 +613,19 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'), require('jquery'));
+  } else {
+    factory(root.Backbone, root.$);
+  }
+}(this, function(Backbone, $) {
+  'use strict';
+  Backbone.$ = $;
+  return true;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -873,19 +886,6 @@
   };
 
   return pollingMixin;
-}));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'), require('jquery'));
-  } else {
-    factory(root.Backbone, root.$);
-  }
-}(this, function(Backbone, $) {
-  'use strict';
-  Backbone.$ = $;
-  return true;
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -1274,32 +1274,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
-  }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
-
-  return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1322,6 +1296,32 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+  }
+}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedCell = Backbone.NestedModel.extend({});
+  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+
+  return NestedCell;
 }));
 
 (function(root, factory) {
@@ -3311,7 +3311,7 @@
     defaultMapping: null,
 
     /**
-     * Initializes the form model. Can take in attributes to set initially. These will override any pulled values from object models
+     * Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models
      * on initialization. On initialization the object model's values will be pulled once.
      * For the options, here are needed definitions:
      * Model Configuration: {
@@ -3328,7 +3328,7 @@
      *   push: {Function} a callback that will be invoked when pushing data to the Object model. It will take a single argument,
      *     an array of all the models defined in the the model configuration array: _.pluck(computedConfig.models, 'model')
      * }
-     * @method initialize
+     * @method constructor
      * @param [options] {Object}
      *   @param [options.models] {Array} list of model configurations. These will dictate what fields from the Object model will be
      *     used during the pulling and pushing. Will be ignored if options.model exists.
@@ -3342,7 +3342,8 @@
      *   @param [options.validation] {Object} A Backbone.Validation plugin hash to dictate the validation rules
      *   @param [options.labels] {Object} A Backbone.Validation plugin hash to dictate the attribute labels
      */
-    initialize: function(attributes, options) {
+    constructor: function(attributes, options) {
+      NestedModel.apply(this, arguments);
       options = options || {};
       this.__computed = [];
       this.__cache = {};
@@ -4161,9 +4162,8 @@
     __delayedRenderTimeout: null,
 
     /**
-     * Initialize the list view object.
-     * Override to add more functionality but remember to call ListView.prorotype.initialize.call(this, args) first
-     * @method initialize
+     * Constructor for the list view object.
+     * @method constructor
      * @param args {Object} - options argument
      *   @param args.childView {Backbone.View definition or Function} - the class definition of the child view. This view will be instantiated
      *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
@@ -4182,7 +4182,8 @@
      *   @param [args.modelId='cid'] {String} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
-    initialize: function(args) {
+    constructor: function(args) {
+      View.apply(this, arguments);
       args = args || {};
 
       var initialModels, i, l, childView,
@@ -4470,9 +4471,8 @@
      **/
 
     /**
-     * Initialize the form view object.
-     * Override to add more functionality
-     * @method initialize
+     * Constructor the form view object.
+     * @method constructor
      * @param args {Object} - options argument
      * @param args.model       {Torso.FormModel} - requires a form model for binding
      * @param [args.template]  {HTML Template} - overrides the template used by this view
@@ -4480,13 +4480,15 @@
      * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
      * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
      */
-    initialize: function(args) {
+    constructor: function(args) {
       args = args || {};
 
       /* Listen to model validation callbacks */
       this.model = this.model || (new FormModel());
       this.listenTo(this.model, 'validated:valid', this.valid);
       this.listenTo(this.model, 'validated:invalid', this.invalid);
+
+      View.apply(this, arguments);
 
       /* Override template */
       this.template = args.template || this.template;

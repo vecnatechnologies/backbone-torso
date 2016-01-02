@@ -60,9 +60,8 @@
      **/
 
     /**
-     * Initialize the form view object.
-     * Override to add more functionality
-     * @method initialize
+     * Constructor the form view object.
+     * @method constructor
      * @param args {Object} - options argument
      * @param args.model       {Torso.FormModel} - requires a form model for binding
      * @param [args.template]  {HTML Template} - overrides the template used by this view
@@ -70,13 +69,15 @@
      * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
      * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
      */
-    initialize: function(args) {
+    constructor: function(args) {
       args = args || {};
 
       /* Listen to model validation callbacks */
       this.model = this.model || (new FormModel());
       this.listenTo(this.model, 'validated:valid', this.valid);
       this.listenTo(this.model, 'validated:invalid', this.invalid);
+
+      View.apply(this, arguments);
 
       /* Override template */
       this.template = args.template || this.template;

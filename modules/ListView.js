@@ -150,9 +150,8 @@
     __delayedRenderTimeout: null,
 
     /**
-     * Initialize the list view object.
-     * Override to add more functionality but remember to call ListView.prorotype.initialize.call(this, args) first
-     * @method initialize
+     * Constructor for the list view object.
+     * @method constructor
      * @param args {Object} - options argument
      *   @param args.childView {Backbone.View definition or Function} - the class definition of the child view. This view will be instantiated
      *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
@@ -171,7 +170,8 @@
      *   @param [args.modelId='cid'] {String} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
-    initialize: function(args) {
+    constructor: function(args) {
+      View.apply(this, arguments);
       args = args || {};
 
       var initialModels, i, l, childView,
