@@ -1546,7 +1546,8 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el {jQuery element} the element to attach to. This element will be replaced with this view
+     * @param [$el] {jQuery element} the element to attach to. This element will be replaced with this view.
+     *                               If options.replaceMethod is provided, then this parameter is ignored.
      * @param [options] {Object} optional options
      * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
      *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
