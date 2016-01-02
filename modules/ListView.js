@@ -77,7 +77,7 @@
       childView.dispose();
       this.unregisterTrackedView(childView, { shared: false });
       delete this.__modelToViewMap[modelId];
-      this.trigger('child-view-removed', {model: childView.model, view: childView});
+      this.trigger('child-view-removed', {model: childView[this.__modelName], view: childView});
     };
 
     /**
