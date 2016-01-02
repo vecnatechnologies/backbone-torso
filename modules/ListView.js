@@ -58,14 +58,27 @@
     removeChildView = function(model) {
       var childView = this.getChildViewFromModel(model);
       if (childView) {
-        childView.dispose();
-        this.unregisterTrackedView(childView, { shared: false });
-        delete this.__modelToViewMap[model.cid];
-        this.trigger('child-view-removed', {model: model, view: childView});
+        _removeChildView.call(this, childView, model[this.__modelId], model);
         if (!this.hasTrackedViews({ shared: false })) {
           this.__delayedRender();
         }
       }
+    };
+
+    /**
+     * Disposes of a child view, unregisters, stops tracking and triggers a 'child-view-removed' event
+     * with the model and child view as the payload.
+     * @private
+     * @method _removeChildView
+     * @param childView {Backbone View instance} the view being removed
+     * @param modelId {String or Number} the id used for the model
+     * @param [model] {Backbone Model instance} the model
+     */
+    _removeChildView = function(childView, modelId, model) {
+      childView.dispose();
+      this.unregisterTrackedView(childView, { shared: false });
+      delete this.__modelToViewMap[modelId];
+      this.trigger('child-view-removed', {model: model || childView.model, view: childView});
     };
 
     /**
@@ -80,8 +93,7 @@
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
-        var previouslyEmpty = _.isEmpty(this.__modelToViewMap);
-        this.__createChildViews();
+        this.__createChildView(model);
         if (!this.hasTrackedViews({ shared: false })) {
           this.__delayedRender();
         } else {
@@ -89,9 +101,9 @@
           childView = this.getChildViewFromModel(model);
           viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
           viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
-          if (!previouslyEmpty && viewAfter) {
+          if (viewAfter) {
             replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
-          } else if (!previouslyEmpty && viewBefore) {
+          } else if (viewBefore) {
             replaceMethod = _.bind(viewBefore.$el.after, viewBefore.$el);
           } else {
             this.__delayedRender();
@@ -299,11 +311,12 @@
     },
 
     /**
-     * Builds any new views and re-renders
+     * Builds any new views, removes stale ones, and re-renders
      * @method update
      */
     update: function() {
       this.__createChildViews();
+      this.__removeStaleChildViews();
       this.__delayedRender();
     },
 
@@ -322,13 +335,36 @@
     /**
      * Creates a new child view if there doesn't exist one for a model
      * @method __createChildViews
+     * @private
      */
     __createChildViews: function() {
       _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
         if (!childView) {
           childView = this.__createChildView(model);
-          this.trigger('child-view-added', {model: model, view: childView});
+        }
+      }, this);
+    },
+
+    /**
+     * Removes a child view's that have models that are no longer tracked by modelsToRender
+     * @method __removeStaleChildViews
+     * @private
+     */
+    __removeStaleChildViews: function() {
+      var modelsWithViews = _.clone(this.__modelToViewMap);
+      _.each(this.modelsToRender(), function(model) {
+        var childView = this.getChildViewFromModel(model);
+        if (childView) {
+          delete modelsWithViews[model[this.__modelId]];
+        }
+      }, this);
+      _.each(modelsWithViews, function(viewId, modelId) {
+        var childView = this.getChildView(viewId);
+        if (childView) {
+          _removeChildView.call(this, childView, modelId);
+        } else {
+          delete this.__modelToViewMap[modelId];
         }
       }, this);
     },
@@ -373,6 +409,7 @@
       childView = new ChildViewClass(this.__generateChildArgs(model));
       this.registerTrackedView(childView, { shared: false });
       this.__modelToViewMap[model[this.__modelId]] = childView.cid;
+      this.trigger('child-view-added', {model: model, view: childView});
       return childView;
     },
 
