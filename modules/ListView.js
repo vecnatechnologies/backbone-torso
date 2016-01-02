@@ -310,7 +310,7 @@
     },
 
     /**
-     * Builds any new views, removes stale one, and re-renders
+     * Builds any new views, removes stale ones, and re-renders
      * @method update
      */
     update: function() {
