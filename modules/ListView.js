@@ -58,7 +58,7 @@
     removeChildView = function(model) {
       var childView = this.getChildViewFromModel(model);
       if (childView) {
-        _removeChildView.call(this, childView, model[this.__modelId]);
+        _removeChildView.call(this, childView, model[this.__modelId], model);
         if (!this.hasTrackedViews({ shared: false })) {
           this.__delayedRender();
         }
@@ -72,12 +72,13 @@
      * @method _removeChildView
      * @param childView {Backbone View instance} the view being removed
      * @param modelId {String or Number} the id used for the model
+     * @param [model] {Backbone Model instance} the model
      */
-    _removeChildView = function(childView, modelId) {
+    _removeChildView = function(childView, modelId, model) {
       childView.dispose();
       this.unregisterTrackedView(childView, { shared: false });
       delete this.__modelToViewMap[modelId];
-      this.trigger('child-view-removed', {model: childView[this.__modelName], view: childView});
+      this.trigger('child-view-removed', {model: model || childView.model, view: childView});
     };
 
     /**
