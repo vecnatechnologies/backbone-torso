@@ -44,6 +44,61 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellPersistenceRemoval
+   * @author kent.willis@vecna.com
+   */
+  return {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('jquery'));
@@ -138,61 +193,6 @@
   };
 
   return collectionLoadingMixin;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellPersistenceRemoval
-   * @author kent.willis@vecna.com
-   */
-  return {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
 }));
 
 (function(root, factory) {
@@ -613,19 +613,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'), require('jquery'));
-  } else {
-    factory(root.Backbone, root.$);
-  }
-}(this, function(Backbone, $) {
-  'use strict';
-  Backbone.$ = $;
-  return true;
-}));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -794,6 +781,19 @@
   return Backbone.history;
 }));
 
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'), require('jquery'));
+  } else {
+    factory(root.Backbone, root.$);
+  }
+}(this, function(Backbone, $) {
+  'use strict';
+  Backbone.$ = $;
+  return true;
+}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -1274,32 +1274,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedModel = Backbone.NestedModel.extend({});
-  _.extend(NestedModel.prototype, pollingMixin);
-
-  return NestedModel;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1322,6 +1296,32 @@
   _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
 
   return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedModel = Backbone.NestedModel.extend({});
+  _.extend(NestedModel.prototype, pollingMixin);
+
+  return NestedModel;
 }));
 
 (function(root, factory) {
@@ -1546,13 +1546,24 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
+     * @param $el {jQuery element} the element to attach to. This element will be replaced will this view
+     * @param [options] {Object} optional options
+     * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
+     *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
+     * @param   [options.discardInjectionSite=false] {Booleon} if set to true, the injection site is not saved.
      * @method attach
      */
-    attach: function($el) {
+    attach: function($el, options) {
+      options = options || {};
+      var injectionSite,
+        replaceMethod = options.replaceMethod,
+        discardInjectionSite = options.discardInjectionSite;
       if (!this.isAttachedToParent()) {
         this.render();
-        this.injectionSite = $el.replaceWith(this.$el);
+        this.injectionSite = replaceMethod ? replaceMethod(this.$el) : $el.replaceWith(this.$el);
+        if (discardInjectionSite) {
+          this.injectionSite = undefined;
+        }
         this.__cleanupAfterReplacingInjectionSite();
       }
     },
@@ -1691,7 +1702,7 @@
      * Registers the child or shared view if not already done so, then calls view.attach with the element argument
      * @param $el {jQuery element} the element to attach to.
      * @param view {View} the view
-     * @param [options] {Object} optionals options object
+     * @param [options] {Object} optional options object
      *   @param [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
      *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
      *                                           (shared views are not disposed when the parent is disposed)
@@ -1701,7 +1712,7 @@
       options = options || {};
       view.detach();
       this.registerTrackedView(view, options);
-      view.attach($el);
+      view.attach($el, options);
       if (!options.noActivate) {
         view.activate();
       }
@@ -4088,7 +4099,7 @@
      * @param model the model being added
      */
     addChildView = function(model) {
-      var childView, viewAfter, viewBefore,
+      var childView, viewAfter, viewBefore, replaceMethod,
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
@@ -4102,11 +4113,17 @@
           viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
           viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
           if (!previouslyEmpty && viewAfter) {
-            viewAfter.$el.before(childView.$el);
+            replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
           } else if (!previouslyEmpty && viewBefore) {
-            viewBefore.$el.after(childView.$el);
+            replaceMethod = _.bind(viewBefore.$el.after, viewBefore.$el);
           } else {
             this.__delayedRender();
+          }
+          if (replaceMethod) {
+            this.attachView(null, childView, {
+              replaceMethod: replaceMethod,
+              discardInjectionSite: true
+            });
           }
         }
       }

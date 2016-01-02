@@ -76,7 +76,7 @@
      * @param model the model being added
      */
     addChildView = function(model) {
-      var childView, viewAfter, viewBefore,
+      var childView, viewAfter, viewBefore, replaceMethod,
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
@@ -90,11 +90,17 @@
           viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
           viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
           if (!previouslyEmpty && viewAfter) {
-            viewAfter.$el.before(childView.$el);
+            replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
           } else if (!previouslyEmpty && viewBefore) {
-            viewBefore.$el.after(childView.$el);
+            replaceMethod = _.bind(viewBefore.$el.after, viewBefore.$el);
           } else {
             this.__delayedRender();
+          }
+          if (replaceMethod) {
+            this.attachView(null, childView, {
+              replaceMethod: replaceMethod,
+              discardInjectionSite: true
+            });
           }
         }
       }
