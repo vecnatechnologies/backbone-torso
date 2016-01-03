@@ -234,7 +234,7 @@
       this.collection = collection;
       this.listenTo(this.collection, 'remove', removeChildView, this);
       this.listenTo(this.collection, 'add', addChildView, this);
-      this.listenTo(this.collection, 'sort', this.__delayedRender, this);
+      this.listenTo(this.collection, 'sort', this.reorder, this);
       this.listenTo(this.collection, 'reset', this.update, this);
     },
 
@@ -264,8 +264,12 @@
       this.delegateEvents();
       _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
-        childView.__cleanupAfterReplacingInjectionSite();
-        childView.activate();
+        if (childView) {
+          childView.__cleanupAfterReplacingInjectionSite();
+          childView.activate();
+        } else {
+          // Shouldn't get here. Child views are missing...
+        }
       }, this);
       this.trigger('render-complete');
     },
@@ -279,6 +283,36 @@
         var childView = this.getChildViewFromModel(model);
         childView.render();
       }, this);
+    },
+
+    /**
+     * Takes existing child views and moves them into correct order defined by
+     * this.modelsToRender(). NOTE: As this method doesn't generate or remove views,
+     * this method takes advantage of jquery's ability to move elements already attached to the DOM.
+     * @method reorder
+     */
+    reorder: function() {
+      var firstChildView, elements = [];
+     _.each(this.modelsToRender(), function(model, index) {
+        var childView = this.getChildViewFromModel(model);
+        if (childView) {
+          elements.push(childView.$el);
+        }
+        if (index === 0) {
+          firstChildView = childView;
+        }
+      }, this);
+      // elements that are already connected to the DOM will be moved instead of re-attached
+      // meaning that detach, delegate events, and attach are not needed
+      if (!this.childrenContainer) {
+        this.$el.append(elements);
+      } else if (firstChildView) {
+        var injectionSite = $("<span>");
+        firstChildView.$el.before(injectionSite);
+        injectionSite.after(elements);
+        injectionSite.remove();
+      }
+      this.trigger('reorder-complete');
     },
 
     /**
@@ -315,9 +349,11 @@
      * @method update
      */
     update: function() {
-      this.__createChildViews();
-      this.__removeStaleChildViews();
-      this.__delayedRender();
+      var newViews = this.__createChildViews(),
+        removedViews = this.__removeStaleChildViews();
+      if (!_.isEmpty(newViews) || !_.isEmpty(removedViews)) {
+        this.__delayedRender();
+      }
     },
 
     /**
@@ -338,12 +374,14 @@
      * @private
      */
     __createChildViews: function() {
+      var newChildViews = [];
       _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
         if (!childView) {
-          childView = this.__createChildView(model);
+          newChildViews.push(this.__createChildView(model));
         }
       }, this);
+      return newChildViews;
     },
 
     /**
@@ -352,6 +390,7 @@
      * @private
      */
     __removeStaleChildViews: function() {
+      var removedChildViews = [];
       var modelsWithViews = _.clone(this.__modelToViewMap);
       _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
@@ -362,11 +401,13 @@
       _.each(modelsWithViews, function(viewId, modelId) {
         var childView = this.getChildView(viewId);
         if (childView) {
+          removedChildViews.push(childView);
           _removeChildView.call(this, childView, modelId);
         } else {
           delete this.__modelToViewMap[modelId];
         }
       }, this);
+      return removedChildViews;
     },
 
     /**
@@ -421,7 +462,8 @@
      *   context: {
      *     ... inherited from parent ...
      *   },
-     *   <modelName>: <modelObject>
+     *   <modelName>: <modelObject>,
+     *   listView: the parent list view
      * }
      * @method __generateChildArgs
      * @private
@@ -430,7 +472,8 @@
      */
     __generateChildArgs: function(model) {
       var args = {
-        'context': _.extend({}, _.result(this, '__childContext'))
+        'context': _.extend({}, _.result(this, '__childContext')),
+        'listView': this
       };
       args[this.__modelName] = model;
       return args;
