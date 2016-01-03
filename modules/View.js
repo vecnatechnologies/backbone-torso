@@ -2,12 +2,12 @@
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
   }
-}(this, function(_, $, Backbone, templateRenderer, Cell) {
+}(this, function(_, $, Backbone, templateRenderer, Cell, NestedCell) {
   'use strict';
 
   /**
@@ -50,7 +50,7 @@
      */
     constructor: function(options) {
       options = options || {};
-      this.viewState = new Cell();
+      this.viewState = new NestedCell();
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
