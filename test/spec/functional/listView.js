@@ -415,26 +415,42 @@ describe('A List View', function() {
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
-    if (renderWait > 0) {
-      myListView.on('render-complete', function(data) {
-        endTime = new Date().getTime() - startTime;
-        console.log('Reset ' + numberOfViews + ' views ' + numberOfTimes + ' times in ' + endTime + 'ms');
-        expect(myListView.getChildViews().length).toBe(numberOfViews);
-        expect(endTime < threshold).toBe(true);
-        done();
-      });
-    }
-    startTime = new Date().getTime();
-    for (i = 0; i < numberOfTimes; i++) {
-      myCollection.reset(models);
-    }
-    if (renderWait <= 0) {
+    myListView.on('render-complete', function(data) {
       endTime = new Date().getTime() - startTime;
       console.log('Reset ' + numberOfViews + ' views ' + numberOfTimes + ' times in ' + endTime + 'ms');
       expect(myListView.getChildViews().length).toBe(numberOfViews);
       expect(endTime < threshold).toBe(true);
       done();
+    });
+    startTime = new Date().getTime();
+    for (i = 0; i < numberOfTimes; i++) {
+      myCollection.reset(models);
     }
+  });
+
+  it('can reset a collection to the same large set of models many times in a reasonable time', function() {
+    var startTime, endTime, i,
+        models = [],
+        numberOfViews = 1000,
+        numberOfTimes = 50,
+        threshold = 1000;
+    myListView.dispose();
+    myListView = new MyListView({
+      collection: myCollection,
+      childModel: 'item',
+      childView: ItemView
+    });
+    for (i = 0; i < numberOfViews; i++) {
+       models.push(new Model())
+    }
+    startTime = new Date().getTime();
+    for (i = 0; i < numberOfTimes; i++) {
+      myCollection.reset(models);
+    }
+    endTime = new Date().getTime() - startTime;
+    console.log('Reset ' + numberOfViews + ' views ' + numberOfTimes + ' times with same models in ' + endTime + 'ms');
+    expect(myListView.getChildViews().length).toBe(numberOfViews);
+    expect(endTime < threshold).toBe(true);
   });
 
   /**

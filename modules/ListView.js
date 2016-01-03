@@ -306,13 +306,13 @@
       // meaning that detach, delegate events, and attach are not needed
       if (!this.childrenContainer) {
         this.$el.append(elements);
-      } else {
+      } else if (firstChildView) {
         var injectionSite = $("<span>");
         firstChildView.$el.before(injectionSite);
         injectionSite.after(elements);
         injectionSite.remove();
       }
-      this.trigger('reorder');
+      this.trigger('reorder-complete');
     },
 
     /**
@@ -349,9 +349,11 @@
      * @method update
      */
     update: function() {
-      this.__createChildViews();
-      this.__removeStaleChildViews();
-      this.__delayedRender();
+      var newViews = this.__createChildViews(),
+        removedViews = this.__removeStaleChildViews();
+      if (!_.isEmpty(newViews) || !_.isEmpty(removedViews)) {
+        this.__delayedRender();
+      }
     },
 
     /**
@@ -372,12 +374,14 @@
      * @private
      */
     __createChildViews: function() {
+      var newChildViews = [];
       _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
         if (!childView) {
-          childView = this.__createChildView(model);
+          newChildViews.push(this.__createChildView(model));
         }
       }, this);
+      return newChildViews;
     },
 
     /**
@@ -386,6 +390,7 @@
      * @private
      */
     __removeStaleChildViews: function() {
+      var removedChildViews = [];
       var modelsWithViews = _.clone(this.__modelToViewMap);
       _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
@@ -396,11 +401,13 @@
       _.each(modelsWithViews, function(viewId, modelId) {
         var childView = this.getChildView(viewId);
         if (childView) {
+          removedChildViews.push(childView);
           _removeChildView.call(this, childView, modelId);
         } else {
           delete this.__modelToViewMap[modelId];
         }
       }, this);
+      return removedChildViews;
     },
 
     /**
@@ -455,7 +462,8 @@
      *   context: {
      *     ... inherited from parent ...
      *   },
-     *   <modelName>: <modelObject>
+     *   <modelName>: <modelObject>,
+     *   listView: the parent list view
      * }
      * @method __generateChildArgs
      * @private
