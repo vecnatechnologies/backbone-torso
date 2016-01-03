@@ -7,7 +7,6 @@ describe('A List View', function() {
       ItemView, myCollection, myListView, templateRenderer;
 
   beforeEach(function(done) {
-    jasmine.clock().install();
     require('./clientEnv')().done(function(environment) {
       env = environment;
       $ = env.window.$;
@@ -258,6 +257,31 @@ describe('A List View', function() {
     expect(_.last(myListView.$el.children())).toBe(myListView.getChildViewFromModel(model).el);
   });
 
+  it('can reorder child views when the collection order changes while using a list view child container', function() {
+    myListView.dispose();
+    myListView = new MyListView({
+      collection: myCollection,
+      childModel: 'item',
+      childView: ItemView,
+      emptyTemplate: Handlebars.compile('<div class="empty-list"></div>'),
+      template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
+      childrenContainer: 'children'
+    });
+    var model = new Model({order: 3});
+    myCollection.add(model);
+    var model2 = new Model({order: 2});
+    myCollection.add(model2);
+    var model3 = new Model({order: 1});
+    myCollection.add(model3);
+    expect(myListView.$el.find('div.item').length).toBe(3);
+    expect(_.first(myListView.$el.find('div.item'))).toBe(myListView.getChildViewFromModel(model).el);
+    expect(_.last(myListView.$el.find('div.item'))).toBe(myListView.getChildViewFromModel(model3).el);
+    myCollection.comparator = 'order';
+    myCollection.sort();
+    expect(_.first(myListView.$el.find('div.item'))).toBe(myListView.getChildViewFromModel(model3).el);
+    expect(_.last(myListView.$el.find('div.item'))).toBe(myListView.getChildViewFromModel(model).el);
+  });
+
   it('can sort a large list in a reasonable time', function() {
     var startTime, endTime, i,
         numberOfViews = 1000,
@@ -274,20 +298,51 @@ describe('A List View', function() {
     expect(myListView.getChildViewFromModel(myCollection.at(0)).el).toBe(_.first(myListView.$el.find('div.item')));
     console.log('Sorted ' + numberOfViews + ' views in ' + endTime + 'ms');
     expect(endTime < threshold).toBe(true);
+    var itemView = myListView.getChildViewFromModel(myCollection.at(0));
+    itemView.$el.find('div.item-details').click().change();
+    expect(itemView.myClick.calls.count()).toBe(1);
+  });
+
+  it('can sort a large list in a reasonable time while using a child container', function() {
+    var startTime, endTime, i,
+        numberOfViews = 1000,
+        threshold = 1000;
+    myListView.dispose();
+    myListView = new MyListView({
+      collection: myCollection,
+      childModel: 'item',
+      childView: ItemView,
+      emptyTemplate: Handlebars.compile('<div class="empty-list"></div>'),
+      template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
+      childrenContainer: 'children'
+    });
+    for (i = 0; i < numberOfViews; i++) {
+      myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
+    }
+    myListView.__createChildViews();
+    myListView.render();
+    myCollection.comparator = 'order';
+    startTime = new Date().getTime();
+    myCollection.sort();
+    endTime = new Date().getTime() - startTime;
+    expect(myListView.getChildViewFromModel(myCollection.at(0)).el).toBe(_.first(myListView.$el.find('div.item')));
+    console.log('Sorted ' + numberOfViews + ' views in a child container in ' + endTime + 'ms');
+    expect(endTime < threshold).toBe(true);
+    var itemView = myListView.getChildViewFromModel(myCollection.at(0));
+    itemView.$el.find('div.item-details').click().change();
+    expect(itemView.myClick.calls.count()).toBe(1);
   });
 
   it('can add views in a reasonable time', function() {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 100,
-        threshold = 300,
-        renderWait = 50;
+        threshold = 500;
     myListView.dispose();
     myListView = new MyListView({
       collection: myCollection,
       childModel: 'item',
-      childView: ItemView,
-      renderWait: renderWait
+      childView: ItemView
     });
     for (i = 0; i < numberOfViews; i++) {
       models.push(new Model())
@@ -300,14 +355,13 @@ describe('A List View', function() {
     expect(myListView.getChildViews().length).toBe(numberOfViews);
     console.log('Added ' + numberOfViews + ' views in ' + endTime + 'ms');
     expect(endTime < threshold).toBe(true);
-    jasmine.clock().tick(myListView._renderWait);
   });
 
   it('can add view to a large list in a reasonable time', function() {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
-        threshold = 20;
+        threshold = 25;
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
@@ -318,6 +372,7 @@ describe('A List View', function() {
     expect(myListView.getChildViewFromModel(newModel)).toBeDefined();
     endTime = new Date().getTime() - startTime;
     console.log('Added one view to ' + numberOfViews + ' views in ' + endTime + 'ms');
+    expect(myListView.getChildViews().length).toBe(numberOfViews + 1);
     expect(endTime < threshold).toBe(true);
   });
 
@@ -329,17 +384,21 @@ describe('A List View', function() {
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
-    // do a reset first to generate all the views.
-    myCollection.reset(models);
+    myListView.dispose();
+    myListView = new MyListView({
+      collection: myCollection,
+      childModel: 'item',
+      childView: ItemView
+    });
     startTime = new Date().getTime();
     myCollection.reset(models);
     endTime = new Date().getTime() - startTime;
-    var newModel = new Model();
     console.log('Reset ' + numberOfViews + ' views in ' + endTime + 'ms');
+    expect(myListView.getChildViews().length).toBe(numberOfViews);
     expect(endTime < threshold).toBe(true);
   });
 
-  it('can reset a collection with a large number of models many times in a reasonable time', function() {
+  it('can reset a collection with a large number of models many times in a reasonable time using renderWait=50', function(done) {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
@@ -356,16 +415,26 @@ describe('A List View', function() {
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
-    // do a reset first to generate all the views.
-    myCollection.reset(models);
+    if (renderWait > 0) {
+      myListView.on('render-complete', function(data) {
+        endTime = new Date().getTime() - startTime;
+        console.log('Reset ' + numberOfViews + ' views ' + numberOfTimes + ' times in ' + endTime + 'ms');
+        expect(myListView.getChildViews().length).toBe(numberOfViews);
+        expect(endTime < threshold).toBe(true);
+        done();
+      });
+    }
     startTime = new Date().getTime();
     for (i = 0; i < numberOfTimes; i++) {
       myCollection.reset(models);
     }
-    endTime = new Date().getTime() - startTime;
-    var newModel = new Model();
-    console.log('Reset ' + numberOfViews + ' views ' + numberOfTimes + ' times in ' + endTime + 'ms');
-    expect(endTime < threshold).toBe(true);
+    if (renderWait <= 0) {
+      endTime = new Date().getTime() - startTime;
+      console.log('Reset ' + numberOfViews + ' views ' + numberOfTimes + ' times in ' + endTime + 'ms');
+      expect(myListView.getChildViews().length).toBe(numberOfViews);
+      expect(endTime < threshold).toBe(true);
+      done();
+    }
   });
 
   /**
