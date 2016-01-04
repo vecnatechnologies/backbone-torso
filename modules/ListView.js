@@ -225,7 +225,7 @@
      * @method setCollection
      * @param collection {Backbone.Collection instance} the new collection that this list view should use.
      */
-    setCollection: function(collection, preserveListeners) {
+    setCollection: function(collection) {
       this.stopListening(this.collection, 'remove', removeChildView);
       this.stopListening(this.collection, 'add', addChildView);
       this.stopListening(this.collection, 'sort', this.reorder);
