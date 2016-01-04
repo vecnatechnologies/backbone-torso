@@ -50,12 +50,13 @@
      */
     constructor: function(options) {
       options = options || {};
-      this.viewState = new NestedCell();
+      this.viewState = this; // backwards compatability.
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
+      NestedCell.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
       }
@@ -63,18 +64,18 @@
 
     /**
      * @return {Object} context for a render method. Defaults to:
-     *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
+     *    {view: this.toJSON(), model: this.model.toJSON()}
      * @method prepare
      */
     prepare: function() {
       if (this.model) {
         return {
           model: this.model.toJSON(),
-          view: this.viewState.toJSON()
+          view: this.toJSON()
         };
       } else {
         return {
-          view: this.viewState.toJSON()
+          view: this.toJSON()
         };
       }
     },
@@ -92,22 +93,6 @@
       }
       this.plug();
       this.delegateEvents();
-    },
-
-    /**
-     * Alias to this.viewState.get()
-     * @method get
-     */
-    get: function() {
-      return this.viewState.get.apply(this.viewState, arguments);
-    },
-
-    /**
-     * Alias to this.viewState.set()
-     * @method set
-     */
-    set: function() {
-      return this.viewState.set.apply(this.viewState, arguments);
     },
 
     /**
@@ -270,10 +255,6 @@
       // Unbind all local event bindings
       this.off();
       this.stopListening();
-      if (this.viewState) {
-        this.viewState.off();
-        this.viewState.stopListening();
-      }
       // Delete the dom references
       delete this.$el;
       delete this.el;
@@ -1031,5 +1012,6 @@
     /************** End Private methods **************/
   });
 
+  View.prototype = _.extend({}, NestedCell.prototype, View.prototype);
   return View;
 }));
