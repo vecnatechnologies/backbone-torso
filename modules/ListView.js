@@ -10,7 +10,7 @@
 }(this, function(_, $, View, templateRenderer) {
   'use strict';
 
-    var removeChildView, addChildView, aggregateRenders, breakDelayedRender;
+    var removeChildView, _removeChildView, addChildView, aggregateRenders, breakDelayedRender;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
