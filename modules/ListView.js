@@ -233,10 +233,10 @@
 
       this.collection = collection;
 
-      this.__collectionRemoveListener = this.listenTo(this.collection, 'remove', removeChildView);
-      this.__collectionAddListener = this.listenTo(this.collection, 'add', addChildView);
-      this.__collectionSortListener = this.listenTo(this.collection, 'sort', this.reorder);
-      this.__collectionResetListener = this.listenTo(this.collection, 'reset', this.update);
+      this.listenTo(this.collection, 'remove', removeChildView);
+      this.listenTo(this.collection, 'add', addChildView);
+      this.listenTo(this.collection, 'sort', this.reorder);
+      this.listenTo(this.collection, 'reset', this.update);
     },
 
     /**
