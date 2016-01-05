@@ -10,7 +10,7 @@
 }(this, function(_, $, View, templateRenderer) {
   'use strict';
 
-    var removeChildView, _removeChildView, addChildView, aggregateRenders, breakDelayedRender;
+    var removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
@@ -52,14 +52,14 @@
     /**
      * Handles the removal of a child view if a model has been removed from the collection
      * @private
-     * @method removeChildView
+     * @method removeItemView
      * @param model {Backbone Model instance} the model that has been removed
      */
-    removeChildView = function(model) {
+    removeItemView = function(model) {
       var childView = this.getChildViewFromModel(model);
       if (childView) {
-        _removeChildView.call(this, childView, model[this.__modelId], model);
-        if (!this.hasTrackedViews({ shared: false })) {
+        _removeItemView.call(this, childView, model[this.__modelId], model);
+        if (!this.hasItemViews()) {
           this.__delayedRender();
         }
       }
@@ -69,51 +69,66 @@
      * Disposes of a child view, unregisters, stops tracking and triggers a 'child-view-removed' event
      * with the model and child view as the payload.
      * @private
-     * @method _removeChildView
+     * @method _removeItemView
      * @param childView {Backbone View instance} the view being removed
      * @param modelId {String or Number} the id used for the model
      * @param [model] {Backbone Model instance} the model
      */
-    _removeChildView = function(childView, modelId, model) {
+    _removeItemView = function(childView, modelId, model) {
       childView.dispose();
       this.unregisterTrackedView(childView, { shared: false });
       delete this.__modelToViewMap[modelId];
+      this.__updateOrderedModelIdList();
       this.trigger('child-view-removed', {model: model || childView.model, view: childView});
     };
 
     /**
-     * Handles the addition of a child view if a model has been added to the collection.
+     * Handles the addition of an item view if a model has been added to the collection.
      * When possible, it will append the view instead of causing a rerender
      * @private
-     * @method addChildView
+     * @method addItemView
      * @param model the model being added
      */
-    addChildView = function(model) {
-      var childView, viewAfter, viewBefore, replaceMethod,
+    addItemView = function(model) {
+      var itemView,
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
-        this.__createChildView(model);
-        if (!this.hasTrackedViews({ shared: false })) {
-          this.__delayedRender();
+        itemView = this.__createItemView(model);
+        _addItemView.call(this, itemView, indexOfModel);
+      }
+    };
+
+    /**
+     * Adds the new item view before or after a sibling view. If no sibling view exists
+     * or if this item view is the first, it will cause a re-render. This method will break
+     * any delayed renders and force a re-render before continuing.
+     * @private
+     * @method _addItemView
+     * @param itemView the view being added
+     * @param indexOfModel - the index of the model into the array of models to render
+     */
+    _addItemView = function(itemView, indexOfModel) {
+      var viewAfter, viewBefore, replaceMethod,
+        models = this.modelsToRender();
+      if (!this.hasItemViews()) {
+        this.__delayedRender();
+      } else {
+        breakDelayedRender(this);
+        viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
+        viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
+        if (viewAfter) {
+          replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
+        } else if (viewBefore) {
+          replaceMethod = _.bind(viewBefore.$el.after, viewBefore.$el);
         } else {
-          breakDelayedRender(this);
-          childView = this.getChildViewFromModel(model);
-          viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
-          viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
-          if (viewAfter) {
-            replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
-          } else if (viewBefore) {
-            replaceMethod = _.bind(viewBefore.$el.after, viewBefore.$el);
-          } else {
-            this.__delayedRender();
-          }
-          if (replaceMethod) {
-            this.attachView(null, childView, {
-              replaceMethod: replaceMethod,
-              discardInjectionSite: true
-            });
-          }
+          this.__delayedRender();
+        }
+        if (replaceMethod) {
+          this.attachView(null, itemView, {
+            replaceMethod: replaceMethod,
+            discardInjectionSite: true
+          });
         }
       }
     };
@@ -185,7 +200,7 @@
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom
      *                                           functionality.
      *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
-     *   @param [args.modelId='cid'] {String} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
+     *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
      */
     constructor: function(args) {
@@ -209,8 +224,10 @@
       this.__renderWait = args.renderWait || this.__renderWait;
       this.__modelId = args.modelId || 'cid';
       this.__modelName = args.childModel || 'model';
-      this.__createChildViews();
+      this.__orderedModelIdList = [];
+      this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
+
 
       if (collection) {
         this.setCollection(collection);
@@ -233,10 +250,10 @@
 
       this.collection = collection;
 
-      this.listenTo(this.collection, 'remove', removeChildView);
-      this.listenTo(this.collection, 'add', addChildView);
-      this.listenTo(this.collection, 'sort', this.reorder);
-      this.listenTo(this.collection, 'reset', this.update);
+      this.listenTo(this.collection, 'remove', removeItemView, this);
+      this.listenTo(this.collection, 'add', addItemView, this);
+      this.listenTo(this.collection, 'sort', this.reorder, this);
+      this.listenTo(this.collection, 'reset', this.update, this);
     },
 
     /**
@@ -246,6 +263,7 @@
      * @method render
      */
     render: function() {
+      // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of child views
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
       if (this.template) {
@@ -255,8 +273,8 @@
         injectionSite = $('<span>');
         newDOM.append(injectionSite);
       }
-      if (this.hasTrackedViews({ shared: false })) {
-        injectionSite.replaceWith(this.__emptyAndRebuildChildViewsFragment());
+      if (this.hasItemViews()) {
+        injectionSite.replaceWith(this.__emptyAndRebuildItemViewsFragment());
       } else if (this.emptyTemplate) {
         injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
@@ -280,10 +298,9 @@
      * @method renderChildViews
      */
     renderChildViews: function() {
-      _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
+      _.each(this.getChildViews(), function(childView) {
         childView.render();
-      }, this);
+      });
     },
 
     /**
@@ -293,8 +310,19 @@
      * @method reorder
      */
     reorder: function() {
-      var firstChildView, elements = [];
-     _.each(this.modelsToRender(), function(model, index) {
+      var firstChildView, sameOrder,
+        elements = [],
+        models = this.modelsToRender(),
+        newOrderOfIds = _.pluck(models, this.__modelId);
+      if (_.size(newOrderOfIds) === _.size(this.__orderedModelIdList)) {
+        sameOrder = _.reduce(this.__orderedModelIdList, function(result, oldId, index) {
+          return result && newOrderOfIds[index] == oldId;
+        }, true);
+      }
+      if (_.isEmpty(newOrderOfIds) || sameOrder) {
+        return;
+      }
+      _.each(models, function(model, index) {
         var childView = this.getChildViewFromModel(model);
         if (childView) {
           elements.push(childView.$el);
@@ -313,6 +341,7 @@
         injectionSite.after(elements);
         injectionSite.remove();
       }
+      this.__updateOrderedModelIdList(newOrderOfIds);
       this.trigger('reorder-complete');
     },
 
@@ -350,10 +379,31 @@
      * @method update
      */
     update: function() {
-      var newViews = this.__createChildViews(),
-        removedViews = this.__removeStaleChildViews();
-      if (!_.isEmpty(newViews) || !_.isEmpty(removedViews)) {
+      var view = this,
+        renderNeeded = false,
+        oldViews = this.getItemViews(),
+        newViews = this.__createItemViews(),
+        staleViews = this.__getStaleItemViews(),
+        sizeOfOldViews = _.size(oldViews),
+        sizeOfNewViews = _.size(newViews),
+        sizeOfStaleViews = _.size(staleViews),
+        sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews,
+        changes = sizeOfNewViews + sizeOfStaleViews,
+        percentChange = changes / Math.max(sizeOfFinalViews, 1),
+        fromEmptyToNotEmpty = !sizeOfOldViews && sizeOfNewViews,
+        fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews,
+        threshold = this.updateThreshold || 0.5,
+        signficantChanges = percentChange >= threshold;
+      if (!changes) {
+        return this.reorder();
+      }
+      // A switch from empty to not empty or vise versa, needs a new render
+      renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
+      if (renderNeeded) {
+        this.__removeStaleItemViews(staleViews);
         this.__delayedRender();
+      } else {
+        this.__updateByAddingRemoving(oldViews, newViews, staleViews);
       }
     },
 
@@ -367,48 +417,110 @@
       return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
     },
 
-    /************** Private methods **************/
-
     /**
-     * Creates a new child view if there doesn't exist one for a model
-     * @method __createChildViews
-     * @private
+     * @return {Boolean} returns true if there exists any generated item views
+     * @method hasItemViews
      */
-    __createChildViews: function() {
-      var newChildViews = [];
-      _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
-        if (!childView) {
-          newChildViews.push(this.__createChildView(model));
-        }
-      }, this);
-      return newChildViews;
+    hasItemViews: function() {
+      return !_.isEmpty(this.getItemViews());
     },
 
     /**
-     * Removes a child view's that have models that are no longer tracked by modelsToRender
-     * @method __removeStaleChildViews
+     * @return {Array of views} Returns unordered list of views generated by this list view
+     * @method getItemViews
+     */
+    getItemViews: function() {
+      var view = this;
+      var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
+      return _.map(orderedViewIds, this.getChildView, this);
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Creates all needed item views that don't exist from modelsToRender()
+     * @method __createItemViews
+     * @private
+     * @return {Array} each object in array contains a 'view' and 'indexOfModel' field
+     */
+    __createItemViews: function() {
+      var newItemViews = [];
+      _.each(this.modelsToRender(), function(model, indexOfModel) {
+        var childView = this.getChildViewFromModel(model);
+        if (!childView) {
+          newItemViews.push({ view: this.__createItemView(model, true), indexOfModel: indexOfModel });
+        }
+      }, this);
+      this.__updateOrderedModelIdList();
+      return newItemViews;
+    },
+
+    /**
+     * Creates an item view and stores a reference to it
+     * @method __createItemView
+     * @private
+     * @param model {Backbone Model} the model to create the view from
+     * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
+     * @return {Backbone View} the new item view
+     */
+    __createItemView: function(model, noUpdateToIdList) {
+      var itemView,
+        ItemViewClass = this.childView;
+      if (!_.isFunction(this.childView.extend)) {
+        ItemViewClass = this.childView(model);
+      }
+      itemView = new ItemViewClass(this.__generateChildArgs(model));
+      this.registerTrackedView(itemView, { shared: false });
+      this.__modelToViewMap[model[this.__modelId]] = itemView.cid;
+      if (!noUpdateToIdList) {
+        this.__updateOrderedModelIdList();
+      }
+      this.trigger('child-view-added', {model: model, view: itemView});
+      return itemView;
+    },
+
+    /**
+     * Gets all item views that have models that are no longer tracked by modelsToRender
+     * @method __getStaleItemViews
+     * @return {Array} An array of information about stale items. Each object has a 'view' and 'modelId' field
      * @private
      */
-    __removeStaleChildViews: function() {
-      var removedChildViews = [];
+    __getStaleItemViews: function() {
+      var staleItemViews = [];
       var modelsWithViews = _.clone(this.__modelToViewMap);
       _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
-        if (childView) {
+        var itemView = this.getChildViewFromModel(model);
+        if (itemView) {
           delete modelsWithViews[model[this.__modelId]];
         }
       }, this);
       _.each(modelsWithViews, function(viewId, modelId) {
-        var childView = this.getChildView(viewId);
-        if (childView) {
-          removedChildViews.push(childView);
-          _removeChildView.call(this, childView, modelId);
+        var itemView = this.getChildView(viewId);
+        if (itemView) {
+          staleItemViews.push({ view: itemView, modelId: modelId });
         } else {
           delete this.__modelToViewMap[modelId];
         }
       }, this);
-      return removedChildViews;
+      return staleItemViews;
+    },
+
+    /**
+     * Removes the item views that no longer have models returned by modelsToRender()
+     * @method __removeStaleItemViews
+     * @param [staleItemViewInfo] {Array of objects:
+     *   [{
+     *     view: stale item view,
+     *     modelId: id of model item
+     *   }]} If provided, stale items will not be found, but this array will be used instead.
+     * @private
+     */
+    __removeStaleItemViews: function(staleItemViewInfo) {
+      var view = this;
+      staleItemViewInfo = staleItemViewInfo || this.__getStaleItemViews();
+      _.each(staleItemViewInfo, function(staleViewInfo) {
+        _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);
+      });
     },
 
     /**
@@ -416,13 +528,14 @@
      * modelsToRender(). This will clear the List View's DOM and invoke the necessary
      * detach, register and render logic on each child view.
      * @return a DOM fragment with child view elements appended
-     * @method __emptyAndRebuildChildViewsFragment
+     * @method __emptyAndRebuildItemViewsFragment
      * @private
      */
-    __emptyAndRebuildChildViewsFragment: function(renderAlso) {
+    __emptyAndRebuildItemViewsFragment: function() {
       var injectionFragment = document.createDocumentFragment();
       // Clearing the DOM will reduce the repaints needed as we detach each child view.
       this.$el.empty();
+
      _.each(this.modelsToRender(), function(model) {
         var childView = this.getChildViewFromModel(model);
         if (childView) {
@@ -432,27 +545,70 @@
           injectionFragment.appendChild(childView.el);
         }
       }, this);
+      this.__updateOrderedModelIdList();
       return $(injectionFragment);
     },
 
     /**
-     * Creates a child view and stores a reference to it
-     * @method __createChildView
-     * @private
-     * @param model {Backbone Model} the model to create the view from
-     * @return {Backbone View} the new child view
+     * Attempts to insert new views and remove stale views individually and correctly reorder all views in an
+     * attempt to be faster then a full view re-render
+     * @method __updateByAddingRemoving
+     * @param oldViews {Array of Views} - correctly ordered list of views before making changes to models to render
+     * @param newViews {Array of Views} - the new views created that will be inserted
+     * @param staleViews {Array of Views} - the stale views that will be removed
      */
-    __createChildView: function(model) {
-      var childView,
-        ChildViewClass = this.childView;
-      if (!_.isFunction(this.childView.extend)) {
-        ChildViewClass = this.childView(model);
+    __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
+      var firstChildViewLeft, injectionSite,
+        view = this,
+        sizeOfOldViews = _.size(oldViews),
+        sizeOfNewViews = _.size(newViews),
+        sizeOfStaleViews = _.size(staleViews);
+      if (view.childrenContainer && sizeOfOldViews && sizeOfOldViews == sizeOfStaleViews) {
+        // we removed all the views!
+        injectionSite = $('<span>');
+        _.first(oldViews).$el.before(injectionSite);
       }
-      childView = new ChildViewClass(this.__generateChildArgs(model));
-      this.registerTrackedView(childView, { shared: false });
-      this.__modelToViewMap[model[this.__modelId]] = childView.cid;
-      this.trigger('child-view-added', {model: model, view: childView});
-      return childView;
+      view.__removeStaleItemViews(staleViews);
+      _.each(newViews, function(createdViewInfo, indexOfView) {
+        if (createdViewInfo.indexOfModel === 0) {
+          // need to handle this case uniquely.
+          var replaceMethod;
+          if (!view.childrenContainer) {
+            replaceMethod = _.bind(view.$el.prepend, view.$el);
+          } else {
+            if (injectionSite) {
+              replaceMethod = _.bind(injectionSite.replaceWith, injectionSite);
+            } else {
+              var staleModelIdMap = _.indexBy(staleViews, 'modelId');
+              var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
+                return !staleModelIdMap[modelId];
+              });
+              firstChildViewLeft = view.getChildView(view.__modelToViewMap[firstModelIdLeft]);
+              replaceMethod = _.bind(firstChildViewLeft.$el.prepend, firstChildViewLeft.$el);
+            }
+          }
+          view.attachView(null, createdViewInfo.view, {
+            replaceMethod: replaceMethod,
+            discardInjectionSite: true
+          });
+        } else {
+          // There will always the view before this one because we are adding new views in order
+          // and we took care of the initial case.
+          _addItemView.call(view, createdViewInfo.view, createdViewInfo.indexOfModel);
+        }
+      });
+      this.reorder();
+    },
+
+    /**
+     * Updates the internal list of model ids that correspond to the models used for the current
+     * list of item views. The order is the same order of the item views.
+     * @method __updateOrderedModelIdList
+     * @param [newIdsList] {Array of ids} - if passed the array, it will use that instead of finding the list.
+     * @private
+     */
+    __updateOrderedModelIdList: function(newIdsList) {
+      this.__orderedModelIdList = newIdsList || _.pluck(this.modelsToRender(), this.__modelId);
     },
 
     /**
@@ -478,6 +634,16 @@
       };
       args[this.__modelName] = model;
       return args;
+    },
+
+    /**
+     * @method __getViewIdFromModelId
+     * @private
+     * @param modelId {String or Number} id of model
+     * @return {String or Number} view cid that was built from corresponding model
+     */
+    __getViewIdFromModelId: function(modelId) {
+      return this.__modelToViewMap[modelId];
     }
   });
 
