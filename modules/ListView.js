@@ -430,14 +430,14 @@
      */
     getItemViews: function() {
       var view = this;
-      var orderedViewIds = _.map(this.__orderedModelIdList, function(modelId) { return view.__modelToViewMap[modelId]; });
+      var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
       return _.map(orderedViewIds, this.getChildView, this);
     },
 
     /************** Private methods **************/
 
     /**
-     * Creates a new item view for a model if there doesn't exist one
+     * Creates all needed item views that don't exist from modelsToRender()
      * @method __createItemViews
      * @private
      * @return {Array} each object in array contains a 'view' and 'indexOfModel' field
@@ -479,29 +479,29 @@
     },
 
     /**
-     * Gets all child views that have models that are no longer tracked by modelsToRender
+     * Gets all item views that have models that are no longer tracked by modelsToRender
      * @method __getStaleItemViews
      * @return {Array} An array of information about stale items. Each object has a 'view' and 'modelId' field
      * @private
      */
     __getStaleItemViews: function() {
-      var staleChildViews = [];
+      var staleItemViews = [];
       var modelsWithViews = _.clone(this.__modelToViewMap);
       _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
-        if (childView) {
+        var itemView = this.getChildViewFromModel(model);
+        if (itemView) {
           delete modelsWithViews[model[this.__modelId]];
         }
       }, this);
       _.each(modelsWithViews, function(viewId, modelId) {
-        var childView = this.getChildView(viewId);
-        if (childView) {
-          staleChildViews.push({ view: childView, modelId: modelId });
+        var itemView = this.getChildView(viewId);
+        if (itemView) {
+          staleItemViews.push({ view: itemView, modelId: modelId });
         } else {
           delete this.__modelToViewMap[modelId];
         }
       }, this);
-      return staleChildViews;
+      return staleItemViews;
     },
 
     /**
@@ -633,6 +633,16 @@
       };
       args[this.__modelName] = model;
       return args;
+    },
+
+    /**
+     * @method __getViewIdFromModelId
+     * @private
+     * @param modelId {String or Number} id of model
+     * @return {String or Number} view cid that was built from corresponding model
+     */
+    __getViewIdFromModelId: function(modelId) {
+      return this.__modelToViewMap[modelId];
     }
   });
 

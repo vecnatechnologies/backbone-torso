@@ -381,104 +381,121 @@ describe('A List View', function() {
     expect(endTime < threshold).toBe(true);
   });
 
-  it('can reset the collection with a large number of models in a reasonable time', function() {
+  describe('can reset models effectively', function() {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
         threshold = 1000;
-    for (i = 0; i < numberOfViews; i++) {
-       models.push(new Model())
-    }
-    myListView.dispose();
-    myListView = new MyListView({
-      collection: myCollection,
-      childModel: 'item',
-      childView: ItemView
-    });
-    myListView.attach($('body'));
-    startTime = new Date().getTime();
-    myCollection.reset(models);
-    endTime = new Date().getTime() - startTime;
-    console.log('Reset ' + numberOfViews + ' views in ' + endTime + 'ms');
-    expect(myListView.getChildViews().length).toBe(numberOfViews);
-    expect(endTime < threshold).toBe(true);
-  });
 
-  it('can reset a few of many models correctly and in a reasonable time', function() {
-    var startTime, endTime, i,
-      models = [],
-      numberOfViews = 1000,
+    beforeEach(function() {
+      models = [];
+      for (i = 0; i < numberOfViews; i++) {
+        models.push(new Model())
+      }
+      myListView.dispose();
+      myListView = new MyListView({
+        collection: myCollection,
+        childModel: 'item',
+        childView: ItemView
+      });
+      myListView.attach($('body'));
+      myCollection.reset(models);
+    });
+
+    it('with a large number of models in a reasonable time', function() {
+      myCollection.reset([]);
+      startTime = new Date().getTime();
+      myCollection.reset(models);
+      endTime = new Date().getTime() - startTime;
+      console.log('Reset ' + numberOfViews + ' views in ' + endTime + 'ms');
+      expect(myListView.getChildViews().length).toBe(numberOfViews);
+      expect(endTime < threshold).toBe(true);
+    });
+
+    it('can remove a few models from the back of many models correctly and in a reasonable time', function() {
       threshold = 500;
-    for (i = 0; i < numberOfViews; i++) {
-      models.push(new Model())
-    }
-    myListView.dispose();
-    myListView = new MyListView({
-      collection: myCollection,
-      childModel: 'item',
-      childView: ItemView
+      startTime = new Date().getTime();
+      myCollection.reset(models.slice(0, numberOfViews - 100));
+      endTime = new Date().getTime() - startTime;
+      console.log('Removed 100 old views at the end of ' + numberOfViews + ' views using reset in ' + endTime + 'ms');
+      expect(myListView.getItemViews().length).toBe(numberOfViews - 100);
+      expect(endTime < threshold).toBe(true);
     });
-    myListView.attach($('body'));
-    myCollection.reset(models);
-    startTime = new Date().getTime();
-    myCollection.reset(models.slice(0, numberOfViews - 100));
-    endTime = new Date().getTime() - startTime;
-    console.log('Removed 100 old views at the end of ' + numberOfViews + ' views using reset in ' + endTime + 'ms');
-    expect(myListView.getItemViews().length).toBe(numberOfViews - 100);
-    expect(endTime < threshold).toBe(true);
 
-    startTime = new Date().getTime();
-    myCollection.reset(models.slice(100, numberOfViews - 100));
-    endTime = new Date().getTime() - startTime;
-    console.log('Removed 100 old views at the front of ' + (numberOfViews - 100) + ' views using reset in ' + endTime + 'ms');
-    expect(myListView.getItemViews().length).toBe(numberOfViews - 200);
-    expect(endTime < threshold).toBe(true);
-
-    var newModels = []
-    for (i = 0; i < 100; i++) {
-      newModels.push(new Model());
-    }
-    newModels = newModels.concat(models.slice(100, numberOfViews - 100));
-    startTime = new Date().getTime();
-    myCollection.reset(newModels);
-    endTime = new Date().getTime() - startTime;
-    console.log('Added 100 new views at the front of ' + (numberOfViews - 200) + ' views using reset in ' + endTime + 'ms');
-    expect(myListView.getItemViews().length).toBe(numberOfViews - 100);
-    expect(myListView.getItemViews()[0].model.cid).toBe(myCollection.at(0).cid);
-    expect(myListView.getItemViews()[numberOfViews - 101].model.cid).toBe(myCollection.at(numberOfViews - 101).cid);
-    expect(endTime < threshold).toBe(true);
-
-    threshold = 1000;
-
-    myListView.dispose();
-    myListView = new MyListView({
-      collection: myCollection,
-      childModel: 'item',
-      childView: ItemView,
-      emptyTemplate: Handlebars.compile('<div class="empty-list"></div>'),
-      template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
-      childrenContainer: 'children'
+    it('can remove a few models from the front of many models correctly and in a reasonable time', function() {
+      threshold = 500;
+      startTime = new Date().getTime();
+      myCollection.reset(models.slice(100, numberOfViews));
+      endTime = new Date().getTime() - startTime;
+      console.log('Removed 100 old views at the front of ' + numberOfViews + ' views using reset in ' + endTime + 'ms');
+      expect(myListView.getItemViews().length).toBe(numberOfViews - 100);
+      expect(endTime < threshold).toBe(true);
     });
-    myListView.attach($('body'));
-    myCollection.reset(models);
-    startTime = new Date().getTime();
-    myCollection.reset(newModels);
-    endTime = new Date().getTime() - startTime;
-    console.log('A list view using a children container: added 100 to the front and removed 200 views to ' + numberOfViews + ' item views using reset in ' + endTime + 'ms');
-    expect(myListView.getItemViews().length).toBe(numberOfViews - 100);
-    expect(myListView.getItemViews()[0].model.cid).toBe(myCollection.at(0).cid);
-    expect(myListView.getItemViews()[numberOfViews - 101].model.cid).toBe(myCollection.at(numberOfViews - 101).cid);
-    expect(endTime < threshold).toBe(true);
 
-    _.shuffle(models);
-    startTime = new Date().getTime();
-    myCollection.reset(models);
-    endTime = new Date().getTime() - startTime;
-    console.log('A list view using a children container: removed 100 from the front, added 200 views and shuffled the entire list of ' + numberOfViews + ' item views using reset in ' + endTime + 'ms');
-    expect(myListView.getItemViews().length).toBe(numberOfViews);
-    expect(myListView.getItemViews()[0].model.cid).toBe(myCollection.at(0).cid);
-    expect(myListView.getItemViews()[numberOfViews - 1].model.cid).toBe(myCollection.at(numberOfViews - 1).cid);
-    expect(endTime < threshold).toBe(true);
+    it('can add a few models to the front of many models correctly and in a reasonable time', function() {
+      threshold = 500;
+      var newModels = []
+      for (i = 0; i < 100; i++) {
+        newModels.push(new Model());
+      }
+      newModels = newModels.concat(models.slice(0, numberOfViews));
+      startTime = new Date().getTime();
+      myCollection.reset(newModels);
+      endTime = new Date().getTime() - startTime;
+      console.log('Added 100 new views at the front of ' + numberOfViews + ' views using reset in ' + endTime + 'ms');
+      expect(myListView.getItemViews().length).toBe(numberOfViews + 100);
+      expect(myListView.getItemViews()[0].model.cid).toBe(myCollection.at(0).cid);
+      expect(myListView.getItemViews()[numberOfViews + 99].model.cid).toBe(myCollection.at(numberOfViews + 99).cid);
+      expect(endTime < threshold).toBe(true);
+    });
+
+    describe('using a children container,', function() {
+
+      var newModels = [];
+
+      beforeEach(function() {
+        myListView.dispose();
+        myListView = new MyListView({
+          collection: myCollection,
+          childModel: 'item',
+          childView: ItemView,
+          emptyTemplate: Handlebars.compile('<div class="empty-list"></div>'),
+          template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
+          childrenContainer: 'children'
+        });
+        myListView.attach($('body'));
+        myCollection.reset(models);
+        newModels = []
+        for (i = 0; i < 100; i++) {
+          newModels.push(new Model());
+        }
+        newModels = newModels.concat(models.slice(100, numberOfViews - 100));
+      });
+
+      it('can add and remove a few models from many models correctly and in a reasonable time', function() {
+        startTime = new Date().getTime();
+        myCollection.reset(newModels);
+        endTime = new Date().getTime() - startTime;
+        console.log('Added 100 to the front and removed 200 views to ' + numberOfViews + ' item views using reset in ' + endTime + 'ms');
+        expect(myListView.getItemViews().length).toBe(numberOfViews - 100);
+        expect(myListView.getItemViews()[0].model.cid).toBe(myCollection.at(0).cid);
+        expect(myListView.getItemViews()[numberOfViews - 101].model.cid).toBe(myCollection.at(numberOfViews - 101).cid);
+        expect(endTime < threshold).toBe(true);
+      });
+
+      it('can add and remove a few models from many models correctly and in a reasonable time', function() {
+        myCollection.reset(newModels);
+        _.shuffle(models);
+        startTime = new Date().getTime();
+        myCollection.reset(models);
+        endTime = new Date().getTime() - startTime;
+        console.log('Removed 100 from the front, added 200 views and shuffled the entire list of ' + numberOfViews + ' item views using reset in ' + endTime + 'ms');
+        expect(myListView.getItemViews().length).toBe(numberOfViews);
+        expect(myListView.getItemViews()[0].model.cid).toBe(myCollection.at(0).cid);
+        expect(myListView.getItemViews()[numberOfViews - 1].model.cid).toBe(myCollection.at(numberOfViews - 1).cid);
+        expect(endTime < threshold).toBe(true);
+      });
+    });
   });
 
   it('can reset a collection to the same large set of models many times in a reasonable time', function() {
