@@ -50,15 +50,15 @@
     };
 
     /**
-     * Handles the removal of a child view if a model has been removed from the collection
+     * Handles the removal of an item view if a model has been removed from the collection
      * @private
      * @method removeItemView
      * @param model {Backbone Model instance} the model that has been removed
      */
     removeItemView = function(model) {
-      var childView = this.getChildViewFromModel(model);
-      if (childView) {
-        _removeItemView.call(this, childView, model[this.__modelId], model);
+      var itemView = this.getItemViewFromModel(model);
+      if (itemView) {
+        _removeItemView.call(this, itemView, model[this.__modelId], model);
         if (!this.hasItemViews()) {
           this.__delayedRender();
         }
@@ -66,20 +66,21 @@
     };
 
     /**
-     * Disposes of a child view, unregisters, stops tracking and triggers a 'child-view-removed' event
-     * with the model and child view as the payload.
+     * Disposes of an item view, unregisters, stops tracking and triggers a 'item-view-removed' event
+     * with the model and an item view as the payload.
      * @private
      * @method _removeItemView
-     * @param childView {Backbone View instance} the view being removed
+     * @param itemView {Backbone View instance} the view being removed
      * @param modelId {String or Number} the id used for the model
      * @param [model] {Backbone Model instance} the model
      */
-    _removeItemView = function(childView, modelId, model) {
-      childView.dispose();
-      this.unregisterTrackedView(childView, { shared: false });
+    _removeItemView = function(itemView, modelId, model) {
+      itemView.dispose();
+      this.unregisterTrackedView(itemView, { shared: false });
       delete this.__modelToViewMap[modelId];
       this.__updateOrderedModelIdList();
-      this.trigger('child-view-removed', {model: model || childView.model, view: childView});
+      this.trigger('item-view-removed', {model: model || itemView.model, view: itemView});
+      this.trigger('child-view-removed', {model: model || itemView.model, view: itemView});
     };
 
     /**
@@ -115,8 +116,8 @@
         this.__delayedRender();
       } else {
         breakDelayedRender(this);
-        viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
-        viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
+        viewAfter = this.getItemViewFromModel(models[indexOfModel + 1]);
+        viewBefore = this.getItemViewFromModel(models[indexOfModel - 1]);
         if (viewAfter) {
           replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
         } else if (viewBefore) {
@@ -148,13 +149,14 @@
      */
     collection: null,
     /**
-     * The child view class definition that will be instantiated for each model in the list.
-     * childView can also be a function that takes a model and returns a view class. This allows
+     * The item view class definition that will be instantiated for each model in the list.
+     * itemView can also be a function that takes a model and returns a view class. This allows
      * for different view classes depending on the model.
-     * @property childView
+     * NOTE: replacement for deprecated field: childView
+     * @property itemView
      * @type View or Function
      */
-    childView: null,
+    itemView: null,
     /**
      * The template that allows a list view to hold it's own HTML like filter buttons, etc.
      * @property template
@@ -163,21 +165,22 @@
     template: null,
     /**
      * If provided, this template that will be shown if the modelsToRender() method returns
-     * an empty list. If a childrenContainer is provided, the empty template will be rendered there.
+     * an empty list. If an itemContainer is provided, the empty template will be rendered there.
      * @property emptyTemplate
      * @type HTML Template
      */
     emptyTemplate: null,
     /**
-     * (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
-     * @property childrenContainer
+     * (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
+     * NOTE: replacement for deprecated field: childContainer
+     * @property itemContainer
      * @type String
      */
-    childrenContainer: null,
+    itemContainer: null,
     __modelName: '',
     __modelId: '',
     __modelToViewMap: null,
-    __childContext: null,
+    __itemContext: null,
     __renderWait: 0,
     __delayedRender: null,
     __delayedRenderTimeout: null,
@@ -186,44 +189,46 @@
      * Constructor for the list view object.
      * @method constructor
      * @param args {Object} - options argument
-     *   @param args.childView {Backbone.View definition or Function} - the class definition of the child view. This view will be instantiated
+     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated
      *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
      *                                                     this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
      *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
      *                                                          might provide a default collection. Can be private or public collection
-     *   @param [args.childContext] {Object or Function} - object or function that's passed to the child view's during initialization under the name "context". Can be used by the child view during their prepare method.
+     *   @param [args.itemContext] {Object or Function} - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
      *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
-     *   @param [args.childrenContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
+     *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
      *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns
-     *                                             an empty list. If a childrenContainer is provided, the empty template will be
+     *                                             an empty list. If a itemContainer is provided, the empty template will be
      *                                             rendered there.
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom
      *                                           functionality.
      *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
-     *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
+     *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
+     *   @param [args.childView] {String} DEPRECATED - deprecated alias to args.itemView
+     *   @param [args.childContext] {String} DEPRECATED - deprecated alias to args.itemContext
+     *   @param [args.childContainer] {String} DEPRECATED - deprecated alias to args.itemContainer
+     *   @param [args.childModel] {String} DEPRECATED - deprecated alias to args.modelName
      */
     constructor: function(args) {
       View.apply(this, arguments);
       args = args || {};
 
-      var initialModels, i, l, childView,
-          injectionSite = this.$el,
-          collection = args.collection || this.collection;
+      var collection = args.collection || this.collection;
 
       this.template = args.template || this.template;
       this.emptyTemplate = args.emptyTemplate || this.emptyTemplate;
-      this.childView = args.childView || this.childView;
-      this.childrenContainer = args.childrenContainer || this.childrenContainer;
-      if (this.template && !this.childrenContainer) {
-        throw 'Children container is required when using a template';
+      this.itemView = args.itemView || this.itemView || args.childView || this.childView;
+      this.itemContainer = args.itemContainer || this.itemContainer || args.childrenContainer || this.childrenContainer;
+      if (this.template && !this.itemContainer) {
+        throw 'Item container is required when using a template';
       }
       this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this.__childContext = args.childContext || this.__childContext;
+      this.__itemContext = args.itemContext || this.__itemContext || args.childContext || this.__childContext;
       this.__modelToViewMap = {};
       this.__renderWait = args.renderWait || this.__renderWait;
       this.__modelId = args.modelId || 'cid';
-      this.__modelName = args.childModel || 'model';
+      this.__modelName = args.modelName || args.childModel || 'model';
       this.__orderedModelIdList = [];
       this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
@@ -235,40 +240,40 @@
     },
 
     /**
-     * Sets the collection from which this view generates child views.
-     * This method will attach all necessary event listeners to the new collection to auto-generate child views
+     * Sets the collection from which this view generates item views.
+     * This method will attach all necessary event listeners to the new collection to auto-generate item views
      * and has the option of removing listeners on a previous collection.
      *
      * @method setCollection
      * @param collection {Backbone.Collection instance} the new collection that this list view should use.
      */
     setCollection: function(collection) {
-      this.stopListening(this.collection, 'remove', removeChildView);
-      this.stopListening(this.collection, 'add', addChildView);
+      this.stopListening(this.collection, 'remove', removeItemView);
+      this.stopListening(this.collection, 'add', addItemView);
       this.stopListening(this.collection, 'sort', this.reorder);
       this.stopListening(this.collection, 'reset', this.update);
 
       this.collection = collection;
 
-      this.listenTo(this.collection, 'remove', removeItemView, this);
-      this.listenTo(this.collection, 'add', addItemView, this);
-      this.listenTo(this.collection, 'sort', this.reorder, this);
-      this.listenTo(this.collection, 'reset', this.update, this);
+      this.listenTo(this.collection, 'remove', removeItemView);
+      this.listenTo(this.collection, 'add', addItemView);
+      this.listenTo(this.collection, 'sort', this.reorder);
+      this.listenTo(this.collection, 'reset', this.update);
     },
 
     /**
      * The core rendering method that produces the template for the list view first
-     * then invokes a refresh on all children views or renders an empty list template
+     * then invokes a refresh on all item views or renders an empty list template
      * if there are no models in the modelsToRender
      * @method render
      */
     render: function() {
-      // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of child views
+      // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
-        injectionSite = newDOM.find('[inject=' + this.childrenContainer + ']');
+        injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
       } else {
         injectionSite = $('<span>');
         newDOM.append(injectionSite);
@@ -282,12 +287,12 @@
       this.$el.html(newDOM.contents());
       this.delegateEvents();
       _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
-        if (childView) {
-          childView.__cleanupAfterReplacingInjectionSite();
-          childView.activate();
+        var itemView = this.getItemViewFromModel(model);
+        if (itemView) {
+          itemView.__cleanupAfterReplacingInjectionSite();
+          itemView.activate();
         } else {
-          // Shouldn't get here. Child views are missing...
+          // Shouldn't get here. Item view is missing...
         }
       }, this);
       this.trigger('render-complete');
@@ -304,40 +309,48 @@
     },
 
     /**
-     * Takes existing child views and moves them into correct order defined by
+     * Takes existing item views and moves them into correct order defined by
      * this.modelsToRender(). NOTE: As this method doesn't generate or remove views,
      * this method takes advantage of jquery's ability to move elements already attached to the DOM.
      * @method reorder
      */
     reorder: function() {
-      var firstChildView, sameOrder,
+      var firstItemView, sameOrder,
         elements = [],
         models = this.modelsToRender(),
-        newOrderOfIds = _.pluck(models, this.__modelId);
-      if (_.size(newOrderOfIds) === _.size(this.__orderedModelIdList)) {
+        newOrderOfIds = _.pluck(models, this.__modelId),
+        sizeOfNewModels = _.size(newOrderOfIds),
+        sizeOfOldModels = _.size(this.__orderedModelIdList),
+        sameSize = sizeOfNewModels === sizeOfOldModels;
+
+      if (sameSize) {
+        // is order the same?
         sameOrder = _.reduce(this.__orderedModelIdList, function(result, oldId, index) {
           return result && newOrderOfIds[index] == oldId;
         }, true);
+      } else {
+        throw 'Reorder should not be invoked if the number of models have changed';
       }
-      if (_.isEmpty(newOrderOfIds) || sameOrder) {
+      if (!sizeOfNewModels || sameOrder) {
+        // stop early if there are no models to reorder or the models are the same
         return;
       }
       _.each(models, function(model, index) {
-        var childView = this.getChildViewFromModel(model);
-        if (childView) {
-          elements.push(childView.$el);
+        var itemView = this.getItemViewFromModel(model);
+        if (itemView) {
+          elements.push(itemView.$el);
         }
         if (index === 0) {
-          firstChildView = childView;
+          firstItemView = itemView;
         }
       }, this);
       // elements that are already connected to the DOM will be moved instead of re-attached
       // meaning that detach, delegate events, and attach are not needed
-      if (!this.childrenContainer) {
+      if (!this.itemContainer) {
         this.$el.append(elements);
-      } else if (firstChildView) {
+      } else if (firstItemView) {
         var injectionSite = $("<span>");
-        firstChildView.$el.before(injectionSite);
+        firstItemView.$el.before(injectionSite);
         injectionSite.after(elements);
         injectionSite.remove();
       }
@@ -394,7 +407,7 @@
         fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews,
         threshold = this.updateThreshold || 0.5,
         signficantChanges = percentChange >= threshold;
-      if (!changes) {
+      if (changes <= 0) {
         return this.reorder();
       }
       // A switch from empty to not empty or vise versa, needs a new render
@@ -410,11 +423,19 @@
     /**
      * Returns the view that corresponds to the model if one exists
      * @param model {Model} the model
-     * @return the child view corresponding to the model
+     * @return the item view corresponding to the model
+     * @method getItemViewFromModel
+     */
+    getItemViewFromModel: function(model) {
+      return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
+    },
+
+    /**
+     * Alias method for getItemViewFromModel()
      * @method getChildViewFromModel
      */
-    getChildViewFromModel: function(model) {
-      return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
+    getChildViewFromModel: function() {
+      return this.getItemViewFromModel.apply(this, arguments);
     },
 
     /**
@@ -446,9 +467,12 @@
     __createItemViews: function() {
       var newItemViews = [];
       _.each(this.modelsToRender(), function(model, indexOfModel) {
-        var childView = this.getChildViewFromModel(model);
-        if (!childView) {
-          newItemViews.push({ view: this.__createItemView(model, true), indexOfModel: indexOfModel });
+        var itemView = this.getItemViewFromModel(model);
+        if (!itemView) {
+          newItemViews.push({
+            view: this.__createItemView(model, true),
+            indexOfModel: indexOfModel
+          });
         }
       }, this);
       this.__updateOrderedModelIdList();
@@ -465,17 +489,18 @@
      */
     __createItemView: function(model, noUpdateToIdList) {
       var itemView,
-        ItemViewClass = this.childView;
-      if (!_.isFunction(this.childView.extend)) {
-        ItemViewClass = this.childView(model);
+        ItemViewClass = this.itemView;
+      if (!_.isFunction(this.itemView.extend)) {
+        ItemViewClass = this.itemView(model);
       }
-      itemView = new ItemViewClass(this.__generateChildArgs(model));
+      itemView = new ItemViewClass(this.__generateItemViewArgs(model));
       this.registerTrackedView(itemView, { shared: false });
       this.__modelToViewMap[model[this.__modelId]] = itemView.cid;
       if (!noUpdateToIdList) {
         this.__updateOrderedModelIdList();
       }
       this.trigger('child-view-added', {model: model, view: itemView});
+      this.trigger('item-view-added', {model: model, view: itemView});
       return itemView;
     },
 
@@ -489,7 +514,7 @@
       var staleItemViews = [];
       var modelsWithViews = _.clone(this.__modelToViewMap);
       _.each(this.modelsToRender(), function(model) {
-        var itemView = this.getChildViewFromModel(model);
+        var itemView = this.getItemViewFromModel(model);
         if (itemView) {
           delete modelsWithViews[model[this.__modelId]];
         }
@@ -498,8 +523,6 @@
         var itemView = this.getChildView(viewId);
         if (itemView) {
           staleItemViews.push({ view: itemView, modelId: modelId });
-        } else {
-          delete this.__modelToViewMap[modelId];
         }
       }, this);
       return staleItemViews;
@@ -524,25 +547,25 @@
     },
 
     /**
-     * Creates a DOM fragment with each child view appended in the order defined by
+     * Creates a DOM fragment with each item view appended in the order defined by
      * modelsToRender(). This will clear the List View's DOM and invoke the necessary
-     * detach, register and render logic on each child view.
-     * @return a DOM fragment with child view elements appended
+     * detach, register and render logic on each item view.
+     * @return a DOM fragment with item view elements appended
      * @method __emptyAndRebuildItemViewsFragment
      * @private
      */
     __emptyAndRebuildItemViewsFragment: function() {
       var injectionFragment = document.createDocumentFragment();
-      // Clearing the DOM will reduce the repaints needed as we detach each child view.
+      // Clearing the DOM will reduce the repaints needed as we detach each item view.
       this.$el.empty();
 
      _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
-        if (childView) {
-          childView.detach();
-          this.registerTrackedView(childView);
-          childView.render();
-          injectionFragment.appendChild(childView.el);
+        var itemView = this.getItemViewFromModel(model);
+        if (itemView) {
+          itemView.detach();
+          this.registerTrackedView(itemView);
+          itemView.render();
+          injectionFragment.appendChild(itemView.el);
         }
       }, this);
       this.__updateOrderedModelIdList();
@@ -558,12 +581,12 @@
      * @param staleViews {Array of Views} - the stale views that will be removed
      */
     __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
-      var firstChildViewLeft, injectionSite,
+      var firstItemViewLeft, injectionSite,
         view = this,
         sizeOfOldViews = _.size(oldViews),
         sizeOfNewViews = _.size(newViews),
         sizeOfStaleViews = _.size(staleViews);
-      if (view.childrenContainer && sizeOfOldViews && sizeOfOldViews == sizeOfStaleViews) {
+      if (view.itemContainer && sizeOfOldViews && sizeOfOldViews == sizeOfStaleViews) {
         // we removed all the views!
         injectionSite = $('<span>');
         _.first(oldViews).$el.before(injectionSite);
@@ -573,7 +596,7 @@
         if (createdViewInfo.indexOfModel === 0) {
           // need to handle this case uniquely.
           var replaceMethod;
-          if (!view.childrenContainer) {
+          if (!view.itemContainer) {
             replaceMethod = _.bind(view.$el.prepend, view.$el);
           } else {
             if (injectionSite) {
@@ -583,8 +606,8 @@
               var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
                 return !staleModelIdMap[modelId];
               });
-              firstChildViewLeft = view.getChildView(view.__modelToViewMap[firstModelIdLeft]);
-              replaceMethod = _.bind(firstChildViewLeft.$el.prepend, firstChildViewLeft.$el);
+              firstItemViewLeft = view.getChildView(view.__modelToViewMap[firstModelIdLeft]);
+              replaceMethod = _.bind(firstItemViewLeft.$el.prepend, firstItemViewLeft.$el);
             }
           }
           view.attachView(null, createdViewInfo.view, {
@@ -612,8 +635,8 @@
     },
 
     /**
-     * Method to generate arguments when creating a child view. Override this method
-     * to change the arguments for a given child view.
+     * Method to generate arguments when creating an item view. Override this method
+     * to change the arguments for a given item view.
      * The format of the subview's arguments is:
      * {
      *   context: {
@@ -622,18 +645,26 @@
      *   <modelName>: <modelObject>,
      *   listView: the parent list view
      * }
-     * @method __generateChildArgs
+     * @method __generateItemViewArgs
      * @private
-     * @param model the model for a child view
-     * @return a context to be used by a child view
+     * @param model the model for an item view
+     * @return a context to be used by an item view
      */
-    __generateChildArgs: function(model) {
+    __generateItemViewArgs: function(model) {
       var args = {
-        'context': _.extend({}, _.result(this, '__childContext')),
+        'context': _.extend({}, _.result(this, '__itemContext')),
         'listView': this
       };
       args[this.__modelName] = model;
       return args;
+    },
+
+    /**
+     * Alias method for __generateItemViewArgs()
+     * @method __generateChildArgs
+     */
+    __generateChildArgs: function() {
+      return this.__generateItemViewArgs.apply(this, arguments);
     },
 
     /**

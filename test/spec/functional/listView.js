@@ -636,7 +636,6 @@ describe('A List View', function() {
     expect(itemViews[1].model.cid).toBe(model2.cid);
   });
 
-
   it('can get list of many item views sorted correctly in a reasonable time', function() {
     var numberOfViews = 1000,
       threshold = 50;
@@ -645,8 +644,8 @@ describe('A List View', function() {
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }
-    myCollection.sort();
     myListView.__createItemViews();
+    myCollection.sort();
     startTime = new Date().getTime();
     var itemViews = myListView.getItemViews()
     endTime = new Date().getTime() - startTime;
