@@ -262,6 +262,7 @@
      * @method render
      */
     render: function() {
+      // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of child views
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
       if (this.template) {
@@ -382,9 +383,8 @@
         return;
       }
       // A switch from empty to not empty or vise versa, needs a new render
-      renderNeeded = (!sizeOfOldViews && sizeOfNewViews) || (sizeOfOldViews && sizeOfOldViews === staleViews && !sizeOfNewViews);
+      renderNeeded = (!sizeOfOldViews && sizeOfNewViews) || (sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews);
       if (renderNeeded || percentChange >= threshold) {
-        // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of child views
         this.$el.empty(); // TODO find out if this is usefull...
         _.each(staleViews, function(staleViewInfo) {
           _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);

@@ -867,28 +867,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['backbone', 'backbone.stickit'], factory);
   } else if (typeof exports === 'object') {
     require('backbone.stickit');
@@ -919,6 +897,28 @@
       return $el.filter(':checked').val();
     }
   });
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
 }));
 
 (function(root, factory) {
@@ -1274,32 +1274,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedModel = Backbone.NestedModel.extend({});
-  _.extend(NestedModel.prototype, pollingMixin);
-
-  return NestedModel;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1322,6 +1296,32 @@
   _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
 
   return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedModel = Backbone.NestedModel.extend({});
+  _.extend(NestedModel.prototype, pollingMixin);
+
+  return NestedModel;
 }));
 
 (function(root, factory) {
@@ -4286,6 +4286,7 @@
      * @method render
      */
     render: function() {
+      // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of child views
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
       if (this.template) {
@@ -4406,9 +4407,8 @@
         return;
       }
       // A switch from empty to not empty or vise versa, needs a new render
-      renderNeeded = (!sizeOfOldViews && sizeOfNewViews) || (sizeOfOldViews && sizeOfOldViews === staleViews && !sizeOfNewViews);
+      renderNeeded = (!sizeOfOldViews && sizeOfNewViews) || (sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews);
       if (renderNeeded || percentChange >= threshold) {
-        // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of child views
         this.$el.empty(); // TODO find out if this is usefull...
         _.each(staleViews, function(staleViewInfo) {
           _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);
