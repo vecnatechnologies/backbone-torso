@@ -626,121 +626,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
-  }
-}(this, function() {
-  /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  polling
-   * @author ariel.wexler@vecna.com
-   */
-  var pollingMixin = {
-    /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
-     */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
-
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.__poll();
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-      }
-    },
-
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
-    },
-
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
-    },
-
-    /************** Private methods **************/
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
-    }
-  };
-
-  return pollingMixin;
-}));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -885,6 +770,121 @@
       }
     });
   };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.polling = factory();
+  }
+}(this, function() {
+  /**
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  polling
+   * @author ariel.wexler@vecna.com
+   */
+  var pollingMixin = {
+    /**
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     */
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
+
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.__poll();
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
+      }
+    },
+
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
+    },
+
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
+    }
+  };
+
+  return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
 }));
 
 (function(root, factory) {
@@ -1274,32 +1274,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
-  }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
-
-  return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1322,6 +1296,32 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+  }
+}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedCell = Backbone.NestedModel.extend({});
+  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+
+  return NestedCell;
 }));
 
 (function(root, factory) {
@@ -4102,35 +4102,43 @@
       childView.dispose();
       this.unregisterTrackedView(childView, { shared: false });
       delete this.__modelToViewMap[modelId];
-      this.updateOrderedModelIdList();
+      this.__updateOrderedModelIdList();
       this.trigger('child-view-removed', {model: model || childView.model, view: childView});
     };
 
     /**
-     * Handles the addition of a child view if a model has been added to the collection.
+     * Handles the addition of an item view if a model has been added to the collection.
      * When possible, it will append the view instead of causing a rerender
      * @private
      * @method addItemView
      * @param model the model being added
      */
     addItemView = function(model) {
-      var childView,
+      var itemView,
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
-        childView = this.__createItemView(model);
-        _addItemView.call(this, childView, model, indexOfModel);
+        itemView = this.__createItemView(model);
+        _addItemView.call(this, itemView, indexOfModel);
       }
     };
 
-    _addItemView = function(childView, model, indexOfModel) {
+    /**
+     * Adds the new item view before or after a sibling view. If no sibling view exists
+     * or if this item view is the first, it will cause a re-render. This method will break
+     * any delayed renders and force a re-render before continuing.
+     * @private
+     * @method _addItemView
+     * @param itemView the view being added
+     * @param indexOfModel - the index of the model into the array of models to render
+     */
+    _addItemView = function(itemView, indexOfModel) {
       var viewAfter, viewBefore, replaceMethod,
         models = this.modelsToRender();
       if (!this.hasItemViews()) {
         this.__delayedRender();
       } else {
         breakDelayedRender(this);
-        childView = this.getChildViewFromModel(model);
         viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
         viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
         if (viewAfter) {
@@ -4141,7 +4149,7 @@
           this.__delayedRender();
         }
         if (replaceMethod) {
-          this.attachView(null, childView, {
+          this.attachView(null, itemView, {
             replaceMethod: replaceMethod,
             discardInjectionSite: true
           });
@@ -4314,7 +4322,7 @@
     renderChildViews: function() {
       _.each(this.getChildViews(), function(childView) {
         childView.render();
-      }, this);
+      });
     },
 
     /**
@@ -4344,7 +4352,7 @@
         injectionSite.after(elements);
         injectionSite.remove();
       }
-      this.updateOrderedModelIdList();
+      this.__updateOrderedModelIdList();
       this.trigger('reorder-complete');
     },
 
@@ -4382,8 +4390,7 @@
      * @method update
      */
     update: function() {
-      var firstChildViewLeft, injectionSite,
-        view = this,
+      var view = this,
         renderNeeded = false,
         oldViews = this.getItemViews(),
         newViews = this.__createItemViews(),
@@ -4393,7 +4400,7 @@
         sizeOfStaleViews = _.size(staleViews),
         changes = sizeOfNewViews + sizeOfStaleViews,
         percentChange = changes / Math.max((sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews), 1),
-        threshold = 0.5;
+        threshold = this.updateThreshold || 0.5;
       if (!changes) {
         this.reorder();
         return;
@@ -4401,56 +4408,15 @@
       // A switch from empty to not empty or vise versa, needs a new render
       renderNeeded = (!sizeOfOldViews && sizeOfNewViews) || (sizeOfOldViews && sizeOfOldViews === staleViews && !sizeOfNewViews);
       if (renderNeeded || percentChange >= threshold) {
+        // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of child views
         this.$el.empty(); // TODO find out if this is usefull...
         _.each(staleViews, function(staleViewInfo) {
           _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);
         });
         this.__delayedRender();
       } else {
-        if (view.childrenContainer && sizeOfOldViews && sizeOfOldViews == sizeOfStaleViews) {
-          // we removed all the views!
-          injectionSite = $('<span>');
-          _.first(oldViews).$el.before(injectionSite);
-        }
-        _.each(staleViews, function(staleViewInfo, indexOfView) {
-          _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);
-        });
-        _.each(newViews, function(createdViewInfo, indexOfView) {
-          // TODO look into chunking views, look for visible views, look for rendering child views deferred
-          if (createdViewInfo.indexOfModel === 0) {
-            // need to handle this case uniquely.
-            var replaceMethod;
-            if (!view.childrenContainer) {
-              replaceMethod = _.bind(view.$el.prepend, view.$el);
-            } else {
-              if (injectionSite) {
-                replaceMethod = _.bind(injectionSite.replaceWith, injectionSite);
-              } else {
-                var staleModelIdMap = _.indexBy(staleViews, 'modelId');
-                var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
-                  return !staleModelIdMap[modelId];
-                });
-                firstChildViewLeft = view.getChildView(view.__modelToViewMap[firstModelIdLeft]);
-                if (firstChildViewLeft) {
-                  replaceMethod = _.bind(firstChildViewLeft.$el.prepend, firstChildViewLeft.$el);
-                } else {
-                  // shouldn't get here.
-                }
-              }
-            }
-            view.attachView(null, createdViewInfo.view, {
-              replaceMethod: replaceMethod,
-              discardInjectionSite: true
-            });
-          } else {
-            // There will always the view before this one because we are adding new views in order
-            // and we took care of the initial case.
-            _addItemView.call(view, createdViewInfo.view, createdViewInfo.model, createdViewInfo.indexOfModel);
-          }
-        });
-        this.reorder();
+        this.__updateByAddingRemoving(oldViews, newViews, staleViews);
       }
-      this.updateOrderedModelIdList();
     },
 
     /**
@@ -4463,12 +4429,17 @@
       return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
     },
 
+    /**
+     * @returns {Boolean} returns true if there exists any generated item views
+     * @method hasItemViews
+     */
     hasItemViews: function() {
       return !_.isEmpty(this.getItemViews());
     },
 
     /**
-     * Returns unordered list of views generated by this list view
+     * @returns {Array of views} Returns unordered list of views generated by this list view
+     * @method getItemViews
      */
     getItemViews: function() {
       var view = this;
@@ -4476,14 +4447,10 @@
       return _.map(orderedViewIds, this.getChildView, this);
     },
 
-    updateOrderedModelIdList: function() {
-      this.__orderedModelIdList = _.pluck(this.modelsToRender(), this.__modelId);
-    },
-
     /************** Private methods **************/
 
     /**
-     * Creates a new child view if there doesn't exist one for a model
+     * Creates a new item view for a model if there doesn't exist one
      * @method __createItemViews
      * @private
      */
@@ -4492,11 +4459,35 @@
       _.each(this.modelsToRender(), function(model, indexOfModel) {
         var childView = this.getChildViewFromModel(model);
         if (!childView) {
-          newItemViews.push({ view: this.__createItemView(model, true), model: model, indexOfModel: indexOfModel });
+          newItemViews.push({ view: this.__createItemView(model, true), indexOfModel: indexOfModel });
         }
       }, this);
-      this.updateOrderedModelIdList();
+      this.__updateOrderedModelIdList();
       return newItemViews;
+    },
+
+    /**
+     * Creates an item view and stores a reference to it
+     * @method __createItemView
+     * @private
+     * @param model {Backbone Model} the model to create the view from
+     * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
+     * @return {Backbone View} the new item view
+     */
+    __createItemView: function(model, noUpdateToIdList) {
+      var itemView,
+        ItemViewClass = this.childView;
+      if (!_.isFunction(this.childView.extend)) {
+        ItemViewClass = this.childView(model);
+      }
+      itemView = new ItemViewClass(this.__generateChildArgs(model));
+      this.registerTrackedView(itemView, { shared: false });
+      this.__modelToViewMap[model[this.__modelId]] = itemView.cid;
+      if (!noUpdateToIdList) {
+        this.__updateOrderedModelIdList();
+      }
+      this.trigger('child-view-added', {model: model, view: itemView});
+      return itemView;
     },
 
     /**
@@ -4545,30 +4536,71 @@
           injectionFragment.appendChild(childView.el);
         }
       }, this);
+      this.__updateOrderedModelIdList();
       return $(injectionFragment);
     },
 
     /**
-     * Creates a child view and stores a reference to it
-     * @method __createItemView
-     * @private
-     * @param model {Backbone Model} the model to create the view from
-     * @return {Backbone View} the new child view
+     * Attempts to insert new views and remove stale views individually and correctly reorder all views in an
+     * attempt to be faster then a full view re-render
+     * @method __updateByAddingRemoving
+     * @param oldViews {Array of Views} - correctly ordered list of views before making changes to models to render
+     * @param newViews {Array of Views} - the new views created that will be inserted
+     * @param staleViews {Array of Views} - the stale views that will be removed
      */
-    __createItemView: function(model, noUpdateToIdList) {
-      var childView,
-        ChildViewClass = this.childView;
-      if (!_.isFunction(this.childView.extend)) {
-        ChildViewClass = this.childView(model);
+    __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
+      var firstChildViewLeft, injectionSite,
+        view = this,
+        sizeOfOldViews = _.size(oldViews),
+        sizeOfNewViews = _.size(newViews),
+        sizeOfStaleViews = _.size(staleViews);
+      if (view.childrenContainer && sizeOfOldViews && sizeOfOldViews == sizeOfStaleViews) {
+        // we removed all the views!
+        injectionSite = $('<span>');
+        _.first(oldViews).$el.before(injectionSite);
       }
-      childView = new ChildViewClass(this.__generateChildArgs(model));
-      this.registerTrackedView(childView, { shared: false });
-      this.__modelToViewMap[model[this.__modelId]] = childView.cid;
-      if (!noUpdateToIdList) {
-        this.updateOrderedModelIdList();
-      }
-      this.trigger('child-view-added', {model: model, view: childView});
-      return childView;
+      _.each(staleViews, function(staleViewInfo, indexOfView) {
+        _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);
+      });
+      _.each(newViews, function(createdViewInfo, indexOfView) {
+        if (createdViewInfo.indexOfModel === 0) {
+          // need to handle this case uniquely.
+          var replaceMethod;
+          if (!view.childrenContainer) {
+            replaceMethod = _.bind(view.$el.prepend, view.$el);
+          } else {
+            if (injectionSite) {
+              replaceMethod = _.bind(injectionSite.replaceWith, injectionSite);
+            } else {
+              var staleModelIdMap = _.indexBy(staleViews, 'modelId');
+              var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
+                return !staleModelIdMap[modelId];
+              });
+              firstChildViewLeft = view.getChildView(view.__modelToViewMap[firstModelIdLeft]);
+              replaceMethod = _.bind(firstChildViewLeft.$el.prepend, firstChildViewLeft.$el);
+            }
+          }
+          view.attachView(null, createdViewInfo.view, {
+            replaceMethod: replaceMethod,
+            discardInjectionSite: true
+          });
+        } else {
+          // There will always the view before this one because we are adding new views in order
+          // and we took care of the initial case.
+          _addItemView.call(view, createdViewInfo.view, createdViewInfo.indexOfModel);
+        }
+      });
+      this.reorder();
+    },
+
+    /**
+     * Updates the internal list of model ids that correspond to the models used for the current
+     * list of item views. The order is the same order of the item views.
+     * @method __updateOrderedModelIdList
+     * @private
+     */
+    __updateOrderedModelIdList: function() {
+      this.__orderedModelIdList = _.pluck(this.modelsToRender(), this.__modelId);
     },
 
     /**
