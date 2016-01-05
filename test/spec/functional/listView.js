@@ -481,38 +481,6 @@ describe('A List View', function() {
     expect(endTime < threshold).toBe(true);
   });
 
-
-  it('can reset a collection with a large number of models many times in a reasonable time using renderWait=50', function(done) {
-    var startTime, endTime, i,
-        models = [],
-        numberOfViews = 1000,
-        numberOfTimes = 50,
-        threshold = 1000,
-        renderWait = 50;
-    myListView.dispose();
-    myListView = new MyListView({
-      collection: myCollection,
-      childModel: 'item',
-      childView: ItemView,
-      renderWait: renderWait
-    });
-    myListView.attach($('body'));
-    for (i = 0; i < numberOfViews; i++) {
-       models.push(new Model())
-    }
-    myListView.on('render-complete', function(data) {
-      endTime = new Date().getTime() - startTime;
-      console.log('Reset ' + numberOfViews + ' views ' + numberOfTimes + ' times in ' + endTime + 'ms');
-      expect(myListView.getChildViews().length).toBe(numberOfViews);
-      expect(endTime < threshold).toBe(true);
-      done();
-    });
-    startTime = new Date().getTime();
-    for (i = 0; i < numberOfTimes; i++) {
-      myCollection.reset(models);
-    }
-  });
-
   it('can reset a collection to the same large set of models many times in a reasonable time', function() {
     var startTime, endTime, i,
         models = [],
