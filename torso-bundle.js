@@ -4016,7 +4016,7 @@
 }(this, function(_, $, View, templateRenderer) {
   'use strict';
 
-    var removeChildView, addChildView, aggregateRenders, breakDelayedRender;
+    var removeChildView, _removeChildView, addChildView, aggregateRenders, breakDelayedRender;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
@@ -4219,7 +4219,7 @@
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
       if (collection) {
-        this.setCollection(collection, true);
+        this.setCollection(collection);
       }
     },
 
@@ -4230,18 +4230,19 @@
      *
      * @method setCollection
      * @param collection {Backbone.Collection instance} the new collection that this list view should use.
-     * @param [preserveListeners=false] {Boolean} whether to clear existing event listeners that this view has on the previous collection (false).
-     *                                            or to preserve any existing listeners on the view's previous collection (true).
      */
-    setCollection: function(collection, preserveListeners) {
-      if (this.collection && !preserveListeners) {
-        this.stopListening(this.collection);
-      }
+    setCollection: function(collection) {
+      this.stopListening(this.collection, 'remove', removeChildView);
+      this.stopListening(this.collection, 'add', addChildView);
+      this.stopListening(this.collection, 'sort', this.reorder);
+      this.stopListening(this.collection, 'reset', this.update);
+
       this.collection = collection;
-      this.listenTo(this.collection, 'remove', removeChildView, this);
-      this.listenTo(this.collection, 'add', addChildView, this);
-      this.listenTo(this.collection, 'sort', this.reorder, this);
-      this.listenTo(this.collection, 'reset', this.update, this);
+
+      this.listenTo(this.collection, 'remove', removeChildView);
+      this.listenTo(this.collection, 'add', addChildView);
+      this.listenTo(this.collection, 'sort', this.reorder);
+      this.listenTo(this.collection, 'reset', this.update);
     },
 
     /**
