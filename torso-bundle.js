@@ -4819,14 +4819,14 @@
      * @method delegateEvents
      */
     delegateEvents: function() {
+      View.prototype.delegateEvents.call(this);
       /* DOM event bindings and plugins */
       this.__generateStickitBindings();
       this.stickit();
-      View.prototype.delegateEvents.call(this);
     },
 
     /**
-     * Remove stickit when undelegating events.
+     * Override the undelegate events and unwrap our custom additions
      * @method undelegateEvents
      */
     undelegateEvents: function() {
