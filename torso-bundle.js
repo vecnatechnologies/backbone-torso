@@ -4826,6 +4826,17 @@
     },
 
     /**
+     * Remove stickit when undelegating events.
+     * @method undelegateEvents
+     */
+    undelegateEvents: function() {
+      if (this.$el) {
+        this.unstickit();
+      }
+      View.prototype.undelegateEvents.call(this);
+    },
+
+    /**
      * Default method called on validation success.
      * @method valid
      */
@@ -4841,17 +4852,6 @@
     invalid: function(model, errors) {
       this._success = false;
       this._errors = errors;
-    },
-
-    /**
-     * Deactivate callback that removes bindings and other resources
-     * that shouldn't exist in a dactivated state
-     * @method _deactivate
-     */
-    _deactivate: function() {
-      View.prototype._deactivate.call(this);
-      // No detach callback... Deactivate will have to do as it is called by detach
-      this.unstickit();
     },
 
     /**
