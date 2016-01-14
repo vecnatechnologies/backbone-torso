@@ -112,10 +112,21 @@
      * @method delegateEvents
      */
     delegateEvents: function() {
+      View.prototype.delegateEvents.call(this);
       /* DOM event bindings and plugins */
       this.__generateStickitBindings();
       this.stickit();
-      View.prototype.delegateEvents.call(this);
+    },
+
+    /**
+     * Override the undelegate events and unwrap our custom additions
+     * @method undelegateEvents
+     */
+    undelegateEvents: function() {
+      if (this.$el) {
+        this.unstickit();
+      }
+      View.prototype.undelegateEvents.call(this);
     },
 
     /**
@@ -134,17 +145,6 @@
     invalid: function(model, errors) {
       this._success = false;
       this._errors = errors;
-    },
-
-    /**
-     * Deactivate callback that removes bindings and other resources
-     * that shouldn't exist in a dactivated state
-     * @method _deactivate
-     */
-    _deactivate: function() {
-      View.prototype._deactivate.call(this);
-      // No detach callback... Deactivate will have to do as it is called by detach
-      this.unstickit();
     },
 
     /**
