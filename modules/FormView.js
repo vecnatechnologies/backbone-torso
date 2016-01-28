@@ -77,8 +77,6 @@
       this.listenTo(this.model, 'validated:valid', this.valid);
       this.listenTo(this.model, 'validated:invalid', this.invalid);
 
-      View.apply(this, arguments);
-
       /* Override template */
       this.template = args.template || this.template;
 
@@ -89,6 +87,8 @@
       this._success = false;
       // this._bindings is a snapshot of the original bindings
       this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
+
+      View.apply(this, arguments);
     },
 
     /**
