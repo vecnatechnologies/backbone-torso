@@ -215,6 +215,9 @@ Added polling api
 - addModelAndTrack
 - trackNewId
 - fetchByIds
+- fetchSubsetOfTrackedIds
+- pull
+- pullByIds
 - requesterDispose
 
 Added polling api
