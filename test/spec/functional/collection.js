@@ -64,6 +64,9 @@ describe('A Torso Collection', function() {
     expect(collection.requesterDispose).toBeDefined();
     expect(collection.polledFetch).toBeDefined();
     expect(collection.fetchByIds).toBeDefined();
+    expect(collection.fetchSubsetOfTrackedIds).toBeDefined();
+    expect(collection.pull).toBeDefined();
+    expect(collection.pullByIds).toBeDefined();
     expect(collection.foo).toBeDefined();
   });
 
@@ -98,6 +101,34 @@ describe('A Torso Collection', function() {
       expect(collection.findWhere({id: '1'})).toBeDefined();
       expect(collection.findWhere({id: '2'})).toBeDefined();
       expect(collection.findWhere({id: '3'})).not.toBeDefined();
+      done();
+    }).fail(function(response) {
+      console.log(response);
+      console.log('Failed to fetch from cache');
+      expect(true).toBe(false);
+      done();
+    });
+  });
+
+  it('can have a requester collection be pushed a model when it tracks a model already in cache', function(done) {
+    var MyModel = Model.extend({});
+    var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
+    var cache = new MyCollection();
+    var requester1 = cache.createPrivateCollection(1);
+    var requester2 = cache.createPrivateCollection(2);
+    requester1.trackNewId('1');
+    requester1.trackNewId('2');
+    expect(requester1.size()).toBe(0);
+    cache.fetch().done(function() {
+      expect(requester1.size()).toBe(2);
+      expect(requester1.findWhere({id: '1'})).toBeDefined();
+      expect(requester1.findWhere({id: '2'})).toBeDefined();
+      expect(requester1.findWhere({id: '3'})).not.toBeDefined();
+      requester2.trackNewId('2');
+      requester2.trackNewId('3');
+      expect(requester2.size()).toBe(1);
+      expect(requester2.findWhere({id: '2'})).toBeDefined();
+      expect(requester2.findWhere({id: '3'})).not.toBeDefined();
       done();
     }).fail(function(response) {
       console.log(response);
@@ -296,6 +327,97 @@ describe('A Torso Collection', function() {
         console.log(response);
         console.log('Failed to fetch from cache');
         expect(true).toBe(false);
+        done();
+      });
+    }).fail(function(response) {
+      console.log(response);
+      console.log('Failed to fetch from cache');
+      expect(true).toBe(false);
+      done();
+    });
+  });
+
+  it('can have a requester collections fetch a subset of their tracked ids', function(done) {
+    var MyModel = Model.extend({});
+    var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
+    var cache = new MyCollection();
+    var requester1 = cache.createPrivateCollection(1);
+    requester1.trackNewId('1');
+    requester1.trackNewId('2');
+    expect(cache.size()).toBe(0);
+    expect(requester1.size()).toBe(0);
+    requester1.fetchSubsetOfTrackedIds(['1', '3']).done(function(data) {
+      expect(cache.size()).toBe(1);
+      expect(requester1.size()).toBe(1);
+      var dataIds = _.pluck(data, 'id');
+      expect(dataIds.length).toBe(1);
+      expect(dataIds[0]).toBe('1');
+      expect(requester1.findWhere({id: '1'})).toBeDefined();
+      expect(requester1.findWhere({id: '2'})).not.toBeDefined();
+      expect(requester1.findWhere({id: '3'})).not.toBeDefined();
+      done();
+    }).fail(function(response) {
+      console.log(response);
+      console.log('Failed to fetch from cache');
+      expect(true).toBe(false);
+      done();
+    });
+  });
+
+  it('can have a requester collections pull into cache models it is tracking that are not in cache', function(done) {
+    var MyModel = Model.extend({});
+    var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
+    var cache = new MyCollection();
+    var requester1 = cache.createPrivateCollection(1);
+    requester1.trackNewId('1');
+    requester1.trackNewId('2');
+    cache.fetch().done(function() {
+      expect(cache.size()).toBe(2);
+      expect(requester1.size()).toBe(2);
+      expect(requester1.findWhere({id: '1'})).toBeDefined();
+      expect(requester1.findWhere({id: '2'})).toBeDefined();
+      expect(requester1.findWhere({id: '3'})).not.toBeDefined();
+      requester1.trackNewId('3');
+      requester1.pull().done(function(data) {
+        expect(cache.size()).toBe(3);
+        expect(requester1.size()).toBe(3);
+        var dataIds = _.pluck(data, 'id');
+        expect(dataIds.length).toBe(1);
+        expect(dataIds[0]).toBe('3');
+        expect(requester1.findWhere({id: '3'})).toBeDefined();
+        done();
+      });
+    }).fail(function(response) {
+      console.log(response);
+      console.log('Failed to fetch from cache');
+      expect(true).toBe(false);
+      done();
+    });
+  });
+
+  it('can have a requester collections track ids and pull into cache tracked ids that are not in cache', function(done) {
+    var MyModel = Model.extend({});
+    var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
+    var cache = new MyCollection();
+    var requester1 = cache.createPrivateCollection(1);
+    var requester2 = cache.createPrivateCollection(2);
+    requester1.trackNewId('1');
+    requester1.trackNewId('2');
+    cache.fetch().done(function() {
+      expect(cache.size()).toBe(2);
+      expect(requester2.size()).toBe(0);
+      expect(requester1.findWhere({id: '1'})).toBeDefined();
+      expect(requester1.findWhere({id: '2'})).toBeDefined();
+      expect(requester1.findWhere({id: '3'})).not.toBeDefined();
+      requester2.pullByIds(['1', '3']).done(function(data) {
+        expect(cache.size()).toBe(3);
+        expect(requester2.size()).toBe(2);
+        var dataIds = _.pluck(data, 'id');
+        expect(dataIds.length).toBe(1);
+        expect(dataIds[0]).toBe('3');
+        expect(requester2.findWhere({id: '1'})).toBeDefined();
+        expect(requester2.findWhere({id: '2'})).not.toBeDefined();
+        expect(requester2.findWhere({id: '3'})).toBeDefined();
         done();
       });
     }).fail(function(response) {
