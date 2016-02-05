@@ -24,6 +24,26 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Router = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+  /**
+   * Backbone's router.
+   * @module Torso
+   * @class  Router
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.Router.extend({});
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -75,26 +95,6 @@
       }
     }
   };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-  /**
-   * Backbone's router.
-   * @module Torso
-   * @class  Router
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.Router.extend({});
 }));
 
 (function(root, factory) {
@@ -1586,6 +1586,36 @@
       if (view && injectionPoint.size() > 0) {
         this.attachView(injectionPoint, view, options);
       }
+    },
+
+    transitionView: function(injectionSite, currentView, previousView, options) {
+      var previousDeferred = $.Deferred();
+      options = options || {};
+      var parentView = this;
+      parentView.injectView(injectionSite, previousView, options);
+      var newViewInjection = $('<div>');
+      previousView.$el.after(newViewInjection);
+      previousView.transitionOut(function() {
+        previousView.injectionSite = undefined;
+        previousView.detach();
+        previousDeferred.resolve();
+      }, options);
+      var currentViewPromise = currentView.transitionIn(function() {
+        parentView.attachView(newViewInjection, currentView, options);
+        if (!options.discardInjectionSite) {
+          previousView.injectionSite = injectionSite;
+        }
+      }, options);
+      return $.when(currentViewPromise, previousDeferred.promise());
+    },
+
+    transitionOut: function(detach) {
+      detach();
+    },
+
+    transitionIn: function(attach) {
+      attach();
+      return $.Deferred().resolve().promise();
     },
 
     /**

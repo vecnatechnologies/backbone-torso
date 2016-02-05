@@ -178,6 +178,36 @@
       }
     },
 
+    transitionView: function(injectionSite, currentView, previousView, options) {
+      var previousDeferred = $.Deferred();
+      options = options || {};
+      var parentView = this;
+      parentView.injectView(injectionSite, previousView, options);
+      var newViewInjection = $('<div>');
+      previousView.$el.after(newViewInjection);
+      previousView.transitionOut(function() {
+        previousView.injectionSite = undefined;
+        previousView.detach();
+        previousDeferred.resolve();
+      }, options);
+      var currentViewPromise = currentView.transitionIn(function() {
+        parentView.attachView(newViewInjection, currentView, options);
+        if (!options.discardInjectionSite) {
+          previousView.injectionSite = injectionSite;
+        }
+      }, options);
+      return $.when(currentViewPromise, previousDeferred.promise());
+    },
+
+    transitionOut: function(detach) {
+      detach();
+    },
+
+    transitionIn: function(attach) {
+      attach();
+      return $.Deferred().resolve().promise();
+    },
+
     /**
      * If attached, will detach the view from the DOM and calls deactivate
      * @method detach
