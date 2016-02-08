@@ -271,6 +271,8 @@
       // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
+      this.unplug();
+      this.updateLastInjectionSiteMap();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
@@ -285,6 +287,7 @@
       }
       this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
+      this.plug();
       this.delegateEvents();
       _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
@@ -295,6 +298,8 @@
           // Shouldn't get here. Item view is missing...
         }
       }, this);
+      this.attachTrackedViews();
+      this.__lastInjectionSiteMap = {};
       this.trigger('render-complete');
     },
 
