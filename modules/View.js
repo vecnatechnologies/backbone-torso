@@ -185,7 +185,7 @@
     },
 
     transitionView: function(injectionSite, currentView, options) {
-      var previousView, cachedInjectionSite, newInjectionSite,
+      var previousView, newInjectionSite,
         previousDeferred = $.Deferred(),
         currentDeferred = $.Deferred(),
         parentView = this;
@@ -201,10 +201,15 @@
       options.parentView   = options.parentView   || parentView;
       options.useTransition = false;
       if (!previousView) {
-        return this.injectView(injectionSite, currentView, options);
+        // Only transition in the new current view and find the injection point.
+        currentView.transitionIn(function() {
+          var injectionPoint = parentView.$('[inject=' + injectionSite + ']');
+          parentView.attachView(injectionPoint, currentView, options);
+        }, currentDeferred.resolve, options);
+        return currentDeferred.promise();
       }
       this.injectView(injectionSite, previousView, options);
-      cachedInjectionSite = options.cachedInjectionSite = previousView.injectionSite;
+      options.cachedInjectionSite = previousView.injectionSite;
       newInjectionSite = options.newInjectionSite = $('<div inject="' + injectionSite + '">');
       previousView.$el.after(newInjectionSite);
       // clear the injections site so it isn't replaced back into the dom.
@@ -213,17 +218,18 @@
       // transition previous view out
       previousView.transitionOut(function() {
         previousView.detach();
-      }, _.bind(previousDeferred.resolve, previousDeferred), options);
+      }, previousDeferred.resolve, options);
       // transition new current view in
       currentView.transitionIn(function() {
         parentView.attachView(newInjectionSite, currentView, options);
-      }, _.bind(currentDeferred.resolve, currentDeferred), options);
+      }, currentDeferred.resolve, options);
       // return a combined promise
       return $.when(previousDeferred.promise(), currentDeferred.promise());
     },
 
     _findViewWithPreviousInjectionSite: function(injectionSite) {
       var previousView = this.__lastInjectionSiteMap[injectionSite];
+      // make sure previous view is still tracked
       var allTrackedViews = _.values(this.__sharedViews).concat(_.values(this.__childViews));
       return _.contains(allTrackedViews, previousView) ? previousView : undefined;
     },
