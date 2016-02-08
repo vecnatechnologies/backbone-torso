@@ -184,7 +184,6 @@
       previousView = options.previousView;
       if (!previousView) {
         previousView = this._getLastTrackedViewAtInjectionSite(injectionSite);
-        previousView = previousView == newView ? undefined : previousView;
       }
       _.defaults(options, {
         parentView: this,
@@ -192,6 +191,10 @@
         previousView: previousView
       });
       options.useTransition = false;
+      if (previousView == newView) {
+        // Inject this view like normal if it's already the last one there
+        return this.injectView(injectionSite, newView, options);
+      }
       if (!previousView) {
         // Only transition in the new current view and find the injection point.
         injectionPoint = this.$('[inject=' + injectionSite + ']');
