@@ -54,6 +54,7 @@
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
+      this.__lastInjectionSiteMap = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
@@ -189,9 +190,15 @@
         currentDeferred = $.Deferred(),
         parentView = this;
       options = options || {};
-      previousView = options.previousView = options.previousView || this._findPreviousViewWithInjectionSite(injectionSite, [currentView]);
-      options.currentView = options.currentView || currentView;
-      options.parentView = options.parentView || parentView;
+      // find previous view that used this injection site.
+      previousView = options.previousView;
+      if (!previousView) {
+        previousView = this._findViewWithPreviousInjectionSite(injectionSite);
+        previousView = previousView == currentView ? undefined : previousView;
+      }
+      options.previousView = options.previousView || previousView;
+      options.currentView  = options.currentView  || currentView;
+      options.parentView   = options.parentView   || parentView;
       options.useTransition = false;
       if (!previousView) {
         return this.injectView(injectionSite, currentView, options);
@@ -200,7 +207,7 @@
       cachedInjectionSite = options.cachedInjectionSite = previousView.injectionSite;
       newInjectionSite = options.newInjectionSite = $('<div inject="' + injectionSite + '">');
       previousView.$el.after(newInjectionSite);
-      // clear the injections site for future discovery of previous view with similar injection site returns currentView.
+      // clear the injections site so it isn't replaced back into the dom.
       previousView.injectionSite = undefined;
 
       // transition previous view out
@@ -211,17 +218,14 @@
       currentView.transitionIn(function() {
         parentView.attachView(newInjectionSite, currentView, options);
       }, _.bind(currentDeferred.resolve, currentDeferred), options);
-
       // return a combined promise
       return $.when(previousDeferred.promise(), currentDeferred.promise());
     },
 
-    _findPreviousViewWithInjectionSite: function(injectionSite, excludingViews) {
+    _findViewWithPreviousInjectionSite: function(injectionSite) {
+      var previousView = this.__lastInjectionSiteMap[injectionSite];
       var allTrackedViews = _.values(this.__sharedViews).concat(_.values(this.__childViews));
-      var matchingViews = allTrackedViews.filter(function(view) {
-        return view.injectionSite && view.injectionSite.attr('inject') == injectionSite && (!excludingViews || !_.contains(excludingViews, view));
-      });
-      return _.first(matchingViews);
+      return _.contains(allTrackedViews, previousView) ? previousView : undefined;
     },
 
     /**
@@ -233,6 +237,7 @@
         // Detach view from DOM
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
+          this.injectionSite = undefined;
         } else {
           this.$el.detach();
         }
@@ -384,7 +389,7 @@
     /**
      * Override to provide your own transition out logic. Default logic is to just detach from the page.
      * @method transitionOut
-     * @param detach {Function} callback to be invoked when you want this view to be detached *MUST BE CALLED*
+     * @param detach {Function} callback to be invoked when you want this view to be detached
      * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
      * @param options {Object} optionals options object
      * @param   options.currentView {View} the view that is being transitioned in.
@@ -399,7 +404,7 @@
     /**
      * Override to provide your own transition in logic. Default logic is to just attach to the page.
      * @method transitionIn
-     * @param detach {Function} callback to be invoked when you want this view to be detached *MUST BE CALLED*
+     * @param attach {Function} callback to be invoked when you want this view to be attached to the dom.
      * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
      * @param options {Object} optionals options object
      * @param   options.currentView {View} the view that is being transitioned in.
@@ -438,10 +443,14 @@
      * @method attachView
      */
     attachView: function($el, view, options) {
+      var injectionSite = $el.attr('inject');
       options = options || {};
       view.detach();
       this.registerTrackedView(view, options);
       view.attach($el, options);
+      if (injectionSite) {
+        this.__lastInjectionSiteMap[injectionSite] = view;
+      }
       if (!options.noActivate) {
         view.activate();
       }
