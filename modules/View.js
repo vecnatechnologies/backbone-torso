@@ -167,45 +167,61 @@
      * Invokes attachChildView as the bulk of the functionality
      * @method injectView
      * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to
+     * @param currentView   {View}   The instantiated view object to be injected
      * @param [options] {Object} optionals options object
      * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
+     * @param   [options.useTransition=false] {Boolean} if set to true, this method will delegate injection logic to this.transitionView
      */
-    injectView: function(injectionSite, view, options) {
-      var injectionPoint = this.$('[inject=' + injectionSite + ']');
-      if (view && injectionPoint.size() > 0) {
-        this.attachView(injectionPoint, view, options);
+    injectView: function(injectionSite, currentView, options) {
+      options = options || {};
+      if (options.useTransition) {
+        return this.transitionView(injectionSite, currentView, options);
+      } else {
+        var injectionPoint = this.$('[inject=' + injectionSite + ']');
+        this.attachView(injectionPoint, currentView, options);
+        return $.Deferred().resolve().promise();
       }
     },
 
-    transitionView: function(injectionSite, currentView, previousView, options) {
-      var previousDeferred = $.Deferred();
+    transitionView: function(injectionSite, currentView, options) {
+      var previousView, cachedInjectionSite, newInjectionSite,
+        previousDeferred = $.Deferred(),
+        currentDeferred = $.Deferred(),
+        parentView = this;
       options = options || {};
-      var parentView = this;
-      parentView.injectView(injectionSite, previousView, options);
-      var newViewInjection = $('<div>');
-      previousView.$el.after(newViewInjection);
+      previousView = options.previousView = options.previousView || this._findPreviousViewWithInjectionSite(injectionSite, [currentView]);
+      options.currentView = options.currentView || currentView;
+      options.parentView = options.parentView || parentView;
+      options.useTransition = false;
+      if (!previousView) {
+        return this.injectView(injectionSite, currentView, options);
+      }
+      this.injectView(injectionSite, previousView, options);
+      cachedInjectionSite = options.cachedInjectionSite = previousView.injectionSite;
+      newInjectionSite = options.newInjectionSite = $('<div inject="' + injectionSite + '">');
+      previousView.$el.after(newInjectionSite);
+      // clear the injections site for future discovery of previous view with similar injection site returns currentView.
+      previousView.injectionSite = undefined;
+
+      // transition previous view out
       previousView.transitionOut(function() {
-        previousView.injectionSite = undefined;
         previousView.detach();
-        previousDeferred.resolve();
-      }, options);
-      var currentViewPromise = currentView.transitionIn(function() {
-        parentView.attachView(newViewInjection, currentView, options);
-        if (!options.discardInjectionSite) {
-          previousView.injectionSite = injectionSite;
-        }
-      }, options);
-      return $.when(currentViewPromise, previousDeferred.promise());
+      }, _.bind(previousDeferred.resolve, previousDeferred), options);
+      // transition new current view in
+      currentView.transitionIn(function() {
+        parentView.attachView(newInjectionSite, currentView, options);
+      }, _.bind(currentDeferred.resolve, currentDeferred), options);
+
+      // return a combined promise
+      return $.when(previousDeferred.promise(), currentDeferred.promise());
     },
 
-    transitionOut: function(detach) {
-      detach();
-    },
-
-    transitionIn: function(attach) {
-      attach();
-      return $.Deferred().resolve().promise();
+    _findPreviousViewWithInjectionSite: function(injectionSite, excludingViews) {
+      var allTrackedViews = _.values(this.__sharedViews).concat(_.values(this.__childViews));
+      var matchingViews = allTrackedViews.filter(function(view) {
+        return view.injectionSite && view.injectionSite.attr('inject') == injectionSite && (!excludingViews || !_.contains(excludingViews, view));
+      });
+      return _.first(matchingViews);
     },
 
     /**
@@ -364,6 +380,36 @@
      * @method plug
      */
     plug: _.noop,
+
+    /**
+     * Override to provide your own transition out logic. Default logic is to just detach from the page.
+     * @method transitionOut
+     * @param detach {Function} callback to be invoked when you want this view to be detached *MUST BE CALLED*
+     * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
+     * @param options {Object} optionals options object
+     * @param   options.currentView {View} the view that is being transitioned in.
+     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
+     * @param   options.parentView {View} the view that is invoking the transition.
+     */
+    transitionOut: function(detach, done, options) {
+      detach();
+      done();
+    },
+
+    /**
+     * Override to provide your own transition in logic. Default logic is to just attach to the page.
+     * @method transitionIn
+     * @param detach {Function} callback to be invoked when you want this view to be detached *MUST BE CALLED*
+     * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
+     * @param options {Object} optionals options object
+     * @param   options.currentView {View} the view that is being transitioned in.
+     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
+     * @param   options.parentView {View} the view that is invoking the transition.
+     */
+    transitionIn: function(attach, done, options) {
+      attach();
+      done();
+    },
 
     /**
      * Gets the hash from id to views of the correct views given the options.
