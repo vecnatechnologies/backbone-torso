@@ -136,12 +136,7 @@
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackCellCallbacks();
-      _.each(this.__childViews, function(view) {
-        if (view.isAttachedToParent()) {
-          view.delegateEvents();
-        }
-      });
-      _.each(this.__sharedViews, function(view) {
+      _.each(this.getAllTrackedViews(), function(view) {
         if (view.isAttachedToParent()) {
           view.delegateEvents();
         }
@@ -155,10 +150,7 @@
      */
     undelegateEvents: function() {
       Backbone.View.prototype.undelegateEvents.call(this);
-      _.each(this.__childViews, function(view) {
-        view.undelegateEvents();
-      });
-      _.each(this.__sharedViews, function(view) {
+      _.each(this.getAllTrackedViews(), function(view) {
         view.undelegateEvents();
       });
     },
@@ -176,7 +168,7 @@
     injectView: function(injectionSite, currentView, options) {
       options = options || {};
       if (options.useTransition) {
-        return this.transitionView(injectionSite, currentView, options);
+        return this.transitionTrackedViews(injectionSite, currentView, options);
       } else {
         var injectionPoint = this.$('[inject=' + injectionSite + ']');
         this.attachView(injectionPoint, currentView, options);
@@ -184,29 +176,26 @@
       }
     },
 
-    transitionView: function(injectionSite, currentView, options) {
-      var previousView, newInjectionSite,
-        previousDeferred = $.Deferred(),
-        currentDeferred = $.Deferred(),
-        parentView = this;
+    transitionTrackedViews: function(injectionSite, currentView, options) {
+      var previousView, injectionPoint, newInjectionSite, currentPromise,
+        previousDeferred = $.Deferred();
       options = options || {};
       // find previous view that used this injection site.
       previousView = options.previousView;
       if (!previousView) {
-        previousView = this._findViewWithPreviousInjectionSite(injectionSite);
+        previousView = this._getLastTrackedViewAtInjectionSite(injectionSite);
         previousView = previousView == currentView ? undefined : previousView;
       }
-      options.previousView = options.previousView || previousView;
-      options.currentView  = options.currentView  || currentView;
-      options.parentView   = options.parentView   || parentView;
+      _.defaults(options, {
+        parentView: this,
+        currentView: currentView,
+        previousView: previousView
+      });
       options.useTransition = false;
       if (!previousView) {
         // Only transition in the new current view and find the injection point.
-        currentView.transitionIn(function() {
-          var injectionPoint = parentView.$('[inject=' + injectionSite + ']');
-          parentView.attachView(injectionPoint, currentView, options);
-        }, currentDeferred.resolve, options);
-        return currentDeferred.promise();
+        injectionPoint = this.$('[inject=' + injectionSite + ']');
+        return this.transitionInView(injectionPoint, currentView, options);
       }
       this.injectView(injectionSite, previousView, options);
       options.cachedInjectionSite = previousView.injectionSite;
@@ -216,22 +205,32 @@
       previousView.injectionSite = undefined;
 
       // transition previous view out
-      previousView.transitionOut(function() {
-        previousView.detach();
-      }, previousDeferred.resolve, options);
+      previousView.transitionOut(previousDeferred.resolve, options);
       // transition new current view in
-      currentView.transitionIn(function() {
-        parentView.attachView(newInjectionSite, currentView, options);
-      }, currentDeferred.resolve, options);
+      currentPromise = this.transitionInView(newInjectionSite, currentView, options);
+
       // return a combined promise
-      return $.when(previousDeferred.promise(), currentDeferred.promise());
+      return $.when(previousDeferred.promise(), currentPromise);
     },
 
-    _findViewWithPreviousInjectionSite: function(injectionSite) {
+    transitionInView: function($el, currentView, options) {
+      var currentDeferred = $.Deferred(),
+        parentView = this;
+      options = options || {};
+      _.defaults(options, {
+        parentView: this,
+        currentView: currentView
+      });
+      currentView.transitionIn(function() {
+        parentView.attachView($el, currentView, options);
+      }, currentDeferred.resolve, options);
+      return currentDeferred.promise();
+    },
+
+    _getLastTrackedViewAtInjectionSite: function(injectionSite) {
       var previousView = this.__lastInjectionSiteMap[injectionSite];
       // make sure previous view is still tracked
-      var allTrackedViews = _.values(this.__sharedViews).concat(_.values(this.__childViews));
-      return _.contains(allTrackedViews, previousView) ? previousView : undefined;
+      return _.contains(this.getAllTrackedViews(), previousView) ? previousView : undefined;
     },
 
     /**
@@ -395,15 +394,14 @@
     /**
      * Override to provide your own transition out logic. Default logic is to just detach from the page.
      * @method transitionOut
-     * @param detach {Function} callback to be invoked when you want this view to be detached
      * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
      * @param options {Object} optionals options object
      * @param   options.currentView {View} the view that is being transitioned in.
      * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
      * @param   options.parentView {View} the view that is invoking the transition.
      */
-    transitionOut: function(detach, done, options) {
-      detach();
+    transitionOut: function(done, options) {
+      this.detach();
       done();
     },
 
@@ -495,6 +493,10 @@
      */
     hasChildViews: function() {
       return this.hasTrackedViews({ shared: false });
+    },
+
+    getAllTrackedViews: function() {
+      return _.values(this.__sharedViews).concat(_.values(this.__childViews));
     },
 
     /**
