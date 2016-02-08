@@ -160,23 +160,23 @@
      * Invokes attachChildView as the bulk of the functionality
      * @method injectView
      * @param injectionSite {String} The name of the injection site in the layout template
-     * @param currentView   {View}   The instantiated view object to be injected
+     * @param newView   {View}   The instantiated view object to be injected
      * @param [options] {Object} optionals options object
      * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
      * @param   [options.useTransition=false] {Boolean} if set to true, this method will delegate injection logic to this.transitionView
      */
-    injectView: function(injectionSite, currentView, options) {
+    injectView: function(injectionSite, newView, options) {
       options = options || {};
       if (options.useTransition) {
-        return this.transitionTrackedViews(injectionSite, currentView, options);
+        return this.transitionSiteToNewView(injectionSite, newView, options);
       } else {
         var injectionPoint = this.$('[inject=' + injectionSite + ']');
-        this.attachView(injectionPoint, currentView, options);
+        this.attachView(injectionPoint, newView, options);
         return $.Deferred().resolve().promise();
       }
     },
 
-    transitionTrackedViews: function(injectionSite, currentView, options) {
+    transitionSiteToNewView: function(injectionSite, newView, options) {
       var previousView, injectionPoint, newInjectionSite, currentPromise,
         previousDeferred = $.Deferred();
       options = options || {};
@@ -184,18 +184,18 @@
       previousView = options.previousView;
       if (!previousView) {
         previousView = this._getLastTrackedViewAtInjectionSite(injectionSite);
-        previousView = previousView == currentView ? undefined : previousView;
+        previousView = previousView == newView ? undefined : previousView;
       }
       _.defaults(options, {
         parentView: this,
-        currentView: currentView,
+        newView: newView,
         previousView: previousView
       });
       options.useTransition = false;
       if (!previousView) {
         // Only transition in the new current view and find the injection point.
         injectionPoint = this.$('[inject=' + injectionSite + ']');
-        return this.transitionInView(injectionPoint, currentView, options);
+        return this.transitionInView(injectionPoint, newView, options);
       }
       this.injectView(injectionSite, previousView, options);
       options.cachedInjectionSite = previousView.injectionSite;
@@ -207,22 +207,22 @@
       // transition previous view out
       previousView.transitionOut(previousDeferred.resolve, options);
       // transition new current view in
-      currentPromise = this.transitionInView(newInjectionSite, currentView, options);
+      currentPromise = this.transitionInView(newInjectionSite, newView, options);
 
       // return a combined promise
       return $.when(previousDeferred.promise(), currentPromise);
     },
 
-    transitionInView: function($el, currentView, options) {
+    transitionInView: function($el, newView, options) {
       var currentDeferred = $.Deferred(),
         parentView = this;
       options = options || {};
       _.defaults(options, {
         parentView: this,
-        currentView: currentView
+        newView: newView
       });
-      currentView.transitionIn(function() {
-        parentView.attachView($el, currentView, options);
+      newView.transitionIn(function() {
+        parentView.attachView($el, newView, options);
       }, currentDeferred.resolve, options);
       return currentDeferred.promise();
     },
