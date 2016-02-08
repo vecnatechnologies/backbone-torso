@@ -89,10 +89,16 @@
     render: function() {
       this.unplug();
       if (this.template) {
+        // Detach this view's tracked views for a more effective hotswap.
+        // The child views should be reattached by the render method.
+        this.updateLastInjectionSiteMap();
+        this.detachAllTrackedViews();
         this.templateRender(this.$el, this.template, this.prepare());
       }
       this.plug();
       this.delegateEvents();
+      this.attachTrackedViews();
+      this.__lastInjectionSiteMap = {};
     },
 
     /**
@@ -117,12 +123,6 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
-      // Detach just this view's child views for a more effective hotswap.
-      // The child views will be reattached by the render method.
-      this.detachTrackedViews({ shared: false });
-      // Detach just this view's shared views for a more effective hotswap.
-      // The shared views will be reattached by the render method.
-      this.detachTrackedViews({ shared: true });
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -203,7 +203,12 @@
       this.injectView(injectionSite, previousView, options);
       options.cachedInjectionSite = previousView.injectionSite;
       newInjectionSite = options.newInjectionSite = $('<div inject="' + injectionSite + '">');
-      previousView.$el.after(newInjectionSite);
+      if (options.addBefore) {
+        previousView.$el.before(newInjectionSite);
+      } else {
+        previousView.$el.after(newInjectionSite);
+      }
+
       // clear the injections site so it isn't replaced back into the dom.
       previousView.injectionSite = undefined;
 
@@ -394,6 +399,8 @@
      */
     plug: _.noop,
 
+    attachTrackedViews: _.noop,
+
     /**
      * Override to provide your own transition out logic. Default logic is to just detach from the page.
      * @method transitionOut
@@ -423,6 +430,16 @@
       done();
     },
 
+    updateLastInjectionSiteMap: function() {
+      var parentView = this;
+      this.__lastInjectionSiteMap = {};
+      _.each(this.getAllTrackedViews(), function(view) {
+        if (view.isAttachedToParent() && view.injectionSite) {
+          parentView.__lastInjectionSiteMap[view.injectionSite.attr('inject')] = view;
+        }
+      });
+    },
+
     /**
      * Gets the hash from id to views of the correct views given the options.
      * @param [options={}] {Object}  Optional options.
@@ -450,14 +467,10 @@
      * @method attachView
      */
     attachView: function($el, view, options) {
-      var injectionSite = $el.attr('inject');
       options = options || {};
       view.detach();
       this.registerTrackedView(view, options);
       view.attach($el, options);
-      if (injectionSite) {
-        this.__lastInjectionSiteMap[injectionSite] = view;
-      }
       if (!options.noActivate) {
         view.activate();
       }
@@ -590,6 +603,12 @@
     detachTrackedViews: function(options) {
       var trackedViewsHash = this.__getTrackedViewsHash(options);
       _.each(trackedViewsHash, function(view) {
+        view.detach();
+      });
+    },
+
+    detachAllTrackedViews: function() {
+      _.each(this.getAllTrackedViews(), function(view) {
         view.detach();
       });
     },
