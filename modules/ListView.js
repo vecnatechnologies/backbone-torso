@@ -269,6 +269,7 @@
      */
     render: function() {
       // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
+      this.trigger('render-begin');
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
       this.unplug();

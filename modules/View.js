@@ -87,6 +87,7 @@
      * @method render
      */
     render: function() {
+      this.trigger('render-begin');
       this.unplug();
       if (this.template) {
         // Detach this view's tracked views for a more effective hotswap.
@@ -99,6 +100,7 @@
       this.delegateEvents();
       this.attachTrackedViews();
       this.__lastInjectionSiteMap = {};
+      this.trigger('render-complete');
     },
 
     /**
