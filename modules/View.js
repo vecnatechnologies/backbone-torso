@@ -89,6 +89,7 @@
     render: function() {
       this.trigger('render-begin');
       this.prerender();
+      this.trigger('render-before-dom-replacement');
       if (this.template) {
         this.__updateInjectionSiteMap();
         // Detach this view's tracked views for a more effective hotswap.
