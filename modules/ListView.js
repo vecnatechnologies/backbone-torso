@@ -269,11 +269,11 @@
      */
     render: function() {
       // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
-      this.trigger('render-begin');
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
-      this.unplug();
-      this.updateLastInjectionSiteMap();
+      this.trigger('render-begin');
+      this.prerender();
+      this.__updateInjectionSiteMap();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
@@ -288,8 +288,8 @@
       }
       this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
-      this.plug();
       this.delegateEvents();
+      this.trigger('render-after-dom-replacement');
       _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
@@ -300,7 +300,8 @@
         }
       }, this);
       this.attachTrackedViews();
-      this.__lastInjectionSiteMap = {};
+      this.__injectionSiteMap = {};
+      this.postrender();
       this.trigger('render-complete');
     },
 

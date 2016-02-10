@@ -54,7 +54,7 @@
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
-      this.__lastInjectionSiteMap = {};
+      this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
@@ -88,18 +88,23 @@
      */
     render: function() {
       this.trigger('render-begin');
-      this.unplug();
+      this.prerender();
       if (this.template) {
+        this.__updateInjectionSiteMap();
         // Detach this view's tracked views for a more effective hotswap.
-        // The child views should be reattached by the render method.
-        this.updateLastInjectionSiteMap();
+        // The child views should be reattached by the attachTrackedViews method.
         this.detachAllTrackedViews();
-        this.templateRender(this.$el, this.template, this.prepare());
+        if (_.isString(this.template)) {
+          this.$el.html(this.template);
+        } else {
+          this.templateRender(this.$el, this.template, this.prepare());
+        }
       }
-      this.plug();
       this.delegateEvents();
+      this.trigger('render-after-dom-replacement');
       this.attachTrackedViews();
-      this.__lastInjectionSiteMap = {};
+      this.__injectionSiteMap = {};
+      this.postrender();
       this.trigger('render-complete');
     },
 
@@ -158,34 +163,56 @@
     },
 
     /**
-     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
+     * Attaches a child view by finding the element with the attribute inject=<injectionSiteName>
      * Invokes attachChildView as the bulk of the functionality
      * @method injectView
-     * @param injectionSite {String} The name of the injection site in the layout template
+     * @param injectionSiteName {String} The name of the injection site in the layout template
      * @param newView   {View}   The instantiated view object to be injected
      * @param [options] {Object} optionals options object
      * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
      * @param   [options.useTransition=false] {Boolean} if set to true, this method will delegate injection logic to this.transitionView
      */
-    injectView: function(injectionSite, newView, options) {
+    injectView: function(injectionSiteName, newView, options) {
       options = options || {};
       if (options.useTransition) {
-        return this.transitionSiteToNewView(injectionSite, newView, options);
+        return this.transitionSiteToNewView(injectionSiteName, newView, options);
       } else {
-        var injectionPoint = this.$('[inject=' + injectionSite + ']');
+        var injectionPoint = this.$('[inject=' + injectionSiteName + ']');
         this.attachView(injectionPoint, newView, options);
         return $.Deferred().resolve().promise();
       }
     },
 
-    transitionSiteToNewView: function(injectionSite, newView, options) {
+    /**
+     * Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view
+     * previously had another view at this injections site, this previous view will be removed with that view's transitionOut.
+     * If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even
+     * though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.
+     * If the previous view is the same as the new view, it is injected normally without transitioning in.
+     * @method transitionSiteToNewView
+     * @param injectionSiteName {String} The name of the injection site in the template. This is the value corresponding to the attribute "inject".
+     * @param newView {View} The instantiated view object to be transitioned into the injection site
+     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   [options.previousView] {View} the view that should be transitioned out. If none is provided, it will look to see if a view already
+     *                                 is at this injection site and uses that by default.
+     * @param   [options.addBefore=false] {Boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
+     * When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields
+     * will be added to the options parameter to allow better handling of the transitions. These include:
+     * {
+     *   newView: the new view
+     *   previousView: the previous view (can be undefined)
+     *   parentView: the parent view transitioning in or out the tracked view
+     * }
+     */
+    transitionSiteToNewView: function(injectionSiteName, newView, options) {
       var previousView, injectionPoint, newInjectionSite, currentPromise,
         previousDeferred = $.Deferred();
       options = options || {};
       // find previous view that used this injection site.
       previousView = options.previousView;
       if (!previousView) {
-        previousView = this._getLastTrackedViewAtInjectionSite(injectionSite);
+        previousView = this.__getLastTrackedViewAtInjectionSite(injectionSiteName);
       }
       _.defaults(options, {
         parentView: this,
@@ -195,16 +222,16 @@
       options.useTransition = false;
       if (previousView == newView) {
         // Inject this view like normal if it's already the last one there
-        return this.injectView(injectionSite, newView, options);
+        return this.injectView(injectionSiteName, newView, options);
       }
       if (!previousView) {
         // Only transition in the new current view and find the injection point.
-        injectionPoint = this.$('[inject=' + injectionSite + ']');
+        injectionPoint = this.$('[inject=' + injectionSiteName + ']');
         return this.transitionInView(injectionPoint, newView, options);
       }
-      this.injectView(injectionSite, previousView, options);
+      this.injectView(injectionSiteName, previousView, options);
       options.cachedInjectionSite = previousView.injectionSite;
-      newInjectionSite = options.newInjectionSite = $('<div inject="' + injectionSite + '">');
+      newInjectionSite = options.newInjectionSite = $('<div inject="' + injectionSiteName + '">');
       if (options.addBefore) {
         previousView.$el.before(newInjectionSite);
       } else {
@@ -223,6 +250,18 @@
       return $.when(previousDeferred.promise(), currentPromise);
     },
 
+    /**
+     * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
+     * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
+     * @param $el {jQuery element} the element to attach to.
+     * @param newView {View} the view to be transitioned in.
+     * @param [options] {Object} optional options object
+     *   @param [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
+     * @return {Promise} resolved when transition is complete. No payload is provided upon resolution.
+     * @method transitionInView
+     */
     transitionInView: function($el, newView, options) {
       var currentDeferred = $.Deferred(),
         parentView = this;
@@ -235,12 +274,6 @@
         parentView.attachView($el, newView, options);
       }, currentDeferred.resolve, options);
       return currentDeferred.promise();
-    },
-
-    _getLastTrackedViewAtInjectionSite: function(injectionSite) {
-      var previousView = this.__lastInjectionSiteMap[injectionSite];
-      // make sure previous view is still tracked
-      return _.contains(this.getAllTrackedViews(), previousView) ? previousView : undefined;
     },
 
     /**
@@ -383,25 +416,28 @@
      */
     _detached: _.noop,
 
-        /**
-     * Before any DOM rendering is done, this method is called and removes any
-     * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+    /**
+     * Hook during render that is invoked before any DOM rendering is performed.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);
      * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
-     * @method unplug
+     * @method prerender
      */
-    unplug: _.noop,
+    prerender: _.noop,
 
     /**
-     * After all DOM rendering is done, this method is called and attaches any
-     * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
-     * @method plug
+     * Hook to inject in (or transition in) tracked views. Called after all DOM rendering is done so injection sites should be available.
+     * This method can be overwritten  as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
+     * @method attachTrackedViews
      */
-    plug: _.noop,
-
     attachTrackedViews: _.noop,
+
+    /**
+     * Hook during render that is invoked after all DOM rendering is done and tracked views attached.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);
+     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
+     * @method postrender
+     */
+    postrender: _.noop,
 
     /**
      * Override to provide your own transition out logic. Default logic is to just detach from the page.
@@ -421,6 +457,7 @@
      * Override to provide your own transition in logic. Default logic is to just attach to the page.
      * @method transitionIn
      * @param attach {Function} callback to be invoked when you want this view to be attached to the dom.
+                                If you are trying to transition in a tracked view, consider using this.transitionInView()
      * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
      * @param options {Object} optionals options object
      * @param   options.currentView {View} the view that is being transitioned in.
@@ -430,16 +467,6 @@
     transitionIn: function(attach, done, options) {
       attach();
       done();
-    },
-
-    updateLastInjectionSiteMap: function() {
-      var parentView = this;
-      this.__lastInjectionSiteMap = {};
-      _.each(this.getAllTrackedViews(), function(view) {
-        if (view.isAttachedToParent() && view.injectionSite) {
-          parentView.__lastInjectionSiteMap[view.injectionSite.attr('inject')] = view;
-        }
-      });
     },
 
     /**
@@ -513,6 +540,11 @@
       return this.hasTrackedViews({ shared: false });
     },
 
+    /**
+     * Returns all tracked views, both child views and shared views.
+     * @method getAllTrackedViews
+     * @return {List<View>} all tracked views (both child and shared views)
+     */
     getAllTrackedViews: function() {
       return _.values(this.__sharedViews).concat(_.values(this.__childViews));
     },
@@ -829,6 +861,45 @@
     },
 
     /************** Private methods **************/
+
+    /**
+     * Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.
+     * @private
+     * @method __updateInjectionSiteMap
+     */
+    __updateInjectionSiteMap: function() {
+      var parentView = this;
+      this.__injectionSiteMap = {};
+      _.each(this.getAllTrackedViews(), function(view) {
+        if (view.isAttachedToParent() && view.injectionSite) {
+          parentView.__injectionSiteMap[view.injectionSite.attr('inject')] = view;
+        }
+      });
+    },
+
+    /**
+     * Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).
+     * When used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.
+     * @private
+     * @method __getLastTrackedViewAtInjectionSite
+     * @param injectionSiteName {String} the injection site name - the value of the "inject" attribute on the element used as an injection target for tracked views.
+     * @return {View} the previous view at that site. Undefined if no view was at that injection site before.
+     */
+    __getLastTrackedViewAtInjectionSite: function(injectionSiteName) {
+      // check to see if a view was cached before a render
+      var previousView = this.__injectionSiteMap[injectionSiteName];
+      if (previousView) {
+        // make sure previous view is still tracked
+        previousView = _.contains(this.getAllTrackedViews(), previousView) ? previousView : undefined;
+      } else {
+        // if not, see if a view is currently in the injection site.
+        var matchingViews = this.getAllTrackedViews().filter(function(view) {
+          return view.injectionSite && view.injectionSite.attr('inject') == injectionSiteName && (!excludingViews || !_.contains(excludingViews, view));
+        });
+        previousView = _.first(matchingViews);
+      }
+      return previousView;
+    },
 
     /**
      * After a view's DOM element replaces an injection site, there is logic that must be performed,
