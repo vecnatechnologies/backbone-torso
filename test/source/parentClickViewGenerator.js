@@ -16,8 +16,8 @@ module.exports = function(window) {
     events: {
       'click div.parent' : 'myClick'
     },
-    render: function() {
-      this.$el.html("<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>");
+    template: "<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>",
+    attachTrackedViews: function() {
       this.injectView('one', this.childView1);
       this.injectView('two', this.childView2);
     },

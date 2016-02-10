@@ -44,61 +44,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellPersistenceRemoval
-   * @author kent.willis@vecna.com
-   */
-  return {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('jquery'));
@@ -193,6 +138,61 @@
   };
 
   return collectionLoadingMixin;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellPersistenceRemoval
+   * @author kent.willis@vecna.com
+   */
+  return {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
 }));
 
 (function(root, factory) {
@@ -1464,6 +1464,7 @@
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
+      this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
@@ -1496,12 +1497,25 @@
      * @method render
      */
     render: function() {
-      this.unplug();
+      this.trigger('render-begin');
+      this.prerender();
       if (this.template) {
-        this.templateRender(this.$el, this.template, this.prepare());
+        this.__updateInjectionSiteMap();
+        // Detach this view's tracked views for a more effective hotswap.
+        // The child views should be reattached by the attachTrackedViews method.
+        this.detachAllTrackedViews();
+        if (_.isString(this.template)) {
+          this.$el.html(this.template);
+        } else {
+          this.templateRender(this.$el, this.template, this.prepare());
+        }
       }
-      this.plug();
       this.delegateEvents();
+      this.trigger('render-after-dom-replacement');
+      this.attachTrackedViews();
+      this.__injectionSiteMap = {};
+      this.postrender();
+      this.trigger('render-complete');
     },
 
     /**
@@ -1526,12 +1540,6 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
-      // Detach just this view's child views for a more effective hotswap.
-      // The child views will be reattached by the render method.
-      this.detachTrackedViews({ shared: false });
-      // Detach just this view's shared views for a more effective hotswap.
-      // The shared views will be reattached by the render method.
-      this.detachTrackedViews({ shared: true });
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -1545,12 +1553,7 @@
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackCellCallbacks();
-      _.each(this.__childViews, function(view) {
-        if (view.isAttachedToParent()) {
-          view.delegateEvents();
-        }
-      });
-      _.each(this.__sharedViews, function(view) {
+      _.each(this.getAllTrackedViews(), function(view) {
         if (view.isAttachedToParent()) {
           view.delegateEvents();
         }
@@ -1564,58 +1567,123 @@
      */
     undelegateEvents: function() {
       Backbone.View.prototype.undelegateEvents.call(this);
-      _.each(this.__childViews, function(view) {
-        view.undelegateEvents();
-      });
-      _.each(this.__sharedViews, function(view) {
+      _.each(this.getAllTrackedViews(), function(view) {
         view.undelegateEvents();
       });
     },
 
     /**
-     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
+     * Attaches a child view by finding the element with the attribute inject=<injectionSiteName>
      * Invokes attachChildView as the bulk of the functionality
      * @method injectView
-     * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to
+     * @param injectionSiteName {String} The name of the injection site in the layout template
+     * @param newView   {View}   The instantiated view object to be injected
      * @param [options] {Object} optionals options object
      * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
+     * @param   [options.useTransition=false] {Boolean} if set to true, this method will delegate injection logic to this.transitionView
      */
-    injectView: function(injectionSite, view, options) {
-      var injectionPoint = this.$('[inject=' + injectionSite + ']');
-      if (view && injectionPoint.size() > 0) {
-        this.attachView(injectionPoint, view, options);
+    injectView: function(injectionSiteName, newView, options) {
+      options = options || {};
+      if (options.useTransition) {
+        return this.transitionSiteToNewView(injectionSiteName, newView, options);
+      } else {
+        var injectionPoint = this.$('[inject=' + injectionSiteName + ']');
+        this.attachView(injectionPoint, newView, options);
+        return $.Deferred().resolve().promise();
       }
     },
 
-    transitionView: function(injectionSite, currentView, previousView, options) {
-      var previousDeferred = $.Deferred();
+    /**
+     * Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view
+     * previously had another view at this injections site, this previous view will be removed with that view's transitionOut.
+     * If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even
+     * though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.
+     * If the previous view is the same as the new view, it is injected normally without transitioning in.
+     * @method transitionSiteToNewView
+     * @param injectionSiteName {String} The name of the injection site in the template. This is the value corresponding to the attribute "inject".
+     * @param newView {View} The instantiated view object to be transitioned into the injection site
+     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   [options.previousView] {View} the view that should be transitioned out. If none is provided, it will look to see if a view already
+     *                                 is at this injection site and uses that by default.
+     * @param   [options.addBefore=false] {Boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
+     * When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields
+     * will be added to the options parameter to allow better handling of the transitions. These include:
+     * {
+     *   newView: the new view
+     *   previousView: the previous view (can be undefined)
+     *   parentView: the parent view transitioning in or out the tracked view
+     * }
+     */
+    transitionSiteToNewView: function(injectionSiteName, newView, options) {
+      var previousView, injectionPoint, newInjectionSite, currentPromise,
+        previousDeferred = $.Deferred();
       options = options || {};
-      var parentView = this;
-      parentView.injectView(injectionSite, previousView, options);
-      var newViewInjection = $('<div>');
-      previousView.$el.after(newViewInjection);
-      previousView.transitionOut(function() {
-        previousView.injectionSite = undefined;
-        previousView.detach();
-        previousDeferred.resolve();
-      }, options);
-      var currentViewPromise = currentView.transitionIn(function() {
-        parentView.attachView(newViewInjection, currentView, options);
-        if (!options.discardInjectionSite) {
-          previousView.injectionSite = injectionSite;
-        }
-      }, options);
-      return $.when(currentViewPromise, previousDeferred.promise());
+      // find previous view that used this injection site.
+      previousView = options.previousView;
+      if (!previousView) {
+        previousView = this.__getLastTrackedViewAtInjectionSite(injectionSiteName);
+      }
+      _.defaults(options, {
+        parentView: this,
+        newView: newView,
+        previousView: previousView
+      });
+      options.useTransition = false;
+      if (previousView == newView) {
+        // Inject this view like normal if it's already the last one there
+        return this.injectView(injectionSiteName, newView, options);
+      }
+      if (!previousView) {
+        // Only transition in the new current view and find the injection point.
+        injectionPoint = this.$('[inject=' + injectionSiteName + ']');
+        return this.transitionInView(injectionPoint, newView, options);
+      }
+      this.injectView(injectionSiteName, previousView, options);
+      options.cachedInjectionSite = previousView.injectionSite;
+      newInjectionSite = options.newInjectionSite = $('<div inject="' + injectionSiteName + '">');
+      if (options.addBefore) {
+        previousView.$el.before(newInjectionSite);
+      } else {
+        previousView.$el.after(newInjectionSite);
+      }
+
+      // clear the injections site so it isn't replaced back into the dom.
+      previousView.injectionSite = undefined;
+
+      // transition previous view out
+      previousView.transitionOut(previousDeferred.resolve, options);
+      // transition new current view in
+      currentPromise = this.transitionInView(newInjectionSite, newView, options);
+
+      // return a combined promise
+      return $.when(previousDeferred.promise(), currentPromise);
     },
 
-    transitionOut: function(detach) {
-      detach();
-    },
-
-    transitionIn: function(attach) {
-      attach();
-      return $.Deferred().resolve().promise();
+    /**
+     * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
+     * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
+     * @param $el {jQuery element} the element to attach to.
+     * @param newView {View} the view to be transitioned in.
+     * @param [options] {Object} optional options object
+     *   @param [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
+     *   @param [options.shared=false] {Boolean} The view is a shared view instead of a child view
+     *                                           (shared views are not disposed when the parent is disposed)
+     * @return {Promise} resolved when transition is complete. No payload is provided upon resolution.
+     * @method transitionInView
+     */
+    transitionInView: function($el, newView, options) {
+      var currentDeferred = $.Deferred(),
+        parentView = this;
+      options = options || {};
+      _.defaults(options, {
+        parentView: this,
+        newView: newView
+      });
+      newView.transitionIn(function() {
+        parentView.attachView($el, newView, options);
+      }, currentDeferred.resolve, options);
+      return currentDeferred.promise();
     },
 
     /**
@@ -1627,6 +1695,7 @@
         // Detach view from DOM
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
+          this.injectionSite = undefined;
         } else {
           this.$el.detach();
         }
@@ -1757,23 +1826,58 @@
      */
     _detached: _.noop,
 
-        /**
-     * Before any DOM rendering is done, this method is called and removes any
-     * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
+    /**
+     * Hook during render that is invoked before any DOM rendering is performed.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);
      * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
-     * @method unplug
+     * @method prerender
      */
-    unplug: _.noop,
+    prerender: _.noop,
 
     /**
-     * After all DOM rendering is done, this method is called and attaches any
-     * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
-     * @method plug
+     * Hook to inject in (or transition in) tracked views. Called after all DOM rendering is done so injection sites should be available.
+     * This method can be overwritten  as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
+     * @method attachTrackedViews
      */
-    plug: _.noop,
+    attachTrackedViews: _.noop,
+
+    /**
+     * Hook during render that is invoked after all DOM rendering is done and tracked views attached.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);
+     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
+     * @method postrender
+     */
+    postrender: _.noop,
+
+    /**
+     * Override to provide your own transition out logic. Default logic is to just detach from the page.
+     * @method transitionOut
+     * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
+     * @param options {Object} optionals options object
+     * @param   options.currentView {View} the view that is being transitioned in.
+     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
+     * @param   options.parentView {View} the view that is invoking the transition.
+     */
+    transitionOut: function(done, options) {
+      this.detach();
+      done();
+    },
+
+    /**
+     * Override to provide your own transition in logic. Default logic is to just attach to the page.
+     * @method transitionIn
+     * @param attach {Function} callback to be invoked when you want this view to be attached to the dom.
+                                If you are trying to transition in a tracked view, consider using this.transitionInView()
+     * @param done {Function} callback to be invoked when the transitions is complete *MUST BE CALLED*
+     * @param options {Object} optionals options object
+     * @param   options.currentView {View} the view that is being transitioned in.
+     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
+     * @param   options.parentView {View} the view that is invoking the transition.
+     */
+    transitionIn: function(attach, done, options) {
+      attach();
+      done();
+    },
 
     /**
      * Gets the hash from id to views of the correct views given the options.
@@ -1844,6 +1948,15 @@
      */
     hasChildViews: function() {
       return this.hasTrackedViews({ shared: false });
+    },
+
+    /**
+     * Returns all tracked views, both child views and shared views.
+     * @method getAllTrackedViews
+     * @return {List<View>} all tracked views (both child and shared views)
+     */
+    getAllTrackedViews: function() {
+      return _.values(this.__sharedViews).concat(_.values(this.__childViews));
     },
 
     /**
@@ -1934,6 +2047,12 @@
     detachTrackedViews: function(options) {
       var trackedViewsHash = this.__getTrackedViewsHash(options);
       _.each(trackedViewsHash, function(view) {
+        view.detach();
+      });
+    },
+
+    detachAllTrackedViews: function() {
+      _.each(this.getAllTrackedViews(), function(view) {
         view.detach();
       });
     },
@@ -2152,6 +2271,45 @@
     },
 
     /************** Private methods **************/
+
+    /**
+     * Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.
+     * @private
+     * @method __updateInjectionSiteMap
+     */
+    __updateInjectionSiteMap: function() {
+      var parentView = this;
+      this.__injectionSiteMap = {};
+      _.each(this.getAllTrackedViews(), function(view) {
+        if (view.isAttachedToParent() && view.injectionSite) {
+          parentView.__injectionSiteMap[view.injectionSite.attr('inject')] = view;
+        }
+      });
+    },
+
+    /**
+     * Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).
+     * When used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.
+     * @private
+     * @method __getLastTrackedViewAtInjectionSite
+     * @param injectionSiteName {String} the injection site name - the value of the "inject" attribute on the element used as an injection target for tracked views.
+     * @return {View} the previous view at that site. Undefined if no view was at that injection site before.
+     */
+    __getLastTrackedViewAtInjectionSite: function(injectionSiteName) {
+      // check to see if a view was cached before a render
+      var previousView = this.__injectionSiteMap[injectionSiteName];
+      if (previousView) {
+        // make sure previous view is still tracked
+        previousView = _.contains(this.getAllTrackedViews(), previousView) ? previousView : undefined;
+      } else {
+        // if not, see if a view is currently in the injection site.
+        var matchingViews = this.getAllTrackedViews().filter(function(view) {
+          return view.injectionSite && view.injectionSite.attr('inject') == injectionSiteName && (!excludingViews || !_.contains(excludingViews, view));
+        });
+        previousView = _.first(matchingViews);
+      }
+      return previousView;
+    },
 
     /**
      * After a view's DOM element replaces an injection site, there is logic that must be performed,
@@ -4387,6 +4545,9 @@
       // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
       var injectionSite,
           newDOM = $(templateRenderer.copyTopElement(this.el));
+      this.trigger('render-begin');
+      this.prerender();
+      this.__updateInjectionSiteMap();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
@@ -4402,6 +4563,7 @@
       this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
       this.delegateEvents();
+      this.trigger('render-after-dom-replacement');
       _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
@@ -4411,6 +4573,9 @@
           // Shouldn't get here. Item view is missing...
         }
       }, this);
+      this.attachTrackedViews();
+      this.__injectionSiteMap = {};
+      this.postrender();
       this.trigger('render-complete');
     },
 

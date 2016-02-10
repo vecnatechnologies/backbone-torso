@@ -192,8 +192,7 @@ describe('A View being detached and attached', function() {
     expect(childView2.isAttachedToParent()).toBe(true);
     view.template = Handlebars.compile("<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>");
     view.prepare = function() {return {};};
-    view.render = function() {
-      this.templateRender(this.$el, this.template, this.prepare());
+    view.attachTrackedViews = function() {
       this.injectView('one', this.childView1);
       this.injectView('two', this.childView2);
     };
