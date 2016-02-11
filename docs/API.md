@@ -16,11 +16,19 @@ DOM generation / rendering
 
 - template
 - **prepare**
-- **render**
+- render
 - templateRender
 - **injectView**
-- plug
-- unplug
+- transitionNewViewIntoSite
+- transitionInView
+- prerender
+- postrender
+- transitionIn
+- transitionOut
+
+View state methods
+- **get**
+- **set**
 
 Feedback
 
@@ -38,6 +46,8 @@ Life cycle methods
 - **\_deactivate**
 - **\_attached**
 - **\_detached**
+- invokeAttached
+- invokeDetached
 
 Life cycle state methods
 
@@ -46,32 +56,31 @@ Life cycle state methods
 - isActive
 - isDisposed
 
-Child view methods
+Tracked/Child view methods
 
-- attachChildView
-- hasChildViews
-- getChildViews
-- getChildView
+- getTrackedViews
+- activateTrackedViews
+- deactivateTrackedViews
+- **attachTrackedViews**
+- detachTrackedViews
+- registerTrackedView
+- unregisterTrackedView
+- hasTrackedViews
 - disposeChildViews
-- deactivateChildViews
-- activateChildViews
-- registerChildView
-- unregisterChildView
 
 ## List View
 #### Auto-manages many views based on a collection of models/cells
 
 - All of Torso.View API
 - **collection**
-- **childView**
+- **itemView**
 - template
 - emptyTemplate
-- childrenContainer
-- renderChildViews
+- itemContainer
 - prepareEmpty
 - **modelsToRender**
-- update
-- getChildViewFromModel
+- getItemViewFromModel
+- renderChildViews
 
 Overridden methods from View
 
@@ -79,9 +88,14 @@ Overridden methods from View
 - render
 - prepare
 
+Public methods invoked by list view on collection updates
+
+- update
+- reorder
+
 Configuration set by initialize parameters only
 
-- childModel
+- modelName
 - modelId
 - renderWait
 
