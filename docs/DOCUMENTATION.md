@@ -103,11 +103,12 @@ Views should never update DOM directly (e.g. grab elements using jQuery and chan
 
 The View's render process goes like this:
 
-1. prerender hook called
-2. DOM creation (or recreation) utilizing Torso's template rerender
-3. Delegation of events
-4. Attaching tracked views (both child views and shared view)
-5. postrender hook called
+1. prerender hook
+2. Detach all tracked views
+3. DOM creation (or recreation) utilizing Torso's template rerender
+4. Delegation of events
+5. Attach all tracked views
+6. postrender hook
 
 Events are also triggered at different points in the render method:
 
