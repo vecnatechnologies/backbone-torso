@@ -310,7 +310,7 @@
      * @method renderChildViews
      */
     renderChildViews: function() {
-      _.each(this.getChildViews(), function(childView) {
+      _.each(this.getTrackedViews({child: true}), function(childView) {
         childView.render();
       });
     },
@@ -434,7 +434,7 @@
      * @method getItemViewFromModel
      */
     getItemViewFromModel: function(model) {
-      return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
+      return model ? this.getTrackedView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
     },
 
     /**
@@ -460,7 +460,7 @@
     getItemViews: function() {
       var view = this;
       var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
-      return _.map(orderedViewIds, this.getChildView, this);
+      return _.map(orderedViewIds, this.getTrackedView, this);
     },
 
     /************** Private methods **************/
@@ -527,7 +527,7 @@
         }
       }, this);
       _.each(modelsWithViews, function(viewId, modelId) {
-        var itemView = this.getChildView(viewId);
+        var itemView = this.getTrackedView(viewId);
         if (itemView) {
           staleItemViews.push({ view: itemView, modelId: modelId });
         }
@@ -613,7 +613,7 @@
               var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
                 return !staleModelIdMap[modelId];
               });
-              firstItemViewLeft = view.getChildView(view.__modelToViewMap[firstModelIdLeft]);
+              firstItemViewLeft = view.getTrackedView(view.__modelToViewMap[firstModelIdLeft]);
               replaceMethod = _.bind(firstItemViewLeft.$el.prepend, firstItemViewLeft.$el);
             }
           }
