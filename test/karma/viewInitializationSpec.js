@@ -1,7 +1,7 @@
 var TorsoView = require('./../../modules/View');
-var ClickView = require('./ClickView');
-var ChildClickView = require('./ChildClickView');
-var ParentClickView = require('./ParentClickView');
+var ClickView = require('./helpers/ClickView');
+var ChildClickView = require('./helpers/ChildClickView');
+var ParentClickView = require('./helpers/ParentClickView');
 
 describe('A Torso View', function() {
   it('can be initialized', function() {
