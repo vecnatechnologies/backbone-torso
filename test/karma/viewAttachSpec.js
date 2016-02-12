@@ -1,5 +1,5 @@
 var $ = require('jquery');
-var ClickView = require('./ClickView');
+var ClickView = require('./helpers/ClickView');
 var spyOnBackbone = require('./../spec/functional/backboneSpy');
 
 describe('A View', function() {

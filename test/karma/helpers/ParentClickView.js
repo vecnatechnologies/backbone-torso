@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var TorsoView = require('./../../modules/View');
+var TorsoView = require('./../../../modules/View');
 var ChildClickView = require('./ChildClickView');
 
 module.exports = TorsoView.extend({
