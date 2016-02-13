@@ -1336,32 +1336,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
-  }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
-
-  return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1384,6 +1358,32 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+  }
+}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedCell = Backbone.NestedModel.extend({});
+  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+
+  return NestedCell;
 }));
 
 (function(root, factory) {
@@ -1689,7 +1689,9 @@
     },
 
     /**
-     * If attached, will detach the view from the DOM and calls deactivate
+     * If attached, will detach the view from the DOM.
+     * This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach
+     * callback on each tracked view recursively.
      * @method detach
      */
     detach: function() {
@@ -2129,13 +2131,16 @@
      * @method invokeDetached
      */
     invokeDetached: function() {
-      // No need to check if child views are actually detached, because if parent is detached, children are detached.
       if (this.__attachedCallbackInvoked) {
         this._detached();
         this.__attachedCallbackInvoked = false;
       }
       _.each(this.getTrackedViews(), function(view) {
-        view.invokeDetached();
+        // No need to check if tracked view is actually detached from the DOM as long as they are attached to the parent and the if parent is detached,
+        // then the tracked view is detached.
+        if (view.isAttachedToParent()) {
+          view.invokeDetached();
+        }
       });
     },
 
