@@ -1,3 +1,5 @@
+// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
+
 var spyOnBackbone = require('./backboneSpy');
 
 describe("A Form Model's Validation", function() {
