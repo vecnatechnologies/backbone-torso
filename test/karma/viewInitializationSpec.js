@@ -26,15 +26,6 @@ describe('ClickView', function() {
     });
   });
 
-  it('can register spys from a hook', function() {
-    var SpiedClickView = ClickView.extend({spyHook: function() {
-      spyOn(this, 'myClick');
-    }});
-    var spiedClickView = new SpiedClickView();
-    spiedClickView.myClick();
-    expect(spiedClickView.myClick).toHaveBeenCalled();
-  });
-
 });
 
 describe('ChildClickView', function() {
@@ -48,5 +39,11 @@ describe('ParentClickView', function() {
   it('can be initialized', function() {
     var parentClickView = new ParentClickView();
     expect(parentClickView).toBeDefined();
+  });
+
+  it('has two children', function() {
+    var parentClickView = new ParentClickView();
+    expect(parentClickView.childView1).toBeDefined();
+    expect(parentClickView.childView2).toBeDefined();
   });
 });
