@@ -18,8 +18,8 @@ module.exports = function(window) {
     },
     template: "<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>",
     attachTrackedViews: function() {
-      this.injectView('one', this.childView1);
-      this.injectView('two', this.childView2);
+      this.attachView('one', this.childView1);
+      this.attachView('two', this.childView2);
     },
     initialize: function() {
       this.childView1 = new ChildView1();

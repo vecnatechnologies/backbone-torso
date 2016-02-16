@@ -1,5 +1,3 @@
-var spyOnBackbone = require('../spec/functional/backboneSpy');
-
 /**
  * Creates a view class that has various events it's listening to
  * with spies on the callbacks.
