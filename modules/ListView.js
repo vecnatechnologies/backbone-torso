@@ -270,9 +270,10 @@
     render: function() {
       // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
       var injectionSite,
+          renderPromises = [],
           newDOM = $(templateRenderer.copyTopElement(this.el));
       this.trigger('render-begin');
-      this.prerender();
+      renderPromises.push(this.prerender() || $.Deferred().resolve().promise());
       this.__updateInjectionSiteMap();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
@@ -299,10 +300,11 @@
           // Shouldn't get here. Item view is missing...
         }
       }, this);
-      this.attachTrackedViews();
+      renderPromises.push(this.attachTrackedViews() || $.Deferred().resolve().promise());
       this.__injectionSiteMap = {};
-      this.postrender();
+      renderPromises.push(this.postrender() || $.Deferred().resolve().promise());
       this.trigger('render-complete');
+      return $.when.apply($, _.flatten(renderPromises));
     },
 
     /**

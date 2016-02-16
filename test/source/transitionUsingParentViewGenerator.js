@@ -1,5 +1,4 @@
-var spyOnBackbone = require('../spec/functional/backboneSpy'),
-    transitionableChildViewGenerator = require('./transitionableChildViewGenerator');
+var transitionableChildViewGenerator = require('./transitionableChildViewGenerator');
 
 /**
  * Creates a parent view with two children views
@@ -24,7 +23,7 @@ module.exports = function(window) {
       this.set('current', 0);
     },
     attachTrackedViews: function() {
-      this.transitionPromise = this.injectView('current', this.getCurrentView(), {
+      this.transitionPromise = this.attachView('current', this.getCurrentView(), {
         useTransition: true,
         transitionTime: 500
       });

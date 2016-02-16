@@ -4,7 +4,7 @@
 #### Building block of the UI
 
 - All of [Backbone's View API](http://backbonejs.org/#View)
-- **viewState**
+- viewState
 
 Overridden methods from Backbone.View
 
@@ -14,25 +14,25 @@ Overridden methods from Backbone.View
 
 DOM generation / rendering
 
-- template
-- **prepare**
+- template*
+- prepare*
 - render
 - templateRender
-- **injectView**
-- transitionNewViewIntoSite
-- transitionInView
-- prerender
-- postrender
-- transitionIn
-- transitionOut
+- prerender*
+- postrender*
+
+Transition Logic
+
+- transitionIn*
+- transitionOut*
 
 View state methods
-- **get**
-- **set**
+- get
+- set
 
 Feedback
 
-- **feedback**
+- feedback*
 - invokeFeedback
 
 Life cycle methods
@@ -42,12 +42,10 @@ Life cycle methods
 - deactivate
 - activate
 - dispose
-- **\_dispose**
-- **\_deactivate**
-- **\_attached**
-- **\_detached**
-- invokeAttached
-- invokeDetached
+- \_dispose*
+- \_deactivate*
+- \_attached*
+- \_detached*
 
 Life cycle state methods
 
@@ -58,15 +56,16 @@ Life cycle state methods
 
 Tracked/Child view methods
 
+- attachView
+- getTrackedView
 - getTrackedViews
-- activateTrackedViews
-- deactivateTrackedViews
-- **attachTrackedViews**
+- attachTrackedViews*
 - detachTrackedViews
 - registerTrackedView
 - unregisterTrackedView
 - hasTrackedViews
-- disposeChildViews
+
+\* methods you can override or extend to produce desired functionality
 
 ## List View
 #### Auto-manages many views based on a collection of models/cells
