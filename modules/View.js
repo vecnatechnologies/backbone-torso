@@ -136,6 +136,7 @@
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);
      * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
      * @method prerender
+     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
      */
     prerender: _.noop,
 
@@ -144,6 +145,7 @@
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);
      * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
      * @method postrender
+     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
      */
     postrender: _.noop,
 
@@ -268,6 +270,7 @@
      * Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
      * @method attachTrackedViews
+     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
      */
     attachTrackedViews: _.noop,
 
