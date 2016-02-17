@@ -20,7 +20,7 @@ describe('A View being detached and attached', function() {
   it('can be iniatialized correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     expect(view.myClick).not.toHaveBeenCalled();
     view.$el.find('div').click().change();
     expect(view.myClick).toHaveBeenCalled();
@@ -33,7 +33,7 @@ describe('A View being detached and attached', function() {
   it('can be attached correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     expect(view.myClick).not.toHaveBeenCalled();
     view.$el.find('div').click().change();
     expect(view.myClick).toHaveBeenCalled();
@@ -49,7 +49,7 @@ describe('A View being detached and attached', function() {
   it('can be detached correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     view.detach();
     expect($('div.click').length).toBe(0);
     expect($('div.app').length).toBe(1);
@@ -74,7 +74,7 @@ describe('A View being detached and attached', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
 
     expect(view.myClick).not.toHaveBeenCalled();
     expect(childView1.myClick).not.toHaveBeenCalled();
@@ -124,7 +124,7 @@ describe('A View being detached and attached', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     view.detach();
     expect($('div.app').length).toBe(1);
     expect($('div.click').length).toBe(0);
@@ -171,7 +171,7 @@ describe('A View being detached and attached', function() {
   it('can attach and detach a view correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     expect($('div.click').length).toBe(1);
     expect($('div.app').length).toBe(0);
     view.detach();
@@ -186,7 +186,7 @@ describe('A View being detached and attached', function() {
     expect(view.isAttachedToParent()).toBe(false);
     expect(childView1.isAttachedToParent()).toBe(false);
     expect(childView2.isAttachedToParent()).toBe(false);
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     expect(view.isAttachedToParent()).toBe(true);
     expect(childView1.isAttachedToParent()).toBe(true);
     expect(childView2.isAttachedToParent()).toBe(true);

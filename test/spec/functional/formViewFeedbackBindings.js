@@ -32,7 +32,7 @@ describe("A Form View's feedback bindings", function() {
     var testView = new UpdateProfileFormView({
       model: new TestFormModel()
     });
-    testView.attach($('body'));
+    testView.attachTo($('body'));
     var feedbackZone = testView.$el.find('[data-feedback="fullName-error"]');
     var input = testView.$el.find('[data-model="fullName"]');
     expect(feedbackZone.text()).toBe('');
@@ -56,7 +56,7 @@ describe("A Form View's feedback bindings", function() {
     var testView = new UpdateProfileFormView({
       model: new TestFormModel()
     });
-    testView.attach($('body'));
+    testView.attachTo($('body'));
     var feedbackZone = testView.$el.find('[data-feedback="gender-error"]');
     var maleInput = testView.$el.find('[data-model="gender"][value="male"]');
     var femaleInput = testView.$el.find('[data-model="gender"][value="female"]');
@@ -82,7 +82,7 @@ describe("A Form View's feedback bindings", function() {
     var testView = new UpdateProfileFormView({
       model: new TestFormModel()
     });
-    testView.attach($('body'));
+    testView.attachTo($('body'));
     var feedbackZone = testView.$el.find('[data-feedback="schedule-error"]');
     var mondayCheckbox = testView.$el.find('[data-model="schedule"][value="M"]');
     var tuesdayCheckbox = testView.$el.find('[data-model="schedule"][value="T"]');

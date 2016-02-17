@@ -20,7 +20,7 @@ describe('A View being deactivated and activated', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
     expect(view.isActive()).toBe(true);
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     expect(view.isActive()).toBe(true);
     view.deactivate();
     expect(view.isActive()).toBe(false);
@@ -44,7 +44,7 @@ describe('A View being deactivated and activated', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
     expect(view.isActive()).toBe(true);
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     expect(view.isActive()).toBe(true);
     expect($('div.app').length).toBe(0);
     expect($('div.click').length).toBe(1);
@@ -67,7 +67,7 @@ describe('A View being deactivated and activated', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
 
     expect(view.myClick).not.toHaveBeenCalled();
     expect(childView1.myClick).not.toHaveBeenCalled();
@@ -116,7 +116,7 @@ describe('A View being deactivated and activated', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     view.deactivate();
     expect($('div.parent').length).toBe(1);
     expect($('div.app').length).toBe(0);
@@ -167,7 +167,7 @@ describe('A View being deactivated and activated', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attach($('div.app'));
+    view.attachTo($('div.app'));
     expect($('div.parent').length).toBe(1);
     expect($('div.app').length).toBe(0);
     expect(view.$el).toBeDefined();

@@ -109,24 +109,14 @@
     render: function() {
       var renderPromises = [];
       this.trigger('render-begin');
-      renderPromises.push(this.prerender() || $.Deferred().resolve().promise());
+      addPromises(renderPromises, this.prerender());
       this.trigger('render-before-dom-replacement');
-      if (this.template) {
-        this.__updateInjectionSiteMap();
-        // Detach this view's tracked views for a more effective hotswap.
-        // The child views should be reattached by the attachTrackedViews method.
-        this.detachTrackedViews();
-        if (_.isString(this.template)) {
-          this.$el.html(this.template);
-        } else {
-          this.templateRender(this.$el, this.template, this.prepare());
-        }
-      }
+      this.__createDOM();
       this.delegateEvents();
       this.trigger('render-after-dom-replacement');
-      renderPromises.push(this.attachTrackedViews() || $.Deferred().resolve().promise());
+      addPromises(renderPromises, this.attachTrackedViews());
       this.__injectionSiteMap = {};
-      renderPromises.push(this.postrender() || $.Deferred().resolve().promise());
+      addPromises(renderPromises, this.postrender());
       this.trigger('render-complete');
       return $.when.apply($, _.flatten(renderPromises));
     },
@@ -195,25 +185,19 @@
      * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
      *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
      * @param   [options.discardInjectionSite=false] {Booleon} if set to true, the injection site is not saved.
-     * @method attach
+     * @method attachTo
      */
-    attach: function($el, options) {
+    attachTo: function($el, options) {
       options = options || {};
-      var injectionSite,
-        replaceMethod = options.replaceMethod,
-        discardInjectionSite = options.discardInjectionSite;
       if (!this.isAttachedToParent()) {
         this.render();
-        this.injectionSite = replaceMethod ? replaceMethod(this.$el) : $el.replaceWith(this.$el);
-        if (discardInjectionSite) {
-          this.injectionSite = undefined;
-        }
+        this.__replaceInjectionSite($el, options);
         this.__cleanupAfterReplacingInjectionSite();
       }
     },
 
     /**
-     * Registers the view as a tracked view (defaulting as a child view), then calls view.attach with the element argument
+     * Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument
      * The element argument can be a String that references an element with the corresponding "inject" attribute.
      * When using attachView with options.useTransition:
      *   Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view
@@ -259,7 +243,7 @@
       }
       view.detach();
       this.registerTrackedView(view, options);
-      view.attach(injectionSite, options);
+      view.attachTo(injectionSite, options);
       if (!options.noActivate) {
         view.activate();
       }
@@ -592,6 +576,26 @@
     /************** Private methods **************/
 
     /**
+     * Produces and sets this view's elements DOM. Used during the rendering process.
+     * Typically needs this.template to do so.
+     * @method __createDOM
+     * @private
+     */
+    __createDOM: function() {
+      if (this.template) {
+        this.__updateInjectionSiteMap();
+        // Detach this view's tracked views for a more effective hotswap.
+        // The child views should be reattached by the attachTrackedViews method.
+        this.detachTrackedViews();
+        if (_.isString(this.template)) {
+          this.$el.html(this.template);
+        } else {
+          this.templateRender(this.$el, this.template, this.prepare());
+        }
+      }
+    },
+
+    /**
      * Deactivates all tracked views or a subset of them based on the options parameter.
      * @param [options={}] {Object}  Optional options.
      *   @param [options.shared=false] {Boolean} If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
@@ -658,8 +662,7 @@
      * }
      */
     __transitionNewViewIntoSite: function(injectionSiteName, newView, options) {
-      var previousView, injectionSite, newInjectionSite, currentPromise,
-        previousDeferred = $.Deferred();
+      var previousView, injectionSite;
       options = options || {};
       // find previous view that used this injection site.
       previousView = options.previousView;
@@ -681,6 +684,23 @@
         injectionSite = this.$('[inject=' + injectionSiteName + ']');
         return this.__transitionInView(injectionSite, newView, options);
       }
+      return this.__performTwoWayTransition(injectionSiteName, previousView, newView, options);
+    },
+
+    /**
+     * Will transition out previousView at the same time as transitioning in newView.
+     * @method __performTwoWayTransition
+     * @param injectionSiteName {String} The name of the injection site in the template. This is the value corresponding to the attribute "inject".
+     * @param previousView {View} the view that should be transitioned out.
+     * @param newView {View} The view that should be transitioned into the injection site
+     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   [options.addBefore=false] {Boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
+     * @private
+     */
+    __performTwoWayTransition: function(injectionSiteName, previousView, newView, options) {
+      var newInjectionSite, currentPromise,
+        previousDeferred = $.Deferred();
       this.attachView(injectionSiteName, previousView, options);
       options.cachedInjectionSite = previousView.injectionSite;
       newInjectionSite = options.newInjectionSite = $('<span inject="' + injectionSiteName + '">');
@@ -730,7 +750,8 @@
 
     /**
      * Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.
-     * NOTE: returns READ-ONLY snapshots. Updates to the returned object will not be saved nor will updates to the underlying maps be reflected later in returned objects.
+     * NOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.
+     * This means that you can add "add" or "remove" tracked view using this method, however you can interact with the views inside the map completely.
      * @param [options={}] {Object}  Optional options.
      *   @param [options.shared=false] {Boolean} If true, will add the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
@@ -791,6 +812,23 @@
         previousView = _.first(matchingViews);
       }
       return previousView;
+    },
+
+    /**
+     * Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method
+     * @method __replaceInjectionSite
+     * @param $el {jQuery Element} the injection site element to be replaced
+     * @param [options] {Object} Optional options
+     * @param   [options.replaceMethod] {Function} use an alternative replace method. Invoked with the view's element as the argument.
+     * @param   [options.discardInjectionSite=false] {Boolean} if true, the view will not save a reference to the injection site after replacement.
+     * @private
+     */
+    __replaceInjectionSite: function($el, options) {
+      options = options || {};
+      this.injectionSite = options.replaceMethod ? options.replaceMethod(this.$el) : $el.replaceWith(this.$el);
+      if (options.discardInjectionSite) {
+        this.injectionSite = undefined;
+      }
     },
 
     /**
@@ -1148,3 +1186,8 @@
 
   return View;
 }));
+
+
+function addPromises(promiseArray, promises) {
+  promiseArray.push(promises || $.Deferred().resolve().promise());
+}
