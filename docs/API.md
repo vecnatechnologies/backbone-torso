@@ -38,7 +38,7 @@ Feedback
 Life cycle methods
 
 - detach
-- attach
+- attachTo
 - deactivate
 - activate
 - dispose

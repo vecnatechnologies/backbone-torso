@@ -232,6 +232,7 @@
       this.__orderedModelIdList = [];
       this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
+      this.on('render-after-dom-replacement', this.__cleanupItemViewsAfterAttachedToParent);
 
 
       if (collection) {
@@ -262,19 +263,18 @@
     },
 
     /**
-     * The core rendering method that produces the template for the list view first
-     * then invokes a refresh on all item views or renders an empty list template
-     * if there are no models in the modelsToRender
-     * @method render
+     * Override of View.__createDOM
+     * Builds a single DOM fragment from the item views and attaches it at once.
+     * @method __createDOM
+     * @private
      */
-    render: function() {
-      // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
+    __createDOM: function() {
       var injectionSite,
-          renderPromises = [],
-          newDOM = $(templateRenderer.copyTopElement(this.el));
-      this.trigger('render-begin');
-      renderPromises.push(this.prerender() || $.Deferred().resolve().promise());
+        newDOM = $(templateRenderer.copyTopElement(this.el));
       this.__updateInjectionSiteMap();
+      // Detach this view's tracked views for a more effective hotswap.
+      // The child views should be reattached by the attachTrackedViews method.
+      this.detachTrackedViews();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
@@ -287,10 +287,17 @@
       } else if (this.emptyTemplate) {
         injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
-      this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
-      this.delegateEvents();
-      this.trigger('render-after-dom-replacement');
+    },
+
+    /**
+     * Completes each item view's lifecycle of being attached to a parent.
+     * Because the item views are attached in a non-standard way, it's important to make sure
+     * that the item views are in the appropriate state after being attached as one fragment.
+     * @method __cleanupItemViewsAfterAttachedToParent
+     * @private
+     */
+    __cleanupItemViewsAfterAttachedToParent: function() {
       _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
@@ -300,11 +307,6 @@
           // Shouldn't get here. Item view is missing...
         }
       }, this);
-      renderPromises.push(this.attachTrackedViews() || $.Deferred().resolve().promise());
-      this.__injectionSiteMap = {};
-      renderPromises.push(this.postrender() || $.Deferred().resolve().promise());
-      this.trigger('render-complete');
-      return $.when.apply($, _.flatten(renderPromises));
     },
 
     /**

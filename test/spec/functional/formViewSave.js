@@ -101,7 +101,7 @@ describe('A Form View saving', function() {
     view = new View({
       model: testFormModel
     });
-    view.attach($('body'));
+    view.attachTo($('body'));
     view.$el.find('.submit').click();
   });
 

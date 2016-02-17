@@ -111,7 +111,7 @@ describe('A List View', function() {
       itemView: ItemView,
       emptyTemplate: Handlebars.compile('<div class="empty-list"></div>')
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     expect(myListView.$el.find('div.empty-list').length).toBe(1);
     expect(myListView.$el.find('div').length).toBe(1);
     var model = new Model();
@@ -134,7 +134,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     // Does empty template affect the injection site or the list view?
     expect(myListView.$el.find('div.empty-list').length).toBe(1);
     expect(myListView.$el.find('div').length).toBe(2);
@@ -159,7 +159,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     expect(myListView.$el.find('div.templated-list').length).toBe(1);
     expect(myListView.$el.find('[inject="children"]').length).toBe(1);
     expect(myListView.$el.find('div').length).toBe(2);
@@ -269,7 +269,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     var model = new Model({order: 3});
     myCollection.add(model);
     var model2 = new Model({order: 2});
@@ -289,7 +289,7 @@ describe('A List View', function() {
     var startTime, endTime, i,
         numberOfViews = 1000,
         threshold = 1000;
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }
@@ -320,7 +320,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }
@@ -349,7 +349,7 @@ describe('A List View', function() {
       modelName: 'item',
       itemView: ItemView
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     for (i = 0; i < numberOfViews; i++) {
       models.push(new Model())
     }
@@ -364,7 +364,7 @@ describe('A List View', function() {
   });
 
   it('can add view to a large list in a reasonable time', function() {
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
@@ -400,7 +400,7 @@ describe('A List View', function() {
         modelName: 'item',
         itemView: ItemView
       });
-      myListView.attach($('body'));
+      myListView.attachTo($('body'));
       myCollection.reset(models);
     });
 
@@ -465,7 +465,7 @@ describe('A List View', function() {
           template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
           itemContainer: 'children'
         });
-        myListView.attach($('body'));
+        myListView.attachTo($('body'));
         myCollection.reset(models);
         newModels = []
         for (i = 0; i < 100; i++) {
@@ -512,7 +512,7 @@ describe('A List View', function() {
       modelName: 'item',
       itemView: ItemView
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
@@ -558,7 +558,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
@@ -607,7 +607,7 @@ describe('A List View', function() {
   });
 
   it('can get list of item views sorted correctly', function() {
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     var model = new Model({order: 1});
     myCollection.add(model);
     var model2 = new Model({order: 2});
@@ -642,7 +642,7 @@ describe('A List View', function() {
     var numberOfViews = 1000,
       threshold = 50;
     myCollection.comparator = 'order';
-    myListView.attach($('body'));
+    myListView.attachTo($('body'));
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }
