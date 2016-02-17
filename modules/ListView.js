@@ -272,8 +272,7 @@
       var injectionSite,
         newDOM = $(templateRenderer.copyTopElement(this.el));
       this.__updateInjectionSiteMap();
-      // Detach this view's tracked views for a more effective hotswap.
-      // The child views should be reattached by the attachTrackedViews method.
+      // The non-item views should be reattached by the attachTrackedViews method and the item views will be attached here.
       this.detachTrackedViews();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
