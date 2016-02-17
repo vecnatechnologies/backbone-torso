@@ -148,14 +148,15 @@
      * @param  context {Object} The context object to pass to the template
      * @param  [opts] {Object} Other options
      * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
+     * @param  [opts.newHTML] {String} If you pass in newHTML, it will not use the template or context, but use this instead.
      * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
      */
     render: function($el, template, context, opts) {
-      var newDOM,
-          newHTML = template(context),
+      var newDOM, newHTML,
           el = $el.get(0);
       opts = opts || {};
 
+      newHTML = opts.newHTML || template(context);
       if (opts.force) {
         $el.html(newHTML);
       } else {
