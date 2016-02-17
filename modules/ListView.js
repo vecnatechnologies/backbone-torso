@@ -263,12 +263,12 @@
     },
 
     /**
-     * Override of View.__createDOM
+     * Override of View.__updateDOM
      * Builds a single DOM fragment from the item views and attaches it at once.
-     * @method __createDOM
+     * @method __updateDOM
      * @private
      */
-    __createDOM: function() {
+    __updateDOM: function() {
       var injectionSite,
         newDOM = $(templateRenderer.copyTopElement(this.el));
       this.__updateInjectionSiteMap();

@@ -1133,14 +1133,15 @@
      * @param  context {Object} The context object to pass to the template
      * @param  [opts] {Object} Other options
      * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
+     * @param  [opts.newHTML] {String} If you pass in newHTML, it will not use the template or context, but use this instead.
      * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
      */
     render: function($el, template, context, opts) {
-      var newDOM,
-          newHTML = template(context),
+      var newDOM, newHTML,
           el = $el.get(0);
       opts = opts || {};
 
+      newHTML = opts.newHTML || template(context);
       if (opts.force) {
         $el.html(newHTML);
       } else {
@@ -1337,6 +1338,31 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1359,31 +1385,6 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
 }));
 
 (function(root, factory) {
@@ -1521,11 +1522,10 @@
       this.trigger('render-begin');
       addPromises(renderPromises, this.prerender());
       this.trigger('render-before-dom-replacement');
-      this.__createDOM();
+      this.__updateDOM();
       this.delegateEvents();
       this.trigger('render-after-dom-replacement');
       addPromises(renderPromises, this.attachTrackedViews());
-      this.__injectionSiteMap = {};
       addPromises(renderPromises, this.postrender());
       this.trigger('render-complete');
       return $.when.apply($, _.flatten(renderPromises));
@@ -1555,6 +1555,10 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      opts = opts || {};
+      if (_.isString(template)) {
+        opts.newHTML = template;
+      }
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -1988,20 +1992,16 @@
     /**
      * Produces and sets this view's elements DOM. Used during the rendering process.
      * Typically needs this.template to do so.
-     * @method __createDOM
+     * @method __updateDOM
      * @private
      */
-    __createDOM: function() {
+    __updateDOM: function() {
       if (this.template) {
         this.__updateInjectionSiteMap();
         // Detach this view's tracked views for a more effective hotswap.
         // The child views should be reattached by the attachTrackedViews method.
         this.detachTrackedViews();
-        if (_.isString(this.template)) {
-          this.$el.html(this.template);
-        } else {
-          this.templateRender(this.$el, this.template, this.prepare());
-        }
+        this.templateRender(this.$el, this.template, this.prepare());
       }
     },
 
@@ -4506,12 +4506,12 @@ function addPromises(promiseArray, promises) {
     },
 
     /**
-     * Override of View.__createDOM
+     * Override of View.__updateDOM
      * Builds a single DOM fragment from the item views and attaches it at once.
-     * @method __createDOM
+     * @method __updateDOM
      * @private
      */
-    __createDOM: function() {
+    __updateDOM: function() {
       var injectionSite,
         newDOM = $(templateRenderer.copyTopElement(this.el));
       this.__updateInjectionSiteMap();

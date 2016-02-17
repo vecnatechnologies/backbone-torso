@@ -111,11 +111,10 @@
       this.trigger('render-begin');
       addPromises(renderPromises, this.prerender());
       this.trigger('render-before-dom-replacement');
-      this.__createDOM();
+      this.__updateDOM();
       this.delegateEvents();
       this.trigger('render-after-dom-replacement');
       addPromises(renderPromises, this.attachTrackedViews());
-      this.__injectionSiteMap = {};
       addPromises(renderPromises, this.postrender());
       this.trigger('render-complete');
       return $.when.apply($, _.flatten(renderPromises));
@@ -145,6 +144,10 @@
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
+      opts = opts || {};
+      if (_.isString(template)) {
+        opts.newHTML = template;
+      }
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -578,20 +581,16 @@
     /**
      * Produces and sets this view's elements DOM. Used during the rendering process.
      * Typically needs this.template to do so.
-     * @method __createDOM
+     * @method __updateDOM
      * @private
      */
-    __createDOM: function() {
+    __updateDOM: function() {
       if (this.template) {
         this.__updateInjectionSiteMap();
         // Detach this view's tracked views for a more effective hotswap.
         // The child views should be reattached by the attachTrackedViews method.
         this.detachTrackedViews();
-        if (_.isString(this.template)) {
-          this.$el.html(this.template);
-        } else {
-          this.templateRender(this.$el, this.template, this.prepare());
-        }
+        this.templateRender(this.$el, this.template, this.prepare());
       }
     },
 
