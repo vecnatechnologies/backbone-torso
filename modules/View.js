@@ -57,6 +57,8 @@
       this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
+      this.on('render:after-dom-update', this.__onDOMUpdate);
+      this.on('render:complete', this.__onRenderComplete);
       if (!options.noActivate) {
         this.activate();
       }
@@ -108,15 +110,16 @@
      */
     render: function() {
       var renderPromises = [];
-      this.trigger('render-begin');
+      this.trigger('render:begin');
       addPromises(renderPromises, this.prerender());
-      this.trigger('render-before-dom-replacement');
+      this.trigger('render:before-dom-update');
       this.__updateDOM();
+      this.trigger('render:after-dom-update');
       this.delegateEvents();
-      this.trigger('render-after-dom-replacement');
+      this.trigger('render:after-delegate-events');
       addPromises(renderPromises, this.attachTrackedViews());
       addPromises(renderPromises, this.postrender());
-      this.trigger('render-complete');
+      this.trigger('render:complete');
       return $.when.apply($, _.flatten(renderPromises));
     },
 
@@ -192,10 +195,13 @@
      */
     attachTo: function($el, options) {
       options = options || {};
+      var view = this;
       if (!this.isAttachedToParent()) {
-        this.render();
-        this.__replaceInjectionSite($el, options);
-        this.__cleanupAfterReplacingInjectionSite();
+        this.__attachingInfo = {
+          $el: $el,
+          options: options
+        };
+        return this.render();
       }
     },
 
@@ -579,6 +585,35 @@
     /************** Private methods **************/
 
     /**
+     * The callback that is invoked when 'render:complete' is triggered.
+     * Updates the view's state to attached if the view was attached during rendering.
+     * @method __onRenderComplete
+     * @private
+     */
+    __onRenderComplete: function() {
+      if (this.__attachingInfo) {
+        if (!this.__attachedCallbackInvoked && this.isAttached()) {
+          this.__invokeAttached();
+        }
+        this.__isAttachedToParent = true;
+      }
+      delete this.__attachingInfo;
+    },
+
+    /**
+     * The callback that is invoked when 'render:after-dom-updated' is triggered.
+     * If the view is attaching during the render process, then it replaces the injection site
+     * with the view's element after the view has generated its DOM.
+     * @method __onDOMUpdate
+     * @private
+     */
+    __onDOMUpdate: function() {
+      if (this.__attachingInfo) {
+        this.__replaceInjectionSite(this.__attachingInfo.$el, this.__attachingInfo.options);
+      }
+    },
+
+    /**
      * Produces and sets this view's elements DOM. Used during the rendering process.
      * Typically needs this.template to do so.
      * @method __updateDOM
@@ -827,23 +862,6 @@
       this.injectionSite = options.replaceMethod ? options.replaceMethod(this.$el) : $el.replaceWith(this.$el);
       if (options.discardInjectionSite) {
         this.injectionSite = undefined;
-      }
-    },
-
-    /**
-     * After a view's DOM element replaces an injection site, there is logic that must be performed,
-     * including delegating events, invoking the attached callback if necessary and marking the view as
-     * attached to a parent. This method performs all of these cleanup tasks.
-     * @private
-     * @method __cleanupAfterReplacingInjectionSite
-     */
-    __cleanupAfterReplacingInjectionSite: function() {
-      if (!this.isAttachedToParent()) {
-        this.delegateEvents();
-        if (!this.__attachedCallbackInvoked && this.isAttached()) {
-          this.__invokeAttached();
-        }
-        this.__isAttachedToParent = true;
       }
     },
 

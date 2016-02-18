@@ -112,10 +112,11 @@ The View's render process goes like this:
 
 Events are also triggered at different points in the render method:
 
- - 'render-begin' is triggered before the prerender occurs.
- - 'render-before-dom-replacement' is triggered right after prerender.
- - 'render-after-dom-replacement' is triggered after delegation of events.
- - 'render-complete' is triggered after postrender is invoked.
+ - 'render:begin' is triggered before the prerender occurs.
+ - 'render:before-dom-update' is triggered right after prerender and before the dom has been updated.
+ - 'render:after-dom-update' is triggered after the dom has been updated and before delegation of events.
+ - 'render:after-delegate-events' is triggered after the delegation of events but before either the tracked views are added or postrender;
+ - 'render:complete' is triggered after postrender is invoked.
 
 It is rare, and discouraged to override the render method. Instead, use the available hooks to control the render logic.
 
