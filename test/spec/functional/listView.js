@@ -35,9 +35,6 @@ describe('A List View', function() {
           this.model = args.item;
         },
         className: 'item',
-        render: function() {
-          this.templateRender(this.$el, this.template, this.prepare());
-        },
         myClick: _.noop
       });
       spyOnBackbone(ItemView, 'myClick');

@@ -107,9 +107,9 @@ describe('A Form View saving', function() {
 
   describe('if the initialize method adds a persisted model with fields and contains a render method', function() {
     it('will initialize with no errors', function() {
-      var formInput = '<input type="text" data-model="category" id="category"/>';
 
       var InitializedFormView = FormView.extend({
+        template: '<input type="text" data-model="category" id="category"/>',
         initialize: function(options) {
           this.persistedModel = new TestModel();
 
@@ -118,11 +118,6 @@ describe('A Form View saving', function() {
             fields: ['category']
           });
           this.render();
-        },
-
-        render: function() {
-          this.$el.html(formInput);
-          this.delegateEvents();
         }
       });
 

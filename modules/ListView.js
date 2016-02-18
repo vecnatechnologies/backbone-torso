@@ -232,12 +232,12 @@
       this.__orderedModelIdList = [];
       this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
-      this.on('render-after-dom-replacement', this.__cleanupItemViewsAfterAttachedToParent);
-
 
       if (collection) {
         this.setCollection(collection);
       }
+
+      this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
     },
 
     /**
@@ -300,7 +300,10 @@
       _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
-          itemView.__cleanupAfterReplacingInjectionSite();
+          itemView.delegateEvents();
+          if (!itemView.__attachedCallbackInvoked && itemView.isAttached()) {
+            itemView.__invokeAttached();
+          }
           itemView.activate();
         } else {
           // Shouldn't get here. Item view is missing...
@@ -572,10 +575,15 @@
      _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
+          // detach to be safe, but during a render, the item views will already be detached.
           itemView.detach();
           this.registerTrackedView(itemView);
-          itemView.render();
-          injectionFragment.appendChild(itemView.el);
+          itemView.attachTo(null, {
+            replaceMethod: function($el) {
+              injectionFragment.appendChild($el[0]);
+            },
+            discardInjectionSite: true
+          });
         }
       }, this);
       this.__updateOrderedModelIdList();

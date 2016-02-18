@@ -858,6 +858,40 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    factory(require('backbone'));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: 'input[type="radio"]',
+    events: ['change'],
+    update: function($el, val) {
+      $el.prop('checked', false);
+      $el.filter('[value="' + val + '"]').prop('checked', true);
+    },
+    getVal: function($el) {
+      return $el.filter(':checked').val();
+    }
+  });
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -949,40 +983,6 @@
 
   return pollingMixin;
 }));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'backbone.stickit'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    factory(require('backbone'));
-  } else {
-    factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Extensions to stickit handlers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  Backbone.Stickit.addHandler({
-    selector: 'input[type="radio"]',
-    events: ['change'],
-    update: function($el, val) {
-      $el.prop('checked', false);
-      $el.filter('[value="' + val + '"]').prop('checked', true);
-    },
-    getVal: function($el) {
-      return $el.filter(':checked').val();
-    }
-  });
-}));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
@@ -1312,6 +1312,31 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1334,31 +1359,6 @@
   _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
 
   return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
 }));
 
 (function(root, factory) {
@@ -1468,6 +1468,8 @@
       this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
+      this.on('render:after-dom-update', this.__onDOMUpdate);
+      this.on('render:complete', this.__onRenderComplete);
       if (!options.noActivate) {
         this.activate();
       }
@@ -1519,15 +1521,16 @@
      */
     render: function() {
       var renderPromises = [];
-      this.trigger('render-begin');
+      this.trigger('render:begin');
       addPromises(renderPromises, this.prerender());
-      this.trigger('render-before-dom-replacement');
+      this.trigger('render:before-dom-update');
       this.__updateDOM();
+      this.trigger('render:after-dom-update');
       this.delegateEvents();
-      this.trigger('render-after-dom-replacement');
+      this.trigger('render:after-delegate-events');
       addPromises(renderPromises, this.attachTrackedViews());
       addPromises(renderPromises, this.postrender());
-      this.trigger('render-complete');
+      this.trigger('render:complete');
       return $.when.apply($, _.flatten(renderPromises));
     },
 
@@ -1603,10 +1606,13 @@
      */
     attachTo: function($el, options) {
       options = options || {};
+      var view = this;
       if (!this.isAttachedToParent()) {
-        this.render();
-        this.__replaceInjectionSite($el, options);
-        this.__cleanupAfterReplacingInjectionSite();
+        this.__attachingInfo = {
+          $el: $el,
+          options: options
+        };
+        return this.render();
       }
     },
 
@@ -1990,6 +1996,35 @@
     /************** Private methods **************/
 
     /**
+     * The callback that is invoked when 'render:complete' is triggered.
+     * Updates the view's state to attached if the view was attached during rendering.
+     * @method __onRenderComplete
+     * @private
+     */
+    __onRenderComplete: function() {
+      if (this.__attachingInfo) {
+        if (!this.__attachedCallbackInvoked && this.isAttached()) {
+          this.__invokeAttached();
+        }
+        this.__isAttachedToParent = true;
+      }
+      delete this.__attachingInfo;
+    },
+
+    /**
+     * The callback that is invoked when 'render:after-dom-updated' is triggered.
+     * If the view is attaching during the render process, then it replaces the injection site
+     * with the view's element after the view has generated its DOM.
+     * @method __onDOMUpdate
+     * @private
+     */
+    __onDOMUpdate: function() {
+      if (this.__attachingInfo) {
+        this.__replaceInjectionSite(this.__attachingInfo.$el, this.__attachingInfo.options);
+      }
+    },
+
+    /**
      * Produces and sets this view's elements DOM. Used during the rendering process.
      * Typically needs this.template to do so.
      * @method __updateDOM
@@ -2238,23 +2273,6 @@
       this.injectionSite = options.replaceMethod ? options.replaceMethod(this.$el) : $el.replaceWith(this.$el);
       if (options.discardInjectionSite) {
         this.injectionSite = undefined;
-      }
-    },
-
-    /**
-     * After a view's DOM element replaces an injection site, there is logic that must be performed,
-     * including delegating events, invoking the attached callback if necessary and marking the view as
-     * attached to a parent. This method performs all of these cleanup tasks.
-     * @private
-     * @method __cleanupAfterReplacingInjectionSite
-     */
-    __cleanupAfterReplacingInjectionSite: function() {
-      if (!this.isAttachedToParent()) {
-        this.delegateEvents();
-        if (!this.__attachedCallbackInvoked && this.isAttached()) {
-          this.__invokeAttached();
-        }
-        this.__isAttachedToParent = true;
       }
     },
 
@@ -4475,12 +4493,12 @@ function addPromises(promiseArray, promises) {
       this.__orderedModelIdList = [];
       this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
-      this.on('render-after-dom-replacement', this.__cleanupItemViewsAfterAttachedToParent);
-
 
       if (collection) {
         this.setCollection(collection);
       }
+
+      this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
     },
 
     /**
@@ -4543,7 +4561,10 @@ function addPromises(promiseArray, promises) {
       _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
-          itemView.__cleanupAfterReplacingInjectionSite();
+          itemView.delegateEvents();
+          if (!itemView.__attachedCallbackInvoked && itemView.isAttached()) {
+            itemView.__invokeAttached();
+          }
           itemView.activate();
         } else {
           // Shouldn't get here. Item view is missing...
@@ -4815,10 +4836,15 @@ function addPromises(promiseArray, promises) {
      _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
+          // detach to be safe, but during a render, the item views will already be detached.
           itemView.detach();
           this.registerTrackedView(itemView);
-          itemView.render();
-          injectionFragment.appendChild(itemView.el);
+          itemView.attachTo(null, {
+            replaceMethod: function($el) {
+              injectionFragment.appendChild($el[0]);
+            },
+            discardInjectionSite: true
+          });
         }
       }, this);
       this.__updateOrderedModelIdList();
