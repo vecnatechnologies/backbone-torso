@@ -19,7 +19,7 @@ describe('A View', function() {
   describe('that is attached', function() {
 
     beforeEach(function() {
-      this.clickView.attach(this.injectionSite);
+      this.clickView.attach(this.$app);
     });
 
     afterEach(function() {
@@ -27,7 +27,7 @@ describe('A View', function() {
     });
 
     it('will be rendered to the DOM', function() {
-      expect(this.injectionContainer.html()).toMatch(this.clickView.className);
+      expect(this.$appContainer.html()).toMatch(this.clickView.className);
     });
 
     it('will trigger event handlers defined in the events hash', function() {
@@ -52,7 +52,7 @@ describe('A View', function() {
 
   describe('that is detached', function() {
     beforeEach(function() {
-      this.clickView.attach(this.injectionSite);
+      this.clickView.attach(this.$app);
       this.clickView.detach();
     });
 
@@ -61,7 +61,7 @@ describe('A View', function() {
     });
 
     it('will not be rendered to the DOM', function() {
-      expect(this.injectionContainer.html()).not.toMatch(this.clickView.className);
+      expect(this.$appContainer.html()).not.toMatch(this.clickView.className);
     });
 
     it('will not trigger event handlers defined in the events hash', function() {
@@ -124,7 +124,7 @@ describe('A view with two children', function() {
 
   describe('when attached', function() {
     beforeEach(function() {
-      this.parentView.attach(this.injectionSite);
+      this.parentView.attach(this.$app);
     });
 
     it('will render both children', function() {
@@ -221,12 +221,12 @@ describe('A view with two children', function() {
 
   describe('when detatched', function() {
     beforeEach(function() {
-      this.parentView.attach(this.injectionSite);
+      this.parentView.attach(this.$app);
       this.parentView.detach();
     });
 
     it('children will not be rendered in dom', function() {
-      expect(this.injectionContainer.html()).not.toMatch(this.childView1.className);
+      expect(this.$appContainer.html()).not.toMatch(this.childView1.className);
     });
 
     it('parent will not be attached to a parent', function() {

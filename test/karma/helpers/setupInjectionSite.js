@@ -1,22 +1,22 @@
 var $ = require('jquery');
 
-// Exposes this.injectionSite for injecting views and this.injectionContainer for inspecting page contents
+// Exposes this.$app for injecting views and this.$appContainer for inspecting page contents
 module.exports = function() {
   var bodyElement;
   beforeEach(function() {
     // Creates divs nested like:
-    // <div class="injection-container">
-    //   <div class="app-container"></div>
+    // <div class="app-container">
+    //   <div class="injection-site"></div>
     // </div>
     bodyElement = $('body');
-    this.injectionContainer = $('<div class="injection-container"/>');
-    this.injectionSite = $('<div class="app-container"/>');
+    this.$appContainer = $('<div class="app-container"/>');
+    this.$app = $('<div class="app"/>');
 
-    bodyElement.append(this.injectionContainer);
-    this.injectionContainer.append(this.injectionSite);
+    bodyElement.append(this.$appContainer);
+    this.$appContainer.append(this.$app);
   });
 
   afterEach(function() {
-    this.injectionContainer.remove();
+    this.$appContainer.remove();
   });
 };
