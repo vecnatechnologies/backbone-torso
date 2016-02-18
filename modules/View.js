@@ -56,9 +56,9 @@
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
-      Backbone.View.apply(this, arguments);
       this.on('render:after-dom-update', this.__onDOMUpdate);
       this.on('render:complete', this.__onRenderComplete);
+      Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
       }
