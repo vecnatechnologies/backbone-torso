@@ -1312,6 +1312,31 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1338,31 +1363,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1385,6 +1385,28 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['./Cell'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('./Cell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.ServiceCell = factory(root.Torso.Cell);
+  }
+}(this, function(Cell) {
+  'use strict';
+  /**
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
+   * @module    Torso
+   * @class  ServiceCell
+   * @author kent.willis@vecna.com
+   */
+  var ServiceCell = Cell.extend({ });
+
+  return ServiceCell;
 }));
 
 (function(root, factory) {
@@ -1445,8 +1467,6 @@
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
-      this.on('render:after-dom-update', this.__onDOMUpdate);
-      this.on('render:complete', this.__onRenderComplete);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -1498,18 +1518,23 @@
      * @return {Promise} a promise that when resolved signifies that the rendering process is complete.
      */
     render: function() {
-      var renderPromises = [];
+      var promises,
+        view = this;
       this.trigger('render:begin');
-      addPromises(renderPromises, this.prerender());
+      this.prerender();
       this.trigger('render:before-dom-update');
       this.__updateDOM();
+      if (this.__pendingAttachInfo) {
+        this.__performPendingAttach();
+      }
       this.trigger('render:after-dom-update');
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
-      addPromises(renderPromises, this.attachTrackedViews());
-      addPromises(renderPromises, this.postrender());
-      this.trigger('render:complete');
-      return $.when.apply($, _.flatten(renderPromises));
+      promises = this.attachTrackedViews();
+      return $.when.apply($, _.flatten([promises])).done(function() {
+        view.postrender();
+        view.trigger('render:complete');
+      });
     },
 
     /**
@@ -1580,18 +1605,26 @@
      * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
      *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
      * @param   [options.discardInjectionSite=false] {Booleon} if set to true, the injection site is not saved.
+     * @return {Promise} promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can
+     *                   make it asynchronous.
      * @method attachTo
      */
     attachTo: function($el, options) {
       options = options || {};
       var view = this;
       if (!this.isAttachedToParent()) {
-        this.__attachingInfo = {
+        this.__pendingAttachInfo = {
           $el: $el,
           options: options
         };
-        return this.render();
+        return this.render().done(function() {
+          if (!view.__attachedCallbackInvoked && view.isAttached()) {
+            view.__invokeAttached();
+          }
+          view.__isAttachedToParent = true;
+        });
       }
+      return $.Deferred().resolve().promise();
     },
 
     /**
@@ -1974,32 +2007,14 @@
     /************** Private methods **************/
 
     /**
-     * The callback that is invoked when 'render:complete' is triggered.
-     * Updates the view's state to attached if the view was attached during rendering.
-     * @method __onRenderComplete
-     * @private
-     */
-    __onRenderComplete: function() {
-      if (this.__attachingInfo) {
-        if (!this.__attachedCallbackInvoked && this.isAttached()) {
-          this.__invokeAttached();
-        }
-        this.__isAttachedToParent = true;
-      }
-      delete this.__attachingInfo;
-    },
-
-    /**
-     * The callback that is invoked when 'render:after-dom-updated' is triggered.
      * If the view is attaching during the render process, then it replaces the injection site
      * with the view's element after the view has generated its DOM.
-     * @method __onDOMUpdate
+     * @method __performPendingAttach
      * @private
      */
-    __onDOMUpdate: function() {
-      if (this.__attachingInfo) {
-        this.__replaceInjectionSite(this.__attachingInfo.$el, this.__attachingInfo.options);
-      }
+    __performPendingAttach: function() {
+      this.__replaceInjectionSite(this.__pendingAttachInfo.$el, this.__pendingAttachInfo.options);
+      delete this.__pendingAttachInfo;
     },
 
     /**
@@ -2009,11 +2024,11 @@
      * @private
      */
     __updateDOM: function() {
+      this.__updateInjectionSiteMap();
+      // Detach this view's tracked views for a more effective hotswap.
+      // The child views should be reattached by the attachTrackedViews method.
+      this.detachTrackedViews();
       if (this.template) {
-        this.__updateInjectionSiteMap();
-        // Detach this view's tracked views for a more effective hotswap.
-        // The child views should be reattached by the attachTrackedViews method.
-        this.detachTrackedViews();
         this.templateRender(this.$el, this.template, this.prepare());
       }
     },
@@ -2597,28 +2612,6 @@
 function addPromises(promiseArray, promises) {
   promiseArray.push(promises || $.Deferred().resolve().promise());
 }
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['./Cell'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('./Cell'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root.Torso.Cell);
-  }
-}(this, function(Cell) {
-  'use strict';
-  /**
-   * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @author kent.willis@vecna.com
-   */
-  var ServiceCell = Cell.extend({ });
-
-  return ServiceCell;
-}));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', './NestedModel'], factory);
