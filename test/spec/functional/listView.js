@@ -382,7 +382,7 @@ describe('A List View', function() {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
-        threshold = 3000;
+        threshold = 4000;
 
     beforeEach(function() {
       models = [];
