@@ -384,7 +384,7 @@ describe('A List View', function() {
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
-        threshold = 1000;
+        threshold = 3000;
 
     beforeEach(function() {
       models = [];
@@ -432,7 +432,7 @@ describe('A List View', function() {
     });
 
     it('can add a few models to the front of many models correctly and in a reasonable time', function() {
-      threshold = 500;
+      threshold = 600;
       var newModels = []
       for (i = 0; i < 100; i++) {
         newModels.push(new Model());
@@ -500,7 +500,7 @@ describe('A List View', function() {
   it('can reset a collection to the same large set of models many times in a reasonable time', function() {
     var startTime, endTime, i,
         models = [],
-        numberOfViews = 1000,
+        numberOfViews = 250,
         numberOfTimes = 50,
         threshold = 1000;
     myListView.dispose();
