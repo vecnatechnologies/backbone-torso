@@ -53,7 +53,6 @@ Torso.FormView.extend({
   },
 
   initialize: function(personModel) {
-    Torso.FormView.prototype.initialize.call(this);
     this.personModel = personModel;
     // The form view's model can act as the mediator between the html form and another model.
     this.model.addModel({model: this.personModel, fields: ['name']});
@@ -144,9 +143,8 @@ Torso.View.extend({
     this.childView = new ChildView();
   },
 
-  render: function() {
-    Torso.View.prototype.render.call(this);
-    this.injectView('my-child-view', this.childView);
+  attachTrackedViews: function() {
+    this.attachView('my-child-view', this.childView);
   }
 })
 ```
