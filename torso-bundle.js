@@ -858,40 +858,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'backbone.stickit'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    factory(require('backbone'));
-  } else {
-    factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Extensions to stickit handlers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  Backbone.Stickit.addHandler({
-    selector: 'input[type="radio"]',
-    events: ['change'],
-    update: function($el, val) {
-      $el.prop('checked', false);
-      $el.filter('[value="' + val + '"]').prop('checked', true);
-    },
-    getVal: function($el) {
-      return $el.filter(':checked').val();
-    }
-  });
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -983,6 +949,40 @@
 
   return pollingMixin;
 }));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    factory(require('backbone'));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: 'input[type="radio"]',
+    events: ['change'],
+    update: function($el, val) {
+      $el.prop('checked', false);
+      $el.filter('[value="' + val + '"]').prop('checked', true);
+    },
+    getVal: function($el) {
+      return $el.filter(':checked').val();
+    }
+  });
+}));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
@@ -1312,31 +1312,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1363,6 +1338,31 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1385,28 +1385,6 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['./Cell'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('./Cell'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root.Torso.Cell);
-  }
-}(this, function(Cell) {
-  'use strict';
-  /**
-   * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @author kent.willis@vecna.com
-   */
-  var ServiceCell = Cell.extend({ });
-
-  return ServiceCell;
 }));
 
 (function(root, factory) {
@@ -1467,9 +1445,9 @@
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
-      Backbone.View.apply(this, arguments);
       this.on('render:after-dom-update', this.__onDOMUpdate);
       this.on('render:complete', this.__onRenderComplete);
+      Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
       }
@@ -2619,6 +2597,28 @@
 function addPromises(promiseArray, promises) {
   promiseArray.push(promises || $.Deferred().resolve().promise());
 }
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['./Cell'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('./Cell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.ServiceCell = factory(root.Torso.Cell);
+  }
+}(this, function(Cell) {
+  'use strict';
+  /**
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
+   * @module    Torso
+   * @class  ServiceCell
+   * @author kent.willis@vecna.com
+   */
+  var ServiceCell = Cell.extend({ });
+
+  return ServiceCell;
+}));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', './NestedModel'], factory);
