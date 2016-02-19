@@ -24,26 +24,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Router = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-  /**
-   * Backbone's router.
-   * @module Torso
-   * @class  Router
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.Router.extend({});
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -95,6 +75,26 @@
       }
     }
   };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Router = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+  /**
+   * Backbone's router.
+   * @module Torso
+   * @class  Router
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.Router.extend({});
 }));
 
 (function(root, factory) {
@@ -305,11 +305,56 @@
           },
 
           /**
+           * Will force the cache to fetch a subset of this collection's tracked ids
+           * @method requesterMixin.fetchSubsetOfTrackedIds
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetchSubsetOfTrackedIds: function(ids) {
+            var subsetOfTrackedIds = _.intersection(ids, this.getTrackedIds());
+            return this.__loadWrapper(function() {
+              if (subsetOfTrackedIds && subsetOfTrackedIds.length) {
+                return parentInstance.fetchByIds({idsToFetch: subsetOfTrackedIds, setOptions: {remove: false}});
+              } else {
+                // handle if subsetOfTrackedIds is empty
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Will force the cache to fetch any of this collection's tracked models that are not in the cache
+           * @method requesterMixin.pull
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          pull: function() {
+            //find ids that we don't have in cache
+            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            return this.__loadWrapper(function() {
+              if (idsNotInCache && idsNotInCache.length) {
+                return parentInstance.fetchByIds({idsToFetch: idsNotInCache, setOptions: {remove: false}});
+              } else {
+                // handle if idsNotInCache is empty
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Will register the new ids and then pull in any models not stored in the cache
+           * @method requesterMixin.pullByIds
+           * @return the promise of the fetch by ids
+           */
+          pullByIds: function(newIds) {
+            this.trackIds(newIds);
+            return this.pull();
+          },
+
+          /**
            * Handles the disposing of this collection as it relates to a requester collection.
            * @method requesterMixin.requesterDispose
            */
           requesterDispose: function() {
-            parentInstance.removeRequster(ownerKey);
+            parentInstance.removeRequester(ownerKey);
           }
         };
 
@@ -361,11 +406,11 @@
       };
 
       /**
-       * @method cacheMixin.removeRequster
+       * @method cacheMixin.removeRequester
        * Removes a requester from this cache. No longer receives updates
        * @param guid {String} the global unique id of the requester
        */
-      collection.removeRequster = function(guid) {
+      collection.removeRequester = function(guid) {
         delete this.requestMap[guid];
         delete this.knownPrivateCollections[guid];
       };
@@ -408,8 +453,10 @@
       };
 
       /**
-       * Registers a list of Ids that a particular object cares about.  This method
-       * intelligently updates the "_requestedIds" field to contain all unique
+       * Registers a list of Ids that a particular object cares about and pushes
+       * any cached models its way.
+       *
+       * This method intelligently updates the "_requestedIds" field to contain all unique
        * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
        * is overriden such that it no longer routes through Backbone's fetch all,
        * but rather a custom "fetchByIds" method.
@@ -418,7 +465,9 @@
        * @param guid {String}   - The GUID of the object that wants the ids
        */
       collection.registerIds = function(newIds, guid) {
-        var i, requesterIdx, storedIds, requesters, requesterLength,
+        var i, newIdx, model, requesterIdx, storedIds,
+            requesters, requesterLength, privateCollection,
+            models = [],
             distinctIds = {},
             result = [];
 
@@ -426,6 +475,18 @@
         setRequestedIds(guid, newIds);
         requesters = collection.getRequesters();
         requesterLength = requesters.length;
+
+        // Collect all cached models
+        for (newIdx = 0; newIdx < newIds.length; newIdx++) {
+          model = collection.get(newIds[newIdx]);
+          if (model) {
+            models.push(model);
+          }
+        }
+
+        // Push cached models to the respective requester
+        privateCollection = collection.knownPrivateCollections[guid];
+        privateCollection.set(models, {remove: false});
 
         // Create a new request list
         for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
@@ -611,6 +672,7 @@
 
   return collectionRegistrationMixin;
 }));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone', 'jquery'], factory);

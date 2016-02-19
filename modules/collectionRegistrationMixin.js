@@ -157,7 +157,7 @@
            * @method requesterMixin.requesterDispose
            */
           requesterDispose: function() {
-            parentInstance.removeRequster(ownerKey);
+            parentInstance.removeRequester(ownerKey);
           }
         };
 
@@ -209,11 +209,11 @@
       };
 
       /**
-       * @method cacheMixin.removeRequster
+       * @method cacheMixin.removeRequester
        * Removes a requester from this cache. No longer receives updates
        * @param guid {String} the global unique id of the requester
        */
-      collection.removeRequster = function(guid) {
+      collection.removeRequester = function(guid) {
         delete this.requestMap[guid];
         delete this.knownPrivateCollections[guid];
       };
