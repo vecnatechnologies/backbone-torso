@@ -233,10 +233,11 @@
       this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
-
       if (collection) {
         this.setCollection(collection);
       }
+
+      this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
     },
 
     /**
@@ -262,15 +263,17 @@
     },
 
     /**
-     * The core rendering method that produces the template for the list view first
-     * then invokes a refresh on all item views or renders an empty list template
-     * if there are no models in the modelsToRender
-     * @method render
+     * Override of View.__updateDOM
+     * Builds a single DOM fragment from the item views and attaches it at once.
+     * @method __updateDOM
+     * @private
      */
-    render: function() {
-      // TODO look into chunking views, look for rendering only visible views at first, or look for deferred rendering of item views
+    __updateDOM: function() {
       var injectionSite,
-          newDOM = $(templateRenderer.copyTopElement(this.el));
+        newDOM = $(templateRenderer.copyTopElement(this.el));
+      this.__updateInjectionSiteMap();
+      // The non-item views should be reattached by the attachTrackedViews method and the item views will be attached here.
+      this.detachTrackedViews();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
@@ -283,19 +286,29 @@
       } else if (this.emptyTemplate) {
         injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
-      this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
-      this.delegateEvents();
+    },
+
+    /**
+     * Completes each item view's lifecycle of being attached to a parent.
+     * Because the item views are attached in a non-standard way, it's important to make sure
+     * that the item views are in the appropriate state after being attached as one fragment.
+     * @method __cleanupItemViewsAfterAttachedToParent
+     * @private
+     */
+    __cleanupItemViewsAfterAttachedToParent: function() {
       _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
-          itemView.__cleanupAfterReplacingInjectionSite();
+          itemView.delegateEvents();
+          if (!itemView.__attachedCallbackInvoked && itemView.isAttached()) {
+            itemView.__invokeAttached();
+          }
           itemView.activate();
         } else {
           // Shouldn't get here. Item view is missing...
         }
       }, this);
-      this.trigger('render-complete');
     },
 
     /**
@@ -303,7 +316,7 @@
      * @method renderChildViews
      */
     renderChildViews: function() {
-      _.each(this.getChildViews(), function(childView) {
+      _.each(this.getTrackedViews({child: true}), function(childView) {
         childView.render();
       });
     },
@@ -427,7 +440,7 @@
      * @method getItemViewFromModel
      */
     getItemViewFromModel: function(model) {
-      return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
+      return model ? this.getTrackedView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
     },
 
     /**
@@ -453,7 +466,7 @@
     getItemViews: function() {
       var view = this;
       var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
-      return _.map(orderedViewIds, this.getChildView, this);
+      return _.map(orderedViewIds, this.getTrackedView, this);
     },
 
     /************** Private methods **************/
@@ -520,7 +533,7 @@
         }
       }, this);
       _.each(modelsWithViews, function(viewId, modelId) {
-        var itemView = this.getChildView(viewId);
+        var itemView = this.getTrackedView(viewId);
         if (itemView) {
           staleItemViews.push({ view: itemView, modelId: modelId });
         }
@@ -562,10 +575,15 @@
      _.each(this.modelsToRender(), function(model) {
         var itemView = this.getItemViewFromModel(model);
         if (itemView) {
+          // detach to be safe, but during a render, the item views will already be detached.
           itemView.detach();
           this.registerTrackedView(itemView);
-          itemView.render();
-          injectionFragment.appendChild(itemView.el);
+          itemView.attachTo(null, {
+            replaceMethod: function($el) {
+              injectionFragment.appendChild($el[0]);
+            },
+            discardInjectionSite: true
+          });
         }
       }, this);
       this.__updateOrderedModelIdList();
@@ -606,7 +624,7 @@
               var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
                 return !staleModelIdMap[modelId];
               });
-              firstItemViewLeft = view.getChildView(view.__modelToViewMap[firstModelIdLeft]);
+              firstItemViewLeft = view.getTrackedView(view.__modelToViewMap[firstModelIdLeft]);
               replaceMethod = _.bind(firstItemViewLeft.$el.prepend, firstItemViewLeft.$el);
             }
           }

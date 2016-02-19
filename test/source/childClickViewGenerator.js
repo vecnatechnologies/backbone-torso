@@ -7,9 +7,7 @@ module.exports = function(window) {
     events: {
       'click div.child' : 'myClick'
     },
-    render: function() {
-      this.$el.html("<div class='child'>test</div>");
-    },
+    template: '<div class="child">test</div>'
   });
   return ChildView;
 };

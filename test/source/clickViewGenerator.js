@@ -12,11 +12,8 @@ module.exports = function(window) {
     events: {
       'click div' : 'myClick'
     },
-    render: function() {
-      this.$el.html('<div class="click">test</div>');
-    },
+    template: '<div class="click">test</div>',
     initialize: function() {
-      window.Torso.View.prototype.initialize.call(this);
       this.on('myEvent', this.afterMyEvent);
     },
     _activate: function() {

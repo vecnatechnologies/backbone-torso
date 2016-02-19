@@ -4,7 +4,7 @@
 #### Building block of the UI
 
 - All of [Backbone's View API](http://backbonejs.org/#View)
-- **viewState**
+- viewState
 
 Overridden methods from Backbone.View
 
@@ -14,30 +14,38 @@ Overridden methods from Backbone.View
 
 DOM generation / rendering
 
-- template
-- **prepare**
-- **render**
+- template*
+- prepare*
+- render
 - templateRender
-- **injectView**
-- plug
-- unplug
+- prerender*
+- postrender*
+
+Transition Logic
+
+- transitionIn*
+- transitionOut*
+
+View state methods
+- get
+- set
 
 Feedback
 
-- **feedback**
+- feedback*
 - invokeFeedback
 
 Life cycle methods
 
 - detach
-- attach
+- attachTo
 - deactivate
 - activate
 - dispose
-- **\_dispose**
-- **\_deactivate**
-- **\_attached**
-- **\_detached**
+- \_dispose*
+- \_deactivate*
+- \_attached*
+- \_detached*
 
 Life cycle state methods
 
@@ -46,32 +54,32 @@ Life cycle state methods
 - isActive
 - isDisposed
 
-Child view methods
+Tracked/Child view methods
 
-- attachChildView
-- hasChildViews
-- getChildViews
-- getChildView
-- disposeChildViews
-- deactivateChildViews
-- activateChildViews
-- registerChildView
-- unregisterChildView
+- attachView
+- getTrackedView
+- getTrackedViews
+- attachTrackedViews*
+- detachTrackedViews
+- registerTrackedView
+- unregisterTrackedView
+- hasTrackedViews
+
+\* methods you can override or extend to produce desired functionality
 
 ## List View
 #### Auto-manages many views based on a collection of models/cells
 
 - All of Torso.View API
 - **collection**
-- **childView**
+- **itemView**
 - template
 - emptyTemplate
-- childrenContainer
-- renderChildViews
+- itemContainer
 - prepareEmpty
 - **modelsToRender**
-- update
-- getChildViewFromModel
+- getItemViewFromModel
+- renderChildViews
 
 Overridden methods from View
 
@@ -79,9 +87,14 @@ Overridden methods from View
 - render
 - prepare
 
+Public methods invoked by list view on collection updates
+
+- update
+- reorder
+
 Configuration set by initialize parameters only
 
-- childModel
+- modelName
 - modelId
 - renderWait
 

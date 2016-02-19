@@ -41,7 +41,17 @@
 
 
 # Application Flow
-Determining how your views will play well together is based on the relationship between any two views. A parent to child relationship is straightforward when the parent wants to interact with a child view. Because it has a direct reference, the parent can invoke methods and set fields on the child view. Child views, however, do not have direct access to its parent view. This was a design decision to increase the portability of the child view. There's nothing stopping a developer from creating a reference to a parent, but it's not done by default by Torso. Instead, the recommended child-to-parent communication is performed by triggering events on the child view. Any parent view (or service, etc.) can listen to these events and react appropriately.
+Determining how your views will interact with one another is based on their relationship. Some types of relationships between views:
+
+- Parent View to Child View
+- Parent View to Shared View
+- Sibling Views
+- Ancestor View to Descedent View
+- Two non-related views
+
+A child view and a shared view are both types of tracked views. The only difference is that when a parent view is disposed, the shared views are kept functional while the child views are also disposed.
+
+A parent view to a tracked view relationship is straightforward when the parent wants to interact with a tracked view. Because it has a direct reference, the parent can invoke methods and set fields on the tracked view. Tracked views, however, do not have direct access to its parent view. This was a design decision to increase the portability of the tracked view. There's nothing stopping a developer from creating a reference to a parent, but it's not done by default by Torso. Instead, the recommended communication is performed by triggering events on the tracked view. Any parent view (or service, etc.) can listen to these events and react appropriately.
 
 There are certainly times where a view (or model, service, etc.) might want to broadcast to the application as a whole and let other components decide to subscribe to these broadcasts. Torso recommends creating an application-level event bus to publish these types of messages. Creating an event bus is as easy as creating an empty module that extends ```Torso.Events```. Require this module and start listening or triggering events on it.
 
@@ -60,7 +70,7 @@ Torso uses the basic Backbone router. Nothing new or fancy was added. However, w
     }
 
     this.current = nextPerspective;
-    this.current.attach($('.app'));
+    this.current.attachTo($('.app'));
   }
 ```
 
@@ -68,7 +78,7 @@ Using this method is as simple as: ```this.switchPerspective(myNewPerspective);`
 
 
 ## Perspectives
-Single page applications are markedly different from the conventional html-based request-response dialogue of early days web sites. Now that the frontend application is producing the DOM, there isn't the natural distinction from one page to another. The frontend app could follow the same behavior by generating “web page”-like views and simulate a normal website user flow. These “web page” views are given the name “perspective” in Torso. This helps developers create a distinction between an actual web page created by the server and a Torso-generated web page. Typically the Torso router is responsible for moving between perspective views. Perspectives are often parents to many child views that help form the page.
+Single page applications are markedly different from the conventional html-based request-response dialogue of early days web sites. Now that the frontend application is producing the DOM, there isn't the natural distinction from one page to another. The frontend app could follow the same behavior by generating “web page”-like views and simulate a normal website user flow. These “web page” views are given the name “perspective” in Torso. This helps developers create a distinction between an actual web page created by the server and a Torso-generated web page. Typically the Torso router is responsible for moving between perspective views. Perspectives are often parents to many tracked views that help form the page.
 
 ## Views
 A view is responsible for connecting a piece of DOM to some data in the application. A standalone view that controls a div is pretty straight-forward and many examples of how to use Backbone show this use-case. However, the more complicated an application gets, the more you have to figure out how views connect to one another.
@@ -81,23 +91,42 @@ A view has the power to create/dispose, activate/deactivate, and attach/detach a
   2. Activated and detached – in use but not visible.
   3. Deactivated and detached – dormant.
 
-You can also dispose of a view if you are sure you no longer need it. Most often, deactivating and detached is preferable as it will save the view state if it's needed again.
+You can also dispose of a view if you are sure you no longer need it. A disposed view is non-functional and its lifecycle has ended. There is no way to bring it back into a usable state. Disposing is recursive on all child views. If you want to maintain a child view after a parent is disposed, you can register a tracked view as a "shared" view. Most often, rather than disposing a view, deactivating and detached is preferable as it will save the view state if it's needed again.
 
 Initializing a view will do a few things: generate the container DOM element, set up the initial state of the view, and by default it will be activated. A view can be initialized without also being activated by passing in ```{noActivate: true}```. If the view is activated, the callback ```_activate``` is invoked. Override this method to setup listeners or intervals that should happen even if the view is detached from the DOM.
 
 You can put listeners and intervals in the initialize method of your view if you want them to continue to happen even if the view is dormant. NOTE: any setup you do in ```initialize``` or ```_activate``` should be removed in the ```_dispose``` or ```_deactivate``` callbacks. The notable exception is that dispose will automatically remove all listeners in the view.
 
-After being created, the view doesn't have any DOM but its auto-generated container element. Creating new DOM comes from the render method. Its sole purpose is to make sure that the view's DOM fragment is exactly correct. It's not responsible for putting the view's DOM fragment on the DOM tree – that's what attach is for. Torso provides a templateRender function on the view that attempts to intelligently swap any updates into the current DOM fragment without regenerating it from scratch. It requires a “template” object that can take an object as a context and produces a string representation of the DOM. Typically Handlebars.js is used to achieve this.
+After being created, the view doesn't have any DOM but its auto-generated container element. Creating new DOM inside the container element comes from the render method. Its sole purpose is to make sure that the view's DOM fragment is exactly correct. It's not responsible for putting the view's DOM fragment on the DOM tree – that's reserved for the attaching process. Torso provides a templateRender function on the view that attempts to intelligently swap any updates into the current DOM fragment without regenerating it from scratch. It requires a “template” function that can take an object as a context and produces a string representation of the DOM. Typically Handlebars.js is used to achieve this. As a convenience, you can also provide a String as an alternative to a function for template which will be used directly as the view's html.
 
 Views should never update DOM directly (e.g. grab elements using jQuery and change the element directly). Views should always change its state and re-render. Updating the DOM directly will cause the DOM to become unsynced on the next render. In a torso application, render can be invoked at any time by any other player in the application (e.g. other views, services, etc.). Thus, you need to make sure that the template can regenerate the DOM at any point in its life.
 
-Are you using jQuery plugins? These can be problematic as they typically don't follow the pattern of being able to re-render at any point. Torso views have ```plug()``` and ```unplug()``` methods that you can override that should be called before and after the render method. The purpose is to be able to tear down and bring back the plugin after the underlying DOM elements have changed. This usually only works if the plugin can report its current state upon unplugging and passing the state back the plugin during the plug method. [should plug and unplug be run even if the view is not attached?]
+The View's render process goes like this:
 
-The render method is also the place to inject child views. Calling ```injectView``` and passing it the name of an injection site and the view to be injected, will register the view as a child view and attach the child view at the injection site. Injection sites are created by adding the element attribute ```“inject=NameOfSite”``` to any element in your view's DOM fragment. Once the injected view has been registered as a child view, any call to activate, deactivate or dispose on the parent view will also be called on the child view.
+1. prerender hook
+2. Detach all tracked views
+3. DOM creation (or recreation) utilizing Torso's template rerender
+4. Delegation of events
+5. Attach all tracked views
+6. postrender hook
 
-If you override the render method make sure to use the templateRender and call unplug and plug around it if needed. Also, always make sure to call ```delegateEvents()``` after everything is done to bind events to new DOM elements. Finally, inject any child views – don't worry about whether they're attached or not, because templateRender will detach all child views first in order to do an accurate DOM hotswap.
+Events are also triggered at different points in the render method:
 
-It's important to know that a child view does not have a reference to the parent view and therefore can be moved very easily between parents. This is useful for views that function like widgets and need to be portable between perspectives.
+ - 'render:begin' is triggered before the prerender occurs.
+ - 'render:before-dom-update' is triggered right after prerender and before the dom has been updated.
+ - 'render:after-dom-update' is triggered after the dom has been updated and before delegation of events.
+ - 'render:after-delegate-events' is triggered after the delegation of events but before either the tracked views are added or postrender;
+ - 'render:complete' is triggered after postrender is invoked.
+
+It is rare, and discouraged to override the render method. Instead, use the available hooks to control the render logic.
+
+The ```attachTrackedViews``` method is the place to attach tracked views to the parent view's DOM. Calling ```attachView``` and passing it the name of an injection site and the view to be injected, the parent will register the view as a tracked view and attach the tracked view at the injection site. Injection sites are created by adding the element attribute ```“inject=NameOfSite”``` to any element in your view's DOM fragment. Once the injected view has been registered as a tracked view, any call to activate or deactivate (or dispose if it wasn't marked as a "shared" view) on the parent view will also be called on the tracked view.
+
+```attachView``` will, by default, will attach the new view to the DOM with a simple replace call on the injection site. However, you can use the option ```useTransition```, which will attempt to replace whatever is currently at that injection site using the previous view's ```transitionOut``` method and the new view's ```transitionIn``` method. This allows you to control the way these views are brought in and out. Typically this means managing animations. ```attachView``` will return a promise that will resolve when both ```transitionOut``` and ```transitionIn``` are completed. You may have to control state changes and re-render requests on the parent view while the transition promise is unresolved as this could cause unexepected behavior. Also, ```render``` will return a promise that resolves when the promises returned by ```attachTrackedViews``` all have resolved.
+
+If you would like to manage extra logic during the render process, like maybe managing jQuery plugins or other non-trivial DOM manipulations, consider overriding the prerender or postrender hooks. These allow you to perform actionas like tear down and bring back plugins after the underlying DOM elements have changed. Note, however, that this usually only works if the plugin can report its current state upon prerender and passing the state back the plugin during the postrender method.
+
+It's important to know that a tracked view does not have a reference to the parent view and therefore can be moved very easily between parents. This is useful for views that function like widgets and need to be portable between perspectives. Remember to categorize a tracked view as "shared" if you do not wish it to be disposed when the parent is disposed.
 
 ## Widgets
 
@@ -135,7 +164,7 @@ Because models, cells, and services all store state using Backbone's Model prope
 ### Form
 HTML forms make up a much of the web ecosystem, and doing it right is difficult. A couple big questions come up quickly. How do I map a model to an HTML form? How do you handle frontend validation and server validation? How do you deal with data integrity (i.e. rolling back model changes if the server fails)?
 
-Torso addresses these concerns with two objects: a Form Model and a Form View. First, regardless of how a developer sets up the application and view hierarchies, a Form Model/View pair is supposed to be one-to-one with an HTML form. You can think of it as the javascript representation of the form. Therefore, the view is responsible for rendering the form DOM and the model is responsible for mirroring the form data. Connecting the form view to the application is easy, just have it be a child view to some parent perspective or widget. Connecting the form model to an object model can also be done – even multiple models.
+Torso addresses these concerns with two objects: a Form Model and a Form View. First, regardless of how a developer sets up the application and view hierarchies, a Form Model/View pair is supposed to be one-to-one with an HTML form. You can think of it as the javascript representation of the form. Therefore, the view is responsible for rendering the form DOM and the model is responsible for mirroring the form data. Connecting the form view to the application is easy, just have it be a tracked view to some parent perspective or widget. Connecting the form model to an object model can also be done – even multiple models.
 
 A form models goal is to pull in data from one or many object models, allow the user to update and dirty up the data and finally, when saved, push back the new updates to the object model(s).
 
@@ -230,16 +259,17 @@ Example:
             when: {'@cars[x].passengers[y]': ['change']},
              then: function(event, indexMap) {
                 return {text: 'Feedback for: ' + this.model.get('cars[' + indexMap.x + '].passengers[' + 'indexMap.y + ']')}
+                },
              to: 'my-feedback-for-car[x]-and-passenger[y]'
            }
 ```
 You can see that if a change is made on any passenger from any car, we'll invoke the “then” function and pass in the indices of the changed property for x and y as an indexMap. Finally, the resulting “then” directives will be made against an element found using the “to” mapping. One or many elements will be found with the value of the data-feedback attribute that matches the x and y indices.
 
-You can replace a variable assignment in the “when” or the “to” with a specific numeric value as well. Changing a “when” or “to” from [x] → [0] would make it so that the when-then would only listen to the first car or only update the first car respectively.
+Using a variable (e.g. x, y, z, etc.) in a "when" field, means that it will listen to all elements that match that pattern but it will applied to the matching feedback element (the matching "to").
 
-While you should always assign variable names to the indices in a “when”, a “to” can capture many indices by using open array notation, “[]”. Using a [] will mean that any invocation of a “then” will occur against all elements with indices 0-n. ```'my-feedback-for-car[]-and-passenger[y]' ```will push any “then” directives to all cars but limited to only the specific passenger index that was triggered by the capturing “when”. Likewise, ```'my-feedback-for-car[]-and-passenger[]'``` will push any “then” directives to all elements that match the pattern: ```'my-feedback-for-car[*]-and-passenger[*]'```.
+You can replace a variable assignment in the “when” with a specific numeric value as well. This limits the listenting elements to just the one specified but still only applies the feedback instructions to the matching feedback element. Changing a “when” from [x] → [0] would make it so that the when-then would only listen to the first car and apply to the matching first car's feedback element.
 
-On the “to” field, you have freedom of where you put index variables and when you choose an open array notation. You can get your desired effect by playing with the index assignments.
+You can also replace a variable assignement in the "when" with an open array notation, “[]”. Using a [] will mean that a change on any triggering element (the "when") that matches that pattern, will apply to all feedback elements (the "to"s).
 
 Summary:
 >When: when to trigger a “then”.
@@ -251,7 +281,7 @@ Summary:
 ## Collections
 A Backbone collection is an ordered set of models (http://backbonejs.org/#Collection). It offers built-in triggered events when the set is modified. It also offers an API to query the models as well. What Torso adds is a way to use collections to meet the new needs of a single page application.
 
-As perspectives come in and out each using various widgets and child views, they typically display and modify models. These views with the addition of application-level services create many places that a single model can be used and modified. For example, we have a view that is showing a model, let's say a person model, and a service, let's say a usage-tracker service, that is also using and modifying the same person model. The service is updating the person's usage data every 5 seconds. Now the view wants to update the person. Whatever the usage data was when the view fetched that person will override the most recent usage data sent by the service. Syncing models across the components that use them is difficult, unless you only use one instance.
+As perspectives come in and out each using various widgets and tracked views, they typically display and modify models. These views with the addition of application-level services create many places that a single model can be used and modified. For example, we have a view that is showing a model, let's say a person model, and a service, let's say a usage-tracker service, that is also using and modifying the same person model. The service is updating the person's usage data every 5 seconds. Now the view wants to update the person. Whatever the usage data was when the view fetched that person will override the most recent usage data sent by the service. Syncing models across the components that use them is difficult, unless you only use one instance.
 
 For this, Torso introduces a Cache. A Cache is a collection that acts as an application-level store of models for a given type of resource. The goal of a cache is to maintain one instance of any model for the entire frontend application. Typically, this is done by creating a cache per resource type and any component of the app that wants to access and modify a model must first pull it from the cache. If the cache does not have that model, it will fetch it from the server. There is an enhancement request in Torso to allow views, services, and other models to directly request a model from the cache. For now, requester collections are the mechanism to allow components to interact with a cache.
 
