@@ -259,16 +259,17 @@ Example:
             when: {'@cars[x].passengers[y]': ['change']},
              then: function(event, indexMap) {
                 return {text: 'Feedback for: ' + this.model.get('cars[' + indexMap.x + '].passengers[' + 'indexMap.y + ']')}
+                },
              to: 'my-feedback-for-car[x]-and-passenger[y]'
            }
 ```
 You can see that if a change is made on any passenger from any car, we'll invoke the “then” function and pass in the indices of the changed property for x and y as an indexMap. Finally, the resulting “then” directives will be made against an element found using the “to” mapping. One or many elements will be found with the value of the data-feedback attribute that matches the x and y indices.
 
-You can replace a variable assignment in the “when” or the “to” with a specific numeric value as well. Changing a “when” or “to” from [x] → [0] would make it so that the when-then would only listen to the first car or only update the first car respectively.
+Using a variable (e.g. x, y, z, etc.) in a "when" field, means that it will listen to all elements that match that pattern but it will applied to the matching feedback element (the matching "to").
 
-While you should always assign variable names to the indices in a “when”, a “to” can capture many indices by using open array notation, “[]”. Using a [] will mean that any invocation of a “then” will occur against all elements with indices 0-n. ```'my-feedback-for-car[]-and-passenger[y]' ```will push any “then” directives to all cars but limited to only the specific passenger index that was triggered by the capturing “when”. Likewise, ```'my-feedback-for-car[]-and-passenger[]'``` will push any “then” directives to all elements that match the pattern: ```'my-feedback-for-car[*]-and-passenger[*]'```.
+You can replace a variable assignment in the “when” with a specific numeric value as well. This limits the listenting elements to just the one specified but still only applies the feedback instructions to the matching feedback element. Changing a “when” from [x] → [0] would make it so that the when-then would only listen to the first car and apply to the matching first car's feedback element.
 
-On the “to” field, you have freedom of where you put index variables and when you choose an open array notation. You can get your desired effect by playing with the index assignments.
+You can also replace a variable assignement in the "when" with an open array notation, “[]”. Using a [] will mean that a change on any triggering element (the "when") that matches that pattern, will apply to all feedback elements (the "to"s).
 
 Summary:
 >When: when to trigger a “then”.
