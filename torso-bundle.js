@@ -252,10 +252,10 @@
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           fetch: function() {
-            var requsterCollection = this;
+            var requesterCollection = this;
             return this.__loadWrapper(function() {
-              if (requsterCollection.trackedIds && requsterCollection.trackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: requsterCollection.trackedIds, setOptions: {remove: false}});
+              if (requesterCollection.trackedIds && requesterCollection.trackedIds.length) {
+                return parentInstance.fetchByIds({idsToFetch: requesterCollection.trackedIds, setOptions: {remove: false}});
               } else {
                 return $.Deferred().resolve().promise();
               }
@@ -675,19 +675,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'), require('jquery'));
-  } else {
-    factory(root.Backbone, root.$);
-  }
-}(this, function(Backbone, $) {
-  'use strict';
-  Backbone.$ = $;
-  return true;
-}));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -836,6 +823,41 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'), require('jquery'));
+  } else {
+    factory(root.Backbone, root.$);
+  }
+}(this, function(Backbone, $) {
+  'use strict';
+  Backbone.$ = $;
+  return true;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -927,28 +949,6 @@
 
   return pollingMixin;
 }));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone', 'backbone.stickit'], factory);

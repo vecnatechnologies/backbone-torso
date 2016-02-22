@@ -55,10 +55,10 @@
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           fetch: function() {
-            var requsterCollection = this;
+            var requesterCollection = this;
             return this.__loadWrapper(function() {
-              if (requsterCollection.trackedIds && requsterCollection.trackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: requsterCollection.trackedIds, setOptions: {remove: false}});
+              if (requesterCollection.trackedIds && requesterCollection.trackedIds.length) {
+                return parentInstance.fetchByIds({idsToFetch: requesterCollection.trackedIds, setOptions: {remove: false}});
               } else {
                 return $.Deferred().resolve().promise();
               }
