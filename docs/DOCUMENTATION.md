@@ -120,7 +120,7 @@ Events are also triggered at different points in the render method:
 
 It is rare, and discouraged to override the render method. Instead, use the available hooks to control the render logic.
 
-The ```updateDOM``` method is called during step 3 during DOM creation and by default, invokes: ```this.templateRender(this.$el, this.template, this.prepare());```. If you wish to have custom logic, override this method.
+The ```updateDOM``` method is called during step 3 during DOM creation and by default, invokes: ```this.templateRender(this.$el, this.template, this.prepare());```. If you wish to have custom logic, override this method. Note, that ListViews have much more complicated default logic, so be careful overriding its ```updateDOM```.
 
 The ```attachTrackedViews``` method is the place to attach tracked views to the parent view's DOM. Calling ```attachView``` and passing it the name of an injection site and the view to be injected, the parent will register the view as a tracked view and attach the tracked view at the injection site. Injection sites are created by adding the element attribute ```“inject=NameOfSite”``` to any element in your view's DOM fragment. Once the injected view has been registered as a tracked view, any call to activate or deactivate (or dispose if it wasn't marked as a "shared" view) on the parent view will also be called on the tracked view.
 
