@@ -111,8 +111,10 @@
         view = this;
       this.trigger('render:begin');
       this.prerender();
+      this.__updateInjectionSiteMap();
       this.trigger('render:before-dom-update');
-      this.__updateDOM();
+      this.detachTrackedViews();
+      this.updateDOM();
       if (this.__pendingAttachInfo) {
         this.__performPendingAttach();
       }
@@ -134,6 +136,18 @@
      * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
      */
     prerender: _.noop,
+
+    /**
+     * Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.
+     * Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare());
+     * Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.
+     * @method updateDOM
+     */
+    updateDOM: function() {
+      if (this.template) {
+        this.templateRender(this.$el, this.template, this.prepare());
+      }
+    },
 
     /**
      * Hook during render that is invoked after all DOM rendering is done and tracked views attached.
@@ -604,22 +618,6 @@
     __performPendingAttach: function() {
       this.__replaceInjectionSite(this.__pendingAttachInfo.$el, this.__pendingAttachInfo.options);
       delete this.__pendingAttachInfo;
-    },
-
-    /**
-     * Produces and sets this view's elements DOM. Used during the rendering process.
-     * Typically needs this.template to do so.
-     * @method __updateDOM
-     * @private
-     */
-    __updateDOM: function() {
-      this.__updateInjectionSiteMap();
-      // Detach this view's tracked views for a more effective hotswap.
-      // The child views should be reattached by the attachTrackedViews method.
-      this.detachTrackedViews();
-      if (this.template) {
-        this.templateRender(this.$el, this.template, this.prepare());
-      }
     },
 
     /**
@@ -1196,8 +1194,3 @@
 
   return View;
 }));
-
-
-function addPromises(promiseArray, promises) {
-  promiseArray.push(promises || $.Deferred().resolve().promise());
-}
