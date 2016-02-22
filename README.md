@@ -3,9 +3,28 @@
 [Backbone](http://www.backbonejs.org) provides many convenient tools for building Single Page Applications (SPAs) out of the box, and we absolutely love using it!  However, Backbone only gives us the bare bones (excuse the overused pun) of what you need to build a complex front end application. Torso gives you the blueprints and some extra tools to build something quickly that scales well. Torso was first created by [Vecna](http://www.vecna.com) employees that needed to build robotics and health care applications that have intense feature sets and large user bases.
 
 ### What is Torso?
+
+We've created our documentation through a tool called [TonicDev](http://tonicdev.com). Typically, tonicdev lets you run code inline to your documentation, but because of the DOM-manipulation and setup of Torso, the code blocks don't run. But you can still see "live" examples inline to the documentation. 
+
+#### Torso Intro
+An explanation about what Torso is and how to get it
+- **Intro**: http://tonicdev.com/kentmw/torso-intro
+
+#### Torso Views
+
+What makes them special?
+- **Basics**: http://tonicdev.com/kentmw/torso-view-basics
+- **Lifecycle**: http://tonicdev.com/kentmw/torso-view-lifecycle
+- **Child Views**: http://tonicdev.com/kentmw/torso-view-child-views
+- **Feedback**: http://tonicdev.com/kentmw/torso-view-feedback
+- **Forms**: http://tonicdev.com/kentmw/torso-view-forms
+- **Transitions**: http://tonicdev.com/kentmw/torso-view-tranisitons
+
+More documentation to come on the other Torso modules.
+
 Torso is a 2-part project. The first is the [guidelines](/docs/RULES.md) on how to use any Backbone (including Torso) applications. These come from hard-fought lessons building large-scale Backbone webapps. The seconds is a set of Backbone [modules](http://vecnatechnologies.github.io/backbone-torso/#modules) that you can bring in all at once, or use pick-and-choose style that fill functionality holes in Backbone. These additions to Backbone's base building blocks include form handling, two-way binding, smart rerendering, data validation tools, polling caches, sub-view management, and more.
 
-Besides the guidelines and modules, we've also created [documentation](/docs/DOCUMENTATION.md) explaining the concepts of a Torso-backed Backbone application and the modules that were added. Also, a list of the added modules and their API is found [here](/docs/API.md).
+Besides the guidelines and modules, there is a [documentation](/docs/DOCUMENTATION.md) page that touches on every module of Torso but at a higher level than the tonicdev pages. Also, a list of the added modules and their API is found [here](/docs/API.md).
 
 ### Play with Torso Live:
 Check out a basic RequireBin setup [Here](http://requirebin.com/?gist=889b60ab18d9194ccca7) using Torso.
