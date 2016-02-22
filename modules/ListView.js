@@ -266,14 +266,10 @@
      * Override of View.__updateDOM
      * Builds a single DOM fragment from the item views and attaches it at once.
      * @method __updateDOM
-     * @private
      */
-    __updateDOM: function() {
+    updateDOM: function() {
       var injectionSite,
         newDOM = $(templateRenderer.copyTopElement(this.el));
-      this.__updateInjectionSiteMap();
-      // The non-item views should be reattached by the attachTrackedViews method and the item views will be attached here.
-      this.detachTrackedViews();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
         injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');

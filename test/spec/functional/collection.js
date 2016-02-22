@@ -23,7 +23,7 @@ describe('A Torso Collection', function() {
     var collection = new MyCollection();
     expect(collection.getRequesterIds).toBeDefined();
     expect(collection.getRequesterIdsAsDictionary).toBeDefined();
-    expect(collection.removeRequster).toBeDefined();
+    expect(collection.removeRequester).toBeDefined();
     expect(collection.getRequesters).toBeDefined();
     expect(collection.getAllRequestedIds).toBeDefined();
     expect(collection.createPrivateCollection).toBeDefined();
@@ -51,7 +51,7 @@ describe('A Torso Collection', function() {
     var collection = cache.createPrivateCollection(1);
     expect(collection.getRequesterIds).not.toBeDefined();
     expect(collection.getRequesterIdsAsDictionary).not.toBeDefined();
-    expect(collection.removeRequster).not.toBeDefined();
+    expect(collection.removeRequester).not.toBeDefined();
     expect(collection.getRequesters).not.toBeDefined();
     expect(collection.getAllRequestedIds).not.toBeDefined();
     expect(collection.createPrivateCollection).not.toBeDefined();
