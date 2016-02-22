@@ -4,7 +4,9 @@
 
 ### What is Torso?
 
-We've created our documentation through a tool called [TonicDev](http://tonicdev.com). Typically, tonicdev lets you run code inline to your documentation, but because of the DOM-manipulation and setup of Torso, the code blocks don't run. But you can still see "live" examples inline to the documentation. 
+Torso is a 2-part project. The first is the [guidelines](/docs/RULES.md) on the principles of a good Backbone (including Torso) application. These come from hard-fought lessons building large-scale Backbone webapps. The seconds is a set of Backbone [modules](http://vecnatechnologies.github.io/backbone-torso/#modules) that you can bring in all at once, or use pick-and-choose style that fill functionality holes in Backbone. These additions to Backbone's base building blocks include form handling, two-way binding, smart rerendering, data validation tools, polling caches, sub-view management, and more.
+
+We've created Torso's documentation through a tool called [TonicDev](http://tonicdev.com). Typically, tonicdev lets you run code inline to your documentation, but because of the DOM-manipulation and setup of Torso, the code blocks don't run. But you can still see "live" examples inline to the documentation. 
 
 #### Torso Intro
 An explanation about what Torso is and how to get it
@@ -21,8 +23,6 @@ What makes them special?
 - **Transitions**: http://tonicdev.com/kentmw/torso-view-tranisitons
 
 More documentation to come on the other Torso modules.
-
-Torso is a 2-part project. The first is the [guidelines](/docs/RULES.md) on how to use any Backbone (including Torso) applications. These come from hard-fought lessons building large-scale Backbone webapps. The seconds is a set of Backbone [modules](http://vecnatechnologies.github.io/backbone-torso/#modules) that you can bring in all at once, or use pick-and-choose style that fill functionality holes in Backbone. These additions to Backbone's base building blocks include form handling, two-way binding, smart rerendering, data validation tools, polling caches, sub-view management, and more.
 
 Besides the guidelines and modules, there is a [documentation](/docs/DOCUMENTATION.md) page that touches on every module of Torso but at a higher level than the tonicdev pages. Also, a list of the added modules and their API is found [here](/docs/API.md).
 
