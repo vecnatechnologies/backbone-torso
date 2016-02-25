@@ -20,7 +20,7 @@ What makes them special?
 - **Child Views**: http://tonicdev.com/kentmw/torso-view-child-views
 - **Feedback**: http://tonicdev.com/kentmw/torso-view-feedback
 - **Forms**: http://tonicdev.com/kentmw/torso-view-forms
-- **Transitions**: http://tonicdev.com/kentmw/torso-view-tranisitons
+- **Transitions**: http://tonicdev.com/kentmw/torso-view-transitions
 
 More documentation to come on the other Torso modules.
 
