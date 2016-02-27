@@ -73,9 +73,7 @@
       args = args || {};
 
       /* Listen to model validation callbacks */
-      this.model = this.model || (new FormModel());
-      this.listenTo(this.model, 'validated:valid', this.valid);
-      this.listenTo(this.model, 'validated:invalid', this.invalid);
+      this.model = args.model || this.model || (new FormModel());
 
       /* Override template */
       this.template = args.template || this.template;
@@ -89,6 +87,11 @@
       this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
 
       View.apply(this, arguments);
+
+      if (this.model) {
+        this.listenTo(this.model, 'validated:valid', this.valid);
+        this.listenTo(this.model, 'validated:invalid', this.invalid);
+      }
     },
 
     /**

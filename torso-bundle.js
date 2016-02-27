@@ -688,6 +688,121 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.polling = factory();
+  }
+}(this, function() {
+  /**
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  polling
+   * @author ariel.wexler@vecna.com
+   */
+  var pollingMixin = {
+    /**
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     */
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
+
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.__poll();
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
+      }
+    },
+
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
+    },
+
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
+    },
+
+    /************** Private methods **************/
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
+    }
+  };
+
+  return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -834,121 +949,6 @@
   };
 }));
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
-  }
-}(this, function() {
-  /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  polling
-   * @author ariel.wexler@vecna.com
-   */
-  var pollingMixin = {
-    /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
-     */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
-
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.__poll();
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-      }
-    },
-
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
-    },
-
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
-    },
-
-    /************** Private methods **************/
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
-    }
-  };
-
-  return pollingMixin;
-}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone', 'backbone.stickit'], factory);
@@ -1467,6 +1467,7 @@
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
+      this.template = options.template || this.template;
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -3513,8 +3514,8 @@
   var FormModel = NestedModel.extend({
     /**
      * @private
-     * @property __computed
-     * @type Array
+     * @property __currentMappings
+     * @type Object
      **/
     /**
      * @private
@@ -3523,8 +3524,8 @@
      **/
     /**
      * @private
-     * @property __modelConfigs
-     * @type Array
+     * @property __currentObjectModels
+     * @type Object
      **/
     /**
      * @private
@@ -3540,10 +3541,10 @@
      * @type Object
      **/
     /**
-     * @property defaultMapping
-     * @type Object|Function
+     * @property mapping
+     * @type Object
      **/
-    defaultMapping: null,
+    mapping: undefined,
 
     /**
      * Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models
@@ -3578,17 +3579,19 @@
      *   @param [options.labels] {Object} A Backbone.Validation plugin hash to dictate the attribute labels
      */
     constructor: function(attributes, options) {
-      NestedModel.apply(this, arguments);
       options = options || {};
-      this.__computed = [];
       this.__cache = {};
       this.__currentUpdateEvents = [];
-      this.__modelConfigs = [];
-      this.__initMappings(options);
+      this.__currentMappings = {};
+      this.__currentObjectModels = {};
 
       // override + extend the validation and labels hashes
       this.validation = _.extend({}, this.validation || {}, options.validation || {});
       this.labels = _.extend({}, this.labels || {}, options.labels || {});
+
+      NestedModel.apply(this, arguments);
+
+      this.__initMappings(options);
 
       // Do an initial pull
       this.pull();
@@ -3605,87 +3608,161 @@
       this.trigger('initialization-complete');
     },
 
-    /**
-     * Add a model that this form model should track against
-     * @method addModel
-     * @param modelConfig {Object} the Object model configuration you are tracking.
-     *   @param modelConfig.model {Backbone.Model} the object model
-     *   @param [modelConfig.fields] {Array} an array of strings where each String value corresponds to an attribute in the model.
-     *     Leave empty if you want to listen to all the fields.
-     * @param [copy=false] {Boolean} set to true if you want to make an initial pull from the object model upon adding.
-     */
-    addModel: function(modelConfig, copy) {
-      this.__modelConfigs.push(modelConfig);
-      if (copy) {
-        this.__copyFields(modelConfig.fields, this, modelConfig.model);
-        this.__updateCache(modelConfig.model);
-      }
+    getMapping: function(alias) {
+      return this.__currentMappings[alias];
+    },
+
+    getMappings: function() {
+      return this.__currentMappings;
     },
 
     /**
-     * Add a computed value. This allows you to alter fields before pulling and pushing to/from the Object model. It also allows you
-     * to aggregate or separate fields from the Object model.
-     * @method addComputed
-     * @param computedConfig {Object} the configuration for a computed field(s)
-     *   @param computedConfig.models {Array} of Model Configurations that are needed for the computation
-     *   @param computedConfig.pull {Function} a callback that will be invoked when pulling data from the Object model. The arguments
-     *     to this function will be a copy of all the fields defined by the models array in order that they were defined including the
-     *     models array order. If any model configuration does not contain a fields array, a hash will be provided for that entry into
-     *     the model array that will contain a copy of all the attributes of that model.
-     *   @param computedConfig.push {Function} a callback that will be invoked when pushing data to the Object model. It will take a single
-     *     argument, an array of all the models defined in the the model configuration array: _.pluck(computedConfig.models, 'model')
-     * @param [copy=false] {Boolean} set to true if you want to make an initial pull from the object models upon adding.
+     * this.setMapping('modelAlias', true, optional model instance);
+     * this.setMapping('modelAlias, 'foo bar baz', optional model instance);
+     * this.setMapping('computedAlias', {
+     *   model1: 'foo bar',
+     *   model2: 'baz',
+     *   push: function() {},
+     *   pull: function() {},
+     * }, optional model map)
      */
-    addComputed: function(computedConfig, copy) {
-      this.__computed.push(computedConfig);
+    setMapping: function(alias, mapping, models, copy) {
+      var computed, fields,
+        config = {};
+      if (_.isString(mapping)) {
+        fields = mapping.split(' ');
+      } else if (mapping === true) {
+        fields = undefined;
+      } else if (_.isObject(mapping)) {
+        mapping = _.clone(mapping);
+        computed = true;
+      }
+      config.computed = computed;
+      if (computed) {
+        config.mapping = mapping;
+        _.each(this.__getModelAliases(undefined, config), function(modelAlias) {
+          config.mapping[modelAlias] = config.mapping[modelAlias].split(' ');
+        });
+      } else {
+        config.mapping = fields;
+      }
+      if (models) {
+        if (computed) {
+          this.setModels(models, copy);
+        } else {
+          this.setModel(alias, models, copy);
+        }
+      }
+      this.__currentMappings[alias] = config;
+    },
+
+    /*
+     * this.setMappings({
+     *   model1: 'foo bar',
+     *   model2: 'baz',
+     *   ssn: {
+     *     model1: 'ssn',
+     *     model2: 'lastssn'
+     *     push: function() {},
+     *     pull: function() {},
+     *   }
+     * }, optional model map)
+     */
+    setMappings: function(mappings, models, copy) {
+      _.each(mappings, function(mapping, alias) {
+        this.setMapping(alias, mapping);
+      }, this);
+      if (models) {
+        this.setModels(models, copy);
+      }
+    },
+
+    unsetMapping: function(aliasOrModel) {
+      var alias = this.__findAlias(aliasOrModel);
+      if (alias) {
+        delete this.__currentMappings[alias];
+      }
+      var model = this.getModel(alias);
+      if (model && _.isEmpty(this.__getTrackedModelFields(model))) {
+        this.unsetModel(model);
+      }
+    },
+
+    unsetMappings: function() {
+      this.__currentMappings = [];
+      this.resetUpdating();
+    },
+
+    getModel: function(alias) {
+      return this.__currentObjectModels[alias];
+    },
+
+    getModels: function() {
+      return _.values(this.__currentObjectModels);
+    },
+
+    setModel: function(alias, model, copy) {
+      this.__currentObjectModels[alias] = model;
+      this.__updateCache(model);
+      this.resetUpdating();
       if (copy) {
-        this.__invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
-        _.each(computedConfig.models, function(modelConfig) {
-          this.__updateCache(modelConfig.model);
+        _.each(this.getMappings(), function(config, mappingAlias) {
+          if (alias === mappingAlias) {
+            this.__pullFromAlias(mappingAlias);
+          }
+          if (config.computed) {
+            var modelAliases = this.__getModelAliases(mappingAlias);
+            if (_.contains(modelAlias, alias)) {
+              this.__pullFromAlias(mappingAlias);
+            }
+          }
         }, this);
       }
     },
 
-    /**
-     * @method isTrackingObjectModel
-     * @return true if this form model is backed by an Object model. That means that at least one model was added or one computed
-     * value was added to this form model.
-     */
-    isTrackingObjectModel: function() {
-      return _.size(this.__modelConfigs) > 0 || _.size(this.__computed) > 0;
-    },
-
-    /**
-     * @method isUpdating
-     * @return true if any updates to an object model will immediately copy new values into this form model.
-     */
-    isUpdating: function() {
-      return this.__currentUpdateEvents.length > 0;
-    },
-
-    /**
-     * Will add listeners that will automatically pull new updates from this form's object models.
-     * @param [pullFirst=false] {Boolean} if true, the form model will pull most recent values then start listening
-     * @method startUpdating
-     */
-    startUpdating: function(pullFirst) {
-      if (this.isTrackingObjectModel() && !this.isUpdating()) {
-        if (pullFirst) {
-          this.pull();
-        }
-        this.__setupListeners();
-      }
-    },
-
-    /**
-     * This will stop the form model from listening to its object models.
-     * @method stopUpdating
-     */
-    stopUpdating: function() {
-      _.each(this.__currentUpdateEvents, function(eventConfig) {
-        this.stopListening(eventConfig.model, eventConfig.eventName);
+    setModels: function(models, copy) {
+      _.each(models, function(instance, alias) {
+        this.setModel(alias, instance, copy);
       }, this);
-      this.__currentUpdateEvents = [];
+    },
+
+    unsetModel: function(aliasOrModel) {
+      var alias = this.__findAlias(aliasOrModel);
+      if (alias) {
+        var model = this.__currentObjectModels[alias];
+        delete this.__currentObjectModels[alias];
+        this.__updateCache(model);
+      }
+      this.resetUpdating();
+    },
+
+    unsetModels: function() {
+      this.__currentObjectModels = [];
+      this.__updateCache();
+      this.resetUpdating();
+    },
+
+    /**
+     * Pushes values from this form model back to the object models it is tracking. This includes invoking the push callbacks from
+     * computed values
+     * @method push
+     */
+    push: function() {
+      _.each(this.getMappings(), function(config, alias) {
+        this.__push(alias);
+      }, this);
+    },
+
+    /**
+     * Pulls the most recent values of every object model that this form model tracks including computed values
+     * NOTE: using this method can override user-submitted data. Use caution.
+     * @method pull
+     */
+    pull: function() {
+      _.each(this.getMappings(), function(config, alias) {
+        this.__pull(alias);
+      }, this);
+      this.__updateCache();
     },
 
     /**
@@ -3748,38 +3825,51 @@
     },
 
     /**
-     * Pushes values from this form model back to the object models it is tracking. This includes invoking the push callbacks from
-     * computed values
-     * @method push
+     * @method isTrackingObjectModel
+     * @return true if this form model is backed by an Object model. That means that at least one object model was set
      */
-    push: function() {
-      _.each(this.__modelConfigs, function(modelConfig) {
-        this.__copyFields(modelConfig.fields, modelConfig.model, this);
-      }, this);
-      _.each(this.__computed, function(computedConfig) {
-        // If a push callback is defined, fire it.
-        if (computedConfig.push) {
-          computedConfig.push.apply(this, [_.pluck(computedConfig.models, 'model')]);
-        }
-      }, this);
+    isTrackingObjectModel: function() {
+      return _.size(this.__currentObjectModels) > 0;
     },
 
     /**
-     * Pulls the most recent values of every object model that this form model tracks including computed values
-     * NOTE: using this method can override user-submitted data. Use caution.
-     * @method pull
+     * @method isUpdating
+     * @return true if any updates to an object model will immediately copy new values into this form model.
      */
-    pull: function() {
-      _.each(this.__modelConfigs, function(modelConfig) {
-        this.__copyFields(modelConfig.fields, this, modelConfig.model);
-        this.__updateCache(modelConfig.model);
+    isUpdating: function() {
+      return this.__currentUpdateEvents.length > 0;
+    },
+
+    /**
+     * Will add listeners that will automatically pull new updates from this form's object models.
+     * @param [pullFirst=false] {Boolean} if true, the form model will pull most recent values then start listening
+     * @method startUpdating
+     */
+    startUpdating: function(pullFirst) {
+      if (this.isTrackingObjectModel() && !this.isUpdating()) {
+        if (pullFirst) {
+          this.pull();
+        }
+        this.__setupListeners();
+      }
+    },
+
+    /**
+     * This will stop the form model from listening to its object models.
+     * @method stopUpdating
+     */
+    stopUpdating: function() {
+      _.each(this.__currentUpdateEvents, function(eventConfig) {
+        this.stopListening(eventConfig.model, eventConfig.eventName);
       }, this);
-      _.each(this.__computed, function(computedConfig) {
-        this.__invokeComputedPull.call({formModel: this, models: computedConfig.models, pull: computedConfig.pull});
-        _.each(computedConfig.models, function(modelConfig) {
-          this.__updateCache(modelConfig.model);
-        }, this);
-      }, this);
+      this.__currentUpdateEvents = [];
+    },
+
+    resetUpdating: function() {
+      if (this.isUpdating()) {
+        this.stopUpdating();
+        this.startUpdating();
+      }
     },
 
     /**
@@ -3815,7 +3905,7 @@
     checkIfModelsAreStale: function() {
       var staleModels = {},
         currentHashValues = this.__generateAllHashValues();
-      _.each(this.__getAllModels(true), function(model) {
+      _.each(this.getModels(), function(model) {
         this.isModelStale(model, staleModels, currentHashValues);
       }, this);
       return _.values(staleModels);
@@ -3828,9 +3918,9 @@
      * @method listenToModelField
      */
     listenToModelField: function(model, field) {
-      var eventName = 'change:' + field;
-      this.listenTo(model, eventName, _.bind(this.__updateFormField,
-          {formModel: this, field: field}));
+      var eventName = field ? ('change:' + field) : 'change';
+      var callback = field ? _.bind(this.__updateFormField, {formModel: this, field: field}) : this.__updateFormModel;
+      this.listenTo(model, eventName, callback);
       this.__currentUpdateEvents.push({model: model, eventName: eventName});
     },
 
@@ -3841,14 +3931,54 @@
      * @param field {String} the field name that it will start listening to.
      * @method listenToComputedValuesDependency
      */
-    listenToComputedValuesDependency: function(computedConfig, model, field) {
-      var eventName = 'change:' + field;
-      this.listenTo(model, 'change:' + field, _.bind(this.__invokeComputedPull,
-          {formModel: this, models: computedConfig.models, pull: computedConfig.pull}));
+    listenToComputedValuesDependency: function(model, field, computedAlias) {
+      var eventName = field ? ('change:' + field) : 'change';
+      this.listenTo(model, eventName, _.bind(this.__invokeComputedPull,
+          {formModel: this, alias: computedAlias}));
       this.__currentUpdateEvents.push({model: model, eventName: eventName});
     },
 
     /************** Private methods **************/
+
+    __getComputedModels: function(computedAlias) {
+      var hasAllModels = !_.isUndefined(this.getMapping(computedAlias)),
+        models = {};
+      _.each(this.__getModelAliases(computedAlias), function(modelAlias) {
+        var model = this.getModel(modelAlias);
+        if (model) {
+          models[modelAlias] = model;
+        } else {
+          hasAllModels = false;
+        }
+      }, this);
+      return hasAllModels ? models : undefined;
+    },
+
+    __getModelAliases: function(computedAlias, config) {
+      var modelAliases = [];
+      config = config || this.getMapping(computedAlias);
+      _.each(config.mapping, function(mapping, key) {
+        if (key != 'pull' && key != 'push') {
+          modelAliases.push(key);
+        }
+      }, this);
+      return modelAliases;
+    },
+
+    __getComputedModelConfigs: function(computedAlias) {
+      var hasAllModels = true,
+        config = this.getMapping(computedAlias),
+        modelConfigs = [];
+      _.each(this.__getModelAliases(computedAlias), function(modelAlias) {
+        var modelConfig = this.__createModelConfig(modelAlias, config.mapping[modelAlias]);
+        if (modelConfig) {
+          modelConfigs.push(modelConfig);
+        } else {
+          hasAllModels = false;
+        }
+      }, this);
+      return hasAllModels ? modelConfigs : undefined;
+    },
 
     /**
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
@@ -3873,7 +4003,7 @@
         responsesFailed = 0,
         responses = {},
         oldValues = {},
-        models = formModel.__getAllModels(true),
+        models = formModel.getModels(),
         numberOfSaves = models.length;
       // If we're not forcing a save, then throw an error if the models are stale
       if (!options.force) {
@@ -3897,7 +4027,7 @@
           if (responsesFailed > 0) {
             // Rollback if any responses have failed
             if (options.rollback) {
-              _.each(formModel.__getAllModels(true), function(model) {
+              _.each(formModel.getModels(), function(model) {
                 model.set(oldValues[model.cid]);
                 if (responses[model.cid].success) {
                   model.save();
@@ -3928,6 +4058,33 @@
           responseCallback(arguments, model, true);
         });
       });
+    },
+
+    __pull: function(alias) {
+      var config = this.getMapping(alias);
+      if (config.computed && config.mapping.pull) {
+        this.__invokeComputedPull.call({formModel: this, alias: alias});
+      } else {
+        var model = this.getModel(alias);
+        if (model) {
+          this.__copyFields(config.mapping, this, model);
+        }
+      }
+    },
+
+    __push: function(alias) {
+      var config = this.getMapping(alias);
+      if (config.computed && config.mapping.push) {
+        var models = this.__getComputedModels(alias);
+        if (models) {
+          config.mapping.push.call(this, models);
+        }
+      } else {
+        var model = this.getModel(alias);
+        if (model) {
+          this.__copyFields(config.mapping, model, this);
+        }
+      }
     },
 
     /**
@@ -3968,7 +4125,14 @@
      * @method __updateCache
      */
     __updateCache: function(model) {
-      this.__cache[model.cid] = this.__generateHashValue(model);
+      if (!model) {
+        this.__cache = {};
+        _.each(this.getModels(), function(model) {
+          this.__updateCache(model);
+        }, this);
+      } else {
+        this.__cache[model.cid] = this.__generateHashValue(model);
+      }
     },
 
     /**
@@ -3980,6 +4144,21 @@
      */
     __hashValue: function(obj) {
       return JSON.stringify(obj);
+    },
+
+    __findAlias: function(aliasOrModel) {
+      var alias, objectModel;
+      // this.unsetModel('alias')
+      if (_.isString(aliasOrModel)) {
+        alias = aliasOrModel;
+      } else {
+        // this.unsetModel(myObjectModel)
+        objectModel = aliasOrModel;
+        alias = _.find(this.__currentObjectModels, function(model) {
+          return model == objectModel;
+        });
+      }
+      return alias;
     },
 
     /**
@@ -4000,7 +4179,7 @@
      */
     __generateAllHashValues: function() {
       var currentHashValues = {};
-      _.each(this.__getAllModels(true), function(model) {
+      _.each(this.getModels(), function(model) {
         currentHashValues[model.cid] = this.__generateHashValue(model);
       }, this);
       return currentHashValues;
@@ -4031,22 +4210,31 @@
      * @method __setupListeners
      */
     __setupListeners: function() {
-      _.each(this.__modelConfigs, function(modelConfig) {
-        if (modelConfig.fields) {
-          _.each(modelConfig.fields, function(field) {
-            this.listenToModelField(modelConfig.model, field);
+      _.each(this.__currentMappings, function(config, alias) {
+        if (config.computed) {
+          var modelConfigs = this.__getComputedModelConfigs(alias);
+          _.each(modelConfigs, function(modelConfig) {
+            var model = modelConfig.model;
+            if (modelConfig.fields) {
+              _.each(modelConfig.fields, function(field) {
+                this.listenToComputedValuesDependency(model, field, alias);
+              }, this);
+            } else {
+              // TODO setup listeners for computeds that listen to all fields
+            }
           }, this);
         } else {
-          this.listenTo(modelConfig.model, 'change', this.__updateFormModel, this);
-          this.__currentUpdateEvents.push({model: modelConfig.model, eventName: 'change'});
+          var model = this.getModel(alias);
+          if (model) {
+            if (config.mapping) {
+              _.each(config.mapping, function(field) {
+                this.listenToModelField(model, field);
+              }, this);
+            } else {
+              this.listenToModelField(model);
+            }
+          }
         }
-      }, this);
-      _.each(this.__computed, function(computedConfig) {
-        _.each(computedConfig.models, function(modelConfig) {
-          _.each(modelConfig.fields, function(field) {
-            this.listenToComputedValuesDependency(computedConfig, modelConfig.model, field);
-          }, this);
-        }, this);
       }, this);
     },
 
@@ -4061,7 +4249,9 @@
      * @method __copyFields
      */
     __copyFields: function(fields, destination, origin) {
-      if (!fields && this === origin) {
+      if (!fields && this === origin && _.size(this.getModels()) > 1) {
+        // only copy attributes that exist on object model when the form model is tracking all the properties
+        // of that object model, but is also tracking other models as well.
         fields = _.keys(destination.attributes);
       }
       if (fields) {
@@ -4080,57 +4270,8 @@
      */
     __initMappings: function(options) {
       var defaultMapping = _.result(this, 'mapping'),
-        optionsMapping = _.pick(options, ['model', 'fields', 'models', 'computed']);
-      this.__initModels(optionsMapping, defaultMapping);
-      this.__initComputeds(optionsMapping, defaultMapping);
-    },
-
-    /**
-     * @param [optionsMapping] {Object} a mapping object with override values
-     * @param [defaultMapping] {Object} the default mapping object
-     * @private
-     * @method __initModels
-     */
-    __initModels: function(optionsMapping, defaultMapping) {
-      var modelConfigs = this.__pullModelsFromMapping(optionsMapping) || this.__pullModelsFromMapping(defaultMapping);
-      _.each(modelConfigs, this.addModel, this);
-    },
-
-    /**
-     * @param [optionsMapping] {Object} a mapping object with override values
-     *   @param [optionsMapping.computed] {Array} an array of Computed Configs
-     * @param [defaultMapping] {Object} the default mapping object
-     *   @param [defaultMapping.computed] {Array} and array of Computed Configs
-     * @private
-     * @method __initComputeds
-     */
-    __initComputeds: function(optionsMapping, defaultMapping) {
-      var computeds;
-      optionsMapping = optionsMapping || {};
-      defaultMapping = defaultMapping || {};
-      computeds = optionsMapping.computed || defaultMapping.computed;
-      _.each(computeds, this.addComputed, this);
-    },
-
-    /**
-     * @param [mapping] {Object} object with attributes that contain either a model/field pair as a convenience or an array of
-     *   model configs. The model/field pair takes priority if both exist.
-     * @return {Array} an array of model configs that are either from the mapping.model or mapping.model. If no model configs are
-     *   defined in the mapping, it will return null.
-     * @private
-     * @method __pullModelsFromMapping
-     */
-    __pullModelsFromMapping: function(mapping) {
-      var modelConfigs = [];
-      if (mapping && mapping.model) {
-        modelConfigs.push({
-          model: mapping.model,
-          fields: mapping.fields
-        });
-      } else if (mapping && mapping.models) {
-        modelConfigs = mapping.models.slice();
-      }
-      return modelConfigs.length === 0 ? null : modelConfigs;
+        optionsMapping = options.mapping;
+      this.setMappings(options.mapping || defaultMapping, options.models);
     },
 
     /**
@@ -4146,7 +4287,7 @@
         modelFields = {},
         modelConfigs = [];
       _.each(this.__getAllModelConfigs(), function(modelConfig) {
-        if (modelConfig.model.cid === model.cid) {
+        if (modelConfig.model && modelConfig.model.cid === model.cid) {
           modelConfigs.push(modelConfig);
         }
       });
@@ -4168,27 +4309,14 @@
       return modelFields;
     },
 
-    /**
-     * @param [normalize=false] {Boolean} if true, there will be no duplicate models in the list
-     * @return {Array} a list of object models that this form model is using a dependencies. Includes those defined in the
-     *   computed fields
-     * @private
-     * @method __getAllModels
-     */
-    __getAllModels: function(normalize) {
-      var modelsSeen = {},
-        models = _.pluck(this.__getAllModelConfigs(), 'model');
-      if (normalize) {
-        var normalizedModels = [];
-        _.each(models, function(model) {
-          if (!modelsSeen[model.cid]) {
-            modelsSeen[model.cid] = true;
-            normalizedModels.push(model);
-          }
-        });
-        models = normalizedModels;
+    __createModelConfig: function(modelAlias, fields) {
+      var model = this.getModel(modelAlias);
+      if (model) {
+        return {
+          fields: fields,
+          model: model
+        };
       }
-      return models;
     },
 
     /**
@@ -4198,10 +4326,20 @@
      * @method __getAllModelConfigs
      */
     __getAllModelConfigs: function() {
-      var modelConfigs = this.__modelConfigs.slice();
-      _.each(this.__computed, function(computedConfig) {
-        modelConfigs = modelConfigs.concat(computedConfig.models);
-      });
+      var modelConfigs = [];
+      _.each(this.__currentMappings, function(config, alias) {
+        if (config.computed) {
+          var computedModelConfigs = this.__getComputedModelConfigs(alias);
+          if (computedModelConfigs) {
+            modelConfigs = modelConfigs.concat(computedModelConfigs);
+          }
+        } else {
+          var modelConfig = this.__createModelConfig(alias, config.mapping);
+          if (modelConfig) {
+            modelConfigs.push(modelConfig);
+          }
+        }
+      }, this);
       return modelConfigs;
     },
 
@@ -4214,29 +4352,45 @@
      * NOTE: requires the context of this function to be:
      * {
      *  formModel: <this form model>,
-     *  models: <the 'models' array of model configurations from the Computed Configuration>,
-     *  update: <the update callback from the Computed Configuration>,
+     *  alias: <the computed alias>,
      * }
      * @private
      * @method __invokeComputedPull
      */
     __invokeComputedPull: function(model) {
-      var args = [];
       if (model) {
         this.formModel.__updateCache(model);
       }
-      (function(formModel, pullCallback, modelConfigs) {
-        _.each(modelConfigs, function(modelConfig) {
-          if (modelConfig.fields) {
-            _.each(modelConfig.fields, function(field) {
-              args.push(formModel.__cloneVal(modelConfig.model.get(field)));
-            });
+      (function(formModel, alias) {
+        var hasAllModels = true,
+          config = formModel.getMapping(alias),
+          modelAliases = formModel.__getModelAliases(alias),
+          models = {};
+        if (!config.mapping.pull) {
+          console.log('Not pulling the computed: ' + alias + ', because no pull method was defined for this computed.');
+          return;
+        }
+        _.each(modelAliases, function(modelAlias) {
+          var fields = config.mapping[modelAlias],
+            model = formModel.getModel(modelAlias),
+            modelCopy = {};
+          if (!model) {
+            hasAllModels = false;
           } else {
-            args.push(formModel.__cloneVal(modelConfig.model.attributes));
+            if (fields) {
+              _.each(fields, function(field) {
+                modelCopy[field] = formModel.__cloneVal(model.get(field));
+              });
+            } else {
+              modelCopy = formModel.__cloneVal(modelConfig.model.attributes);
+            }
+            models[modelAlias] = modelCopy;
           }
         });
-        pullCallback.apply(formModel, args);
-      })(this.formModel, this.pull, this.models);
+        if (hasAllModels) {
+          config.mapping.pull.call(formModel, models);
+        }
+      })(this.formModel, this.alias);
     }
   });
 
@@ -5017,9 +5171,7 @@
       args = args || {};
 
       /* Listen to model validation callbacks */
-      this.model = this.model || (new FormModel());
-      this.listenTo(this.model, 'validated:valid', this.valid);
-      this.listenTo(this.model, 'validated:invalid', this.invalid);
+      this.model = args.model || this.model || (new FormModel());
 
       /* Override template */
       this.template = args.template || this.template;
@@ -5033,6 +5185,11 @@
       this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
 
       View.apply(this, arguments);
+
+      if (this.model) {
+        this.listenTo(this.model, 'validated:valid', this.valid);
+        this.listenTo(this.model, 'validated:invalid', this.invalid);
+      }
     },
 
     /**
