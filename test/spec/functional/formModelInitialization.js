@@ -86,11 +86,11 @@ describe('A Form Model during initialization', function() {
         }
       });
     myProfileFormModel = new MyProfileFormModel();
-    expect(_.size(myProfileFormModel.getModels())).toBe(0);
+    expect(_.size(myProfileFormModel.getTrackedModels())).toBe(0);
     expect(_.size(myProfileFormModel.getMappings())).toBe(4);
-    myProfileFormModel.setModel('testModel', testModel);
-    myProfileFormModel.setModel('testModel2', testModel2);
-    expect(_.size(myProfileFormModel.getModels())).toBe(2);
+    myProfileFormModel.setTrackedModel('testModel', testModel);
+    myProfileFormModel.setTrackedModel('testModel2', testModel2);
+    expect(_.size(myProfileFormModel.getTrackedModels())).toBe(2);
     expect(_.size(myProfileFormModel.getMappings())).toBe(4);
 
     formModel2 = new MyProfileFormModel({}, {
@@ -98,10 +98,10 @@ describe('A Form Model during initialization', function() {
         testModel: 'foo'
       }
     });
-    expect(_.size(formModel2.getModels())).toBe(0);
+    expect(_.size(formModel2.getTrackedModels())).toBe(0);
     expect(_.size(formModel2.getMappings())).toBe(1);
-    formModel2.setModel('testModel', testModel);
-    expect(_.size(formModel2.getModels())).toBe(1);
+    formModel2.setTrackedModel('testModel', testModel);
+    expect(_.size(formModel2.getTrackedModels())).toBe(1);
     expect(_.size(formModel2.getMappings())).toBe(1);
 
     formModel2 = new MyProfileFormModel({}, {
@@ -114,10 +114,10 @@ describe('A Form Model during initialization', function() {
         }
       })
     });
-    expect(_.size(formModel2.getModels())).toBe(0);
+    expect(_.size(formModel2.getTrackedModels())).toBe(0);
     expect(_.size(formModel2.getMappings())).toBe(5);
-    formModel2.setModel('testModel', testModel);
-    formModel2.setModel('testModel2', testModel2);
+    formModel2.setTrackedModel('testModel', testModel);
+    formModel2.setTrackedModel('testModel2', testModel2);
     expect(formModel2.get('raz')).not.toBeDefined();
     testModel.set('raz', 4);
     testModel.set('foo', 123);
