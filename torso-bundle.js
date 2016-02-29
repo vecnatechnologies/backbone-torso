@@ -4084,12 +4084,9 @@
       } else {
         config = computedAliasOrConfig;
       }
-      _.each(config.mapping, function(mapping, key) {
-        if (key != 'pull' && key != 'push') {
-          modelAliases.push(key);
-        }
-      }, this);
-      return modelAliases;
+      return _.filter(_.keys(config.mapping), function(key) {
+        return key != 'pull' && key != 'push';
+      });
     },
 
     /**
@@ -4202,11 +4199,12 @@
      * @private
      */
     __pull: function(alias) {
-      var config = this.getMapping(alias);
+      var model,
+        config = this.getMapping(alias);
       if (config.computed && config.mapping.pull) {
         this.__invokeComputedPull.call({formModel: this, alias: alias});
       } else {
-        var model = this.getTrackedModel(alias);
+        model = this.getTrackedModel(alias);
         if (model) {
           this.__copyFields(config.mapping, this, model);
         }
@@ -4221,14 +4219,15 @@
      * @private
      */
     __push: function(alias) {
-      var config = this.getMapping(alias);
+      var model,
+        config = this.getMapping(alias);
       if (config.computed && config.mapping.push) {
         var models = this.__getComputedModels(alias);
         if (models) {
           config.mapping.push.call(this, models);
         }
       } else {
-        var model = this.getTrackedModel(alias);
+        model = this.getTrackedModel(alias);
         if (model) {
           this.__copyFields(config.mapping, model, this);
         }
@@ -4554,7 +4553,9 @@
           modelAliases = formModel.__getModelAliases(alias),
           models = {};
         if (!config.mapping.pull) {
-          console.log('Not pulling the computed: ' + alias + ', because no pull method was defined for this computed.');
+          if (console && _.isFunction(console.log)) {
+            console.log('Not pulling the computed: ' + alias + ', because no pull method was defined for this computed.');
+          }
           return;
         }
         _.each(modelAliases, function(modelAlias) {
