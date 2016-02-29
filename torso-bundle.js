@@ -3557,8 +3557,8 @@
      *   computedName: {
      *     modelName: 'taz raz',  // mappings for models that will be used for this computed mapping.
      *     ...                    // can have many model mappings for a computed
-     *     ,    // a callback that will be invoked when pulling data from the Object model
-     *     custom push method     // a callback that will be invoked when pushing data to the Object model
+     *     pull: function(models) {}, // a callback that will be invoked when pulling data from the Object model. Passes in a map of model alias/name to shallow copies of fields being tracked on that model.
+     *     push: function(models) {}  // a callback that will be invoked when pushing data to the Object model. Passes in a map of model alias/name to object model being tracked under that alias.
      *   }
      * },
      * models: {
@@ -3586,8 +3586,8 @@
       this.__currentObjectModels = {};
 
       // override + extend the validation and labels hashes
-      this.validation = _.extend({}, this.validation || {}, options.validation || {});
-      this.labels = _.extend({}, this.labels || {}, options.labels || {});
+      this.validation = _.extend({}, this.validation, options.validation);
+      this.labels = _.extend({}, this.labels, options.labels);
 
       NestedModel.apply(this, arguments);
 
@@ -3771,11 +3771,12 @@
       this.resetUpdating();
       if (copy) {
         _.each(this.getMappings(), function(config, mappingAlias) {
+          var modelAliases;
           if (alias === mappingAlias) {
             this.__pullFromAlias(mappingAlias);
           }
           if (config.computed) {
-            var modelAliases = this.__getModelAliases(mappingAlias);
+            modelAliases = this.__getModelAliases(mappingAlias);
             if (_.contains(modelAlias, alias)) {
               this.__pullFromAlias(mappingAlias);
             }
@@ -3803,9 +3804,10 @@
      *   is given, it will unbind whatever alias is currently bound to it.
      */
     unsetTrackedModel: function(aliasOrModel) {
-      var alias = this.__findAlias(aliasOrModel);
+      var model,
+        alias = this.__findAlias(aliasOrModel);
       if (alias) {
-        var model = this.__currentObjectModels[alias];
+        model = this.__currentObjectModels[alias];
         delete this.__currentObjectModels[alias];
         this.__updateCache(model);
       }
@@ -3884,7 +3886,7 @@
         return NestedModel.prototype.save.apply(formModel, arguments).done(function() {
           formModel.push();
         });
-      } else if (this.isTrackingObjectModel()) {
+      } else if (this.isTrackingAnyObjectModel()) {
         this.__saveToModels(deferred, options);
         return deferred.promise();
       } else {
@@ -3905,10 +3907,10 @@
     },
 
     /**
-     * @method isTrackingObjectModel
+     * @method isTrackingAnyObjectModel
      * @return true if this form model is backed by an Object model. That means that at least one object model was bound to an mapping alias.
      */
-    isTrackingObjectModel: function() {
+    isTrackingAnyObjectModel: function() {
       return _.size(this.__currentObjectModels) > 0;
     },
 
@@ -3926,7 +3928,7 @@
      * @method startUpdating
      */
     startUpdating: function(pullFirst) {
-      if (this.isTrackingObjectModel() && !this.isUpdating()) {
+      if (this.isTrackingAnyObjectModel() && !this.isUpdating()) {
         if (pullFirst) {
           this.pull();
         }
@@ -4005,8 +4007,17 @@
      * @private
      */
     __listenToModelField: function(model, field) {
-      var eventName = field ? ('change:' + field) : 'change';
-      var callback = field ? _.bind(this.__updateFormField, {formModel: this, field: field}) : this.__updateFormModel;
+      var callback, eventName;
+      if (field) {
+        eventName = 'change:' + field;
+        callback = _.bind(this.__updateFormField, {
+          formModel: this,
+          field: field
+        });
+      } else {
+        eventName = 'change';
+        callback = this.__updateFormModel;
+      }
       this.listenTo(model, eventName, callback);
       this.__currentUpdateEvents.push({model: model, eventName: eventName});
     },
@@ -4020,9 +4031,17 @@
      * @private
      */
     __listenToComputedValuesDependency: function(model, field, computedAlias) {
-      var eventName = field ? ('change:' + field) : 'change';
-      this.listenTo(model, eventName, _.bind(this.__invokeComputedPull,
-          {formModel: this, alias: computedAlias}));
+      var callback, eventName;
+      if (field) {
+        eventName = 'change:' + field;
+      } else {
+        eventName = 'change';
+      }
+      callback = _.bind(this.__invokeComputedPull, {
+        formModel: this,
+        alias: computedAlias
+      });
+      this.listenTo(model, eventName, callback);
       this.__currentUpdateEvents.push({model: model, eventName: eventName});
     },
 
@@ -4346,10 +4365,11 @@
      * @method __setupListeners
      */
     __setupListeners: function() {
-      var formModel = this;
+      var model, modelConfigs,
+        formModel = this;
       _.each(formModel.getMappings(), function(config, alias) {
         if (config.computed) {
-          var modelConfigs = formModel.__getComputedModelConfigs(alias);
+          modelConfigs = formModel.__getComputedModelConfigs(alias);
           _.each(modelConfigs, function(modelConfig) {
             var model = modelConfig.model;
             if (modelConfig.fields) {
@@ -4357,11 +4377,11 @@
                 formModel.__listenToComputedValuesDependency(model, field, alias);
               });
             } else {
-              formModel.__listenToComputedValuesDependency(model, undefined, alias);
+              formModel.__listenToComputedValuesDependency(model, '', alias);
             }
           });
         } else {
-          var model = formModel.getTrackedModel(alias);
+          model = formModel.getTrackedModel(alias);
           if (model) {
             if (config.mapping) {
               _.each(config.mapping, function(field) {
