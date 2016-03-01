@@ -18,7 +18,7 @@ describe('A View', function() {
   describe('that is attached', function() {
 
     beforeEach(function() {
-      this.clickView.attach(this.$app);
+      this.clickView.attachTo(this.$app);
     });
 
     afterEach(function() {
@@ -51,7 +51,7 @@ describe('A View', function() {
 
   describe('that is detached', function() {
     beforeEach(function() {
-      this.clickView.attach(this.$app);
+      this.clickView.attachTo(this.$app);
       this.clickView.detach();
     });
 
@@ -123,7 +123,7 @@ describe('A view with two children', function() {
 
   describe('when attached', function() {
     beforeEach(function() {
-      this.parentView.attach(this.$app);
+      this.parentView.attachTo(this.$app);
     });
 
     it('will render both children', function() {
@@ -220,7 +220,7 @@ describe('A view with two children', function() {
 
   describe('when detatched', function() {
     beforeEach(function() {
-      this.parentView.attach(this.$app);
+      this.parentView.attachTo(this.$app);
       this.parentView.detach();
     });
 
