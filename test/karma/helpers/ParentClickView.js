@@ -1,18 +1,13 @@
 var _ = require('underscore');
 var TorsoView = require('./../../../modules/View');
 var ChildClickView = require('./ChildClickView');
+var spyOnBackbone = require('./spyOnBackbone');
 
-module.exports = TorsoView.extend({
+var ParentClickView = TorsoView.extend({
   events: {
     'click div.parent' : 'myClick'
   },
   initialize: function() {
-    this.spyHook();
-
-    spyOn(this, 'myClick');
-    spyOn(this, 'afterMyEvent');
-    spyOn(this, 'afterMyDeactivatableEvent');
-
     this.childView1 = new ChildClickView();
     this.childView2 = new ChildClickView();
     this.on('myEvent', this.afterMyEvent);
@@ -30,6 +25,10 @@ module.exports = TorsoView.extend({
   },
   myClick: _.noop,
   afterMyEvent: _.noop,
-  afterMyDeactivatableEvent: _.noop,
-  spyHook: _.noop
+  afterMyDeactivatableEvent: _.noop
 });
+
+spyOnBackbone(ParentClickView, 'myClick');
+spyOnBackbone(ParentClickView, 'afterMyEvent');
+spyOnBackbone(ParentClickView, 'afterMyDeactivatableEvent');
+module.exports = ParentClickView;

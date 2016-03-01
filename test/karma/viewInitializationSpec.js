@@ -1,7 +1,7 @@
 var TorsoView = require('./../../modules/View');
 var ClickView = require('./helpers/ClickView');
-var ChildClickView = require('./helpers/ChildClickView');
 var ParentClickView = require('./helpers/ParentClickView');
+var ChildClickView = require('./helpers/ChildClickView');
 
 describe('A Torso View', function() {
   it('can be initialized', function() {
@@ -11,21 +11,30 @@ describe('A Torso View', function() {
 });
 
 describe('ClickView', function() {
-  it('can be initialized', function() {
+  it('is initialized with spies', function() {
     var clickView = new ClickView();
     expect(clickView).toBeDefined();
+    clickView.myClick();
+    expect(clickView.myClick).toHaveBeenCalled();
+    clickView.afterMyEvent();
+    expect(clickView.afterMyEvent).toHaveBeenCalled();
+  });
+
+  it('can be initialized multiple times with independent spies', function() {
+    var clickView1 = new ClickView();
+    var clickView2 = new ClickView();
+    clickView1.myClick();
+    expect(clickView1.myClick).toHaveBeenCalled();
+    expect(clickView2.myClick).not.toHaveBeenCalled();
   });
 
   describe('when initialized', function() {
+
     it('will call _activate', function() {
-      var SpiedClickView = ClickView.extend({spyHook: function() {
-        spyOn(this, '_activate');
-      }});
-      var spiedClickView = new SpiedClickView();
-      expect(spiedClickView._activate).toHaveBeenCalled();
+      var clickView = new ClickView();
+      expect(clickView._activate).toHaveBeenCalled();
     });
   });
-
 });
 
 describe('ChildClickView', function() {

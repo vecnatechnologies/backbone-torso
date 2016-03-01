@@ -1,7 +1,8 @@
 var _ = require('underscore');
 var TorsoView = require('./../../../modules/View');
+var spyOnBackbone = require('./spyOnBackbone');
 
-module.exports = TorsoView.extend({
+var ClickView = TorsoView.extend({
   className: 'click',
   events: {
     'click div' : 'myClick'
@@ -11,10 +12,6 @@ module.exports = TorsoView.extend({
   },
   initialize: function() {
     this.spyHook();
-    spyOn(this, 'myClick');
-    spyOn(this, 'afterMyEvent');
-    spyOn(this, 'afterMyDeactivatableEvent');
-
     this.on('myEvent', this.afterMyEvent);
   },
   _activate: function() {
@@ -29,3 +26,9 @@ module.exports = TorsoView.extend({
   // hook for registering additional spies
   spyHook: _.noop
 });
+
+spyOnBackbone(ClickView, 'myClick');
+spyOnBackbone(ClickView, 'afterMyEvent');
+spyOnBackbone(ClickView, 'afterMyDeactivatableEvent');
+spyOnBackbone(ClickView, '_activate');
+module.exports = ClickView;

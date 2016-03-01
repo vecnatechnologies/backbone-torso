@@ -12,8 +12,7 @@ describe('A View', function() {
   });
 
   it('will be initialized with an $el', function() {
-    var clickView = new ClickView();
-    expect(clickView.$el).toBeDefined();
+    expect(this.clickView.$el).toBeDefined();
   });
 
   describe('that is attached', function() {
