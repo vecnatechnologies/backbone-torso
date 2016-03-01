@@ -1,3 +1,5 @@
+// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
+
 var jsdom = require('jsdom'),
     Promise = require('promise'),
     handlebars = require('handlebars'),
