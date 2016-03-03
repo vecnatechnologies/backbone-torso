@@ -7,11 +7,8 @@ var ClickView = TorsoView.extend({
   events: {
     'click div' : 'myClick'
   },
-  render: function() {
-    this.$el.html('<div>test</div>');
-  },
+  template: '<div class="click">test</div>',
   initialize: function() {
-    this.spyHook();
     this.on('myEvent', this.afterMyEvent);
   },
   _activate: function() {
@@ -23,8 +20,6 @@ var ClickView = TorsoView.extend({
   myClick: _.noop,
   afterMyEvent: _.noop,
   afterMyDeactivatableEvent: _.noop,
-  // hook for registering additional spies
-  spyHook: _.noop
 });
 
 spyOnBackbone(ClickView, 'myClick');

@@ -7,15 +7,15 @@ var ParentClickView = TorsoView.extend({
   events: {
     'click div.parent' : 'myClick'
   },
+  template: "<div class='parent'>test</div><div inject='one'></div><div inject='two'></div>",
   initialize: function() {
     this.childView1 = new ChildClickView();
     this.childView2 = new ChildClickView();
     this.on('myEvent', this.afterMyEvent);
   },
-  render: function() {
-    this.$el.html('<div class="parent">test</div><div inject="one"></div><div inject="two"></div>');
-    this.injectView('one', this.childView1);
-    this.injectView('two', this.childView2);
+  attachTrackedViews: function() {
+    this.attachView('one', this.childView1);
+    this.attachView('two', this.childView2);
   },
   _activate: function() {
     this.on('myDeactivatableEvent', this.afterMyDeactivatableEvent);
