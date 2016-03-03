@@ -1,3 +1,5 @@
+// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
+
 describe('A Form Model during the conversion to and from a View/Template', function() {
 
   it('will have a single form attribute per DOM form field');
