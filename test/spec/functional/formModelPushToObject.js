@@ -22,7 +22,14 @@ describe('A Form Model when it pushes new data to Object Models', function() {
   //********** Push ************//
 
   it('can push simple, one-depth attributes to an Object Model', function() {
-    var testFormModel = new FormModel({}, {model: testModel});
+    var testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     testFormModel.set('foo', 555);
     expect(testModel.get('foo')).toBe(123);
     testFormModel.push();
@@ -36,7 +43,14 @@ describe('A Form Model when it pushes new data to Object Models', function() {
   });
 
   it('can push to nested attributes of an Object Model', function() {
-    var testFormModel = new FormModel({}, {model: testModel});
+    var testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     testFormModel.set('obj.c.d', false);
     expect(testModel.get('obj.c.d')).toBe(true);
     testFormModel.push();
@@ -45,7 +59,16 @@ describe('A Form Model when it pushes new data to Object Models', function() {
   });
 
   it('can push simple, one-depth attributes to multiple Object Models', function() {
-    var combinedFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['color']}]});
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        testModel: 'foo',
+        testModel2: 'color'
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
+    });
     expect(combinedFormModel.get('foo')).toBe(123);
     expect(testModel.get('foo')).toBe(123);
     combinedFormModel.set('foo', 555);
@@ -72,8 +95,16 @@ describe('A Form Model when it pushes new data to Object Models', function() {
   });
 
   it('can push to nested attributes of multiple Object Models', function() {
-    var combinedFormModel = new FormModel({}, {models: [{model: testModel, fields: ['obj.a', 'obj.b']},
-                                                        {model: testModel2, fields: ['ingredients[0]', 'ingredients[1]']}]});
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        testModel: 'obj.a obj.b',
+        testModel2: 'ingredients[0] ingredients[1]'
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
+    });
     expect(combinedFormModel.get('obj.a')).toBe(1);
     expect(testModel.get('obj.a')).toBe(1);
     combinedFormModel.set('obj.a', 100);
@@ -99,17 +130,22 @@ describe('A Form Model when it pushes new data to Object Models', function() {
 
   it('can separate a single form attribute and push many parts to an Object Model', function() {
     var combinedFormModel = new FormModel({}, {
-      computed: [{
-        models: [{model: testModel, fields: ['foo', 'bar']}],
-        pull: function(foo, bar) {
-          this.set('fooBar', foo + ' ' + bar);
-        },
-        push: function(models) {
-          var fooBar = this.get('fooBar').split(/[ ]+/);
-          models[0].set('foo', parseInt(fooBar[0], 10));
-          models[0].set('bar', fooBar[1]);
+      mapping: {
+        fooBar: {
+          testModel: 'foo bar',
+          pull: function(models) {
+            this.set('fooBar', models.testModel.foo + ' ' + models.testModel.bar);
+          },
+          push: function(models) {
+            var fooBar = this.get('fooBar').split(/[ ]+/);
+            models.testModel.set('foo', parseInt(fooBar[0], 10));
+            models.testModel.set('bar', fooBar[1]);
+          }
         }
-      }]
+      },
+      models: {
+        testModel: testModel
+      }
     });
     expect(testModel.get('foo')).toBe(123);
     expect(testModel.get('bar')).toBe('test');
@@ -124,17 +160,24 @@ describe('A Form Model when it pushes new data to Object Models', function() {
 
   it('can separate a single form attribute and push many parts to multiple Object Models', function() {
     var combinedFormModel = new FormModel({}, {
-      computed: [{
-        models: [{model: testModel, fields: ['bar']}, {model: testModel2, fields: ['color']}],
-        pull: function(bar, color) {
-          this.set('colorBar', color + ' ' + bar);
-        },
-        push: function(models) {
-          var fooBar = this.get('colorBar').split(/[ ]+/);
-          models[0].set('bar', fooBar[1]);
-          models[1].set('color', fooBar[0]);
+      mapping: {
+        fooBar: {
+          testModel: 'bar',
+          testModel2: 'color',
+          pull: function(models) {
+            this.set('colorBar', models.testModel2.color + ' ' + models.testModel.bar);
+          },
+          push: function(models) {
+            var fooBar = this.get('colorBar').split(/[ ]+/);
+            models.testModel.set('bar', fooBar[1]);
+            models.testModel2.set('color', fooBar[0]);
+          }
         }
-      }]
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
     });
     expect(testModel2.get('color')).toBe('red');
     expect(testModel.get('bar')).toBe('test');
@@ -151,17 +194,22 @@ describe('A Form Model when it pushes new data to Object Models', function() {
     var combinedFormModel;
     testModel.set('bar', 'test value')
     combinedFormModel = new FormModel({}, {
-      computed: [{
-        models: [{model: testModel, fields: ['bar']}],
-        pull: function(bar) {
-          var bazTaz = bar.split(/[ ]+/);
-          this.set('baz', bazTaz[0]);
-          this.set('taz', bazTaz[1]);
-        },
-        push: function(models) {
-          models[0].set('bar', this.get('baz') + ' ' + this.get('taz'));
+      mapping: {
+        fooBar: {
+          testModel: 'bar',
+          pull: function(models) {
+            var bazTaz = models.testModel.bar.split(/[ ]+/);
+            this.set('baz', bazTaz[0]);
+            this.set('taz', bazTaz[1]);
+          },
+          push: function(models) {
+            models.testModel.set('bar', this.get('baz') + ' ' + this.get('taz'));
+          }
         }
-      }]
+      },
+      models: {
+        testModel: testModel
+      }
     });
     expect(combinedFormModel.get('bar')).not.toBeDefined();
     expect(combinedFormModel.get('baz')).toBe('test');
@@ -177,28 +225,34 @@ describe('A Form Model when it pushes new data to Object Models', function() {
     testModel.set('bar', 'test value')
     testModel2.set('color', 'red blue')
     combinedFormModel = new FormModel({}, {
-      computed: [{
-        models: [{model: testModel, fields: ['bar']}],
-        pull: function(bar) {
-          var bazTaz = bar.split(/[ ]+/);
-          this.set('baz', bazTaz[0]);
-          this.set('taz', bazTaz[1]);
+      mapping: {
+        fooBar: {
+          testModel: 'bar',
+          pull: function(models) {
+            var bazTaz = models.testModel.bar.split(/[ ]+/);
+            this.set('baz', bazTaz[0]);
+            this.set('taz', bazTaz[1]);
+          },
+          push: function(models) {
+            models.testModel.set('bar', this.get('baz') + ' ' + this.get('taz'));
+          }
         },
-        push: function(models) {
-          models[0].set('bar', this.get('baz') + ' ' + this.get('taz'));
+        color: {
+          testModel2: 'color',
+          pull: function(models) {
+            var colors = models.testModel2.color.split(/[ ]+/);
+            this.set('primary', colors[0]);
+            this.set('secondary', colors[1]);
+          },
+          push: function(models) {
+            models.testModel2.set('color', this.get('primary') + ' ' + this.get('secondary'));
+          }
         }
       },
-      {
-        models: [{model: testModel2, fields: ['color']}],
-        pull: function(color) {
-          var colors = color.split(/[ ]+/);
-          this.set('primary', colors[0]);
-          this.set('secondary', colors[1]);
-        },
-        push: function(models) {
-          models[0].set('color', this.get('primary') + ' ' + this.get('secondary'));
-        }
-      }]
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
     });
     expect(combinedFormModel.get('bar')).not.toBeDefined();
     expect(combinedFormModel.get('baz')).toBe('test');
@@ -218,7 +272,14 @@ describe('A Form Model when it pushes new data to Object Models', function() {
   });
 
   it('can, when triggered to do so, update when new data is fetched on an object model', function(done) {
-    var testFormModel = new FormModel({}, {model: testModel});
+    var testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.get('bar')).toBe('test');
     testFormModel.startUpdating();
@@ -233,7 +294,16 @@ describe('A Form Model when it pushes new data to Object Models', function() {
   })
 
   it('can push data to the correct model when tracking multiple objects', function() {
-    var testFormModel = new FormModel({}, {models: [{model: testModel}, {model: testModel2, fields: ['pieces']}]});
+    var testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true,
+        testModel2: 'pieces'
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
+    });
     testFormModel.set('foo', 555);
     testFormModel.push();
     expect(testModel2.get('foo')).not.toBeDefined();

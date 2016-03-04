@@ -56,6 +56,7 @@
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
+      this.template = options.template || this.template;
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();

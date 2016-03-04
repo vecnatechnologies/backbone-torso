@@ -22,7 +22,14 @@ describe('A Form Model when it pulls from object models', function() {
   //********** Pull ************//
 
   it('can pull simple, one-depth attributes from an Object Model', function() {
-    var testFormModel = new FormModel({}, {model: testModel});
+    var testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true,
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.get('bar')).toBe('test');
   });
@@ -31,27 +38,53 @@ describe('A Form Model when it pulls from object models', function() {
     var computedFormModel;
     expect(testModel.get('foo')).toBe(123);
     computedFormModel = new FormModel({}, {
-      computed: [{
-        models: [{model: testModel, fields: ['foo']}],
-        pull: function(foo) {
-          this.set('myFoo', -foo);
+      mapping: {
+        myFoo: {
+          testModel: 'foo',
+          pull: function(models) {
+            this.set('myFoo', -models.testModel.foo);
+          }
         }
-      }]
+      },
+      models: {
+        testModel: testModel
+      }
     });
     expect(computedFormModel.get('myFoo')).toBe(-123);
   });
 
   it('can pull only select simple, one-depth attributes from an Object Model', function() {
-    var fewFieldFormModel = new FormModel({}, {model: testModel, fields: ['foo']});
+    var fewFieldFormModel = new FormModel({}, {
+      mapping: {
+        testModel: 'foo',
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(fewFieldFormModel.get('foo')).toBe(123);
     expect(fewFieldFormModel.get('bar')).not.toBe('test');
   });
 
   it('can pull nested attributes from an Object Model', function() {
     var testFormModel2,
-      testFormModel = new FormModel({}, {model: testModel});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: true,
+        },
+        models: {
+          testModel: testModel
+        }
+      });
     expect(testFormModel.get('obj').c.d).toBe(true);
-    testFormModel2 = new FormModel({}, {model: testModel2});
+    testFormModel2 = new FormModel({}, {
+      mapping: {
+        testModel2: true,
+      },
+      models: {
+        testModel2: testModel2
+      }
+    });
     expect(testFormModel2.get('ingredients[0].name')).toBe('flour');
     expect(testFormModel2.get('ingredients[1].name')).toBe('dye');
     expect(testFormModel2.get('ingredients[2].name')).toBe('sugar');
@@ -59,24 +92,54 @@ describe('A Form Model when it pulls from object models', function() {
 
   it('can pull only select nested attributes from an Object Model', function() {
     var doubleNestedFormModel, testFormModel2,
-      fewFieldFormModel = new FormModel({}, {model: testModel, fields: ['obj.a', 'obj.b']});
+      fewFieldFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'obj.a obj.b'
+        },
+        models: {
+          testModel: testModel
+        }
+      });
     expect(fewFieldFormModel.get('obj').a).toBe(1);
     expect(fewFieldFormModel.get('obj').b).toBe('b value');
     expect(fewFieldFormModel.get('obj').c).not.toBeDefined();
 
-    doubleNestedFormModel = new FormModel({}, {model: testModel, fields: ['obj.c.d']});
+    doubleNestedFormModel = new FormModel({}, {
+      mapping: {
+        testModel: 'obj.c.d'
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(doubleNestedFormModel.get('obj').a).not.toBeDefined();
     expect(doubleNestedFormModel.get('obj').b).not.toBeDefined();
     expect(doubleNestedFormModel.get('obj').c.d).toBe(true);
 
-    testFormModel2 = new FormModel({}, {model: testModel2, fields: ['ingredients[0]', 'ingredients[1]']});
+    testFormModel2 = new FormModel({}, {
+      mapping: {
+        testModel2: 'ingredients[0] ingredients[1]'
+      },
+      models: {
+        testModel2: testModel2
+      }
+    });
     expect(testFormModel2.get('ingredients[0].name')).toBe('flour');
     expect(testFormModel2.get('ingredients[1].name')).toBe('dye');
     expect(testFormModel2.get('ingredients[2].name')).not.toBeDefined();
   });
 
   it('can pull simple, one-depth attributes from multiple Object Models', function() {
-    var combinedFormModel = new FormModel({}, {models: [{model: testModel}, {model: testModel2}]});
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true,
+        testModel2: true
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
+    });
     expect(combinedFormModel.get('foo')).toBe(123);
     expect(combinedFormModel.get('bar')).toBe('test');
     expect(combinedFormModel.get('pieces')).toBe(5);
@@ -84,7 +147,16 @@ describe('A Form Model when it pulls from object models', function() {
   });
 
   it('can pull only select simple, one-depth attributes from multiple Object Models', function() {
-    var combinedFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['color']}]});
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        testModel: 'foo',
+        testModel2: 'color'
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
+    });
     expect(combinedFormModel.get('foo')).toBe(123);
     expect(combinedFormModel.get('bar')).not.toBeDefined();
     expect(combinedFormModel.get('pieces')).not.toBeDefined();
@@ -92,8 +164,16 @@ describe('A Form Model when it pulls from object models', function() {
   });
 
   it('can pull nested attributes from multiple Object Models', function() {
-    var combinedFormModel = new FormModel({}, {models: [{model: testModel, fields: ['obj.a', 'obj.b']},
-                                                         {model: testModel2, fields: ['ingredients[0]', 'ingredients[1]']}]});
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        testModel: 'obj.a obj.b',
+        testModel2: 'ingredients[0] ingredients[1]'
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
+    });
     expect(combinedFormModel.get('obj').a).toBe(1);
     expect(combinedFormModel.get('obj').b).toBe('b value');
     expect(combinedFormModel.get('obj').c).not.toBeDefined();
@@ -103,7 +183,14 @@ describe('A Form Model when it pulls from object models', function() {
   });
 
   it('can pull an object from the attributes of an Object Model', function() {
-    var combinedFormModel = new FormModel({}, {models: [{model: testModel, fields: ['obj']}]});
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        testModel: 'obj'
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(combinedFormModel.get('obj').a).toBe(1);
     expect(combinedFormModel.get('obj').b).toBe('b value');
     expect(combinedFormModel.get('obj').c.d).toBe(true)
@@ -111,12 +198,17 @@ describe('A Form Model when it pulls from object models', function() {
 
   it('can combine attributes from an Object Model into a single form attribute', function() {
     var combinedFormModel = new FormModel({}, {
-      computed: [{
-        models: [{model: testModel, fields: ['foo', 'bar']}],
-        pull: function(foo, bar) {
-          this.set('fooBar', foo + ' ' + bar);
+      mapping: {
+        fooBar: {
+          testModel: 'foo bar',
+          pull: function(models) {
+            this.set('fooBar', models.testModel.foo + ' ' + models.testModel.bar);
+          }
         }
-      }]
+      },
+      models: {
+        testModel: testModel
+      }
     });
     expect(combinedFormModel.get('foo')).not.toBeDefined();
     expect(combinedFormModel.get('bar')).not.toBeDefined();
@@ -125,13 +217,21 @@ describe('A Form Model when it pulls from object models', function() {
 
   it('can combine attributes from multiple Object Models into a single form attribute', function() {
     var combinedFormModel = new FormModel({}, {
-      models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}],
-      computed: [{
-        models: [{model: testModel, fields: ['bar']}, {model: testModel2, fields: ['color']}],
-        pull: function(bar, color) {
-          this.set('colorBar', color + ' ' + bar);
+      mapping: {
+        testModel: 'foo',
+        testModel2: 'pieces',
+        colorBar: {
+          testModel: 'bar',
+          testModel2: 'color',
+          pull: function(models) {
+            this.set('colorBar', models.testModel2.color + ' ' + models.testModel.bar);
+          }
         }
-      }]
+      },
+      models: {
+        testModel: testModel,
+        testModel2: testModel2
+      }
     });
     expect(combinedFormModel.get('foo')).toBe(123);
     expect(combinedFormModel.get('bar')).not.toBeDefined();
@@ -142,7 +242,14 @@ describe('A Form Model when it pulls from object models', function() {
 
   describe('during a manual, one time pull from it\'s object models', function() {
     it('can pull non-object fields from a single model', function() {
-      var testFormModel = new FormModel({}, {model: testModel});
+      var testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: true
+        },
+        models: {
+          testModel: testModel
+        }
+      });
       expect(testFormModel.get('foo')).toBe(123);
       expect(testFormModel.get('bar')).toBe('test');
       testModel.set('foo', 555);
@@ -156,15 +263,28 @@ describe('A Form Model when it pulls from object models', function() {
 
     it('can pull object fields from a single model', function() {
       var testFormModel2,
-        testFormModel = new FormModel({}, {model: testModel});
+        testFormModel = new FormModel({}, {
+          mapping: {
+            testModel: true
+          },
+          models: {
+            testModel: testModel
+          }
+        });
       expect(testFormModel.get('obj').c.d).toBe(true);
       testModel.set('obj.c.d', false);
       expect(testFormModel.get('obj').c.d).toBe(true);
       testFormModel.pull();
       expect(testFormModel.get('obj').c.d).toBe(false);
 
-
-      testFormModel2 = new FormModel({}, {model: testModel2});
+      testFormModel2 = new FormModel({}, {
+        mapping: {
+          testModel2: true
+        },
+        models: {
+          testModel2: testModel2
+        }
+      });
       expect(testFormModel2.get('ingredients[1].name')).toBe('dye');
       testModel2.set('ingredients[1].name', 'food coloring');
       expect(testFormModel2.get('ingredients[1].name')).toBe('dye');
@@ -173,7 +293,14 @@ describe('A Form Model when it pulls from object models', function() {
     });
 
     it('can pull when a form model is only listening to a subset of non-object attributes', function(){
-      var fewFieldFormModel = new FormModel({}, {model: testModel, fields: ['foo']});
+      var fewFieldFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+        },
+        models: {
+          testModel: testModel
+        }
+      });
       expect(fewFieldFormModel.get('foo')).toBe(123);
       expect(fewFieldFormModel.get('bar')).not.toBeDefined();
       testModel.set('foo', 555);
@@ -184,7 +311,16 @@ describe('A Form Model when it pulls from object models', function() {
     });
 
     it('can pull non-object attributes from multiple object models', function() {
-      var combinedFormModel = new FormModel({}, {models: [{model: testModel}, {model: testModel2}]});
+      var combinedFormModel = new FormModel({}, {
+        mapping: {
+          testModel: true,
+          testModel2: true
+        },
+        models: {
+          testModel: testModel,
+          testModel2: testModel2
+        }
+      });
       expect(combinedFormModel.get('foo')).toBe(123);
       expect(combinedFormModel.get('bar')).toBe('test');
       expect(combinedFormModel.get('pieces')).toBe(5);
@@ -206,12 +342,17 @@ describe('A Form Model when it pulls from object models', function() {
       var computedFormModel;
       expect(testModel.get('foo')).toBe(123);
       computedFormModel = new FormModel({}, {
-        computed: [{
-          models: [{model: testModel, fields: ['foo']}],
-          pull: function(foo) {
-            this.set('myFoo', -foo);
+        mapping: {
+          myFoo: {
+            testModel: 'foo',
+            pull: function(models) {
+              this.set('myFoo', -models.testModel.foo);
+            }
           }
-        }]
+        },
+        models: {
+          testModel: testModel
+        }
       });
       expect(computedFormModel.get('myFoo')).toBe(-123);
       testModel.set('foo', 555);
@@ -221,8 +362,16 @@ describe('A Form Model when it pulls from object models', function() {
     });
 
     it('can pull nested attributes from multiple Object Models', function() {
-      var combinedFormModel = new FormModel({}, {models: [{model: testModel, fields: ['obj.a', 'obj.b']},
-                                                           {model: testModel2, fields: ['ingredients[0]', 'ingredients[1]']}]});
+      var combinedFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'obj.a obj.b',
+          testModel2: 'ingredients[0] ingredients[1]'
+        },
+        models: {
+          testModel: testModel,
+          testModel2: testModel2
+        }
+      });
       expect(combinedFormModel.get('obj').a).toBe(1);
       expect(combinedFormModel.get('obj').b).toBe('b value');
       expect(combinedFormModel.get('obj').c).not.toBeDefined();
@@ -248,12 +397,17 @@ describe('A Form Model when it pulls from object models', function() {
 
     it('can combine attributes from an Object Model into a single form attribute', function() {
       var combinedFormModel = new FormModel({}, {
-        computed: [{
-          models: [{model: testModel, fields: ['foo', 'bar']}],
-          pull: function(foo, bar) {
-            this.set('fooBar', foo + ' ' + bar);
+        mapping: {
+          fooBar: {
+            testModel: 'foo bar',
+            pull: function(models) {
+              this.set('fooBar', models.testModel.foo + ' ' + models.testModel.bar);
+            }
           }
-        }]
+        },
+        models: {
+          testModel: testModel
+        }
       });
       expect(combinedFormModel.get('foo')).not.toBeDefined();
       expect(combinedFormModel.get('bar')).not.toBeDefined();
@@ -270,13 +424,21 @@ describe('A Form Model when it pulls from object models', function() {
 
     it('can combine attributes from multiple Object Models into a single form attribute', function() {
       var combinedFormModel = new FormModel({}, {
-        models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}],
-        computed: [{
-          models: [{model: testModel, fields: ['bar']}, {model: testModel2, fields: ['color']}],
-          pull: function(bar, color) {
-            this.set('colorBar', color + ' ' + bar);
+        mapping: {
+          testModel: 'foo',
+          testModel2: 'pieces',
+          colorBar: {
+            testModel: 'bar',
+            testModel2: 'color',
+            pull: function(models) {
+              this.set('colorBar', models.testModel2.color + ' ' + models.testModel.bar);
+            }
           }
-        }]
+        },
+        models: {
+          testModel: testModel,
+          testModel2: testModel2
+        }
       });
       expect(combinedFormModel.get('foo')).toBe(123);
       expect(combinedFormModel.get('bar')).not.toBeDefined();

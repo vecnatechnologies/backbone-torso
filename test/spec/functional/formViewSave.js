@@ -63,7 +63,14 @@ describe('A Form View saving', function() {
       }
     });
 
-    testFormModel = new FormModel({}, {model: testModel});
+    testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     View = FormView.extend({
       template: require(testSrcPath + '/save-errors-template'),
       events: {
@@ -113,10 +120,8 @@ describe('A Form View saving', function() {
         initialize: function(options) {
           this.persistedModel = new TestModel();
 
-          this.model.addModel({
-            model: this.persistedModel,
-            fields: ['category']
-          });
+          this.model.setMapping('persistedModel', 'category', this.persistedModel);
+
           this.render();
         }
       });

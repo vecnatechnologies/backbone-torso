@@ -22,7 +22,14 @@ describe('A Form Model saving', function() {
   //********** Save *********/
 
   it('can save to a single object model by pushing changes to object model and calling save on the object model', function(done) {
-    var testFormModel = new FormModel({}, {model: testModel});
+    var testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.get('bar')).toBe('test');
     expect(testModel.get('foo')).toBe(123);
@@ -38,7 +45,16 @@ describe('A Form Model saving', function() {
 
   it('can save to multiple object models by pushing changes to the object models and calling save on them', function(done) {
     var anotherTestModel = new TestModel(),
-      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: anotherTestModel, fields: ['bar']}]});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+          anotherTestModel: 'bar'
+        },
+        models: {
+          testModel: testModel,
+          anotherTestModel: anotherTestModel
+        }
+      });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.get('bar')).toBe('test');
     expect(testModel.get('foo')).toBe(123);
@@ -54,7 +70,16 @@ describe('A Form Model saving', function() {
 
   it('can identify and warn when there were changes in the object model since last pull', function(done) {
     var anotherTestModel = new TestModel(),
-      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: anotherTestModel, fields: ['bar']}]});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+          anotherTestModel: 'bar'
+        },
+        models: {
+          testModel: testModel,
+          anotherTestModel: anotherTestModel
+        }
+      });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":123}');
     testModel.set('foo', 555);
@@ -72,7 +97,14 @@ describe('A Form Model saving', function() {
 
   it('can identify only the fields that changed when warning that the object model was updated since last pull', function(done) {
     var anotherTestModel = new TestModel(),
-      testFormModel = new FormModel({}, {model: testModel, fields: ['foo']});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo'
+        },
+        models: {
+          testModel: testModel
+        }
+      });
     testModel.set('bar', 555);
     try {
       testFormModel.save({force: false});
@@ -125,7 +157,14 @@ describe('A Form Model saving', function() {
       }
     });
 
-    testFormModel = new FormModel({}, {model: testModel});
+    testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.get('bar')).toBe('test');
     expect(testModel.get('foo')).toBe(123);
@@ -172,7 +211,14 @@ describe('A Form Model saving', function() {
       }
     });
 
-    testFormModel = new FormModel({}, {model: testModel});
+    testFormModel = new FormModel({}, {
+      mapping: {
+        testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.get('bar')).toBe('test');
     expect(testModel.get('foo')).toBe(123);
@@ -192,7 +238,16 @@ describe('A Form Model saving', function() {
 
   it('can return the responses when saving to multiple object models', function(done) {
     var anotherTestModel = new TestModel(),
-      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: anotherTestModel, fields: ['bar']}]});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+          anotherTestModel: 'bar'
+        },
+        models: {
+          testModel: testModel,
+          anotherTestModel: anotherTestModel
+        }
+      });
     testFormModel.set('foo', 444);
     testFormModel.set('bar', 'new value');
     testFormModel.save().done(function(responses) {
@@ -220,7 +275,16 @@ describe('A Form Model saving', function() {
 
   it('can return the responses when saving to multiple object models and failing', function(done) {
     var testModel2 = new TestModel2(),
-      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}]});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+          testModel2: 'pieces'
+        },
+        models: {
+          testModel: testModel,
+          testModel2: testModel2
+        }
+      });
     env.window.$.mockjax.clear(env.routes['/tests|post']);
     env.window.$.mockjax({
       url: '/tests',
@@ -261,7 +325,16 @@ describe('A Form Model saving', function() {
 
   it('can save to a single url for multiple models', function(done) {
     var testModel2 = new TestModel2(),
-      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}]});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+          testModel2: 'pieces'
+        },
+        models: {
+          testModel: testModel,
+          testModel2: testModel2
+        }
+      });
     testFormModel.url = '/unified';
     testFormModel.set('foo', 444);
     testFormModel.set('pieces', 4);
@@ -292,7 +365,16 @@ describe('A Form Model saving', function() {
 
   it('can save to a single url for multiple models and not change models on fail', function(done) {
     var testModel2 = new TestModel2(),
-      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: testModel2, fields: ['pieces']}]});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+          testModel2: 'pieces'
+        },
+        models: {
+          testModel: testModel,
+          testModel2: testModel2
+        }
+      });
     testFormModel.url = '/unified';
     env.window.$.mockjax.clear(env.routes['/unified|post']);
     env.window.$.mockjax({
@@ -325,7 +407,16 @@ describe('A Form Model saving', function() {
 
   it('can cache the most recent pulls from the object models to compare against', function() {
     var anotherTestModel = new TestModel(),
-      testFormModel = new FormModel({}, {models: [{model: testModel, fields: ['foo']}, {model: anotherTestModel, fields: ['bar']}]});
+      testFormModel = new FormModel({}, {
+        mapping: {
+          testModel: 'foo',
+          anotherTestModel: 'bar'
+        },
+        models: {
+          testModel: testModel,
+          anotherTestModel: anotherTestModel
+        }
+      });
     expect(testFormModel.get('foo')).toBe(123);
     expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":123}');
     testFormModel.startUpdating();
@@ -336,12 +427,17 @@ describe('A Form Model saving', function() {
 
   it('can cache the most recent pulls from the object models used in a computed value', function() {
     var combinedFormModel = new FormModel({}, {
-      computed: [{
-        models: [{model: testModel, fields: ['bar']}],
-        pull: function(bar) {
-          this.set('baz', bar);
+      mapping: {
+        baz: {
+          testModel: 'bar',
+          pull: function(models) {
+            this.set('baz', models.testModel.bar);
+          }
         }
-      }]
+      },
+      models: {
+        testModel: testModel
+      }
     });
     expect(combinedFormModel.get('baz')).toBe('test');
     expect(combinedFormModel.__cache[testModel.cid]).toBe('{"bar":"test"}');
