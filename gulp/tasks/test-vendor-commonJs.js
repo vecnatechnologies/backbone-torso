@@ -17,7 +17,6 @@
       test = require('./test'),
       tasks = [],
       bundleAll = function(options, callback) {
-        $.util.log(fs.readdirSync(paths.modules));
         var mergedTasks, tasks,
           handleFile = function(file) {
             var bundler,
