@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 module.exports = function($) {
 
   var routes = {};
@@ -62,7 +64,7 @@ module.exports = function($) {
     responseTime: 100,
     response: function(settings) {
       var models = [],
-          data = JSON.parse(settings.data);
+          data = _.isString(settings.data) ? JSON.parse(settings.data) : settings.data;
       for (var i = 0; i < data.length; i++) {
         models.push({
           id: data[i],

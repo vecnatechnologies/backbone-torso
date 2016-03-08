@@ -48,9 +48,7 @@
       var threshold = 10;
       while (!_.isEmpty(files) && count <= threshold) {
         _.each(files, function(file) {
-          $.util.log(files);
           if (!_.has(dependencies, file)) {
-            $.util.log(file);
             fileList.push(file);
             _.each(dependencies, function(deps, key) {
               if (_.contains(deps, file)) {
@@ -66,7 +64,6 @@
       if (count >= threshold) {
         throw new Error('Bundle dependency list could not be created within the depth threshold');
       }
-      $.util.log(fileList);
       fileList = _.map(fileList, function(filePath) {
         return dirPath + '/' + (_.last(filePath, 5).join('') == 'Mixin' ? 'mixins/' : '') + filePath + '.js';
       });

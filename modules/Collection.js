@@ -17,7 +17,31 @@
    * @constructor
    * @author kent.willis@vecna.com
    */
-  var Collection = Backbone.Collection.extend({});
+  var Collection = Backbone.Collection.extend({
+      /**
+       * The default filter.  Always returns itself.
+       * @method filterDefault
+       * @return {Collection} a new instance of this collection
+       */
+      filterDefault: function() {
+        return this.constructor(this);
+      },
+
+      /**
+       * Will abolish all listeners and events that are hooked
+       * to this collection.
+       * @method dispose
+       */
+      dispose: function() {
+        this.unbind();
+        this.off();
+        this.stopListening();
+        this.stopPolling();
+        if (this.isRequester) {
+          this.requesterDispose();
+        }
+      }
+  });
   _.extend(Collection.prototype, pollingMixin);
   Collection = Collection.extend(loadingMixin(Collection));
   Collection = Collection.extend(cacheMixin(Collection));
