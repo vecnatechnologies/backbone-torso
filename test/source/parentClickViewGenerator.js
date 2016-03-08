@@ -6,6 +6,7 @@ var spyOnBackbone = require('../spec/functional/backboneSpy'),
  * @param window {window} the window object
  * @param ChildView1 {View} the class for the first child view
  * @param ChildView2 {View} the class for the second child view
+ * @method parentClickViewGenerator
  */
 module.exports = function(window) {
   var _ = window._,

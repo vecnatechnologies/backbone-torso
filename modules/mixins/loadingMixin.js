@@ -6,7 +6,7 @@
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.collectionLoading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.loading = factory((root.jQuery || root.Zepto || root.ender || root.$));
   }
 }(this, function($) {
   /**
@@ -14,14 +14,14 @@
    *
    * @module    Torso
    * @namespace Torso.Mixins
-   * @class  collectionLoadingMixin
+   * @class  loadingMixin
    * @author kent.willis@vecna.com
    */
-  var collectionLoadingMixin = function(base) {
+  var loadingMixin = function(base) {
 
     return {
       /**
-       * Adds the loading mixin to the collection
+       * Adds the loading mixin
        * @method constructor
        * @param args {Object} the arguments to the base constructor method
        */
@@ -34,7 +34,7 @@
 
       /**
        * @method hasLoadedOnce
-       * @return true if this collection has ever loaded from a fetch call
+       * @return true if this model/collection has ever loaded from a fetch call
        */
       hasLoadedOnce: function() {
         return this.loadedOnce;
@@ -42,7 +42,7 @@
 
       /**
        * @method isLoading
-       * @return true if this collection is currently loading new values from the server
+       * @return true if this model/collection is currently loading new values from the server
        */
       isLoading: function() {
         return this.loading;
@@ -50,7 +50,7 @@
 
       /**
        * @method getLoadedOncePromise
-       * @return a promise that will resolve when the collection has loaded for the first time
+       * @return a promise that will resolve when the model/collection has loaded for the first time
        */
       getLoadedOncePromise: function() {
         return this.loadedOnceDeferred.promise();
@@ -75,23 +75,23 @@
        * @return a promise when the fetch method has completed and the events have been triggered
        */
       __loadWrapper: function(fetchMethod, options) {
-        var collection = this;
+        var object = this;
         this.loading = true;
         this.trigger('load-begin');
-        return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
-          collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
+        return $.when(fetchMethod.call(object, options)).done(function(data, textStatus, jqXHR) {
+          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
         }).fail(function(jqXHR, textStatus, errorThrown) {
-          collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
+          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
         }).always(function() {
-          if (!collection.loadedOnce) {
-            collection.loadedOnce = true;
-            collection.loadedOnceDeferred.resolve();
+          if (!object.loadedOnce) {
+            object.loadedOnce = true;
+            object.loadedOnceDeferred.resolve();
           }
-          collection.loading = false;
+          object.loading = false;
         });
       }
     };
   };
 
-  return collectionLoadingMixin;
+  return loadingMixin;
 }));

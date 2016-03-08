@@ -47,31 +47,31 @@ commonJsImportTest = function(moduleToImport, expectedModules) {
 
 commonJsImportTest('/modules/Events', ['underscore', 'backbone']);
 
-commonJsImportTest('/modules/Cell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin']);
+commonJsImportTest('/modules/Cell', ['underscore', 'backbone', '/modules/mixins/cellMixin']);
 commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
-                                         '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin']);
+                                         '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin']);
 
-commonJsImportTest('/modules/collectionLoadingMixin', ['jquery']);
-commonJsImportTest('/modules/collectionRegistrationMixin', ['underscore', 'jquery']);
-commonJsImportTest('/modules/pollingMixin', []);
+commonJsImportTest('/modules/mixins/loadingMixin', ['jquery']);
+commonJsImportTest('/modules/mixins/cacheMixin', ['underscore', 'jquery']);
+commonJsImportTest('/modules/mixins/pollingMixin', []);
 commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone',
-                                         '/modules/pollingMixin', '/modules/NestedModel']);
+                                         '/modules/mixins/pollingMixin', '/modules/NestedModel']);
 
-commonJsImportTest('/modules/Model', ['underscore', 'backbone', '/modules/pollingMixin']);
-commonJsImportTest('/modules/NestedCell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin', 'backbone-nested']);
-commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', '/modules/pollingMixin']);
+commonJsImportTest('/modules/Model', ['underscore', 'backbone', '/modules/mixins/pollingMixin']);
+commonJsImportTest('/modules/NestedCell', ['underscore', 'backbone', '/modules/mixins/cellMixin', 'backbone-nested']);
+commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', '/modules/mixins/pollingMixin']);
 commonJsImportTest('/modules/FormModel', ['underscore', 'jquery', 'backbone-nested', 'backbone',
-                                        '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation']);
+                                        '/modules/mixins/pollingMixin', '/modules/NestedModel', '/modules/validation']);
 
-commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/cellPersistenceRemovalMixin', '/modules/Cell']);
+commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/mixins/cellMixin', '/modules/Cell']);
 commonJsImportTest('/modules/Router', ['backbone']);
 commonJsImportTest('/modules/history', ['backbone']);
-commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/cellPersistenceRemovalMixin',
+commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/mixins/cellMixin',
                                    '/modules/templateRenderer']);
-commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/cellPersistenceRemovalMixin',
+commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/mixins/cellMixin',
                                        '/modules/templateRenderer', '/modules/View',
-                                       '/modules/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel', 'backbone.stickit']);
-commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/cellPersistenceRemovalMixin',
+                                       '/modules/mixins/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel', 'backbone.stickit']);
+commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/mixins/cellMixin',
                                        '/modules/templateRenderer', '/modules/View']);
 
 commonJsImportTest('/modules/handlebarsUtils', []);
@@ -81,7 +81,7 @@ commonJsImportTest('/modules/configure', ['backbone', 'jquery']);
 
 commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
                                '/modules/stickitUtils',
-                               '/modules/pollingMixin', '/modules/collectionRegistrationMixin', '/modules/collectionLoadingMixin', '/modules/cellPersistenceRemovalMixin', '/modules/validation',
+                               '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/mixins/cellMixin', '/modules/validation',
                                '/modules/Cell',
                                '/modules/Collection',
                                '/modules/Events',

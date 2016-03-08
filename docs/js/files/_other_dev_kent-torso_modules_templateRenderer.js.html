@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>/other/dev/kent-torso/modules/templateRenderer.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Cell.html">Cell</a></li>
+            
+                <li><a href="../classes/Collection.html">Collection</a></li>
+            
+                <li><a href="../classes/Events.html">Events</a></li>
+            
+                <li><a href="../classes/FormModel.html">FormModel</a></li>
+            
+                <li><a href="../classes/FormView.html">FormView</a></li>
+            
+                <li><a href="../classes/history.html">history</a></li>
+            
+                <li><a href="../classes/ListView.html">ListView</a></li>
+            
+                <li><a href="../classes/Model.html">Model</a></li>
+            
+                <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+            
+                <li><a href="../classes/Router.html">Router</a></li>
+            
+                <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
+            
+                <li><a href="../classes/Torso.html">Torso</a></li>
+            
+                <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
+            
+                <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
+            
+                <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+            
+                <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
+            
+                <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
+            
+                <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
+            
+                <li><a href="../classes/Torso.Utils.templateRenderer.html">Torso.Utils.templateRenderer</a></li>
+            
+                <li><a href="../classes/Torso.validation.html">Torso.validation</a></li>
+            
+                <li><a href="../classes/View.html">View</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/Torso.html">Torso</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: /other/dev/kent-torso/modules/templateRenderer.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+(function(root, factory) {
+  if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
+    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;], factory);
+  } else if (typeof exports === &#x27;object&#x27;) {
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;jquery&#x27;));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Utils = root.Torso.Utils || {};
+    root.Torso.Utils.templateRenderer = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+  }
+}(this, function(_, $) {
+  &#x27;use strict&#x27;;
+
+  /**
+   * Changes DOM Nodes that are different, and leaves others untouched.
+   *
+   * Algorithm:
+   * Delegates to a particular swapMethod, depending on the Node type.
+   * Recurses for nested Element Nodes only.
+   * There is always room for optimizing this method.
+   *
+   * @method hotswap
+   * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
+   * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
+   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   */
+  function hotswap(currentNode, newNode, ignoreElements) {
+    var newNodeType = newNode.nodeType,
+      currentNodeType = currentNode.nodeType,
+      swapMethod;
+
+    if(newNodeType !== currentNodeType) {
+      $(currentNode).replaceWith(newNode);
+    } else {
+      swapMethod = swapMethods[newNodeType] || swapMethods[&#x27;default&#x27;];
+      swapMethod(currentNode, newNode, ignoreElements);
+    }
+  }
+
+  /*
+   * Swap method for Element Nodes
+   * @param currentNode {Element} The pre-existing DOM Element to update
+   * @param newNode {Element} The detached DOM Element representing the desired DOM Element subtree
+   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   */
+  function swapElementNodes(currentNode, newNode, ignoreElements) {
+    var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
+      $currentNode = $(currentNode),
+      $newNode = $(newNode),
+      idx = 0;
+
+    shouldIgnore = _.some(ignoreElements, function(selector) {
+      return $currentNode.is(selector);
+    });
+
+    if (shouldIgnore) {
+      return;
+    }
+
+    // Handle tagname changes with full replacement
+    if (newNode.tagName !== currentNode.tagName) {
+      $currentNode.replaceWith(newNode);
+      return;
+    }
+
+    // Remove current attributes that have changed
+    // This is necessary, because some types of attributes cannot be removed
+    // without causing a browser error.
+    currentAttributes = currentNode.attributes;
+    while (idx &lt; currentAttributes.length) {
+      currentAttr = currentAttributes[idx].name;
+      if (newNode.getAttribute(currentAttr)) {
+        idx++;
+      } else {
+        currentNode.removeAttribute(currentAttr);
+      }
+    }
+
+    // Set new attributes
+    _.each(newNode.attributes, function(attrib) {
+      currentNode.setAttribute(attrib.name, attrib.value);
+    });
+
+    // Quick check to see if we need to bother comparing sub-levels
+    if ($currentNode.html() === $newNode.html()) {
+      return;
+    }
+
+    // Include all child nodes, including text and comment nodes
+    $newChildNodes = $newNode.contents();
+    $currChildNodes = $currentNode.contents();
+
+    // If the DOM lists are different sizes, perform a hard refresh
+    if ($newChildNodes.length !== $currChildNodes.length) {
+      $currentNode.html($newNode.html());
+      return;
+    }
+
+    // Perform a recursive hotswap for all children nodes
+    $currChildNodes.each(function(index, currChildNode) {
+      hotswap(currChildNode, $newChildNodes.get(index), ignoreElements);
+    });
+  }
+
+  /*
+   * Swap method for Text, Comment, and CDATA Section Nodes
+   * @param currentNode {Node} The pre-existing DOM Node to update
+   * @param newNode {Node} The detached DOM Node representing the desired DOM Node subtree
+   */
+  function updateIfNodeValueChanged(currentNode, newNode){
+    var nodeValueChanged = newNode.nodeValue !== currentNode.nodeValue;
+    if (nodeValueChanged) {
+      $(currentNode).replaceWith(newNode);
+    }
+  }
+
+  /*
+   * Map of nodeType to hot swap implementations.
+   * NodeTypes are hard-coded integers per the DOM Level 2 specification instead of
+   * references to constants defined on the window.Node object for IE8 compatibility
+   */
+  var swapMethods = {
+    1: swapElementNodes, // ELEMENT_NODE
+    3: updateIfNodeValueChanged, // TEXT_NODE
+    4: updateIfNodeValueChanged, // CDATA_SECTION_NODE
+    8: updateIfNodeValueChanged, // COMMENT_NODE
+    default: function(currentNode, newNode) {
+      $(currentNode).replaceWith(newNode);
+    }
+  };
+
+  /**
+   * Static Template Engine.
+   * All template renders should be piped through this method.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     templateRenderer
+   * @static
+   * @author    ariel.wexler@vecna.com
+   */
+  var templateRenderer = {
+    /**
+     * Performs efficient re-rendering of a template.
+     * @method render
+     * @param  $el {jQueryObject} The Element to render into
+     * @param  template {Handlebars Template} The HBS template to apply
+     * @param  context {Object} The context object to pass to the template
+     * @param  [opts] {Object} Other options
+     * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
+     * @param  [opts.newHTML] {String} If you pass in newHTML, it will not use the template or context, but use this instead.
+     * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
+     */
+    render: function($el, template, context, opts) {
+      var newDOM, newHTML,
+          el = $el.get(0);
+      opts = opts || {};
+
+      newHTML = opts.newHTML || template(context);
+      if (opts.force) {
+        $el.html(newHTML);
+      } else {
+        newDOM = this.copyTopElement(el);
+        $(newDOM).html(newHTML);
+        this.hotswapKeepCaret(el, newDOM, opts.ignoreElements);
+      }
+    },
+
+    /**
+     * Call this.hotswap but also keeps the caret position the same
+     * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
+     * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
+     * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+     * @method hotswapKeepCaret
+     */
+
+    hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
+      var currentCaret,
+          activeElement = document.activeElement;
+      if (activeElement &amp;&amp; this.supportsSelection(activeElement)) {
+        currentCaret = this.getCaretPosition(activeElement);
+      }
+      this.hotswap(currentNode, newNode, ignoreElements);
+      if (activeElement &amp;&amp; this.supportsSelection(activeElement)) {
+        this.setCaretPosition(activeElement, currentCaret);
+      }
+    },
+
+    // See above function declaration for method-level documentation
+    hotswap: hotswap,
+
+    /**
+     * Produces a copy of the element tag with attributes but with no contents
+     * @param el {Element} the DOM element to be copied
+     * @return {Element} a shallow copy of the element with no children but with attributes
+     * @method copyTopElement
+     */
+    copyTopElement: function(el) {
+      var newDOM = document.createElement(el.tagName);
+      _.each(el.attributes, function(attrib) {
+        newDOM.setAttribute(attrib.name, attrib.value);
+      });
+      return newDOM;
+    },
+
+    /**
+     * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
+     * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
+     * @param el {Element} the DOM element to check
+     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el
+     * @method supportsSelection
+     */
+    supportsSelection : function (el) {
+      return (/text|password|search|tel|url/).test(el.type);
+    },
+
+    /**
+     * Method that returns the current caret (cursor) position of a given element.
+     * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
+     * @method getCaretPosition
+     * @param elem {element} the DOM element to check caret position
+     * @return {Integer} the cursor index of the given element.
+     */
+    getCaretPosition: function(elem) {
+      // range {IE selection object}
+      // iCaretPos {Integer} will store the final caret position
+      var range,
+          iCaretPos = 0;
+      // IE Support
+      if (document.selection) {
+        // Set focus on the element
+        elem.focus();
+        // To get cursor position, get empty selection range
+        range = document.selection.createRange();
+        // Move selection start to 0 position
+        range.moveStart(&#x27;character&#x27;, -elem.value.length);
+        // The caret position is selection length
+        iCaretPos = range.text.length;
+      } else if (elem.selectionStart || elem.selectionStart === 0) {
+        // Firefox support
+        iCaretPos = elem.selectionStart;
+      }
+      // Return results
+      return iCaretPos;
+    },
+
+    /**
+     * Method that returns sets the current caret (cursor) position of a given element and puts it in focus.
+     * Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox
+     * @method setCaretPosition
+     * @param elem {element}
+     * @param caretPos {Integer} The caret index to set
+     * @return {Integer} the cursor index of the given element.
+     */
+    setCaretPosition: function(elem, caretPos) {
+      var range;
+      if (elem) {
+        if (elem.createTextRange) {
+          // IE support
+          range = elem.createTextRange();
+          range.move(&#x27;character&#x27;, caretPos);
+          range.select();
+        } else if (elem.selectionStart || elem.selectionStart === 0) {
+          // Firefox support
+          elem.focus();
+          elem.setSelectionRange(caretPos, caretPos);
+        } else {
+          // At least focus the element if nothing else
+          elem.focus();
+        }
+      }
+    }
+  };
+
+  return templateRenderer;
+}));
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

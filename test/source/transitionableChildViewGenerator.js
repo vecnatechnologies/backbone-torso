@@ -2,6 +2,7 @@
  * Creates a view class that has various events it's listening to
  * with spies on the callbacks.
  * @param window {window} the window object
+ * @method transitionableChildViewGenerator
  */
 module.exports = function(window) {
   Handlebars = window.Handlebars;

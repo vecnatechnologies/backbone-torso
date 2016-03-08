@@ -7,9 +7,7 @@ describe("A Form View's two-way binding", function() {
   var model, view, UpdateProfileFormModel, UpdateProfileFormView,
     $, _, env;
 
-  /**
-   * Sets up test view
-   */
+   // Sets up test view
    beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
@@ -37,7 +35,7 @@ describe("A Form View's two-way binding", function() {
     view.dispose();
    });
 
-  /******** PUSHING from FormModel to FormView ********/
+  //******** PUSHING from FormModel to FormView ********//
 
   it("can update DOM text inputs on change of FormModel", function() {
     expect(view.$el.find('#full-name').val()).toBe('');
@@ -96,7 +94,7 @@ describe("A Form View's two-way binding", function() {
     expect(view.$el.find('#ranking').val()).toBe('lieutenant');
   });
 
-  /******** PULLING from FormModel to FormView ********/
+  //******** PULLING from FormModel to FormView ********//
 
   it("can update model attributes on change of DOM text inputs", function() {
     expect(model.get('fullName')).toBe('');

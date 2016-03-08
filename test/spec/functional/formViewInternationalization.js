@@ -7,9 +7,7 @@ describe("A Form View's internationalization", function() {
   var model, view, UpdateProfileFormModel, UpdateProfileFormView,
       init, $, _, env;
 
-  /**
-   * Sets up test view
-   */
+  // Sets up test view
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;

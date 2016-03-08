@@ -46,7 +46,6 @@
     /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
      * @method constructor
-     * @override
      */
     constructor: function(options) {
       options = options || {};
@@ -173,10 +172,9 @@
     },
 
     /**
-     * Binds DOM events with the view using events hash.
-     * Also adds feedback event bindings
+     * Overrides the base delegateEvents
+     * Binds DOM events with the view using events hash while also adding feedback event bindings
      * @method delegateEvents
-     * @override
      */
     delegateEvents: function() {
       Backbone.View.prototype.delegateEvents.call(this);
@@ -190,9 +188,9 @@
     },
 
     /**
+     * Overrides undelegateEvents
      * Unbinds DOM events from the view.
      * @method undelegateEvents
-     * @override
      */
     undelegateEvents: function() {
       Backbone.View.prototype.undelegateEvents.call(this);
@@ -301,7 +299,7 @@
     _attached: _.noop,
 
     /**
-     * @returns {Boolean} true if the view is attached to a parent
+     * @return {Boolean} true if the view is attached to a parent
      * @method isAttachedToParent
      */
     isAttachedToParent: function() {
@@ -310,7 +308,7 @@
 
     /**
      * NOTE: depends on a global variable "document"
-     * @returns {Boolean} true if the view is attached to the DOM
+     * @return {Boolean} true if the view is attached to the DOM
      * @method isAttached
      */
     isAttached: function() {
@@ -385,7 +383,7 @@
     _activate: _.noop,
 
     /**
-     * @returns {Boolean} true if the view is active
+     * @return {Boolean} true if the view is active
      * @method isActive
      */
     isActive: function() {
@@ -454,7 +452,7 @@
     _dispose: _.noop,
 
     /**
-     * @returns {Boolean} true if the view was disposed
+     * @return {Boolean} true if the view was disposed
      * @method isDisposed
      */
     isDisposed: function() {
@@ -608,7 +606,7 @@
       }
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * If the view is attaching during the render process, then it replaces the injection site
@@ -1190,7 +1188,7 @@
       }
     }
 
-    /************** End Private methods **************/
+    //************** End Private methods **************//
   });
 
   return View;

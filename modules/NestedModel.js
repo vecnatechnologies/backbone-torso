@@ -1,9 +1,9 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
+    define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);

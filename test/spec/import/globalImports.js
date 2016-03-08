@@ -5,17 +5,18 @@ describe('Global Module imports', function() {
       // Define the globals layout, each array is a global to verify
       //   and each item in the array is a step on the path from the window object.
       // The test below will verify that all items defined below exist on the window object.
-      // e.g. ['Torso', 'Mixins', 'collectionLoading'] = window.Torso.Mixins.collectionLoading
+      // e.g. ['Torso', 'Mixins', 'loading'] = window.Torso.Mixins.loading
       globals = [
         ['Torso'],
         ['Torso', 'Cell'],
         ['Torso', 'Collection'],
         ['Torso', 'Events'],
         ['Torso', 'Mixins'],
-        ['Torso', 'Mixins', 'collectionLoading'],
-        ['Torso', 'Mixins', 'collectionRegistration'],
+        ['Torso', 'Mixins', 'loading'],
+        ['Torso', 'Mixins', 'cache'],
         ['Torso', 'Mixins', 'polling'],
         ['Torso', 'Mixins', 'validation'],
+        ['Torso', 'Mixins', 'cell'],
         ['Torso', 'Model'],
         ['Torso', 'NestedCell'],
         ['Torso', 'NestedModel'],

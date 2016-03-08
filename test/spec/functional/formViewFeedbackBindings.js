@@ -7,9 +7,7 @@ describe("A Form View's feedback bindings", function() {
   var model, view, UpdateProfileFormView,
       init, $, _, env;
 
-  /**
-   * Sets up test view
-   */
+  // Sets up test view
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;

@@ -4,6 +4,5 @@ target
 .project
 node_modules
 *.swp
-docs/js/
 testSandbox/
 *.log

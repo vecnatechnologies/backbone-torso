@@ -7,7 +7,7 @@
   },
   "scripts": {
     "build": "gulp",
-    "prepublish": "gulp bundle",
+    "prepublish": "gulp prepublish",
     "test": "npm run karma-test && gulp test",
     "karma-test": "./node_modules/karma/bin/karma start",
     "doc": "gulp doc",

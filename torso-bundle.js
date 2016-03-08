@@ -44,637 +44,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellPersistenceRemoval
-   * @author kent.willis@vecna.com
-   */
-  return {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.collectionLoading = factory((root.jQuery || root.Zepto || root.ender || root.$));
-  }
-}(this, function($) {
-  /**
-   * Loading logic.
-   *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  collectionLoadingMixin
-   * @author kent.willis@vecna.com
-   */
-  var collectionLoadingMixin = function(base) {
-
-    return {
-      /**
-       * Adds the loading mixin to the collection
-       * @method constructor
-       * @param args {Object} the arguments to the base constructor method
-       */
-      constructor: function(args) {
-        base.call(this, args);
-        this.loadedOnceDeferred = new $.Deferred();
-        this.loadedOnce = false;
-        this.loading = false;
-      },
-
-      /**
-       * @method hasLoadedOnce
-       * @return true if this collection has ever loaded from a fetch call
-       */
-      hasLoadedOnce: function() {
-        return this.loadedOnce;
-      },
-
-      /**
-       * @method isLoading
-       * @return true if this collection is currently loading new values from the server
-       */
-      isLoading: function() {
-        return this.loading;
-      },
-
-      /**
-       * @method getLoadedOncePromise
-       * @return a promise that will resolve when the collection has loaded for the first time
-       */
-      getLoadedOncePromise: function() {
-        return this.loadedOnceDeferred.promise();
-      },
-
-      /**
-       * Wraps the base fetch in a wrapper that manages loaded states
-       * @method fetch
-       * @param options {Object} - the object to hold the options needed by the base fetch method
-       * @return {Promise} The loadWrapper promise
-       */
-      fetch: function(options) {
-        return this.__loadWrapper(base.prototype.fetch, options);
-      },
-
-      /**
-       * Base load function that will trigger a "load-begin" and a "load-complete" as
-       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       * @method __loadWrapper
-       * @param fetchMethod {Function} - the method to invoke a fetch
-       * @param options {Object} - the object to hold the options needed by the fetchMethod
-       * @return a promise when the fetch method has completed and the events have been triggered
-       */
-      __loadWrapper: function(fetchMethod, options) {
-        var collection = this;
-        this.loading = true;
-        this.trigger('load-begin');
-        return $.when(fetchMethod.call(collection, options)).done(function(data, textStatus, jqXHR) {
-          collection.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-          collection.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
-        }).always(function() {
-          if (!collection.loadedOnce) {
-            collection.loadedOnce = true;
-            collection.loadedOnceDeferred.resolve();
-          }
-          collection.loading = false;
-        });
-      }
-    };
-  };
-
-  return collectionLoadingMixin;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.collectionRegistration = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
-  }
-}(this, function(_, $) {
-  /**
-   * Custom additions to the Backbone Collection object.
-   * - safe disposal methods for memory + event management
-   * - special functional overrides to support ID registration for different views
-   *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  collectionRegistration
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var collectionRegistrationMixin = function(base) {
-
-    var cacheMixin, createRequesterCollectionClass;
-
-    /**
-     * Returns a new class of collection that inherits from the parent but not the cacheMixin
-     * and adds a requesterMixin that connects this cache to it's parent
-     *
-     * @method createRequesterCollectionClass
-     * @param parent {Backbone Collection instance} the parent of the private collection
-     * @param guid {String} the unique code of the owner of this private collection
-     */
-    createRequesterCollectionClass = function(parent, guid) {
-      return parent.constructor.extend((function(parentClass, parentInstance, ownerKey) {
-
-        /**
-         * A mixin that overrides base collection methods meant for cache's and tailors them
-         * to a requester.
-         * @method requesterMixin
-         */
-        var requesterMixin = {
-
-          /**
-           * @method requesterMixin.getTrackedIds
-           * @return {Array} array of ids that this collection is tracking
-           */
-          getTrackedIds: function() {
-            return this.trackedIds;
-          },
-
-          /**
-           * Will force the cache to fetch just the registered ids of this collection
-           * @method requesterMixin.fetch
-           * @return {Promise} promise that will resolve when the fetch is complete
-           */
-          fetch: function() {
-            var requesterCollection = this;
-            return this.__loadWrapper(function() {
-              if (requesterCollection.trackedIds && requesterCollection.trackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: requesterCollection.trackedIds, setOptions: {remove: false}});
-              } else {
-                return $.Deferred().resolve().promise();
-              }
-            });
-          },
-
-          /**
-           * Override the Id registration system to route via the parent collection
-           * @method requesterMixin.trackIds
-           * @param ids The list of ids that this collection wants to track
-           */
-          trackIds: function(ids) {
-            this.remove(_.difference(this.trackedIds, ids));
-            parentInstance.registerIds(ids, ownerKey);
-            this.trackedIds = ids;
-          },
-
-
-          /**
-           * Adds a new model to the requester collection and tracks the model.id
-           * @method requesterMixin.addModelAndTrack
-           * @param model {Backbone Model} the model to be added
-           */
-          addModelAndTrack: function(model) {
-            this.add(model);
-            parentInstance.add(model);
-            this.trackNewId(model.id);
-          },
-
-          /**
-           * Tracks a new id
-           * @method requesterMixin.trackNewId
-           * @param id {String or Number} the id attribute of the model
-           */
-          trackNewId: function(id) {
-            this.trackIds(this.getTrackedIds().concat(id));
-          },
-
-          /**
-           * Will register the new ids and then ask the cache to fetch them
-           * @method requesterMixin.fetchByIds
-           * @return the promise of the fetch by ids
-           */
-          fetchByIds: function(newIds) {
-            this.trackIds(newIds);
-            return this.fetch();
-          },
-
-          /**
-           * Will force the cache to fetch a subset of this collection's tracked ids
-           * @method requesterMixin.fetchSubsetOfTrackedIds
-           * @return {Promise} promise that will resolve when the fetch is complete
-           */
-          fetchSubsetOfTrackedIds: function(ids) {
-            var subsetOfTrackedIds = _.intersection(ids, this.getTrackedIds());
-            return this.__loadWrapper(function() {
-              if (subsetOfTrackedIds && subsetOfTrackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: subsetOfTrackedIds, setOptions: {remove: false}});
-              } else {
-                // handle if subsetOfTrackedIds is empty
-                return $.Deferred().resolve().promise();
-              }
-            });
-          },
-
-          /**
-           * Will force the cache to fetch any of this collection's tracked models that are not in the cache
-           * @method requesterMixin.pull
-           * @return {Promise} promise that will resolve when the fetch is complete
-           */
-          pull: function() {
-            //find ids that we don't have in cache
-            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
-            return this.__loadWrapper(function() {
-              if (idsNotInCache && idsNotInCache.length) {
-                return parentInstance.fetchByIds({idsToFetch: idsNotInCache, setOptions: {remove: false}});
-              } else {
-                // handle if idsNotInCache is empty
-                return $.Deferred().resolve().promise();
-              }
-            });
-          },
-
-          /**
-           * Will register the new ids and then pull in any models not stored in the cache
-           * @method requesterMixin.pullByIds
-           * @return the promise of the fetch by ids
-           */
-          pullByIds: function(newIds) {
-            this.trackIds(newIds);
-            return this.pull();
-          },
-
-          /**
-           * Handles the disposing of this collection as it relates to a requester collection.
-           * @method requesterMixin.requesterDispose
-           */
-          requesterDispose: function() {
-            parentInstance.removeRequester(ownerKey);
-          }
-        };
-
-        return requesterMixin;
-      })(parent.constructor.__super__, parent, guid));
-    };
-
-    /**
-     * Adds functions to manage state of requesters
-     * @method cacheMixin
-     * @param collection {Collection} the collection to add this mixin
-     */
-    cacheMixin = function(collection) {
-
-      //************* PRIVATE METHODS ************//
-
-      /**
-       * @private
-       * @method cacheMixin.setRequestedIds
-       * @param guid {String} the global unique identifier for the requester
-       * @param array {Array} the array of ids the requester wants
-       */
-      var setRequestedIds = function(guid, array) {
-        collection.requestMap[guid] = {
-          array: array,
-          dict: _.object(_.map(array, function(id) { return [id, id]; }))
-        };
-      };
-
-      //*********** PUBLIC METHODS ************//
-
-      /**
-       * @method cacheMixin.getRequesterIds
-       * @param {String} the global unique id of the requester
-       * @return {Array} an array of the ids the requester with the guid has requested
-       */
-      collection.getRequesterIds = function(guid) {
-        return this.requestMap[guid] && this.requestMap[guid].array;
-      };
-
-      /**
-       * @method cacheMixin.getRequesterIdsAsDictionary
-       * This method is used for quick look up of a certain id within the list of requested ids
-       * @param guid {String} the global unique id of the requester
-       * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
-       */
-      collection.getRequesterIdsAsDictionary = function(guid) {
-        return this.requestMap[guid] && this.requestMap[guid].dict;
-      };
-
-      /**
-       * @method cacheMixin.removeRequester
-       * Removes a requester from this cache. No longer receives updates
-       * @param guid {String} the global unique id of the requester
-       */
-      collection.removeRequester = function(guid) {
-        delete this.requestMap[guid];
-        delete this.knownPrivateCollections[guid];
-      };
-
-      /**
-       * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
-       * TODO: should this return just the knownPrivateCollections
-       * @method cacheMixin.getRequesters
-       * @return {Array} an array of the all requesters in the form of their GUID's
-       */
-      collection.getRequesters = function()  {
-        return _.keys(this.requestMap);
-      };
-
-      /**
-       * Return the list of Ids requested by this collection
-       * @method cacheMixin.getAllRequestedIds
-       * @return {Array} the corresponding requested Ids
-       */
-      collection.getAllRequestedIds = function() {
-        return this.collectionTrackedIds;
-      };
-
-      /**
-       * Used to return a collection of desired models given the requester object.
-       * Binds a custom "resized" event to the private collections.
-       * Overrides the fetch method to call the parent collection's fetchByIds method.
-       * Overrides the registerIds method to redirect to its parent collection.
-       * @method cacheMixin.createPrivateCollection
-       * @param guid {String} Identifier for the requesting view
-       * @return {Collection} an new empty collection of the same type as "this"
-       */
-      collection.createPrivateCollection = function(guid, args) {
-        args = args || {};
-        args.isRequester = true;
-        args.parentInstance = collection;
-        var RequesterClass = createRequesterCollectionClass(collection, guid);
-        this.knownPrivateCollections[guid] = new RequesterClass(null, args);
-        return this.knownPrivateCollections[guid];
-      };
-
-      /**
-       * Registers a list of Ids that a particular object cares about and pushes
-       * any cached models its way.
-       *
-       * This method intelligently updates the "_requestedIds" field to contain all unique
-       * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
-       * is overriden such that it no longer routes through Backbone's fetch all,
-       * but rather a custom "fetchByIds" method.
-       * @method cacheMixin.registerIds
-       * @param newIds {Array}  - New ids to register under the requester
-       * @param guid {String}   - The GUID of the object that wants the ids
-       */
-      collection.registerIds = function(newIds, guid) {
-        var i, newIdx, model, requesterIdx, storedIds,
-            requesters, requesterLength, privateCollection,
-            models = [],
-            distinctIds = {},
-            result = [];
-
-        // Save the new requests in the map
-        setRequestedIds(guid, newIds);
-        requesters = collection.getRequesters();
-        requesterLength = requesters.length;
-
-        // Collect all cached models
-        for (newIdx = 0; newIdx < newIds.length; newIdx++) {
-          model = collection.get(newIds[newIdx]);
-          if (model) {
-            models.push(model);
-          }
-        }
-
-        // Push cached models to the respective requester
-        privateCollection = collection.knownPrivateCollections[guid];
-        privateCollection.set(models, {remove: false});
-
-        // Create a new request list
-        for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
-          storedIds = this.getRequesterIds(requesters[requesterIdx]);
-          if (!_.isUndefined(storedIds)) {
-            for (i = 0; i < storedIds.length; i++) {
-              distinctIds[storedIds[i]] = true;
-            }
-          }
-        }
-
-        // Convert the hash table of unique Ids to a list
-        for (i in distinctIds) {
-          result.push(i);
-        }
-        this.collectionTrackedIds = result;
-
-        // Overrides the polling mixin's fetch method
-        this.polledFetch = function() {
-          collection.fetchByIds({
-            setOptions: {remove: true}
-          });
-        };
-      };
-
-      /**
-       * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
-       * it will pass through to the default fetch.
-       * @override
-       * @method fetch
-       */
-      collection.fetch = function(options) {
-        options = options || {};
-        if (this.fetchUsingTrackedIds) {
-          return this.fetchByIds({
-            setOptions: _.extend({remove: true}, options)
-          });
-        } else {
-          return base.prototype.fetch.apply(this, options);
-        }
-      };
-
-      /**
-       * A custom fetch operation to only fetch the requested Ids.
-       * @method cacheMixin.fetchByIds
-       * @param [options] - argument options
-       * @param [options.idsToFetch=collection.collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
-       * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
-       * @return {Promise} the promise of the fetch
-       */
-      collection.fetchByIds = function(options) {
-        options = options || {};
-        // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
-        return this.__loadWrapper(function(options) {
-          var requestedIds, idsToFetch;
-          requestedIds = options.idsToFetch || collection.collectionTrackedIds;
-          if (collection.lazyFetch) {
-            idsToFetch = _.difference(requestedIds, this.models.pluck('id'));
-          } else {
-            idsToFetch = requestedIds;
-          }
-          return $.ajax({
-              type: collection.fetchHttpAction,
-              url: _.result(collection, 'url') + collection.getByIdsUrl,
-              contentType: 'application/json; charset=utf-8',
-              data: JSON.stringify(idsToFetch)
-            }).done(
-              // Success function
-              function(data) {
-                var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
-                    requesterLength, requesters, model,
-                    requestedIdsLength = requestedIds.length,
-                    setOptions = options.setOptions;
-                collection.set(collection.parse(data), setOptions);
-                // Set respective collection's models for requested ids only.
-                requesters = collection.getRequesters();
-                requesterLength = requesters.length;
-                // For each requester...
-                for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
-                  requesterIdsAsDict = collection.getRequesterIdsAsDictionary(requesters[requesterIdx]);
-                  models = [];
-                  // ... now let's iterate over the ids that were fetched ...
-                  for (i = 0; i < requestedIdsLength; i++) {
-                    //if the id that the requester cares about matches that model whose id was just fetched...
-                    if (requesterIdsAsDict[requestedIds[i]]) {
-                      model = collection.get(requestedIds[i]);
-                      // if the model was removed, no worries, the parent won't attempt to update the child on that one.
-                      if (model) {
-                        models.push(model);
-                      }
-                    }
-                  }
-                  privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
-                  // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
-                  privateCollection.set(models, {remove: false});
-                }
-              });
-        }, options);
-      };
-
-      /**
-       * Sets the lazyFetch mode. When enabled, the collection will assume models don't change, and only fetch each model from the server once.
-       * @method setLazyFetch
-       * @param lazyFetch {boolean} the lazyFetch mode to set
-       */
-      collection.setLazyFetch = function(lazyFetch) {
-        this.lazyFetch = lazyFetch;
-      };
-
-      /**
-       * Gets the lazyFetch mode.
-       * @method isLazyFetch
-       * @return {boolean} true if this collection fetches lazily.
-       */
-      collection.isLazyFetch = function() {
-        return this.lazyFetch;
-      };
-    };
-
-    return {
-      /**
-       * The constructor constructor / initialize method for collections.
-       * Allocate new memory for the local references if they
-       * were null when this method was called.
-       * @param [options] {Object} - optional options object
-       * @param   [options.fetchHttpAction='POST'] {String} http action used to get objects by ids
-       * @param   [options.getByIdsUrl='/ids'] {String} path appended to collection.url to get objects by a list of ids
-       * @param   [options.lazyFetch=false] {Boolean} if set to true, the collection will assume that models do not change after first fetch
-       * @param   [options.fetchUsingTrackedIds=true] {Boolean} if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
-                                                               but will rather call the default fetch method.
-       * @method constructor
-       */
-      constructor: function(models, options) {
-        options = options || {};
-        base.call(this, models, options);
-        this.isRequester = options.isRequester;
-        this.parentInstance = options.parentInstance;
-        if (!this.isRequester) {
-          this.requestMap = {};
-          this.collectionTrackedIds = [];
-          this.knownPrivateCollections = {};
-          this.getByIdsUrl = options.getByIdsUrl || '/ids';
-          this.fetchHttpAction = options.fetchHttpAction || 'POST';
-          this.lazyFetch = options.lazyFetch || false;
-          this.fetchUsingTrackedIds = options.fetchUsingTrackedIds !== false;
-          cacheMixin(this);
-        } else {
-          this.trackedIds = [];
-          this.listenTo(this.parentInstance, 'load-begin', function() {
-            this.trigger('cache-load-begin');
-          });
-          this.listenTo(this.parentInstance, 'load-complete', function() {
-            this.trigger('cache-load-complete');
-          });
-        }
-      },
-
-      /**
-       * Will abolish all listeners and events that are hooked
-       * to this collection.
-       * @method dispose
-       */
-      dispose: function() {
-        this.unbind();
-        this.off();
-        this.stopListening();
-        this.stopPolling();
-        if (this.isRequester) {
-          this.requesterDispose();
-        }
-      },
-
-      /**
-       * The default filter.  Always returns itself.
-       * @method filterDefault
-       * @return {Collection} a new instance of this collection
-       */
-      filterDefault: function() {
-        return this.constructor(this);
-      }
-    };
-  };
-
-  return collectionRegistrationMixin;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['backbone', 'jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('backbone'), require('jquery'));
@@ -856,99 +225,6 @@
   return Backbone.history;
 }));
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
-  }
-}(this, function() {
-  /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  polling
-   * @author ariel.wexler@vecna.com
-   */
-  var pollingMixin = {
-    /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
-     */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
-
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.__poll();
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-      }
-    },
-
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
-    },
-
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
-    },
-
-    /************** Private methods **************/
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
-    }
-  };
-
-  return pollingMixin;
-}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone', 'backbone.stickit'], factory);
@@ -1262,14 +538,738 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin'], factory);
+    define(['underscore', 'jquery'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+    module.exports = factory(require('underscore'), require('jquery'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Cell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+}(this, function(_, $) {
+  /**
+   * Custom additions to the Backbone Collection object.
+   * - safe disposal methods for memory + event management
+   * - special functional overrides to support ID registration for different views
+   *
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  cacheMixin
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  var mixin = function(base) {
+
+    var cacheMixin, createRequesterCollectionClass;
+
+    /**
+     * Returns a new class of collection that inherits from the parent but not the cacheMixin
+     * and adds a requesterMixin that connects this cache to it's parent
+     *
+     * @method createRequesterCollectionClass
+     * @param parent {Backbone Collection instance} the parent of the private collection
+     * @param guid {String} the unique code of the owner of this private collection
+     */
+    createRequesterCollectionClass = function(parent, guid) {
+      return parent.constructor.extend((function(parentClass, parentInstance, ownerKey) {
+
+        /**
+         * A mixin that overrides base collection methods meant for cache's and tailors them
+         * to a requester.
+         * @method requesterMixin
+         */
+        var requesterMixin = {
+
+          /**
+           * @method requesterMixin.getTrackedIds
+           * @return {Array} array of ids that this collection is tracking
+           */
+          getTrackedIds: function() {
+            return this.trackedIds;
+          },
+
+          /**
+           * Will force the cache to fetch just the registered ids of this collection
+           * @method requesterMixin.fetch
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetch: function() {
+            var requesterCollection = this;
+            return this.__loadWrapper(function() {
+              if (requesterCollection.trackedIds && requesterCollection.trackedIds.length) {
+                return parentInstance.fetchByIds({idsToFetch: requesterCollection.trackedIds, setOptions: {remove: false}});
+              } else {
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Override the Id registration system to route via the parent collection
+           * @method requesterMixin.trackIds
+           * @param ids The list of ids that this collection wants to track
+           */
+          trackIds: function(ids) {
+            this.remove(_.difference(this.trackedIds, ids));
+            parentInstance.registerIds(ids, ownerKey);
+            this.trackedIds = ids;
+          },
+
+
+          /**
+           * Adds a new model to the requester collection and tracks the model.id
+           * @method requesterMixin.addModelAndTrack
+           * @param model {Backbone Model} the model to be added
+           */
+          addModelAndTrack: function(model) {
+            this.add(model);
+            parentInstance.add(model);
+            this.trackNewId(model.id);
+          },
+
+          /**
+           * Tracks a new id
+           * @method requesterMixin.trackNewId
+           * @param id {String or Number} the id attribute of the model
+           */
+          trackNewId: function(id) {
+            this.trackIds(this.getTrackedIds().concat(id));
+          },
+
+          /**
+           * Will register the new ids and then ask the cache to fetch them
+           * @method requesterMixin.fetchByIds
+           * @return the promise of the fetch by ids
+           */
+          fetchByIds: function(newIds) {
+            this.trackIds(newIds);
+            return this.fetch();
+          },
+
+          /**
+           * Will force the cache to fetch a subset of this collection's tracked ids
+           * @method requesterMixin.fetchSubsetOfTrackedIds
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetchSubsetOfTrackedIds: function(ids) {
+            var subsetOfTrackedIds = _.intersection(ids, this.getTrackedIds());
+            return this.__loadWrapper(function() {
+              if (subsetOfTrackedIds && subsetOfTrackedIds.length) {
+                return parentInstance.fetchByIds({idsToFetch: subsetOfTrackedIds, setOptions: {remove: false}});
+              } else {
+                // handle if subsetOfTrackedIds is empty
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Will force the cache to fetch any of this collection's tracked models that are not in the cache
+           * @method requesterMixin.pull
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          pull: function() {
+            //find ids that we don't have in cache
+            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            return this.__loadWrapper(function() {
+              if (idsNotInCache && idsNotInCache.length) {
+                return parentInstance.fetchByIds({idsToFetch: idsNotInCache, setOptions: {remove: false}});
+              } else {
+                // handle if idsNotInCache is empty
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Will register the new ids and then pull in any models not stored in the cache
+           * @method requesterMixin.pullByIds
+           * @return the promise of the fetch by ids
+           */
+          pullByIds: function(newIds) {
+            this.trackIds(newIds);
+            return this.pull();
+          },
+
+          /**
+           * Handles the disposing of this collection as it relates to a requester collection.
+           * @method requesterMixin.requesterDispose
+           */
+          requesterDispose: function() {
+            parentInstance.removeRequester(ownerKey);
+          }
+        };
+
+        return requesterMixin;
+      })(parent.constructor.__super__, parent, guid));
+    };
+
+    /**
+     * Adds functions to manage state of requesters
+     * @method cacheMixin
+     * @param collection {Collection} the collection to add this mixin
+     */
+    cacheMixin = function(collection) {
+
+      //************* PRIVATE METHODS ************//
+
+      /**
+       * @private
+       * @method cacheMixin.setRequestedIds
+       * @param guid {String} the global unique identifier for the requester
+       * @param array {Array} the array of ids the requester wants
+       */
+      var setRequestedIds = function(guid, array) {
+        collection.requestMap[guid] = {
+          array: array,
+          dict: _.object(_.map(array, function(id) { return [id, id]; }))
+        };
+      };
+
+      //*********** PUBLIC METHODS ************//
+
+      /**
+       * @method cacheMixin.getRequesterIds
+       * @param {String} the global unique id of the requester
+       * @return {Array} an array of the ids the requester with the guid has requested
+       */
+      collection.getRequesterIds = function(guid) {
+        return this.requestMap[guid] && this.requestMap[guid].array;
+      };
+
+      /**
+       * @method cacheMixin.getRequesterIdsAsDictionary
+       * This method is used for quick look up of a certain id within the list of requested ids
+       * @param guid {String} the global unique id of the requester
+       * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
+       */
+      collection.getRequesterIdsAsDictionary = function(guid) {
+        return this.requestMap[guid] && this.requestMap[guid].dict;
+      };
+
+      /**
+       * @method cacheMixin.removeRequester
+       * Removes a requester from this cache. No longer receives updates
+       * @param guid {String} the global unique id of the requester
+       */
+      collection.removeRequester = function(guid) {
+        delete this.requestMap[guid];
+        delete this.knownPrivateCollections[guid];
+      };
+
+      /**
+       * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
+       * TODO: should this return just the knownPrivateCollections
+       * @method cacheMixin.getRequesters
+       * @return {Array} an array of the all requesters in the form of their GUID's
+       */
+      collection.getRequesters = function()  {
+        return _.keys(this.requestMap);
+      };
+
+      /**
+       * Return the list of Ids requested by this collection
+       * @method cacheMixin.getAllRequestedIds
+       * @return {Array} the corresponding requested Ids
+       */
+      collection.getAllRequestedIds = function() {
+        return this.collectionTrackedIds;
+      };
+
+      /**
+       * Used to return a collection of desired models given the requester object.
+       * Binds a custom "resized" event to the private collections.
+       * Overrides the fetch method to call the parent collection's fetchByIds method.
+       * Overrides the registerIds method to redirect to its parent collection.
+       * @method cacheMixin.createPrivateCollection
+       * @param guid {String} Identifier for the requesting view
+       * @return {Collection} an new empty collection of the same type as "this"
+       */
+      collection.createPrivateCollection = function(guid, args) {
+        args = args || {};
+        args.isRequester = true;
+        args.parentInstance = collection;
+        var RequesterClass = createRequesterCollectionClass(collection, guid);
+        this.knownPrivateCollections[guid] = new RequesterClass(null, args);
+        return this.knownPrivateCollections[guid];
+      };
+
+      /**
+       * Registers a list of Ids that a particular object cares about and pushes
+       * any cached models its way.
+       *
+       * This method intelligently updates the "_requestedIds" field to contain all unique
+       * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
+       * is overriden such that it no longer routes through Backbone's fetch all,
+       * but rather a custom "fetchByIds" method.
+       * @method cacheMixin.registerIds
+       * @param newIds {Array}  - New ids to register under the requester
+       * @param guid {String}   - The GUID of the object that wants the ids
+       */
+      collection.registerIds = function(newIds, guid) {
+        var i, newIdx, model, requesterIdx, storedIds,
+            requesters, requesterLength, privateCollection,
+            models = [],
+            distinctIds = {},
+            result = [];
+
+        // Save the new requests in the map
+        setRequestedIds(guid, newIds);
+        requesters = collection.getRequesters();
+        requesterLength = requesters.length;
+
+        // Collect all cached models
+        for (newIdx = 0; newIdx < newIds.length; newIdx++) {
+          model = collection.get(newIds[newIdx]);
+          if (model) {
+            models.push(model);
+          }
+        }
+
+        // Push cached models to the respective requester
+        privateCollection = collection.knownPrivateCollections[guid];
+        privateCollection.set(models, {remove: false});
+
+        // Create a new request list
+        for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
+          storedIds = this.getRequesterIds(requesters[requesterIdx]);
+          if (!_.isUndefined(storedIds)) {
+            for (i = 0; i < storedIds.length; i++) {
+              distinctIds[storedIds[i]] = true;
+            }
+          }
+        }
+
+        // Convert the hash table of unique Ids to a list
+        for (i in distinctIds) {
+          result.push(i);
+        }
+        this.collectionTrackedIds = result;
+
+        // Overrides the polling mixin's fetch method
+        this.polledFetch = function() {
+          collection.fetchByIds({
+            setOptions: {remove: true}
+          });
+        };
+      };
+
+      /**
+       * Overrides the base fetch call if this.fetchUsingTrackedIds is true
+       * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
+       * it will pass through to the default fetch.
+       * @method fetch
+       */
+      collection.fetch = function(options) {
+        options = options || {};
+        if (this.fetchUsingTrackedIds) {
+          return this.fetchByIds({
+            setOptions: _.extend({remove: true}, options)
+          });
+        } else {
+          return base.prototype.fetch.apply(this, options);
+        }
+      };
+
+      /**
+       * A custom fetch operation to only fetch the requested Ids.
+       * @method cacheMixin.fetchByIds
+       * @param [options] - argument options
+       * @param [options.idsToFetch=collection.collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
+       * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
+       * @return {Promise} the promise of the fetch
+       */
+      collection.fetchByIds = function(options) {
+        options = options || {};
+        // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
+        return this.__loadWrapper(function(options) {
+          var requestedIds, idsToFetch;
+          requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+          if (collection.lazyFetch) {
+            idsToFetch = _.difference(requestedIds, this.models.pluck('id'));
+          } else {
+            idsToFetch = requestedIds;
+          }
+          return $.ajax({
+              type: collection.fetchHttpAction,
+              url: _.result(collection, 'url') + collection.getByIdsUrl,
+              contentType: 'application/json; charset=utf-8',
+              data: JSON.stringify(idsToFetch)
+            }).done(
+              // Success function
+              function(data) {
+                var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
+                    requesterLength, requesters, model,
+                    requestedIdsLength = requestedIds.length,
+                    setOptions = options.setOptions;
+                collection.set(collection.parse(data), setOptions);
+                // Set respective collection's models for requested ids only.
+                requesters = collection.getRequesters();
+                requesterLength = requesters.length;
+                // For each requester...
+                for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
+                  requesterIdsAsDict = collection.getRequesterIdsAsDictionary(requesters[requesterIdx]);
+                  models = [];
+                  // ... now let's iterate over the ids that were fetched ...
+                  for (i = 0; i < requestedIdsLength; i++) {
+                    //if the id that the requester cares about matches that model whose id was just fetched...
+                    if (requesterIdsAsDict[requestedIds[i]]) {
+                      model = collection.get(requestedIds[i]);
+                      // if the model was removed, no worries, the parent won't attempt to update the child on that one.
+                      if (model) {
+                        models.push(model);
+                      }
+                    }
+                  }
+                  privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
+                  // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
+                  privateCollection.set(models, {remove: false});
+                }
+              });
+        }, options);
+      };
+
+      /**
+       * Sets the lazyFetch mode. When enabled, the collection will assume models don't change, and only fetch each model from the server once.
+       * @method setLazyFetch
+       * @param lazyFetch {boolean} the lazyFetch mode to set
+       */
+      collection.setLazyFetch = function(lazyFetch) {
+        this.lazyFetch = lazyFetch;
+      };
+
+      /**
+       * Gets the lazyFetch mode.
+       * @method isLazyFetch
+       * @return {boolean} true if this collection fetches lazily.
+       */
+      collection.isLazyFetch = function() {
+        return this.lazyFetch;
+      };
+    };
+
+    return {
+      /**
+       * The constructor constructor / initialize method for collections.
+       * Allocate new memory for the local references if they
+       * were null when this method was called.
+       * @param [options] {Object} - optional options object
+       * @param   [options.fetchHttpAction='POST'] {String} http action used to get objects by ids
+       * @param   [options.getByIdsUrl='/ids'] {String} path appended to collection.url to get objects by a list of ids
+       * @param   [options.lazyFetch=false] {Boolean} if set to true, the collection will assume that models do not change after first fetch
+       * @param   [options.fetchUsingTrackedIds=true] {Boolean} if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
+                                                               but will rather call the default fetch method.
+       * @method constructor
+       */
+      constructor: function(models, options) {
+        options = options || {};
+        base.call(this, models, options);
+        this.isRequester = options.isRequester;
+        this.parentInstance = options.parentInstance;
+        if (!this.isRequester) {
+          this.requestMap = {};
+          this.collectionTrackedIds = [];
+          this.knownPrivateCollections = {};
+          this.getByIdsUrl = options.getByIdsUrl || '/ids';
+          this.fetchHttpAction = options.fetchHttpAction || 'POST';
+          this.lazyFetch = options.lazyFetch || false;
+          this.fetchUsingTrackedIds = options.fetchUsingTrackedIds !== false;
+          cacheMixin(this);
+        } else {
+          this.trackedIds = [];
+          this.listenTo(this.parentInstance, 'load-begin', function() {
+            this.trigger('cache-load-begin');
+          });
+          this.listenTo(this.parentInstance, 'load-complete', function() {
+            this.trigger('cache-load-complete');
+          });
+        }
+      },
+
+      /**
+       * Will abolish all listeners and events that are hooked
+       * to this collection.
+       * @method dispose
+       */
+      dispose: function() {
+        this.unbind();
+        this.off();
+        this.stopListening();
+        this.stopPolling();
+        if (this.isRequester) {
+          this.requesterDispose();
+        }
+      },
+
+      /**
+       * The default filter.  Always returns itself.
+       * @method filterDefault
+       * @return {Collection} a new instance of this collection
+       */
+      filterDefault: function() {
+        return this.constructor(this);
+      }
+    };
+  };
+
+  return mixin;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cell = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellMixin
+   * @author kent.willis@vecna.com
+   */
+  return {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('jquery'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.loading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+  }
+}(this, function($) {
+  /**
+   * Loading logic.
+   *
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  loadingMixin
+   * @author kent.willis@vecna.com
+   */
+  var loadingMixin = function(base) {
+
+    return {
+      /**
+       * Adds the loading mixin
+       * @method constructor
+       * @param args {Object} the arguments to the base constructor method
+       */
+      constructor: function(args) {
+        base.call(this, args);
+        this.loadedOnceDeferred = new $.Deferred();
+        this.loadedOnce = false;
+        this.loading = false;
+      },
+
+      /**
+       * @method hasLoadedOnce
+       * @return true if this model/collection has ever loaded from a fetch call
+       */
+      hasLoadedOnce: function() {
+        return this.loadedOnce;
+      },
+
+      /**
+       * @method isLoading
+       * @return true if this model/collection is currently loading new values from the server
+       */
+      isLoading: function() {
+        return this.loading;
+      },
+
+      /**
+       * @method getLoadedOncePromise
+       * @return a promise that will resolve when the model/collection has loaded for the first time
+       */
+      getLoadedOncePromise: function() {
+        return this.loadedOnceDeferred.promise();
+      },
+
+      /**
+       * Wraps the base fetch in a wrapper that manages loaded states
+       * @method fetch
+       * @param options {Object} - the object to hold the options needed by the base fetch method
+       * @return {Promise} The loadWrapper promise
+       */
+      fetch: function(options) {
+        return this.__loadWrapper(base.prototype.fetch, options);
+      },
+
+      /**
+       * Base load function that will trigger a "load-begin" and a "load-complete" as
+       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       * @method __loadWrapper
+       * @param fetchMethod {Function} - the method to invoke a fetch
+       * @param options {Object} - the object to hold the options needed by the fetchMethod
+       * @return a promise when the fetch method has completed and the events have been triggered
+       */
+      __loadWrapper: function(fetchMethod, options) {
+        var object = this;
+        this.loading = true;
+        this.trigger('load-begin');
+        return $.when(fetchMethod.call(object, options)).done(function(data, textStatus, jqXHR) {
+          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
+        }).always(function() {
+          if (!object.loadedOnce) {
+            object.loadedOnce = true;
+            object.loadedOnceDeferred.resolve();
+          }
+          object.loading = false;
+        });
+      }
+    };
+  };
+
+  return loadingMixin;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.polling = factory();
+  }
+}(this, function() {
+  /**
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  pollingMixin
+   * @author ariel.wexler@vecna.com
+   */
+  var pollingMixin = {
+    /**
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     */
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
+
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.__poll();
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
+      }
+    },
+
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
+    },
+
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
+    },
+
+    //************** Private methods **************//
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
+    }
+  };
+
+  return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/cellMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Cell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
+  }
+}(this, function(_, Backbone, cellMixin) {
   'use strict';
   /**
    * An non-persistable object that can listen to and emit events like a models.
@@ -1278,21 +1278,21 @@
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var Cell = Backbone.Model.extend({});
-  _.extend(Cell.prototype, cellPersistenceRemovalMixin);
+  _.extend(Cell.prototype, cellMixin);
 
   return Cell;
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', './collectionRegistrationMixin', './collectionLoadingMixin'], factory);
+    define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/cacheMixin', './mixins/loadingMixin'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./collectionRegistrationMixin'), require('./collectionLoadingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/cacheMixin'), require('./mixins/loadingMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Collection = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.collectionRegistration, root.Torso.Mixins.collectionLoading);
+    root.Torso.Collection = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.cache, root.Torso.Mixins.loading);
   }
-}(this, function(_, Backbone, pollingMixin, collectionRegistrationMixin, collectionLoadingMixin) {
+}(this, function(_, Backbone, pollingMixin, cacheMixin, loadingMixin) {
   'use strict';
 
   /**
@@ -1304,17 +1304,17 @@
    */
   var Collection = Backbone.Collection.extend({});
   _.extend(Collection.prototype, pollingMixin);
-  Collection = Collection.extend(collectionLoadingMixin(Collection));
-  Collection = Collection.extend(collectionRegistrationMixin(Collection));
+  Collection = Collection.extend(loadingMixin(Collection));
+  Collection = Collection.extend(cacheMixin(Collection));
 
   return Collection;
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin'], factory);
+    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
@@ -1337,15 +1337,15 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+    define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
   }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+}(this, function(_, Backbone, cellMixin) {
   'use strict';
 
   /**
@@ -1356,17 +1356,17 @@
    * @author kent.willis@vecna.com
    */
   var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+  _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', 'backbone-nested'], factory);
+    define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
@@ -1457,7 +1457,6 @@
     /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
      * @method constructor
-     * @override
      */
     constructor: function(options) {
       options = options || {};
@@ -1584,10 +1583,9 @@
     },
 
     /**
-     * Binds DOM events with the view using events hash.
-     * Also adds feedback event bindings
+     * Overrides the base delegateEvents
+     * Binds DOM events with the view using events hash while also adding feedback event bindings
      * @method delegateEvents
-     * @override
      */
     delegateEvents: function() {
       Backbone.View.prototype.delegateEvents.call(this);
@@ -1601,9 +1599,9 @@
     },
 
     /**
+     * Overrides undelegateEvents
      * Unbinds DOM events from the view.
      * @method undelegateEvents
-     * @override
      */
     undelegateEvents: function() {
       Backbone.View.prototype.undelegateEvents.call(this);
@@ -1712,7 +1710,7 @@
     _attached: _.noop,
 
     /**
-     * @returns {Boolean} true if the view is attached to a parent
+     * @return {Boolean} true if the view is attached to a parent
      * @method isAttachedToParent
      */
     isAttachedToParent: function() {
@@ -1721,7 +1719,7 @@
 
     /**
      * NOTE: depends on a global variable "document"
-     * @returns {Boolean} true if the view is attached to the DOM
+     * @return {Boolean} true if the view is attached to the DOM
      * @method isAttached
      */
     isAttached: function() {
@@ -1796,7 +1794,7 @@
     _activate: _.noop,
 
     /**
-     * @returns {Boolean} true if the view is active
+     * @return {Boolean} true if the view is active
      * @method isActive
      */
     isActive: function() {
@@ -1865,7 +1863,7 @@
     _dispose: _.noop,
 
     /**
-     * @returns {Boolean} true if the view was disposed
+     * @return {Boolean} true if the view was disposed
      * @method isDisposed
      */
     isDisposed: function() {
@@ -2019,7 +2017,7 @@
       }
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * If the view is attaching during the render process, then it replaces the injection site
@@ -2601,7 +2599,7 @@
       }
     }
 
-    /************** End Private methods **************/
+    //************** End Private methods **************//
   });
 
   return View;
@@ -3712,7 +3710,7 @@
 
     /**
      * Remove a mapping (model or computed) by alias
-     * @model unsetMapping
+     * @method unsetMapping
      * @param aliasOrModel {String or Backbone.Model instance} if a String is provided, it will unset the mapping with that alias.
      *   If a Backbone Model instance is provided, it will remove the model mapping that was bound to that model.
      * @param [removeModelIfUntracked=false] {Boolean} If true, after the mapping is removed, the model will also be unset but only if
@@ -3816,7 +3814,7 @@
 
     /**
      * Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.
-     * @param unsetTrackedModels
+     * @method unsetTrackedModels
      */
     unsetTrackedModels: function() {
       this.__currentObjectModels = [];
@@ -3997,7 +3995,7 @@
       return _.values(staleModels);
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * Sets up a listener to update the form model if the model's field (or any field) changes.
@@ -4778,19 +4776,13 @@
      * Constructor for the list view object.
      * @method constructor
      * @param args {Object} - options argument
-     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated
-     *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
-     *                                                     this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
-     *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
-     *                                                          might provide a default collection. Can be private or public collection
+     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
+     *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
      *   @param [args.itemContext] {Object or Function} - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
      *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
      *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns
-     *                                             an empty list. If a itemContainer is provided, the empty template will be
-     *                                             rendered there.
-     *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom
-     *                                           functionality.
+     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
+     *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom functionality.
      *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
@@ -5054,7 +5046,7 @@
       return _.map(orderedViewIds, this.getTrackedView, this);
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * Creates all needed item views that don't exist from modelsToRender()
@@ -5486,7 +5478,7 @@
       }
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * Selects all data-model references in this view's DOM, and creates stickit bindings
