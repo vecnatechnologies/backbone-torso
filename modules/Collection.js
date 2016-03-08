@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './pollingMixin', './collectionRegistrationMixin', './collectionLoadingMixin'], factory);
+    define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/cacheMixin', './mixins/loadingMixin'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./pollingMixin'), require('./collectionRegistrationMixin'), require('./collectionLoadingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/cacheMixin'), require('./mixins/loadingMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Collection = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.collectionRegistration, root.Torso.Mixins.collectionLoading);
+    root.Torso.Collection = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.cache, root.Torso.Mixins.loading);
   }
-}(this, function(_, Backbone, pollingMixin, collectionRegistrationMixin, collectionLoadingMixin) {
+}(this, function(_, Backbone, pollingMixin, cacheMixin, loadingMixin) {
   'use strict';
 
   /**
@@ -19,8 +19,8 @@
    */
   var Collection = Backbone.Collection.extend({});
   _.extend(Collection.prototype, pollingMixin);
-  Collection = Collection.extend(collectionLoadingMixin(Collection));
-  Collection = Collection.extend(collectionRegistrationMixin(Collection));
+  Collection = Collection.extend(loadingMixin(Collection));
+  Collection = Collection.extend(cacheMixin(Collection));
 
   return Collection;
 }));

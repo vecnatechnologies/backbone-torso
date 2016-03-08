@@ -1,14 +1,14 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './cellPersistenceRemovalMixin', 'backbone-nested'], factory);
+    define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./cellPersistenceRemovalMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cellPersistenceRemovalMixin);
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
   }
-}(this, function(_, Backbone, cellPersistenceRemovalMixin) {
+}(this, function(_, Backbone, cellMixin) {
   'use strict';
 
   /**
@@ -19,7 +19,7 @@
    * @author kent.willis@vecna.com
    */
   var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellPersistenceRemovalMixin);
+  _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
 }));

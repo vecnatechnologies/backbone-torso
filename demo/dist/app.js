@@ -5,8 +5,6 @@ var $ = require('backbone-torso/node_modules/jquery');
 window.$ = $;
 window.jQuery = $;
 
-require('brec-tables/node_modules/brec-base/js/alerts');
-
 /* START IT UP
   You'll need to start your application to get things going.
   While this file isn't part of Torso, it does show how to start
@@ -27,14 +25,14 @@ $(window).ready(function () {
 
 
 
-},{"./router":4,"backbone-torso/node_modules/jquery":31,"brec-tables/node_modules/brec-base/js/alerts":33}],2:[function(require,module,exports){
+},{"./router":4,"backbone-torso/node_modules/jquery":31}],2:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<div id=\"hello-world\">Hello world, this is a perspective view!</div>\n";
 },"useData":true});
 
-},{"hbsfy/runtime":41}],3:[function(require,module,exports){
+},{"hbsfy/runtime":40}],3:[function(require,module,exports){
 var Torso = require('backbone-torso');
 
 /* PERSPECTIVE VIEW
@@ -109,7 +107,7 @@ module.exports = new (Torso.Router.extend({
     this.current = nextPerspective;
     // Torso View's attach method will fire all of the needed behind-the-scenes
     // code to make sure your view is ready to be used after it is attached to the DOM.
-    this.current.attach($('.app'));
+    this.current.attachTo($('.app'));
   }
 }))();
 },{"./home/homeView":3,"backbone-torso":26,"backbone-torso/node_modules/jquery":31}],5:[function(require,module,exports){
@@ -245,7 +243,7 @@ module.exports = new (Torso.Router.extend({
     defaultMapping: null,
 
     /**
-     * Initializes the form model. Can take in attributes to set initially. These will override any pulled values from object models
+     * Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models
      * on initialization. On initialization the object model's values will be pulled once.
      * For the options, here are needed definitions:
      * Model Configuration: {
@@ -262,7 +260,7 @@ module.exports = new (Torso.Router.extend({
      *   push: {Function} a callback that will be invoked when pushing data to the Object model. It will take a single argument,
      *     an array of all the models defined in the the model configuration array: _.pluck(computedConfig.models, 'model')
      * }
-     * @method initialize
+     * @method constructor
      * @param [options] {Object}
      *   @param [options.models] {Array} list of model configurations. These will dictate what fields from the Object model will be
      *     used during the pulling and pushing. Will be ignored if options.model exists.
@@ -276,7 +274,8 @@ module.exports = new (Torso.Router.extend({
      *   @param [options.validation] {Object} A Backbone.Validation plugin hash to dictate the validation rules
      *   @param [options.labels] {Object} A Backbone.Validation plugin hash to dictate the attribute labels
      */
-    initialize: function(attributes, options) {
+    constructor: function(attributes, options) {
+      NestedModel.apply(this, arguments);
       options = options || {};
       this.__computed = [];
       this.__cache = {};
@@ -391,6 +390,8 @@ module.exports = new (Torso.Router.extend({
      * saving, will perform a push.
      * If no "url" property is defined then the following behavior is used:
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
+     * NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise
+     * with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}
      * @param [options] {Object}
      *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
      *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
@@ -406,7 +407,7 @@ module.exports = new (Torso.Router.extend({
      * @method save
      */
     save: function(options) {
-      var notTrackingResponse,
+      var notTrackingResponse, url,
         deferred = new $.Deferred(),
         formModel = this;
       options = options || {};
@@ -414,15 +415,18 @@ module.exports = new (Torso.Router.extend({
         rollback: true,
         force: true
       });
-      if (this.isTrackingObjectModel()) {
-        if (_.has(formModel, 'url')) {
-          return NestedModel.prototype.save.apply(this, arguments).done(function() {
-            formModel.push();
-          });
-        } else {
-          this.__saveToModels(deferred, options);
-          return deferred.promise();
-        }
+      try {
+        url = _.result(formModel, 'url');
+      } catch (e) {
+        // no url attached to this form model. Continue by pushing to models.
+      }
+      if (url) {
+        return NestedModel.prototype.save.apply(formModel, arguments).done(function() {
+          formModel.push();
+        });
+      } else if (this.isTrackingObjectModel()) {
+        this.__saveToModels(deferred, options);
+        return deferred.promise();
       } else {
         // Return a response that is generated when this form model is not tracking an object model
         notTrackingResponse = {
@@ -1001,9 +1005,8 @@ module.exports = new (Torso.Router.extend({
      **/
 
     /**
-     * Initialize the form view object.
-     * Override to add more functionality
-     * @method initialize
+     * Constructor the form view object.
+     * @method constructor
      * @param args {Object} - options argument
      * @param args.model       {Torso.FormModel} - requires a form model for binding
      * @param [args.template]  {HTML Template} - overrides the template used by this view
@@ -1011,7 +1014,7 @@ module.exports = new (Torso.Router.extend({
      * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
      * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
      */
-    initialize: function(args) {
+    constructor: function(args) {
       args = args || {};
 
       /* Listen to model validation callbacks */
@@ -1029,6 +1032,8 @@ module.exports = new (Torso.Router.extend({
       this._success = false;
       // this._bindings is a snapshot of the original bindings
       this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
+
+      View.apply(this, arguments);
     },
 
     /**
@@ -1213,7 +1218,7 @@ module.exports = new (Torso.Router.extend({
 }(this, function(_, $, View, templateRenderer) {
   'use strict';
 
-    var removeChildView, addChildView, aggregateRenders, breakDelayedRender;
+    var removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
@@ -1253,51 +1258,86 @@ module.exports = new (Torso.Router.extend({
     };
 
     /**
-     * Handles the removal of a child view if a model has been removed from the collection
+     * Handles the removal of an item view if a model has been removed from the collection
      * @private
-     * @method removeChildView
+     * @method removeItemView
      * @param model {Backbone Model instance} the model that has been removed
      */
-    removeChildView = function(model) {
-      var childView = this.getChildViewFromModel(model);
-      if (childView) {
-        childView.dispose();
-        this.unregisterChildView(childView);
-        delete this.__modelToViewMap[model.cid];
-        this.trigger('child-view-removed', {model: model, view: childView});
-        if (!this.hasChildViews()) {
+    removeItemView = function(model) {
+      var itemView = this.getItemViewFromModel(model);
+      if (itemView) {
+        _removeItemView.call(this, itemView, model[this.__modelId], model);
+        if (!this.hasItemViews()) {
           this.__delayedRender();
         }
       }
     };
 
     /**
-     * Handles the addition of a child view if a model has been added to the collection.
+     * Disposes of an item view, unregisters, stops tracking and triggers a 'item-view-removed' event
+     * with the model and an item view as the payload.
+     * @private
+     * @method _removeItemView
+     * @param itemView {Backbone View instance} the view being removed
+     * @param modelId {String or Number} the id used for the model
+     * @param [model] {Backbone Model instance} the model
+     */
+    _removeItemView = function(itemView, modelId, model) {
+      itemView.dispose();
+      this.unregisterTrackedView(itemView, { shared: false });
+      delete this.__modelToViewMap[modelId];
+      this.__updateOrderedModelIdList();
+      this.trigger('item-view-removed', {model: model || itemView.model, view: itemView});
+      this.trigger('child-view-removed', {model: model || itemView.model, view: itemView});
+    };
+
+    /**
+     * Handles the addition of an item view if a model has been added to the collection.
      * When possible, it will append the view instead of causing a rerender
      * @private
-     * @method addChildView
+     * @method addItemView
      * @param model the model being added
      */
-    addChildView = function(model) {
-      var childView, viewAfter, viewBefore,
+    addItemView = function(model) {
+      var itemView,
           models = this.modelsToRender(),
           indexOfModel = models.indexOf(model);
       if (indexOfModel > -1) {
-        this.__createChildViews();
-        if (!this.hasChildViews()) {
-          this.__delayedRender();
+        itemView = this.__createItemView(model);
+        _addItemView.call(this, itemView, indexOfModel);
+      }
+    };
+
+    /**
+     * Adds the new item view before or after a sibling view. If no sibling view exists
+     * or if this item view is the first, it will cause a re-render. This method will break
+     * any delayed renders and force a re-render before continuing.
+     * @private
+     * @method _addItemView
+     * @param itemView the view being added
+     * @param indexOfModel - the index of the model into the array of models to render
+     */
+    _addItemView = function(itemView, indexOfModel) {
+      var viewAfter, viewBefore, replaceMethod,
+        models = this.modelsToRender();
+      if (!this.hasItemViews()) {
+        this.__delayedRender();
+      } else {
+        breakDelayedRender(this);
+        viewAfter = this.getItemViewFromModel(models[indexOfModel + 1]);
+        viewBefore = this.getItemViewFromModel(models[indexOfModel - 1]);
+        if (viewAfter) {
+          replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
+        } else if (viewBefore) {
+          replaceMethod = _.bind(viewBefore.$el.after, viewBefore.$el);
         } else {
-          breakDelayedRender(this);
-          childView = this.getChildViewFromModel(model);
-          viewAfter = this.getChildViewFromModel(models[indexOfModel + 1]);
-          viewBefore = this.getChildViewFromModel(models[indexOfModel - 1]);
-          if (viewAfter) {
-            viewAfter.$el.before(childView.$el);
-          } else if (viewBefore) {
-            viewBefore.$el.after(childView.$el);
-          } else {
-            this.__delayedRender();
-          }
+          this.__delayedRender();
+        }
+        if (replaceMethod) {
+          this.attachView(null, itemView, {
+            replaceMethod: replaceMethod,
+            discardInjectionSite: true
+          });
         }
       }
     };
@@ -1317,11 +1357,14 @@ module.exports = new (Torso.Router.extend({
      */
     collection: null,
     /**
-     * The child view class definition that will be instantiated for each model in the list
-     * @property childView
-     * @type View
+     * The item view class definition that will be instantiated for each model in the list.
+     * itemView can also be a function that takes a model and returns a view class. This allows
+     * for different view classes depending on the model.
+     * NOTE: replacement for deprecated field: childView
+     * @property itemView
+     * @type View or Function
      */
-    childView: null,
+    itemView: null,
     /**
      * The template that allows a list view to hold it's own HTML like filter buttons, etc.
      * @property template
@@ -1330,99 +1373,150 @@ module.exports = new (Torso.Router.extend({
     template: null,
     /**
      * If provided, this template that will be shown if the modelsToRender() method returns
-     * an empty list. If a childrenContainer is provided, the empty template will be rendered there.
+     * an empty list. If an itemContainer is provided, the empty template will be rendered there.
      * @property emptyTemplate
      * @type HTML Template
      */
     emptyTemplate: null,
     /**
-     * (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
-     * @property childrenContainer
+     * (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
+     * NOTE: replacement for deprecated field: childContainer
+     * @property itemContainer
      * @type String
      */
-    childrenContainer: null,
+    itemContainer: null,
     __modelName: '',
     __modelId: '',
     __modelToViewMap: null,
-    __childContext: null,
+    __itemContext: null,
     __renderWait: 0,
     __delayedRender: null,
     __delayedRenderTimeout: null,
 
     /**
-     * Initialize the list view object.
-     * Override to add more functionality but remember to call ListView.prorotype.initialize.call(this, args) first
-     * @method initialize
+     * Constructor for the list view object.
+     * @method constructor
      * @param args {Object} - options argument
-     *   @param args.childView {Backbone.View definition} - the class definition of the child view. This view will be instantiated
-     *                                                     for every model returned by modelsToRender()
+     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated
+     *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
+     *                                                     this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
      *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
      *                                                          might provide a default collection. Can be private or public collection
-     *   @param [args.childContext] {Object or Function} - object or function that's passed to the child view's during initialization under the name "context". Can be used by the child view during their prepare method.
+     *   @param [args.itemContext] {Object or Function} - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
      *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
-     *   @param [args.childrenContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of children
+     *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
      *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns
-     *                                             an empty list. If a childrenContainer is provided, the empty template will be
+     *                                             an empty list. If a itemContainer is provided, the empty template will be
      *                                             rendered there.
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom
      *                                           functionality.
      *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
-     *   @param [args.modelId='cid'] {String} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
-     *   @param [args.childModel='model'] {String} - name of the model argument passed to the child view during initialization
+     *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
+     *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
+     *   @param [args.childView] {String} DEPRECATED - deprecated alias to args.itemView
+     *   @param [args.childContext] {String} DEPRECATED - deprecated alias to args.itemContext
+     *   @param [args.childContainer] {String} DEPRECATED - deprecated alias to args.itemContainer
+     *   @param [args.childModel] {String} DEPRECATED - deprecated alias to args.modelName
      */
-    initialize: function(args) {
-      var initialModels, i, l, childView,
-        injectionSite = this.$el;
+    constructor: function(args) {
+      View.apply(this, arguments);
       args = args || {};
-      this.collection = args.collection;
-      this.template = args.template;
-      this.emptyTemplate = args.emptyTemplate;
-      this.childView = args.childView;
-      this.childrenContainer = args.childrenContainer;
-      if (this.template && !this.childrenContainer) {
-        throw 'Children container is required when using a template';
+
+      var collection = args.collection || this.collection;
+
+      this.template = args.template || this.template;
+      this.emptyTemplate = args.emptyTemplate || this.emptyTemplate;
+      this.itemView = args.itemView || this.itemView || args.childView || this.childView;
+      this.itemContainer = args.itemContainer || this.itemContainer || args.childrenContainer || this.childrenContainer;
+      if (this.template && !this.itemContainer) {
+        throw 'Item container is required when using a template';
       }
       this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this.__childContext = args.childContext;
+      this.__itemContext = args.itemContext || this.__itemContext || args.childContext || this.__childContext;
       this.__modelToViewMap = {};
       this.__renderWait = args.renderWait || this.__renderWait;
       this.__modelId = args.modelId || 'cid';
-      this.__modelName = args.childModel || 'model';
-      this.__createChildViews();
+      this.__modelName = args.modelName || args.childModel || 'model';
+      this.__orderedModelIdList = [];
+      this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
-      // if a 'changed' event happens, the model's view should handle re-rendering itself
-      this.listenTo(this.collection, 'remove', removeChildView, this);
-      this.listenTo(this.collection, 'add', addChildView, this);
-      this.listenTo(this.collection, 'sort', this.__delayedRender, this);
-      this.listenTo(this.collection, 'reset', this.update, this);
+      if (collection) {
+        this.setCollection(collection);
+      }
+
+      this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
     },
 
     /**
-     * The core rendering method that produces the template for the list view first
-     * then invokes a refresh on all children views or renders an empty list template
-     * if there are no models in the modelsToRender
-     * @method render
+     * Sets the collection from which this view generates item views.
+     * This method will attach all necessary event listeners to the new collection to auto-generate item views
+     * and has the option of removing listeners on a previous collection.
+     *
+     * @method setCollection
+     * @param collection {Backbone.Collection instance} the new collection that this list view should use.
      */
-    render: function() {
+    setCollection: function(collection) {
+      this.stopListening(this.collection, 'remove', removeItemView);
+      this.stopListening(this.collection, 'add', addItemView);
+      this.stopListening(this.collection, 'sort', this.reorder);
+      this.stopListening(this.collection, 'reset', this.update);
+
+      this.collection = collection;
+
+      this.listenTo(this.collection, 'remove', removeItemView);
+      this.listenTo(this.collection, 'add', addItemView);
+      this.listenTo(this.collection, 'sort', this.reorder);
+      this.listenTo(this.collection, 'reset', this.update);
+    },
+
+    /**
+     * Override of View.__updateDOM
+     * Builds a single DOM fragment from the item views and attaches it at once.
+     * @method __updateDOM
+     * @private
+     */
+    __updateDOM: function() {
       var injectionSite,
-          newDOM = $(templateRenderer.copyTopElement(this.el));
+        newDOM = $(templateRenderer.copyTopElement(this.el));
+      this.__updateInjectionSiteMap();
+      // The non-item views should be reattached by the attachTrackedViews method and the item views will be attached here.
+      this.detachTrackedViews();
       if (this.template) {
         newDOM.html(this.template(this.prepare()));
-        injectionSite = newDOM.find('[inject=' + this.childrenContainer + ']');
+        injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
       } else {
         injectionSite = $('<span>');
         newDOM.append(injectionSite);
       }
-      if (this.hasChildViews()) {
-        injectionSite.replaceWith(this.__buildChildViewsFragment());
+      if (this.hasItemViews()) {
+        injectionSite.replaceWith(this.__emptyAndRebuildItemViewsFragment());
       } else if (this.emptyTemplate) {
         injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
       }
-      this.trigger('render-before-dom-replacement', newDOM);
       this.$el.html(newDOM.contents());
-      this.delegateEvents();
-      this.trigger('render-complete');
+    },
+
+    /**
+     * Completes each item view's lifecycle of being attached to a parent.
+     * Because the item views are attached in a non-standard way, it's important to make sure
+     * that the item views are in the appropriate state after being attached as one fragment.
+     * @method __cleanupItemViewsAfterAttachedToParent
+     * @private
+     */
+    __cleanupItemViewsAfterAttachedToParent: function() {
+      _.each(this.modelsToRender(), function(model) {
+        var itemView = this.getItemViewFromModel(model);
+        if (itemView) {
+          itemView.delegateEvents();
+          if (!itemView.__attachedCallbackInvoked && itemView.isAttached()) {
+            itemView.__invokeAttached();
+          }
+          itemView.activate();
+        } else {
+          // Shouldn't get here. Item view is missing...
+        }
+      }, this);
     },
 
     /**
@@ -1430,10 +1524,59 @@ module.exports = new (Torso.Router.extend({
      * @method renderChildViews
      */
     renderChildViews: function() {
-      _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
+      _.each(this.getTrackedViews({child: true}), function(childView) {
         childView.render();
+      });
+    },
+
+    /**
+     * Takes existing item views and moves them into correct order defined by
+     * this.modelsToRender(). NOTE: As this method doesn't generate or remove views,
+     * this method takes advantage of jquery's ability to move elements already attached to the DOM.
+     * @method reorder
+     */
+    reorder: function() {
+      var firstItemView, sameOrder,
+        elements = [],
+        models = this.modelsToRender(),
+        newOrderOfIds = _.pluck(models, this.__modelId),
+        sizeOfNewModels = _.size(newOrderOfIds),
+        sizeOfOldModels = _.size(this.__orderedModelIdList),
+        sameSize = sizeOfNewModels === sizeOfOldModels;
+
+      if (sameSize) {
+        // is order the same?
+        sameOrder = _.reduce(this.__orderedModelIdList, function(result, oldId, index) {
+          return result && newOrderOfIds[index] == oldId;
+        }, true);
+      } else {
+        throw 'Reorder should not be invoked if the number of models have changed';
+      }
+      if (!sizeOfNewModels || sameOrder) {
+        // stop early if there are no models to reorder or the models are the same
+        return;
+      }
+      _.each(models, function(model, index) {
+        var itemView = this.getItemViewFromModel(model);
+        if (itemView) {
+          elements.push(itemView.$el);
+        }
+        if (index === 0) {
+          firstItemView = itemView;
+        }
       }, this);
+      // elements that are already connected to the DOM will be moved instead of re-attached
+      // meaning that detach, delegate events, and attach are not needed
+      if (!this.itemContainer) {
+        this.$el.append(elements);
+      } else if (firstItemView) {
+        var injectionSite = $("<span>");
+        firstItemView.$el.before(injectionSite);
+        injectionSite.after(elements);
+        injectionSite.remove();
+      }
+      this.__updateOrderedModelIdList(newOrderOfIds);
+      this.trigger('reorder-complete');
     },
 
     /**
@@ -1466,91 +1609,298 @@ module.exports = new (Torso.Router.extend({
     },
 
     /**
-     * Builds any new views and re-renders
+     * Builds any new views, removes stale ones, and re-renders
      * @method update
      */
     update: function() {
-      this.__createChildViews();
-      this.__delayedRender();
+      var view = this,
+        renderNeeded = false,
+        oldViews = this.getItemViews(),
+        newViews = this.__createItemViews(),
+        staleViews = this.__getStaleItemViews(),
+        sizeOfOldViews = _.size(oldViews),
+        sizeOfNewViews = _.size(newViews),
+        sizeOfStaleViews = _.size(staleViews),
+        sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews,
+        changes = sizeOfNewViews + sizeOfStaleViews,
+        percentChange = changes / Math.max(sizeOfFinalViews, 1),
+        fromEmptyToNotEmpty = !sizeOfOldViews && sizeOfNewViews,
+        fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews,
+        threshold = this.updateThreshold || 0.5,
+        signficantChanges = percentChange >= threshold;
+      if (changes <= 0) {
+        return this.reorder();
+      }
+      // A switch from empty to not empty or vise versa, needs a new render
+      renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
+      if (renderNeeded) {
+        this.__removeStaleItemViews(staleViews);
+        this.__delayedRender();
+      } else {
+        this.__updateByAddingRemoving(oldViews, newViews, staleViews);
+      }
     },
 
     /**
      * Returns the view that corresponds to the model if one exists
      * @param model {Model} the model
-     * @return the child view corresponding to the model
+     * @return the item view corresponding to the model
+     * @method getItemViewFromModel
+     */
+    getItemViewFromModel: function(model) {
+      return model ? this.getTrackedView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
+    },
+
+    /**
+     * Alias method for getItemViewFromModel()
      * @method getChildViewFromModel
      */
-    getChildViewFromModel: function(model) {
-      return model ? this.getChildView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
+    getChildViewFromModel: function() {
+      return this.getItemViewFromModel.apply(this, arguments);
+    },
+
+    /**
+     * @return {Boolean} returns true if there exists any generated item views
+     * @method hasItemViews
+     */
+    hasItemViews: function() {
+      return !_.isEmpty(this.getItemViews());
+    },
+
+    /**
+     * @return {Array of views} Returns unordered list of views generated by this list view
+     * @method getItemViews
+     */
+    getItemViews: function() {
+      var view = this;
+      var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
+      return _.map(orderedViewIds, this.getTrackedView, this);
     },
 
     /************** Private methods **************/
 
     /**
-     * Creates a new child view if there doesn't exist one for a model
-     * @method __createChildViews
+     * Creates all needed item views that don't exist from modelsToRender()
+     * @method __createItemViews
+     * @private
+     * @return {Array} each object in array contains a 'view' and 'indexOfModel' field
      */
-    __createChildViews: function() {
-      _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
-        if (!childView) {
-          childView = this.__createChildView(model);
-          this.trigger('child-view-added', {model: model, view: childView});
+    __createItemViews: function() {
+      var newItemViews = [];
+      _.each(this.modelsToRender(), function(model, indexOfModel) {
+        var itemView = this.getItemViewFromModel(model);
+        if (!itemView) {
+          newItemViews.push({
+            view: this.__createItemView(model, true),
+            indexOfModel: indexOfModel
+          });
         }
       }, this);
+      this.__updateOrderedModelIdList();
+      return newItemViews;
     },
 
     /**
-     * @return a DOM fragment with child view elements appended
-     * @method __buildChildViewsFragment
+     * Creates an item view and stores a reference to it
+     * @method __createItemView
+     * @private
+     * @param model {Backbone Model} the model to create the view from
+     * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
+     * @return {Backbone View} the new item view
+     */
+    __createItemView: function(model, noUpdateToIdList) {
+      var itemView,
+        ItemViewClass = this.itemView;
+      if (!_.isFunction(this.itemView.extend)) {
+        ItemViewClass = this.itemView(model);
+      }
+      itemView = new ItemViewClass(this.__generateItemViewArgs(model));
+      this.registerTrackedView(itemView, { shared: false });
+      this.__modelToViewMap[model[this.__modelId]] = itemView.cid;
+      if (!noUpdateToIdList) {
+        this.__updateOrderedModelIdList();
+      }
+      this.trigger('child-view-added', {model: model, view: itemView});
+      this.trigger('item-view-added', {model: model, view: itemView});
+      return itemView;
+    },
+
+    /**
+     * Gets all item views that have models that are no longer tracked by modelsToRender
+     * @method __getStaleItemViews
+     * @return {Array} An array of information about stale items. Each object has a 'view' and 'modelId' field
      * @private
      */
-    __buildChildViewsFragment: function(renderAlso) {
-      var injectionFragment = document.createDocumentFragment();
-     _.each(this.modelsToRender(), function(model) {
-        var childView = this.getChildViewFromModel(model);
-        if (childView) {
-          injectionFragment.appendChild(childView.el);
+    __getStaleItemViews: function() {
+      var staleItemViews = [];
+      var modelsWithViews = _.clone(this.__modelToViewMap);
+      _.each(this.modelsToRender(), function(model) {
+        var itemView = this.getItemViewFromModel(model);
+        if (itemView) {
+          delete modelsWithViews[model[this.__modelId]];
         }
       }, this);
+      _.each(modelsWithViews, function(viewId, modelId) {
+        var itemView = this.getTrackedView(viewId);
+        if (itemView) {
+          staleItemViews.push({ view: itemView, modelId: modelId });
+        }
+      }, this);
+      return staleItemViews;
+    },
+
+    /**
+     * Removes the item views that no longer have models returned by modelsToRender()
+     * @method __removeStaleItemViews
+     * @param [staleItemViewInfo] {Array of objects:
+     *   [{
+     *     view: stale item view,
+     *     modelId: id of model item
+     *   }]} If provided, stale items will not be found, but this array will be used instead.
+     * @private
+     */
+    __removeStaleItemViews: function(staleItemViewInfo) {
+      var view = this;
+      staleItemViewInfo = staleItemViewInfo || this.__getStaleItemViews();
+      _.each(staleItemViewInfo, function(staleViewInfo) {
+        _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);
+      });
+    },
+
+    /**
+     * Creates a DOM fragment with each item view appended in the order defined by
+     * modelsToRender(). This will clear the List View's DOM and invoke the necessary
+     * detach, register and render logic on each item view.
+     * @return a DOM fragment with item view elements appended
+     * @method __emptyAndRebuildItemViewsFragment
+     * @private
+     */
+    __emptyAndRebuildItemViewsFragment: function() {
+      var injectionFragment = document.createDocumentFragment();
+      // Clearing the DOM will reduce the repaints needed as we detach each item view.
+      this.$el.empty();
+
+     _.each(this.modelsToRender(), function(model) {
+        var itemView = this.getItemViewFromModel(model);
+        if (itemView) {
+          // detach to be safe, but during a render, the item views will already be detached.
+          itemView.detach();
+          this.registerTrackedView(itemView);
+          itemView.attachTo(null, {
+            replaceMethod: function($el) {
+              injectionFragment.appendChild($el[0]);
+            },
+            discardInjectionSite: true
+          });
+        }
+      }, this);
+      this.__updateOrderedModelIdList();
       return $(injectionFragment);
     },
 
     /**
-     * Creates a child view and stores a reference to it
-     * @method __createChildView
-     * @private
-     * @param model {Backbone Model} the model to create the view from
-     * @return {Backbone View} the new child view
+     * Attempts to insert new views and remove stale views individually and correctly reorder all views in an
+     * attempt to be faster then a full view re-render
+     * @method __updateByAddingRemoving
+     * @param oldViews {Array of Views} - correctly ordered list of views before making changes to models to render
+     * @param newViews {Array of Views} - the new views created that will be inserted
+     * @param staleViews {Array of Views} - the stale views that will be removed
      */
-    __createChildView: function(model) {
-      var childView = new this.childView(this.__generateChildArgs(model));
-      this.registerChildView(childView);
-      this.__modelToViewMap[model.cid] = childView.cid;
-      return childView;
+    __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
+      var firstItemViewLeft, injectionSite,
+        view = this,
+        sizeOfOldViews = _.size(oldViews),
+        sizeOfNewViews = _.size(newViews),
+        sizeOfStaleViews = _.size(staleViews);
+      if (view.itemContainer && sizeOfOldViews && sizeOfOldViews == sizeOfStaleViews) {
+        // we removed all the views!
+        injectionSite = $('<span>');
+        _.first(oldViews).$el.before(injectionSite);
+      }
+      view.__removeStaleItemViews(staleViews);
+      _.each(newViews, function(createdViewInfo, indexOfView) {
+        if (createdViewInfo.indexOfModel === 0) {
+          // need to handle this case uniquely.
+          var replaceMethod;
+          if (!view.itemContainer) {
+            replaceMethod = _.bind(view.$el.prepend, view.$el);
+          } else {
+            if (injectionSite) {
+              replaceMethod = _.bind(injectionSite.replaceWith, injectionSite);
+            } else {
+              var staleModelIdMap = _.indexBy(staleViews, 'modelId');
+              var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
+                return !staleModelIdMap[modelId];
+              });
+              firstItemViewLeft = view.getTrackedView(view.__modelToViewMap[firstModelIdLeft]);
+              replaceMethod = _.bind(firstItemViewLeft.$el.prepend, firstItemViewLeft.$el);
+            }
+          }
+          view.attachView(null, createdViewInfo.view, {
+            replaceMethod: replaceMethod,
+            discardInjectionSite: true
+          });
+        } else {
+          // There will always the view before this one because we are adding new views in order
+          // and we took care of the initial case.
+          _addItemView.call(view, createdViewInfo.view, createdViewInfo.indexOfModel);
+        }
+      });
+      this.reorder();
     },
 
     /**
-     * Method to generate arguments when creating a child view. Override this method
-     * to change the arguments for a given child view.
+     * Updates the internal list of model ids that correspond to the models used for the current
+     * list of item views. The order is the same order of the item views.
+     * @method __updateOrderedModelIdList
+     * @param [newIdsList] {Array of ids} - if passed the array, it will use that instead of finding the list.
+     * @private
+     */
+    __updateOrderedModelIdList: function(newIdsList) {
+      this.__orderedModelIdList = newIdsList || _.pluck(this.modelsToRender(), this.__modelId);
+    },
+
+    /**
+     * Method to generate arguments when creating an item view. Override this method
+     * to change the arguments for a given item view.
      * The format of the subview's arguments is:
      * {
      *   context: {
      *     ... inherited from parent ...
      *   },
-     *   <modelName>: <modelObject>
+     *   <modelName>: <modelObject>,
+     *   listView: the parent list view
      * }
-     * @method __generateChildArgs
+     * @method __generateItemViewArgs
      * @private
-     * @param model the model for a child view
-     * @return a context to be used by a child view
+     * @param model the model for an item view
+     * @return a context to be used by an item view
      */
-    __generateChildArgs: function(model) {
+    __generateItemViewArgs: function(model) {
       var args = {
-        'context': _.extend({}, _.result(this, '__childContext'))
+        'context': _.extend({}, _.result(this, '__itemContext')),
+        'listView': this
       };
       args[this.__modelName] = model;
       return args;
+    },
+
+    /**
+     * Alias method for __generateItemViewArgs()
+     * @method __generateChildArgs
+     */
+    __generateChildArgs: function() {
+      return this.__generateItemViewArgs.apply(this, arguments);
+    },
+
+    /**
+     * @method __getViewIdFromModelId
+     * @private
+     * @param modelId {String or Number} id of model
+     * @return {String or Number} view cid that was built from corresponding model
+     */
+    __getViewIdFromModelId: function(modelId) {
+      return this.__modelToViewMap[modelId];
     }
   });
 
@@ -1684,14 +2034,14 @@ module.exports = new (Torso.Router.extend({
 },{"./Cell":5}],16:[function(require,module,exports){
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell'], factory);
+    define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone-torso/node_modules/jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone-torso/node_modules/jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell);
+    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
   }
-}(this, function(_, $, Backbone, templateRenderer, Cell) {
+}(this, function(_, $, Backbone, templateRenderer, Cell, NestedCell) {
   'use strict';
 
   /**
@@ -1709,6 +2059,7 @@ module.exports = new (Torso.Router.extend({
     feedback: null,
     feedbackCell: null,
     __childViews: null,
+    __sharedViews: null,
     __isActive: false,
     __isAttachedToParent: false,
     __isDisposed: false,
@@ -1733,14 +2084,32 @@ module.exports = new (Torso.Router.extend({
      */
     constructor: function(options) {
       options = options || {};
-      this.viewState = new Cell();
+      this.viewState = new NestedCell();
       this.feedbackCell = new Cell();
       this.__childViews = {};
+      this.__sharedViews = {};
+      this.__injectionSiteMap = {};
       this.__feedbackEvents = [];
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
       }
+    },
+
+    /**
+     * Alias to this.viewState.get()
+     * @method get
+     */
+    get: function() {
+      return this.viewState.get.apply(this.viewState, arguments);
+    },
+
+    /**
+     * Alias to this.viewState.set()
+     * @method set
+     */
+    set: function() {
+      return this.viewState.set.apply(this.viewState, arguments);
     },
 
     /**
@@ -1765,16 +2134,49 @@ module.exports = new (Torso.Router.extend({
      * Rebuilds the html for this view's element. Should be able to be called at any time.
      * Defaults to using this.templateRender. Assumes that this.template is a javascript
      * function that accepted a single JSON context.
+     * The render method returns a promise that resolves when rendering is complete. Typically render
+     * is synchronous and the rendering is complete upon completion of the method. However, when utilizing
+     * transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.
      * @method render
+     * @return {Promise} a promise that when resolved signifies that the rendering process is complete.
      */
     render: function() {
-      this.unplug();
-      if (this.template) {
-        this.templateRender(this.$el, this.template, this.prepare());
+      var promises,
+        view = this;
+      this.trigger('render:begin');
+      this.prerender();
+      this.trigger('render:before-dom-update');
+      this.__updateDOM();
+      if (this.__pendingAttachInfo) {
+        this.__performPendingAttach();
       }
-      this.plug();
+      this.trigger('render:after-dom-update');
       this.delegateEvents();
+      this.trigger('render:after-delegate-events');
+      promises = this.attachTrackedViews();
+      return $.when.apply($, _.flatten([promises])).done(function() {
+        view.postrender();
+        view.trigger('render:complete');
+      });
     },
+
+    /**
+     * Hook during render that is invoked before any DOM rendering is performed.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);
+     * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
+     * @method prerender
+     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
+     */
+    prerender: _.noop,
+
+    /**
+     * Hook during render that is invoked after all DOM rendering is done and tracked views attached.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);
+     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
+     * @method postrender
+     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
+     */
+    postrender: _.noop,
 
     /**
      * Hotswap rendering system reroute method.
@@ -1782,9 +2184,10 @@ module.exports = new (Torso.Router.extend({
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
-      // Detach just this view's child views for a more effective hotswap.
-      // The child views will be reattached by the render method.
-      this.detachChildViews();
+      opts = opts || {};
+      if (_.isString(template)) {
+        opts.newHTML = template;
+      }
       templateRenderer.render(el, template, context, opts);
     },
 
@@ -1798,7 +2201,7 @@ module.exports = new (Torso.Router.extend({
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackCellCallbacks();
-      _.each(this.__childViews, function(view) {
+      _.each(this.getTrackedViews(), function(view) {
         if (view.isAttachedToParent()) {
           view.delegateEvents();
         }
@@ -1812,60 +2215,200 @@ module.exports = new (Torso.Router.extend({
      */
     undelegateEvents: function() {
       Backbone.View.prototype.undelegateEvents.call(this);
-      _.each(this.__childViews, function(view) {
+      _.each(this.getTrackedViews(), function(view) {
         view.undelegateEvents();
       });
     },
 
     /**
-     * Attaches a child view by finding the element with the attribute inject=<injectionSite>
-     * Invokes attachChildView as the bulk of the functionality
-     * @method injectView
-     * @param injectionSite {String} The name of the injection site in the layout template
-     * @param view          {View}   The instantiated view object to
-     * @param [options] {Object} optionals options object
-     * @param   [options.noActivate=false] {Boolean} if set to true, the child view will not be activated upon attaching.
+     * If detached, will replace the element passed in with this view's element and activate the view.
+     * @param [$el] {jQuery element} the element to attach to. This element will be replaced with this view.
+     *                               If options.replaceMethod is provided, then this parameter is ignored.
+     * @param [options] {Object} optional options
+     * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
+     *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
+     * @param   [options.discardInjectionSite=false] {Booleon} if set to true, the injection site is not saved.
+     * @return {Promise} promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can
+     *                   make it asynchronous.
+     * @method attachTo
      */
-    injectView: function(injectionSite, view, options) {
-      var injectionPoint = this.$('[inject=' + injectionSite + ']');
-      if (view && injectionPoint.size() > 0) {
-        this.attachChildView(injectionPoint, view, options);
+    attachTo: function($el, options) {
+      options = options || {};
+      var view = this;
+      if (!this.isAttachedToParent()) {
+        this.__pendingAttachInfo = {
+          $el: $el,
+          options: options
+        };
+        return this.render().done(function() {
+          if (!view.__attachedCallbackInvoked && view.isAttached()) {
+            view.__invokeAttached();
+          }
+          view.__isAttachedToParent = true;
+        });
       }
+      return $.Deferred().resolve().promise();
     },
 
     /**
-     * If attached, will detach the view from the DOM and calls deactivate
+     * Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument
+     * The element argument can be a String that references an element with the corresponding "inject" attribute.
+     * When using attachView with options.useTransition:
+     *   Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view
+     *   previously had another view at this injections site, this previous view will be removed with that view's transitionOut.
+     *   If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even
+     *   though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.
+     *   If the previous view is the same as the new view, it is injected normally without transitioning in.
+     *   The previous view must has used an injection site with the standard "inject=<name of injection site>" attribute to be found.
+     *   When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields
+     *   will be added to the options parameter to allow better handling of the transitions. These include:
+     *   {
+     *     newView: the new view
+     *     previousView: the previous view (can be undefined)
+     *     parentView: the parent view transitioning in or out the tracked view
+     *   }
+     * @param $el {jQuery element or String} the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
+     * @param view   {View}   The instantiated view object to be attached
+     * @param [options] {Object} optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
+     * @param   [options.shared=false] {Boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @param   [options.useTransition=false] {Boolean} if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite
+     * @param   [options.addBefore=false] {Boolean} if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param   [options.previousView] {View} if using options.useTransition, then you can explicitly define the view that should be transitioned out.
+     *                                        If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.
+     * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.
+     * @method attachView
+     */
+    attachView: function($el, view, options) {
+      options = options || {};
+      var injectionSite, injectionSiteName,
+        usesInjectionSiteName = _.isString($el);
+      if (usesInjectionSiteName) {
+        injectionSiteName = $el;
+        injectionSite = this.$('[inject=' + injectionSiteName + ']');
+        if (!injectionSite) {
+          throw 'View.attachView: No injection site found with which to attach this view. View.cid=' + this.cid;
+        }
+      } else {
+        injectionSite = $el;
+      }
+      if (options.useTransition) {
+        return this.__transitionNewViewIntoSite(injectionSiteName, view, options);
+      }
+      view.detach();
+      this.registerTrackedView(view, options);
+      view.attachTo(injectionSite, options);
+      if (!options.noActivate) {
+        view.activate();
+      }
+      return $.Deferred().resolve().promise();
+    },
+
+    /**
+     * Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
+     * @method attachTrackedViews
+     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
+     */
+    attachTrackedViews: _.noop,
+
+    /**
+     * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
+     * after the DOM has been attached to the document. The default implementation is a no-op.
+     * @method _attached
+     */
+    _attached: _.noop,
+
+    /**
+     * @returns {Boolean} true if the view is attached to a parent
+     * @method isAttachedToParent
+     */
+    isAttachedToParent: function() {
+      return this.__isAttachedToParent;
+    },
+
+    /**
+     * NOTE: depends on a global variable "document"
+     * @returns {Boolean} true if the view is attached to the DOM
+     * @method isAttached
+     */
+    isAttached: function() {
+      return $.contains(document, this.$el[0]);
+    },
+
+    /**
+     * If attached, will detach the view from the DOM.
+     * This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach
+     * callback on each tracked view recursively.
      * @method detach
      */
     detach: function() {
+      var wasAttached;
       if (this.isAttachedToParent()) {
+         wasAttached = this.isAttached();
         // Detach view from DOM
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
+          this.injectionSite = undefined;
         } else {
           this.$el.detach();
         }
-        this.invokeDetached();
+        if (wasAttached) {
+          this.__invokeDetached();
+        }
         this.undelegateEvents();
         this.__isAttachedToParent = false;
       }
     },
 
     /**
-     * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param $el [jQuery element] the element to attach to. This element will be replaced will this view
-     * @method attach
+     * Detach all tracked views or a subset of them based on the options parameter.
+     * NOTE: this is not recursive - it will not separate the entire view tree.
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, detach only the shared views. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed.
+     *   @param [options.child=false] {Boolean} If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     * @method detachTrackedViews
      */
-    attach: function($el) {
-      if (!this.isAttachedToParent()) {
-        this.render();
-        this.injectionSite = $el.replaceWith(this.$el);
-        this.delegateEvents();
-        if (!this.__attachedCallbackInvoked && this.isAttached()) {
-          this.invokeAttached();
-        }
-        this.__isAttachedToParent = true;
+    detachTrackedViews: function(options) {
+      var trackedViewsHash = this.getTrackedViews(options);
+      _.each(trackedViewsHash, function(view) {
+        view.detach();
+      });
+    },
+
+    /**
+     * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
+     * after the view has been removed from the document. The default implementation is a no-op.
+     * @method _detached
+     */
+    _detached: _.noop,
+
+    /**
+     * Resets listeners and events in order for the view to be reattached to the visible DOM
+     * @method activate
+     */
+    activate: function() {
+      this.__activateTrackedViews();
+      if (!this.isActive()) {
+        this._activate();
+        this.__isActive = true;
       }
+    },
+
+    /**
+     * Method to be invoked when activate is called. Use this method to turn on any
+     * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
+     * @method _activate
+     */
+    _activate: _.noop,
+
+    /**
+     * @returns {Boolean} true if the view is active
+     * @method isActive
+     */
+    isActive: function() {
+      return this.__isActive;
     },
 
     /**
@@ -1874,7 +2417,7 @@ module.exports = new (Torso.Router.extend({
      * @method deactivate
      */
     deactivate: function() {
-      this.deactivateChildViews();
+      this.__deactivateTrackedViews();
       if (this.isActive()) {
         this._deactivate();
         this.__isActive = false;
@@ -1882,16 +2425,11 @@ module.exports = new (Torso.Router.extend({
     },
 
     /**
-     * Resets listeners and events in order for the view to be reattached to the visible DOM
-     * @method activate
+     * Method to be invoked when deactivate is called. Use this method to turn off any
+     * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
+     * @method _deactivate
      */
-    activate: function() {
-      this.activateChildViews();
-      if (!this.isActive()) {
-        this._activate();
-        this.__isActive = true;
-      }
-    },
+    _deactivate: _.noop,
 
     /**
      * Removes all listeners, disposes children views, stops listening to events, removes DOM.
@@ -1907,7 +2445,7 @@ module.exports = new (Torso.Router.extend({
       this.deactivate();
 
       // Clean up child views first
-      this.disposeChildViews();
+      this.__disposeChildViews();
 
       // Remove view from DOM
       this.remove();
@@ -1935,195 +2473,131 @@ module.exports = new (Torso.Router.extend({
     _dispose: _.noop,
 
     /**
-     * Method to be invoked when deactivate is called. Use this method to turn off any
-     * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
-     * @method _deactivate
-     */
-    _deactivate: _.noop,
-
-    /**
-     * Method to be invoked when activate is called. Use this method to turn on any
-     * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
-     * @method _activate
-     */
-    _activate: _.noop,
-
-    /**
-     * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
-     * after the DOM has been attached to the document. The default implementation is a no-op.
-     * @method _attached
-     */
-    _attached: _.noop,
-
-    /**
-     * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
-     * after the view has been removed from the document. The default implementation is a no-op.
-     * @method _detached
-     */
-    _detached: _.noop,
-
-        /**
-     * Before any DOM rendering is done, this method is called and removes any
-     * custom plugins including events that attached to the existing elements.
-     * This method can be overwritten as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
-     * @method unplug
-     */
-    unplug: _.noop,
-
-    /**
-     * After all DOM rendering is done, this method is called and attaches any
-     * custom plugins to the existing elements.  This method can be overwritten
-     * as usual OR extended using <baseClass>.prototype.plug.apply(this, arguments);
-     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
-     * @method plug
-     */
-    plug: _.noop,
-
-    /**
-     * Registers the child view if not already done so, then calls view.attach with the element argument
-     * @param $el {jQuery element} the element to attach to.
-     * @param view {View} the child view
-     * @param [options] {Object} optionals options object
-     * @param   [options.noActivate=false] {Boolean} if set to true, the child view will not be activated upon attaching.
-     * @method attachChildView
-     */
-    attachChildView: function($el, view, options) {
-      options = options || {};
-      view.detach();
-      this.registerChildView(view);
-      view.attach($el);
-      if (!options.noActivate) {
-        view.activate();
-      }
-    },
-
-    /**
-     * @return {Boolean} true if this view has child views
-     * @method hasChildViews
-     */
-    hasChildViews: function() {
-      return !_.isEmpty(this.__childViews);
-    },
-
-    /**
-     * @return all of the child views this list view has registered
-     * @method getChildViews
-     */
-    getChildViews: function() {
-      return _.values(this.__childViews);
-    },
-
-    /**
-     * Returns the view that corresponds to the cid
-     * @param viewCID {cid} the view cid
-     * @return the child view corresponding to the cid
-     * @method getChildView
-     */
-    getChildView: function(viewCID) {
-      return this.__childViews[viewCID];
-    },
-
-    /**
-     * Disposes all child views recursively
-     * @method disposeChildViews
-     */
-    disposeChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.dispose();
-      });
-    },
-
-    /**
-     * Deactivates all child views recursively
-     * @method deactivateChildViews
-     */
-    deactivateChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.deactivate();
-      });
-    },
-
-    /**
-     * Detach all child views. NOTE: this is not recursive - it will not separate the entire view tree.
-     * @method detachChildViews
-     */
-    detachChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.detach();
-      });
-    },
-
-    /**
-     * Activates all child views
-     * @method activateChildViews
-     */
-    activateChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        view.activate();
-      });
-    },
-
-    /**
-     * Binds the view as a child view - any recursive calls like activate, deactivate, or dispose will
-     * be done to the child view as well.
-     * @param view {View} the child view
-     * @method registerChildView
-     */
-    registerChildView: function(view) {
-      this.__childViews[view.cid] = view;
-    },
-
-    /**
-     * Unbinds the child view - no recursive calls will be made to this child view
-     * @param view {View} the child view
-     * @method unregisterChildView
-     */
-    unregisterChildView: function(view) {
-      delete this.__childViews[view.cid];
-    },
-
-    /**
-     * Unregisters all child views
-     * @method unregisterChildViews
-     */
-    unregisterChildViews: function() {
-      _.each(this.__childViews, function(view) {
-        this.unregisterChildView(view);
-      }, this);
-    },
-
-    /**
-     * @returns {Boolean} true if the view is attached to a parent
-     * @method isAttachedToParent
-     */
-    isAttachedToParent: function() {
-      return this.__isAttachedToParent;
-    },
-
-    /**
-     * NOTE: depends on a global variable "document"
-     * @returns {Boolean} true if the view is attached to the DOM
-     * @method isAttached
-     */
-    isAttached: function() {
-      return $.contains(document, this.$el[0]);
-    },
-
-    /**
-     * @returns {Boolean} true if the view is active
-     * @method isActive
-     */
-    isActive: function() {
-      return this.__isActive;
-    },
-
-    /**
      * @returns {Boolean} true if the view was disposed
      * @method isDisposed
      */
     isDisposed: function() {
       return this.__isDisposed;
+    },
+
+    /**
+     * @return {Boolean} true if this view has tracked views (limited by the options parameter)
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, only check the shared views. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed.
+     *   @param [options.child=false] {Boolean} If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     * @method hasTrackedViews
+     */
+    hasTrackedViews: function(options) {
+      return !_.isEmpty(this.getTrackedViews(options));
+    },
+
+    /**
+     * Returns all tracked views, both child views and shared views.
+     * @method getTrackedViews
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, get only the shared views. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed.
+     *   @param [options.child=false] {Boolean} If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     * @return {List<View>} all tracked views (filtered by options parameter)
+     */
+    getTrackedViews: function(options) {
+      return _.values(this.__getTrackedViewsHash(options));
+    },
+
+    /**
+     * @return the view with the given cid.  Will look in both shared and child views.
+     * @param viewCID {String} the cid of the view
+     * @method getTrackedView
+     */
+    getTrackedView: function(viewCID) {
+      var childView = this.__childViews[viewCID],
+          sharedView = this.__sharedViews[viewCID];
+      return childView || sharedView;
+    },
+
+    /**
+     * Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will
+     * be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the
+     * view as a child view unless specified by options.shared.
+     * @param view {View} the tracked view
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.
+     * @return {View} the tracked view
+     * @method registerTrackedView
+     */
+    registerTrackedView: function(view, options) {
+      options = options || {};
+      this.unregisterTrackedView(view);
+      if (options.child || !options.shared) {
+        this.__childViews[view.cid] = view;
+      } else {
+        this.__sharedViews[view.cid] = view;
+      }
+      return view;
+    },
+
+    /**
+     * Unbinds the tracked view - no recursive calls will be made to this shared view
+     * @param view {View} the shared view
+     * @return {View} the tracked view
+     * @method unregisterTrackedView
+     */
+    unregisterTrackedView: function(view) {
+      delete this.__childViews[view.cid];
+      delete this.__sharedViews[view.cid];
+      return view;
+    },
+
+    /**
+     * Unbinds all tracked view - no recursive calls will be made to this shared view
+     * You can limit the types of views that will be unregistered by using the options parameter.
+     * @param view {View} the shared view
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed.
+     *   @param [options.child=false] {Boolean} If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     * @return {View} the tracked view
+     * @method unregisterTrackedView
+     */
+    unregisterTrackedViews: function(options) {
+      var trackedViewsHash = this.getTrackedViews(options);
+      _.each(trackedViewsHash, function(view) {
+        this.unregisterTrackedView(view, options);
+      }, this);
+    },
+
+    /**
+     * Override to provide your own transition out logic. Default logic is to just detach from the page.
+     * The method is passed a callback that should be invoked when the transition out has fully completed.
+     * @method transitionOut
+     * @param done {Function} callback that MUST be invoked when the transition is complete.
+     * @param options {Object} optionals options object
+     * @param   options.currentView {View} the view that is being transitioned in.
+     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
+     * @param   options.parentView {View} the view that is invoking the transition.
+     */
+    transitionOut: function(done, options) {
+      this.detach();
+      done();
+    },
+
+    /**
+     * Override to provide your own transition in logic. Default logic is to just attach to the page.
+     * The method is passed a callback that should be invoked when the transition in has fully completed.
+     * @method transitionIn
+     * @param attach {Function} callback to be invoked when you want this view to be attached to the dom.
+                                If you are trying to transition in a tracked view, consider using this.transitionInView()
+     * @param done {Function} callback that MUST be invoked when the transition is complete.
+     * @param options {Object} optionals options object
+     * @param   options.currentView {View} the view that is being transitioned in.
+     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
+     * @param   options.parentView {View} the view that is invoking the transition.
+     */
+    transitionIn: function(attach, done, options) {
+      attach();
+      done();
     },
 
     /**
@@ -2153,18 +2627,284 @@ module.exports = new (Torso.Router.extend({
       }
     },
 
+    /************** Private methods **************/
+
+    /**
+     * If the view is attaching during the render process, then it replaces the injection site
+     * with the view's element after the view has generated its DOM.
+     * @method __performPendingAttach
+     * @private
+     */
+    __performPendingAttach: function() {
+      this.__replaceInjectionSite(this.__pendingAttachInfo.$el, this.__pendingAttachInfo.options);
+      delete this.__pendingAttachInfo;
+    },
+
+    /**
+     * Produces and sets this view's elements DOM. Used during the rendering process.
+     * Typically needs this.template to do so.
+     * @method __updateDOM
+     * @private
+     */
+    __updateDOM: function() {
+      this.__updateInjectionSiteMap();
+      // Detach this view's tracked views for a more effective hotswap.
+      // The child views should be reattached by the attachTrackedViews method.
+      this.detachTrackedViews();
+      if (this.template) {
+        this.templateRender(this.$el, this.template, this.prepare());
+      }
+    },
+
+    /**
+     * Deactivates all tracked views or a subset of them based on the options parameter.
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed.
+     *   @param [options.child=false] {Boolean} If true, deactivate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     * @method __deactivateTrackedViews
+     * @private
+     */
+    __deactivateTrackedViews: function(options) {
+      _.each(this.getTrackedViews(options), function(view) {
+        view.deactivate();
+      });
+    },
+
+    /**
+     * Activates all tracked views or a subset of them based on the options parameter.
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, activate only the shared views. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed.
+     *   @param [options.child=false] {Boolean} If true, activate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     * @method __activateTrackedViews
+     * @private
+     */
+    __activateTrackedViews: function(options) {
+      _.each(this.getTrackedViews(options), function(view) {
+        view.activate();
+      });
+    },
+
+    /**
+     * Disposes all child views recursively
+     * @method disposeChildViews
+     * @private
+     */
+    __disposeChildViews: function() {
+      _.each(this.__childViews, function(view) {
+        view.dispose();
+      });
+    },
+
+    /**
+     * Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view
+     * previously had another view at this injections site, this previous view will be removed with that view's transitionOut.
+     * If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even
+     * though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.
+     * If the previous view is the same as the new view, it is injected normally without transitioning in.
+     * The previous view must has used an injection site with the standard "inject=<name of injection site>" attribute to be found.
+     * @method transitionNewViewIntoSite
+     * @private
+     * @param injectionSiteName {String} The name of the injection site in the template. This is the value corresponding to the attribute "inject".
+     * @param newView {View} The instantiated view object to be transitioned into the injection site
+     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   [options.previousView] {View} the view that should be transitioned out. If none is provided, it will look to see if a view already
+     *                                 is at this injection site and uses that by default.
+     * @param   [options.addBefore=false] {Boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param   [options.shared=false] {Boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
+     * When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields
+     * will be added to the options parameter to allow better handling of the transitions. These include:
+     * {
+     *   newView: the new view
+     *   previousView: the previous view (can be undefined)
+     *   parentView: the parent view transitioning in or out the tracked view
+     * }
+     */
+    __transitionNewViewIntoSite: function(injectionSiteName, newView, options) {
+      var previousView, injectionSite;
+      options = options || {};
+      // find previous view that used this injection site.
+      previousView = options.previousView;
+      if (!previousView) {
+        previousView = this.__getLastTrackedViewAtInjectionSite(injectionSiteName);
+      }
+      _.defaults(options, {
+        parentView: this,
+        newView: newView,
+        previousView: previousView
+      });
+      options.useTransition = false;
+      if (previousView == newView) {
+        // Inject this view like normal if it's already the last one there
+        return this.attachView(injectionSiteName, newView, options);
+      }
+      if (!previousView) {
+        // Only transition in the new current view and find the injection site.
+        injectionSite = this.$('[inject=' + injectionSiteName + ']');
+        return this.__transitionInView(injectionSite, newView, options);
+      }
+      return this.__performTwoWayTransition(injectionSiteName, previousView, newView, options);
+    },
+
+    /**
+     * Will transition out previousView at the same time as transitioning in newView.
+     * @method __performTwoWayTransition
+     * @param injectionSiteName {String} The name of the injection site in the template. This is the value corresponding to the attribute "inject".
+     * @param previousView {View} the view that should be transitioned out.
+     * @param newView {View} The view that should be transitioned into the injection site
+     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   [options.addBefore=false] {Boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
+     * @private
+     */
+    __performTwoWayTransition: function(injectionSiteName, previousView, newView, options) {
+      var newInjectionSite, currentPromise,
+        previousDeferred = $.Deferred();
+      this.attachView(injectionSiteName, previousView, options);
+      options.cachedInjectionSite = previousView.injectionSite;
+      newInjectionSite = options.newInjectionSite = $('<span inject="' + injectionSiteName + '">');
+      if (options.addBefore) {
+        previousView.$el.before(newInjectionSite);
+      } else {
+        previousView.$el.after(newInjectionSite);
+      }
+
+      // clear the injections site so it isn't replaced back into the dom.
+      previousView.injectionSite = undefined;
+
+      // transition previous view out
+      previousView.transitionOut(previousDeferred.resolve, options);
+      // transition new current view in
+      currentPromise = this.__transitionInView(newInjectionSite, newView, options);
+
+      // return a combined promise
+      return $.when(previousDeferred.promise(), currentPromise);
+    },
+
+    /**
+     * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
+     * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
+     * @param $el {jQuery element} the element to attach to.
+     * @param newView {View} the view to be transitioned in.
+     * @param [options] {Object} optional options object
+     * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
+     * @param   [options.shared=false] {Boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @return {Promise} resolved when transition is complete. No payload is provided upon resolution.
+     * @method transitionInView
+     * @private
+     */
+    __transitionInView: function($el, newView, options) {
+      var currentDeferred = $.Deferred(),
+        parentView = this;
+      options = _.extend({}, options);
+      _.defaults(options, {
+        parentView: this,
+        newView: newView
+      });
+      newView.transitionIn(function() {
+        parentView.attachView($el, newView, options);
+      }, currentDeferred.resolve, options);
+      return currentDeferred.promise();
+    },
+
+    /**
+     * Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.
+     * NOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.
+     * This means that you can add "add" or "remove" tracked view using this method, however you can interact with the views inside the map completely.
+     * @param [options={}] {Object}  Optional options.
+     *   @param [options.shared=false] {Boolean} If true, will add the shared views. These are views not owned by this parent. As compared to a child view
+     *                                           which are disposed when the parent is disposed.
+     *   @param [options.child=false] {Boolean} If true, will add child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     * @method __getTrackedViewsHash
+     * @return READ-ONLY snapshot of the object maps cotaining tracked views keyed by their cid (filtered by optional options parameter).
+     * @private
+     */
+    __getTrackedViewsHash: function(options) {
+      var views = {};
+      options = options || {};
+      if (options.shared) {
+        views = _.extend(views, this.__sharedViews);
+      }
+      if (options.child) {
+        views = _.extend(views, this.__childViews);
+      }
+      if (!options.child && !options.shared) {
+        views = _.extend(views, this.__sharedViews, this.__childViews);
+      }
+      return views;
+    },
+
+    /**
+     * Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.
+     * @private
+     * @method __updateInjectionSiteMap
+     */
+    __updateInjectionSiteMap: function() {
+      var parentView = this;
+      this.__injectionSiteMap = {};
+      _.each(this.getTrackedViews(), function(view) {
+        if (view.isAttachedToParent() && view.injectionSite) {
+          parentView.__injectionSiteMap[view.injectionSite.attr('inject')] = view;
+        }
+      });
+    },
+
+    /**
+     * Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).
+     * When used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.
+     * @private
+     * @method __getLastTrackedViewAtInjectionSite
+     * @param injectionSiteName {String} the injection site name - the value of the "inject" attribute on the element used as an injection target for tracked views.
+     * @return {View} the previous view at that site. Undefined if no view was at that injection site before.
+     */
+    __getLastTrackedViewAtInjectionSite: function(injectionSiteName) {
+      // check to see if a view was cached before a render
+      var previousView = this.__injectionSiteMap[injectionSiteName];
+      if (previousView) {
+        // make sure previous view is still tracked
+        previousView = _.contains(this.getTrackedViews(), previousView) ? previousView : undefined;
+      } else {
+        // if not, see if a view is currently in the injection site.
+        var matchingViews = this.getTrackedViews().filter(function(view) {
+          return view.injectionSite && view.injectionSite.attr('inject') == injectionSiteName;
+        });
+        previousView = _.first(matchingViews);
+      }
+      return previousView;
+    },
+
+    /**
+     * Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method
+     * @method __replaceInjectionSite
+     * @param $el {jQuery Element} the injection site element to be replaced
+     * @param [options] {Object} Optional options
+     * @param   [options.replaceMethod] {Function} use an alternative replace method. Invoked with the view's element as the argument.
+     * @param   [options.discardInjectionSite=false] {Boolean} if true, the view will not save a reference to the injection site after replacement.
+     * @private
+     */
+    __replaceInjectionSite: function($el, options) {
+      options = options || {};
+      this.injectionSite = options.replaceMethod ? options.replaceMethod(this.$el) : $el.replaceWith(this.$el);
+      if (options.discardInjectionSite) {
+        this.injectionSite = undefined;
+      }
+    },
+
     /**
      * Call this method when a view is attached to the DOM. It is recursive to child views, but checks whether each child view is attached.
-     * @method invokeAttached
+     * @method __invokeAttached
+     * @private
      */
-    invokeAttached: function() {
+    __invokeAttached: function() {
       // Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.
       if (!this.__attachedCallbackInvoked) {
         this._attached();
         this.__attachedCallbackInvoked = true;
-        _.each(this.__childViews, function(view) {
+        _.each(this.getTrackedViews(), function(view) {
           if (view.isAttachedToParent()) {
-            view.invokeAttached();
+            view.__invokeAttached();
           }
         });
       }
@@ -2172,20 +2912,20 @@ module.exports = new (Torso.Router.extend({
 
     /**
      * Call this method when a view is detached from the DOM. It is recursive to child views.
-     * @method invokeDetached
+     * @method __invokeDetached
      */
-    invokeDetached: function() {
-      // No need to check if child views are actually detached, because if parent is detached, children are detached.
+    __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {
         this._detached();
         this.__attachedCallbackInvoked = false;
       }
-      _.each(this.__childViews, function(view) {
-        view.invokeDetached();
+      _.each(this.getTrackedViews(), function(view) {
+        // If the tracked view is currently attached to the parent, then invoke detatched on it.
+        if (view.isAttachedToParent()) {
+          view.__invokeDetached();
+        }
       });
     },
-
-    /************** Private methods **************/
 
     /**
      * Generates callbacks for changes in feedback cell fields
@@ -2491,7 +3231,11 @@ module.exports = new (Torso.Router.extend({
   return View;
 }));
 
-},{"./Cell":5,"./templateRenderer":25,"backbone":30,"backbone-torso/node_modules/jquery":31,"underscore":32}],17:[function(require,module,exports){
+
+function addPromises(promiseArray, promises) {
+  promiseArray.push(promises || $.Deferred().resolve().promise());
+}
+},{"./Cell":5,"./NestedCell":12,"./templateRenderer":25,"backbone":30,"backbone-torso/node_modules/jquery":31,"underscore":32}],17:[function(require,module,exports){
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([], factory);
@@ -2733,6 +3477,7 @@ module.exports = new (Torso.Router.extend({
            */
           addModelAndTrack: function(model) {
             this.add(model);
+            parentInstance.add(model);
             this.trackNewId(model.id);
           },
 
@@ -2756,11 +3501,56 @@ module.exports = new (Torso.Router.extend({
           },
 
           /**
+           * Will force the cache to fetch a subset of this collection's tracked ids
+           * @method requesterMixin.fetchSubsetOfTrackedIds
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetchSubsetOfTrackedIds: function(ids) {
+            var subsetOfTrackedIds = _.intersection(ids, this.getTrackedIds());
+            return this.__loadWrapper(function() {
+              if (subsetOfTrackedIds && subsetOfTrackedIds.length) {
+                return parentInstance.fetchByIds({idsToFetch: subsetOfTrackedIds, setOptions: {remove: false}});
+              } else {
+                // handle if subsetOfTrackedIds is empty
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Will force the cache to fetch any of this collection's tracked models that are not in the cache
+           * @method requesterMixin.pull
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          pull: function() {
+            //find ids that we don't have in cache
+            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            return this.__loadWrapper(function() {
+              if (idsNotInCache && idsNotInCache.length) {
+                return parentInstance.fetchByIds({idsToFetch: idsNotInCache, setOptions: {remove: false}});
+              } else {
+                // handle if idsNotInCache is empty
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Will register the new ids and then pull in any models not stored in the cache
+           * @method requesterMixin.pullByIds
+           * @return the promise of the fetch by ids
+           */
+          pullByIds: function(newIds) {
+            this.trackIds(newIds);
+            return this.pull();
+          },
+
+          /**
            * Handles the disposing of this collection as it relates to a requester collection.
            * @method requesterMixin.requesterDispose
            */
           requesterDispose: function() {
-            parentInstance.removeRequster(ownerKey);
+            parentInstance.removeRequester(ownerKey);
           }
         };
 
@@ -2812,11 +3602,11 @@ module.exports = new (Torso.Router.extend({
       };
 
       /**
-       * @method cacheMixin.removeRequster
+       * @method cacheMixin.removeRequester
        * Removes a requester from this cache. No longer receives updates
        * @param guid {String} the global unique id of the requester
        */
-      collection.removeRequster = function(guid) {
+      collection.removeRequester = function(guid) {
         delete this.requestMap[guid];
         delete this.knownPrivateCollections[guid];
       };
@@ -2859,8 +3649,10 @@ module.exports = new (Torso.Router.extend({
       };
 
       /**
-       * Registers a list of Ids that a particular object cares about.  This method
-       * intelligently updates the "_requestedIds" field to contain all unique
+       * Registers a list of Ids that a particular object cares about and pushes
+       * any cached models its way.
+       *
+       * This method intelligently updates the "_requestedIds" field to contain all unique
        * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
        * is overriden such that it no longer routes through Backbone's fetch all,
        * but rather a custom "fetchByIds" method.
@@ -2869,7 +3661,9 @@ module.exports = new (Torso.Router.extend({
        * @param guid {String}   - The GUID of the object that wants the ids
        */
       collection.registerIds = function(newIds, guid) {
-        var i, requesterIdx, storedIds, requesters, requesterLength,
+        var i, newIdx, model, requesterIdx, storedIds,
+            requesters, requesterLength, privateCollection,
+            models = [],
             distinctIds = {},
             result = [];
 
@@ -2878,11 +3672,25 @@ module.exports = new (Torso.Router.extend({
         requesters = collection.getRequesters();
         requesterLength = requesters.length;
 
+        // Collect all cached models
+        for (newIdx = 0; newIdx < newIds.length; newIdx++) {
+          model = collection.get(newIds[newIdx]);
+          if (model) {
+            models.push(model);
+          }
+        }
+
+        // Push cached models to the respective requester
+        privateCollection = collection.knownPrivateCollections[guid];
+        privateCollection.set(models, {remove: false});
+
         // Create a new request list
         for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
           storedIds = this.getRequesterIds(requesters[requesterIdx]);
-          for (i = 0; i < storedIds.length; i++) {
-            distinctIds[storedIds[i]] = true;
+          if (!_.isUndefined(storedIds)) {
+            for (i = 0; i < storedIds.length; i++) {
+              distinctIds[storedIds[i]] = true;
+            }
           }
         }
 
@@ -2913,7 +3721,7 @@ module.exports = new (Torso.Router.extend({
             setOptions: _.extend({remove: true}, options)
           });
         } else {
-          return base.fetch(options);
+          return base.prototype.fetch.apply(this, options);
         }
       };
 
@@ -2938,7 +3746,7 @@ module.exports = new (Torso.Router.extend({
           }
           return $.ajax({
               type: collection.fetchHttpAction,
-              url: collection.url + collection.getByIdsUrl,
+              url: _.result(collection, 'url') + collection.getByIdsUrl,
               contentType: 'application/json; charset=utf-8',
               data: JSON.stringify(idsToFetch)
             }).done(
@@ -3060,6 +3868,7 @@ module.exports = new (Torso.Router.extend({
 
   return collectionRegistrationMixin;
 }));
+
 },{"backbone-torso/node_modules/jquery":31,"underscore":32}],20:[function(require,module,exports){
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -3079,7 +3888,7 @@ module.exports = new (Torso.Router.extend({
   if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
-    factory();
+    module.exports = factory();
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
@@ -3526,14 +4335,15 @@ module.exports = new (Torso.Router.extend({
      * @param  context {Object} The context object to pass to the template
      * @param  [opts] {Object} Other options
      * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
+     * @param  [opts.newHTML] {String} If you pass in newHTML, it will not use the template or context, but use this instead.
      * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
      */
     render: function($el, template, context, opts) {
-      var newDOM,
-          newHTML = template(context),
+      var newDOM, newHTML,
           el = $el.get(0);
       opts = opts || {};
 
+      newHTML = opts.newHTML || template(context);
       if (opts.force) {
         $el.html(newHTML);
       } else {
@@ -5706,14 +6516,20 @@ module.exports = new (Torso.Router.extend({
 }));
 
 },{"backbone":30,"underscore":32}],30:[function(require,module,exports){
-//     Backbone.js 1.1.2
+(function (global){
+//     Backbone.js 1.2.3
 
-//     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     (c) 2010-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 //     Backbone may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://backbonejs.org
 
-(function(root, factory) {
+(function(factory) {
+
+  // Establish the root object, `window` (`self`) in the browser, or `global` on the server.
+  // We use `self` instead of `window` for `WebWorker` support.
+  var root = (typeof self == 'object' && self.self == self && self) ||
+            (typeof global == 'object' && global.global == global && global);
 
   // Set up Backbone appropriately for the environment. Start with AMD.
   if (typeof define === 'function' && define.amd) {
@@ -5725,15 +6541,16 @@ module.exports = new (Torso.Router.extend({
 
   // Next for Node.js or CommonJS. jQuery may not be needed as a module.
   } else if (typeof exports !== 'undefined') {
-    var _ = require('underscore');
-    factory(root, exports, _);
+    var _ = require('underscore'), $;
+    try { $ = require('backbone-torso/node_modules/jquery'); } catch(e) {}
+    factory(root, exports, _, $);
 
   // Finally, as a browser global.
   } else {
     root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
 
-}(this, function(root, Backbone, _, $) {
+}(function(root, Backbone, _, $) {
 
   // Initial Setup
   // -------------
@@ -5742,14 +6559,11 @@ module.exports = new (Torso.Router.extend({
   // restored later on, if `noConflict` is used.
   var previousBackbone = root.Backbone;
 
-  // Create local references to array methods we'll want to use later.
-  var array = [];
-  var push = array.push;
-  var slice = array.slice;
-  var splice = array.splice;
+  // Create a local reference to a common array method we'll want to use later.
+  var slice = Array.prototype.slice;
 
   // Current version of the library. Keep in sync with `package.json`.
-  Backbone.VERSION = '1.1.2';
+  Backbone.VERSION = '1.2.3';
 
   // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
   // the `$` variable.
@@ -5768,17 +6582,65 @@ module.exports = new (Torso.Router.extend({
   Backbone.emulateHTTP = false;
 
   // Turn on `emulateJSON` to support legacy servers that can't deal with direct
-  // `application/json` requests ... will encode the body as
+  // `application/json` requests ... this will encode the body as
   // `application/x-www-form-urlencoded` instead and will send the model in a
   // form param named `model`.
   Backbone.emulateJSON = false;
+
+  // Proxy Backbone class methods to Underscore functions, wrapping the model's
+  // `attributes` object or collection's `models` array behind the scenes.
+  //
+  // collection.filter(function(model) { return model.get('age') > 10 });
+  // collection.each(this.addView);
+  //
+  // `Function#apply` can be slow so we use the method's arg count, if we know it.
+  var addMethod = function(length, method, attribute) {
+    switch (length) {
+      case 1: return function() {
+        return _[method](this[attribute]);
+      };
+      case 2: return function(value) {
+        return _[method](this[attribute], value);
+      };
+      case 3: return function(iteratee, context) {
+        return _[method](this[attribute], cb(iteratee, this), context);
+      };
+      case 4: return function(iteratee, defaultVal, context) {
+        return _[method](this[attribute], cb(iteratee, this), defaultVal, context);
+      };
+      default: return function() {
+        var args = slice.call(arguments);
+        args.unshift(this[attribute]);
+        return _[method].apply(_, args);
+      };
+    }
+  };
+  var addUnderscoreMethods = function(Class, methods, attribute) {
+    _.each(methods, function(length, method) {
+      if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
+    });
+  };
+
+  // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
+  var cb = function(iteratee, instance) {
+    if (_.isFunction(iteratee)) return iteratee;
+    if (_.isObject(iteratee) && !instance._isModel(iteratee)) return modelMatcher(iteratee);
+    if (_.isString(iteratee)) return function(model) { return model.get(iteratee); };
+    return iteratee;
+  };
+  var modelMatcher = function(attrs) {
+    var matcher = _.matches(attrs);
+    return function(model) {
+      return matcher(model.attributes);
+    };
+  };
 
   // Backbone.Events
   // ---------------
 
   // A module that can be mixed in to *any object* in order to provide it with
-  // custom events. You may bind with `on` or remove with `off` callback
-  // functions to an event; `trigger`-ing an event fires all callbacks in
+  // a custom event channel. You may bind a callback to an event with `on` or
+  // remove with `off`; `trigger`-ing an event fires all callbacks in
   // succession.
   //
   //     var object = {};
@@ -5786,123 +6648,234 @@ module.exports = new (Torso.Router.extend({
   //     object.on('expand', function(){ alert('expanded'); });
   //     object.trigger('expand');
   //
-  var Events = Backbone.Events = {
-
-    // Bind an event to a `callback` function. Passing `"all"` will bind
-    // the callback to all events fired.
-    on: function(name, callback, context) {
-      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
-      this._events || (this._events = {});
-      var events = this._events[name] || (this._events[name] = []);
-      events.push({callback: callback, context: context, ctx: context || this});
-      return this;
-    },
-
-    // Bind an event to only be triggered a single time. After the first time
-    // the callback is invoked, it will be removed.
-    once: function(name, callback, context) {
-      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
-      var self = this;
-      var once = _.once(function() {
-        self.off(name, once);
-        callback.apply(this, arguments);
-      });
-      once._callback = callback;
-      return this.on(name, once, context);
-    },
-
-    // Remove one or many callbacks. If `context` is null, removes all
-    // callbacks with that function. If `callback` is null, removes all
-    // callbacks for the event. If `name` is null, removes all bound
-    // callbacks for all events.
-    off: function(name, callback, context) {
-      var retain, ev, events, names, i, l, j, k;
-      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
-      if (!name && !callback && !context) {
-        this._events = void 0;
-        return this;
-      }
-      names = name ? [name] : _.keys(this._events);
-      for (i = 0, l = names.length; i < l; i++) {
-        name = names[i];
-        if (events = this._events[name]) {
-          this._events[name] = retain = [];
-          if (callback || context) {
-            for (j = 0, k = events.length; j < k; j++) {
-              ev = events[j];
-              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-                  (context && context !== ev.context)) {
-                retain.push(ev);
-              }
-            }
-          }
-          if (!retain.length) delete this._events[name];
-        }
-      }
-
-      return this;
-    },
-
-    // Trigger one or many events, firing all bound callbacks. Callbacks are
-    // passed the same arguments as `trigger` is, apart from the event name
-    // (unless you're listening on `"all"`, which will cause your callback to
-    // receive the true name of the event as the first argument).
-    trigger: function(name) {
-      if (!this._events) return this;
-      var args = slice.call(arguments, 1);
-      if (!eventsApi(this, 'trigger', name, args)) return this;
-      var events = this._events[name];
-      var allEvents = this._events.all;
-      if (events) triggerEvents(events, args);
-      if (allEvents) triggerEvents(allEvents, arguments);
-      return this;
-    },
-
-    // Tell this object to stop listening to either specific events ... or
-    // to every object it's currently listening to.
-    stopListening: function(obj, name, callback) {
-      var listeningTo = this._listeningTo;
-      if (!listeningTo) return this;
-      var remove = !name && !callback;
-      if (!callback && typeof name === 'object') callback = this;
-      if (obj) (listeningTo = {})[obj._listenId] = obj;
-      for (var id in listeningTo) {
-        obj = listeningTo[id];
-        obj.off(name, callback, this);
-        if (remove || _.isEmpty(obj._events)) delete this._listeningTo[id];
-      }
-      return this;
-    }
-
-  };
+  var Events = Backbone.Events = {};
 
   // Regular expression used to split event strings.
   var eventSplitter = /\s+/;
 
-  // Implement fancy features of the Events API such as multiple event
-  // names `"change blur"` and jQuery-style event maps `{change: action}`
-  // in terms of the existing API.
-  var eventsApi = function(obj, action, name, rest) {
-    if (!name) return true;
-
-    // Handle event maps.
-    if (typeof name === 'object') {
-      for (var key in name) {
-        obj[action].apply(obj, [key, name[key]].concat(rest));
+  // Iterates over the standard `event, callback` (as well as the fancy multiple
+  // space-separated events `"change blur", callback` and jQuery-style event
+  // maps `{event: callback}`).
+  var eventsApi = function(iteratee, events, name, callback, opts) {
+    var i = 0, names;
+    if (name && typeof name === 'object') {
+      // Handle event maps.
+      if (callback !== void 0 && 'context' in opts && opts.context === void 0) opts.context = callback;
+      for (names = _.keys(name); i < names.length ; i++) {
+        events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
       }
-      return false;
+    } else if (name && eventSplitter.test(name)) {
+      // Handle space separated event names by delegating them individually.
+      for (names = name.split(eventSplitter); i < names.length; i++) {
+        events = iteratee(events, names[i], callback, opts);
+      }
+    } else {
+      // Finally, standard events.
+      events = iteratee(events, name, callback, opts);
+    }
+    return events;
+  };
+
+  // Bind an event to a `callback` function. Passing `"all"` will bind
+  // the callback to all events fired.
+  Events.on = function(name, callback, context) {
+    return internalOn(this, name, callback, context);
+  };
+
+  // Guard the `listening` argument from the public API.
+  var internalOn = function(obj, name, callback, context, listening) {
+    obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
+        context: context,
+        ctx: obj,
+        listening: listening
+    });
+
+    if (listening) {
+      var listeners = obj._listeners || (obj._listeners = {});
+      listeners[listening.id] = listening;
     }
 
-    // Handle space separated event names.
-    if (eventSplitter.test(name)) {
-      var names = name.split(eventSplitter);
-      for (var i = 0, l = names.length; i < l; i++) {
-        obj[action].apply(obj, [names[i]].concat(rest));
-      }
-      return false;
+    return obj;
+  };
+
+  // Inversion-of-control versions of `on`. Tell *this* object to listen to
+  // an event in another object... keeping track of what it's listening to
+  // for easier unbinding later.
+  Events.listenTo =  function(obj, name, callback) {
+    if (!obj) return this;
+    var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
+    var listeningTo = this._listeningTo || (this._listeningTo = {});
+    var listening = listeningTo[id];
+
+    // This object is not listening to any other events on `obj` yet.
+    // Setup the necessary references to track the listening callbacks.
+    if (!listening) {
+      var thisId = this._listenId || (this._listenId = _.uniqueId('l'));
+      listening = listeningTo[id] = {obj: obj, objId: id, id: thisId, listeningTo: listeningTo, count: 0};
     }
 
-    return true;
+    // Bind callbacks on obj, and keep track of them on listening.
+    internalOn(obj, name, callback, this, listening);
+    return this;
+  };
+
+  // The reducing API that adds a callback to the `events` object.
+  var onApi = function(events, name, callback, options) {
+    if (callback) {
+      var handlers = events[name] || (events[name] = []);
+      var context = options.context, ctx = options.ctx, listening = options.listening;
+      if (listening) listening.count++;
+
+      handlers.push({ callback: callback, context: context, ctx: context || ctx, listening: listening });
+    }
+    return events;
+  };
+
+  // Remove one or many callbacks. If `context` is null, removes all
+  // callbacks with that function. If `callback` is null, removes all
+  // callbacks for the event. If `name` is null, removes all bound
+  // callbacks for all events.
+  Events.off =  function(name, callback, context) {
+    if (!this._events) return this;
+    this._events = eventsApi(offApi, this._events, name, callback, {
+        context: context,
+        listeners: this._listeners
+    });
+    return this;
+  };
+
+  // Tell this object to stop listening to either specific events ... or
+  // to every object it's currently listening to.
+  Events.stopListening =  function(obj, name, callback) {
+    var listeningTo = this._listeningTo;
+    if (!listeningTo) return this;
+
+    var ids = obj ? [obj._listenId] : _.keys(listeningTo);
+
+    for (var i = 0; i < ids.length; i++) {
+      var listening = listeningTo[ids[i]];
+
+      // If listening doesn't exist, this object is not currently
+      // listening to obj. Break out early.
+      if (!listening) break;
+
+      listening.obj.off(name, callback, this);
+    }
+    if (_.isEmpty(listeningTo)) this._listeningTo = void 0;
+
+    return this;
+  };
+
+  // The reducing API that removes a callback from the `events` object.
+  var offApi = function(events, name, callback, options) {
+    if (!events) return;
+
+    var i = 0, listening;
+    var context = options.context, listeners = options.listeners;
+
+    // Delete all events listeners and "drop" events.
+    if (!name && !callback && !context) {
+      var ids = _.keys(listeners);
+      for (; i < ids.length; i++) {
+        listening = listeners[ids[i]];
+        delete listeners[listening.id];
+        delete listening.listeningTo[listening.objId];
+      }
+      return;
+    }
+
+    var names = name ? [name] : _.keys(events);
+    for (; i < names.length; i++) {
+      name = names[i];
+      var handlers = events[name];
+
+      // Bail out if there are no events stored.
+      if (!handlers) break;
+
+      // Replace events if there are any remaining.  Otherwise, clean up.
+      var remaining = [];
+      for (var j = 0; j < handlers.length; j++) {
+        var handler = handlers[j];
+        if (
+          callback && callback !== handler.callback &&
+            callback !== handler.callback._callback ||
+              context && context !== handler.context
+        ) {
+          remaining.push(handler);
+        } else {
+          listening = handler.listening;
+          if (listening && --listening.count === 0) {
+            delete listeners[listening.id];
+            delete listening.listeningTo[listening.objId];
+          }
+        }
+      }
+
+      // Update tail event if the list has any events.  Otherwise, clean up.
+      if (remaining.length) {
+        events[name] = remaining;
+      } else {
+        delete events[name];
+      }
+    }
+    if (_.size(events)) return events;
+  };
+
+  // Bind an event to only be triggered a single time. After the first time
+  // the callback is invoked, its listener will be removed. If multiple events
+  // are passed in using the space-separated syntax, the handler will fire
+  // once for each event, not once for a combination of all events.
+  Events.once =  function(name, callback, context) {
+    // Map the event into a `{event: once}` object.
+    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
+    return this.on(events, void 0, context);
+  };
+
+  // Inversion-of-control versions of `once`.
+  Events.listenToOnce =  function(obj, name, callback) {
+    // Map the event into a `{event: once}` object.
+    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, obj));
+    return this.listenTo(obj, events);
+  };
+
+  // Reduces the event callbacks into a map of `{event: onceWrapper}`.
+  // `offer` unbinds the `onceWrapper` after it has been called.
+  var onceMap = function(map, name, callback, offer) {
+    if (callback) {
+      var once = map[name] = _.once(function() {
+        offer(name, once);
+        callback.apply(this, arguments);
+      });
+      once._callback = callback;
+    }
+    return map;
+  };
+
+  // Trigger one or many events, firing all bound callbacks. Callbacks are
+  // passed the same arguments as `trigger` is, apart from the event name
+  // (unless you're listening on `"all"`, which will cause your callback to
+  // receive the true name of the event as the first argument).
+  Events.trigger =  function(name) {
+    if (!this._events) return this;
+
+    var length = Math.max(0, arguments.length - 1);
+    var args = Array(length);
+    for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
+
+    eventsApi(triggerApi, this._events, name, void 0, args);
+    return this;
+  };
+
+  // Handles triggering the appropriate event callbacks.
+  var triggerApi = function(objEvents, name, cb, args) {
+    if (objEvents) {
+      var events = objEvents[name];
+      var allEvents = objEvents.all;
+      if (events && allEvents) allEvents = allEvents.slice();
+      if (events) triggerEvents(events, args);
+      if (allEvents) triggerEvents(allEvents, [name].concat(args));
+    }
+    return objEvents;
   };
 
   // A difficult-to-believe, but optimized internal dispatch function for
@@ -5918,22 +6891,6 @@ module.exports = new (Torso.Router.extend({
       default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args); return;
     }
   };
-
-  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
-
-  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
-  // listen to an event in another object ... keeping track of what it's
-  // listening to.
-  _.each(listenMethods, function(implementation, method) {
-    Events[method] = function(obj, name, callback) {
-      var listeningTo = this._listeningTo || (this._listeningTo = {});
-      var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
-      listeningTo[id] = obj;
-      if (!callback && typeof name === 'object') callback = this;
-      obj[implementation](name, callback, this);
-      return this;
-    };
-  });
 
   // Aliases for backwards compatibility.
   Events.bind   = Events.on;
@@ -5956,7 +6913,7 @@ module.exports = new (Torso.Router.extend({
   var Model = Backbone.Model = function(attributes, options) {
     var attrs = attributes || {};
     options || (options = {});
-    this.cid = _.uniqueId('c');
+    this.cid = _.uniqueId(this.cidPrefix);
     this.attributes = {};
     if (options.collection) this.collection = options.collection;
     if (options.parse) attrs = this.parse(attrs, options) || {};
@@ -5978,6 +6935,10 @@ module.exports = new (Torso.Router.extend({
     // The default name for the JSON `id` attribute is `"id"`. MongoDB and
     // CouchDB users may want to set this to `"_id"`.
     idAttribute: 'id',
+
+    // The prefix is used to create the client id which is used to identify models locally.
+    // You may want to override this if you're experiencing name clashes with model ids.
+    cidPrefix: 'c',
 
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
@@ -6010,14 +6971,19 @@ module.exports = new (Torso.Router.extend({
       return this.get(attr) != null;
     },
 
+    // Special-cased proxy to underscore's `_.matches` method.
+    matches: function(attrs) {
+      return !!_.iteratee(attrs, this)(this.attributes);
+    },
+
     // Set a hash of model attributes on the object, firing `"change"`. This is
     // the core primitive operation of a model, updating the data and notifying
     // anyone who needs to know about the change in state. The heart of the beast.
     set: function(key, val, options) {
-      var attr, attrs, unset, changes, silent, changing, prev, current;
       if (key == null) return this;
 
       // Handle both `"key", value` and `{key: value}` -style arguments.
+      var attrs;
       if (typeof key === 'object') {
         attrs = key;
         options = val;
@@ -6031,37 +6997,40 @@ module.exports = new (Torso.Router.extend({
       if (!this._validate(attrs, options)) return false;
 
       // Extract attributes and options.
-      unset           = options.unset;
-      silent          = options.silent;
-      changes         = [];
-      changing        = this._changing;
-      this._changing  = true;
+      var unset      = options.unset;
+      var silent     = options.silent;
+      var changes    = [];
+      var changing   = this._changing;
+      this._changing = true;
 
       if (!changing) {
         this._previousAttributes = _.clone(this.attributes);
         this.changed = {};
       }
-      current = this.attributes, prev = this._previousAttributes;
 
-      // Check for changes of `id`.
-      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+      var current = this.attributes;
+      var changed = this.changed;
+      var prev    = this._previousAttributes;
 
       // For each `set` attribute, update or delete the current value.
-      for (attr in attrs) {
+      for (var attr in attrs) {
         val = attrs[attr];
         if (!_.isEqual(current[attr], val)) changes.push(attr);
         if (!_.isEqual(prev[attr], val)) {
-          this.changed[attr] = val;
+          changed[attr] = val;
         } else {
-          delete this.changed[attr];
+          delete changed[attr];
         }
         unset ? delete current[attr] : current[attr] = val;
       }
 
+      // Update the `id`.
+      this.id = this.get(this.idAttribute);
+
       // Trigger all relevant attribute changes.
       if (!silent) {
         if (changes.length) this._pending = options;
-        for (var i = 0, l = changes.length; i < l; i++) {
+        for (var i = 0; i < changes.length; i++) {
           this.trigger('change:' + changes[i], this, current[changes[i]], options);
         }
       }
@@ -6109,13 +7078,14 @@ module.exports = new (Torso.Router.extend({
     // determining if there *would be* a change.
     changedAttributes: function(diff) {
       if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
-      var val, changed = false;
       var old = this._changing ? this._previousAttributes : this.attributes;
+      var changed = {};
       for (var attr in diff) {
-        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
-        (changed || (changed = {}))[attr] = val;
+        var val = diff[attr];
+        if (_.isEqual(old[attr], val)) continue;
+        changed[attr] = val;
       }
-      return changed;
+      return _.size(changed) ? changed : false;
     },
 
     // Get the previous value of an attribute, recorded at the time the last
@@ -6131,17 +7101,16 @@ module.exports = new (Torso.Router.extend({
       return _.clone(this._previousAttributes);
     },
 
-    // Fetch the model from the server. If the server's representation of the
-    // model differs from its current attributes, they will be overridden,
-    // triggering a `"change"` event.
+    // Fetch the model from the server, merging the response with the model's
+    // local attributes. Any changed attributes will trigger a "change" event.
     fetch: function(options) {
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
+      options = _.extend({parse: true}, options);
       var model = this;
       var success = options.success;
       options.success = function(resp) {
-        if (!model.set(model.parse(resp, options), options)) return false;
-        if (success) success(model, resp, options);
+        var serverAttrs = options.parse ? model.parse(resp, options) : resp;
+        if (!model.set(serverAttrs, options)) return false;
+        if (success) success.call(options.context, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
@@ -6152,9 +7121,8 @@ module.exports = new (Torso.Router.extend({
     // If the server returns an attributes hash that differs, the model's
     // state will be `set` again.
     save: function(key, val, options) {
-      var attrs, method, xhr, attributes = this.attributes;
-
       // Handle both `"key", value` and `{key: value}` -style arguments.
+      var attrs;
       if (key == null || typeof key === 'object') {
         attrs = key;
         options = val;
@@ -6162,46 +7130,43 @@ module.exports = new (Torso.Router.extend({
         (attrs = {})[key] = val;
       }
 
-      options = _.extend({validate: true}, options);
+      options = _.extend({validate: true, parse: true}, options);
+      var wait = options.wait;
 
       // If we're not waiting and attributes exist, save acts as
       // `set(attr).save(null, opts)` with validation. Otherwise, check if
       // the model will be valid when the attributes, if any, are set.
-      if (attrs && !options.wait) {
+      if (attrs && !wait) {
         if (!this.set(attrs, options)) return false;
       } else {
         if (!this._validate(attrs, options)) return false;
       }
 
-      // Set temporary attributes if `{wait: true}`.
-      if (attrs && options.wait) {
-        this.attributes = _.extend({}, attributes, attrs);
-      }
-
       // After a successful server-side save, the client is (optionally)
       // updated with the server-side state.
-      if (options.parse === void 0) options.parse = true;
       var model = this;
       var success = options.success;
+      var attributes = this.attributes;
       options.success = function(resp) {
         // Ensure attributes are restored during synchronous saves.
         model.attributes = attributes;
-        var serverAttrs = model.parse(resp, options);
-        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
-        if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
-          return false;
-        }
-        if (success) success(model, resp, options);
+        var serverAttrs = options.parse ? model.parse(resp, options) : resp;
+        if (wait) serverAttrs = _.extend({}, attrs, serverAttrs);
+        if (serverAttrs && !model.set(serverAttrs, options)) return false;
+        if (success) success.call(options.context, model, resp, options);
         model.trigger('sync', model, resp, options);
       };
       wrapError(this, options);
 
-      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-      if (method === 'patch') options.attrs = attrs;
-      xhr = this.sync(method, this, options);
+      // Set temporary attributes if `{wait: true}` to properly find new ids.
+      if (attrs && wait) this.attributes = _.extend({}, attributes, attrs);
+
+      var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+      if (method === 'patch' && !options.attrs) options.attrs = attrs;
+      var xhr = this.sync(method, this, options);
 
       // Restore attributes.
-      if (attrs && options.wait) this.attributes = attributes;
+      this.attributes = attributes;
 
       return xhr;
     },
@@ -6213,25 +7178,27 @@ module.exports = new (Torso.Router.extend({
       options = options ? _.clone(options) : {};
       var model = this;
       var success = options.success;
+      var wait = options.wait;
 
       var destroy = function() {
+        model.stopListening();
         model.trigger('destroy', model, model.collection, options);
       };
 
       options.success = function(resp) {
-        if (options.wait || model.isNew()) destroy();
-        if (success) success(model, resp, options);
+        if (wait) destroy();
+        if (success) success.call(options.context, model, resp, options);
         if (!model.isNew()) model.trigger('sync', model, resp, options);
       };
 
+      var xhr = false;
       if (this.isNew()) {
-        options.success();
-        return false;
+        _.defer(options.success);
+      } else {
+        wrapError(this, options);
+        xhr = this.sync('delete', this, options);
       }
-      wrapError(this, options);
-
-      var xhr = this.sync('delete', this, options);
-      if (!options.wait) destroy();
+      if (!wait) destroy();
       return xhr;
     },
 
@@ -6244,7 +7211,8 @@ module.exports = new (Torso.Router.extend({
         _.result(this.collection, 'url') ||
         urlError();
       if (this.isNew()) return base;
-      return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id);
+      var id = this.get(this.idAttribute);
+      return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
     },
 
     // **parse** converts a response into the hash of attributes to be `set` on
@@ -6265,7 +7233,7 @@ module.exports = new (Torso.Router.extend({
 
     // Check if the model is currently in a valid state.
     isValid: function(options) {
-      return this._validate({}, _.extend(options || {}, { validate: true }));
+      return this._validate({}, _.defaults({validate: true}, options));
     },
 
     // Run validation against the next complete set of model attributes,
@@ -6281,23 +7249,19 @@ module.exports = new (Torso.Router.extend({
 
   });
 
-  // Underscore methods that we want to implement on the Model.
-  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit'];
+  // Underscore methods that we want to implement on the Model, mapped to the
+  // number of arguments they take.
+  var modelMethods = { keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
+      omit: 0, chain: 1, isEmpty: 1 };
 
   // Mix in each Underscore method as a proxy to `Model#attributes`.
-  _.each(modelMethods, function(method) {
-    Model.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.attributes);
-      return _[method].apply(_, args);
-    };
-  });
+  addUnderscoreMethods(Model, modelMethods, 'attributes');
 
   // Backbone.Collection
   // -------------------
 
   // If models tend to represent a single row of data, a Backbone Collection is
-  // more analagous to a table full of data ... or a small slice or page of that
+  // more analogous to a table full of data ... or a small slice or page of that
   // table, or a collection of rows that belong together for a particular reason
   // -- all of the messages in this particular folder, all of the documents
   // belonging to this particular author, and so on. Collections maintain
@@ -6319,6 +7283,16 @@ module.exports = new (Torso.Router.extend({
   var setOptions = {add: true, remove: true, merge: true};
   var addOptions = {add: true, remove: false};
 
+  // Splices `insert` into `array` at index `at`.
+  var splice = function(array, insert, at) {
+    at = Math.min(Math.max(at, 0), array.length);
+    var tail = Array(array.length - at);
+    var length = insert.length;
+    for (var i = 0; i < tail.length; i++) tail[i] = array[i + at];
+    for (i = 0; i < length; i++) array[i + at] = insert[i];
+    for (i = 0; i < tail.length; i++) array[i + length + at] = tail[i];
+  };
+
   // Define the Collection's inheritable methods.
   _.extend(Collection.prototype, Events, {
 
@@ -6333,7 +7307,7 @@ module.exports = new (Torso.Router.extend({
     // The JSON representation of a Collection is an array of the
     // models' attributes.
     toJSON: function(options) {
-      return this.map(function(model){ return model.toJSON(options); });
+      return this.map(function(model) { return model.toJSON(options); });
     },
 
     // Proxy `Backbone.sync` by default.
@@ -6341,32 +7315,21 @@ module.exports = new (Torso.Router.extend({
       return Backbone.sync.apply(this, arguments);
     },
 
-    // Add a model, or list of models to the set.
+    // Add a model, or list of models to the set. `models` may be Backbone
+    // Models or raw JavaScript objects to be converted to Models, or any
+    // combination of the two.
     add: function(models, options) {
       return this.set(models, _.extend({merge: false}, options, addOptions));
     },
 
     // Remove a model, or a list of models from the set.
     remove: function(models, options) {
+      options = _.extend({}, options);
       var singular = !_.isArray(models);
       models = singular ? [models] : _.clone(models);
-      options || (options = {});
-      var i, l, index, model;
-      for (i = 0, l = models.length; i < l; i++) {
-        model = models[i] = this.get(models[i]);
-        if (!model) continue;
-        delete this._byId[model.id];
-        delete this._byId[model.cid];
-        index = this.indexOf(model);
-        this.models.splice(index, 1);
-        this.length--;
-        if (!options.silent) {
-          options.index = index;
-          model.trigger('remove', model, this, options);
-        }
-        this._removeReference(model, options);
-      }
-      return singular ? models[0] : models;
+      var removed = this._removeModels(models, options);
+      if (!options.silent && removed) this.trigger('update', this, options);
+      return singular ? removed[0] : removed;
     },
 
     // Update a collection by `set`-ing a new list of models, adding new ones,
@@ -6374,78 +7337,88 @@ module.exports = new (Torso.Router.extend({
     // already exist in the collection, as necessary. Similar to **Model#set**,
     // the core operation for updating the data contained by the collection.
     set: function(models, options) {
+      if (models == null) return;
+
       options = _.defaults({}, options, setOptions);
-      if (options.parse) models = this.parse(models, options);
+      if (options.parse && !this._isModel(models)) models = this.parse(models, options);
+
       var singular = !_.isArray(models);
-      models = singular ? (models ? [models] : []) : _.clone(models);
-      var i, l, id, model, attrs, existing, sort;
+      models = singular ? [models] : models.slice();
+
       var at = options.at;
-      var targetModel = this.model;
+      if (at != null) at = +at;
+      if (at < 0) at += this.length + 1;
+
+      var set = [];
+      var toAdd = [];
+      var toRemove = [];
+      var modelMap = {};
+
+      var add = options.add;
+      var merge = options.merge;
+      var remove = options.remove;
+
+      var sort = false;
       var sortable = this.comparator && (at == null) && options.sort !== false;
       var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-      var toAdd = [], toRemove = [], modelMap = {};
-      var add = options.add, merge = options.merge, remove = options.remove;
-      var order = !sortable && add && remove ? [] : false;
 
       // Turn bare objects into model references, and prevent invalid models
       // from being added.
-      for (i = 0, l = models.length; i < l; i++) {
-        attrs = models[i] || {};
-        if (attrs instanceof Model) {
-          id = model = attrs;
-        } else {
-          id = attrs[targetModel.prototype.idAttribute || 'id'];
-        }
+      var model;
+      for (var i = 0; i < models.length; i++) {
+        model = models[i];
 
         // If a duplicate is found, prevent it from being added and
         // optionally merge it into the existing model.
-        if (existing = this.get(id)) {
-          if (remove) modelMap[existing.cid] = true;
-          if (merge) {
-            attrs = attrs === model ? model.attributes : attrs;
+        var existing = this.get(model);
+        if (existing) {
+          if (merge && model !== existing) {
+            var attrs = this._isModel(model) ? model.attributes : model;
             if (options.parse) attrs = existing.parse(attrs, options);
             existing.set(attrs, options);
-            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
+            if (sortable && !sort) sort = existing.hasChanged(sortAttr);
+          }
+          if (!modelMap[existing.cid]) {
+            modelMap[existing.cid] = true;
+            set.push(existing);
           }
           models[i] = existing;
 
         // If this is a new, valid model, push it to the `toAdd` list.
         } else if (add) {
-          model = models[i] = this._prepareModel(attrs, options);
-          if (!model) continue;
-          toAdd.push(model);
-          this._addReference(model, options);
+          model = models[i] = this._prepareModel(model, options);
+          if (model) {
+            toAdd.push(model);
+            this._addReference(model, options);
+            modelMap[model.cid] = true;
+            set.push(model);
+          }
         }
-
-        // Do not add multiple models with the same `id`.
-        model = existing || model;
-        if (order && (model.isNew() || !modelMap[model.id])) order.push(model);
-        modelMap[model.id] = true;
       }
 
-      // Remove nonexistent models if appropriate.
+      // Remove stale models.
       if (remove) {
-        for (i = 0, l = this.length; i < l; ++i) {
-          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
+        for (i = 0; i < this.length; i++) {
+          model = this.models[i];
+          if (!modelMap[model.cid]) toRemove.push(model);
         }
-        if (toRemove.length) this.remove(toRemove, options);
+        if (toRemove.length) this._removeModels(toRemove, options);
       }
 
       // See if sorting is needed, update `length` and splice in new models.
-      if (toAdd.length || (order && order.length)) {
+      var orderChanged = false;
+      var replace = !sortable && add && remove;
+      if (set.length && replace) {
+        orderChanged = this.length != set.length || _.some(this.models, function(model, index) {
+          return model !== set[index];
+        });
+        this.models.length = 0;
+        splice(this.models, set, 0);
+        this.length = this.models.length;
+      } else if (toAdd.length) {
         if (sortable) sort = true;
-        this.length += toAdd.length;
-        if (at != null) {
-          for (i = 0, l = toAdd.length; i < l; i++) {
-            this.models.splice(at + i, 0, toAdd[i]);
-          }
-        } else {
-          if (order) this.models.length = 0;
-          var orderedModels = order || toAdd;
-          for (i = 0, l = orderedModels.length; i < l; i++) {
-            this.models.push(orderedModels[i]);
-          }
-        }
+        splice(this.models, toAdd, at == null ? this.length : at);
+        this.length = this.models.length;
       }
 
       // Silently sort the collection if appropriate.
@@ -6453,10 +7426,13 @@ module.exports = new (Torso.Router.extend({
 
       // Unless silenced, it's time to fire all appropriate add/sort events.
       if (!options.silent) {
-        for (i = 0, l = toAdd.length; i < l; i++) {
-          (model = toAdd[i]).trigger('add', model, this, options);
+        for (i = 0; i < toAdd.length; i++) {
+          if (at != null) options.index = at + i;
+          model = toAdd[i];
+          model.trigger('add', model, this, options);
         }
-        if (sort || (order && order.length)) this.trigger('sort', this, options);
+        if (sort || orderChanged) this.trigger('sort', this, options);
+        if (toAdd.length || toRemove.length) this.trigger('update', this, options);
       }
 
       // Return the added (or merged) model (or models).
@@ -6468,8 +7444,8 @@ module.exports = new (Torso.Router.extend({
     // any granular `add` or `remove` events. Fires `reset` when finished.
     // Useful for bulk operations and optimizations.
     reset: function(models, options) {
-      options || (options = {});
-      for (var i = 0, l = this.models.length; i < l; i++) {
+      options = options ? _.clone(options) : {};
+      for (var i = 0; i < this.models.length; i++) {
         this._removeReference(this.models[i], options);
       }
       options.previousModels = this.models;
@@ -6487,8 +7463,7 @@ module.exports = new (Torso.Router.extend({
     // Remove a model from the end of the collection.
     pop: function(options) {
       var model = this.at(this.length - 1);
-      this.remove(model, options);
-      return model;
+      return this.remove(model, options);
     },
 
     // Add a model to the beginning of the collection.
@@ -6499,8 +7474,7 @@ module.exports = new (Torso.Router.extend({
     // Remove a model from the beginning of the collection.
     shift: function(options) {
       var model = this.at(0);
-      this.remove(model, options);
-      return model;
+      return this.remove(model, options);
     },
 
     // Slice out a sub-array of models from the collection.
@@ -6511,24 +7485,20 @@ module.exports = new (Torso.Router.extend({
     // Get a model from the set by id.
     get: function(obj) {
       if (obj == null) return void 0;
-      return this._byId[obj] || this._byId[obj.id] || this._byId[obj.cid];
+      var id = this.modelId(this._isModel(obj) ? obj.attributes : obj);
+      return this._byId[obj] || this._byId[id] || this._byId[obj.cid];
     },
 
     // Get the model at the given index.
     at: function(index) {
+      if (index < 0) index += this.length;
       return this.models[index];
     },
 
     // Return models with matching attributes. Useful for simple cases of
     // `filter`.
     where: function(attrs, first) {
-      if (_.isEmpty(attrs)) return first ? void 0 : [];
-      return this[first ? 'find' : 'filter'](function(model) {
-        for (var key in attrs) {
-          if (attrs[key] !== model.get(key)) return false;
-        }
-        return true;
-      });
+      return this[first ? 'find' : 'filter'](attrs);
     },
 
     // Return the first model with matching attributes. Useful for simple cases
@@ -6541,16 +7511,19 @@ module.exports = new (Torso.Router.extend({
     // normal circumstances, as the set will maintain sort order as each item
     // is added.
     sort: function(options) {
-      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+      var comparator = this.comparator;
+      if (!comparator) throw new Error('Cannot sort a set without a comparator');
       options || (options = {});
 
-      // Run sort based on type of `comparator`.
-      if (_.isString(this.comparator) || this.comparator.length === 1) {
-        this.models = this.sortBy(this.comparator, this);
-      } else {
-        this.models.sort(_.bind(this.comparator, this));
-      }
+      var length = comparator.length;
+      if (_.isFunction(comparator)) comparator = _.bind(comparator, this);
 
+      // Run sort based on type of `comparator`.
+      if (length === 1 || _.isString(comparator)) {
+        this.models = this.sortBy(comparator);
+      } else {
+        this.models.sort(comparator);
+      }
       if (!options.silent) this.trigger('sort', this, options);
       return this;
     },
@@ -6564,14 +7537,13 @@ module.exports = new (Torso.Router.extend({
     // collection when they arrive. If `reset: true` is passed, the response
     // data will be passed through the `reset` method instead of `set`.
     fetch: function(options) {
-      options = options ? _.clone(options) : {};
-      if (options.parse === void 0) options.parse = true;
+      options = _.extend({parse: true}, options);
       var success = options.success;
       var collection = this;
       options.success = function(resp) {
         var method = options.reset ? 'reset' : 'set';
         collection[method](resp, options);
-        if (success) success(collection, resp, options);
+        if (success) success.call(options.context, collection, resp, options);
         collection.trigger('sync', collection, resp, options);
       };
       wrapError(this, options);
@@ -6583,13 +7555,15 @@ module.exports = new (Torso.Router.extend({
     // wait for the server to agree.
     create: function(model, options) {
       options = options ? _.clone(options) : {};
-      if (!(model = this._prepareModel(model, options))) return false;
-      if (!options.wait) this.add(model, options);
+      var wait = options.wait;
+      model = this._prepareModel(model, options);
+      if (!model) return false;
+      if (!wait) this.add(model, options);
       var collection = this;
       var success = options.success;
-      options.success = function(model, resp) {
-        if (options.wait) collection.add(model, options);
-        if (success) success(model, resp, options);
+      options.success = function(model, resp, callbackOpts) {
+        if (wait) collection.add(model, callbackOpts);
+        if (success) success.call(callbackOpts.context, model, resp, callbackOpts);
       };
       model.save(null, options);
       return model;
@@ -6603,7 +7577,15 @@ module.exports = new (Torso.Router.extend({
 
     // Create a new collection with an identical list of models as this one.
     clone: function() {
-      return new this.constructor(this.models);
+      return new this.constructor(this.models, {
+        model: this.model,
+        comparator: this.comparator
+      });
+    },
+
+    // Define how to uniquely identify models in the collection.
+    modelId: function (attrs) {
+      return attrs[this.model.prototype.idAttribute || 'id'];
     },
 
     // Private method to reset all internal state. Called when the collection
@@ -6617,7 +7599,10 @@ module.exports = new (Torso.Router.extend({
     // Prepare a hash of attributes (or other model) to be added to this
     // collection.
     _prepareModel: function(attrs, options) {
-      if (attrs instanceof Model) return attrs;
+      if (this._isModel(attrs)) {
+        if (!attrs.collection) attrs.collection = this;
+        return attrs;
+      }
       options = options ? _.clone(options) : {};
       options.collection = this;
       var model = new this.model(attrs, options);
@@ -6626,16 +7611,47 @@ module.exports = new (Torso.Router.extend({
       return false;
     },
 
+    // Internal method called by both remove and set.
+    _removeModels: function(models, options) {
+      var removed = [];
+      for (var i = 0; i < models.length; i++) {
+        var model = this.get(models[i]);
+        if (!model) continue;
+
+        var index = this.indexOf(model);
+        this.models.splice(index, 1);
+        this.length--;
+
+        if (!options.silent) {
+          options.index = index;
+          model.trigger('remove', model, this, options);
+        }
+
+        removed.push(model);
+        this._removeReference(model, options);
+      }
+      return removed.length ? removed : false;
+    },
+
+    // Method for checking whether an object should be considered a model for
+    // the purposes of adding to the collection.
+    _isModel: function (model) {
+      return model instanceof Model;
+    },
+
     // Internal method to create a model's ties to a collection.
     _addReference: function(model, options) {
       this._byId[model.cid] = model;
-      if (model.id != null) this._byId[model.id] = model;
-      if (!model.collection) model.collection = this;
+      var id = this.modelId(model.attributes);
+      if (id != null) this._byId[id] = model;
       model.on('all', this._onModelEvent, this);
     },
 
     // Internal method to sever a model's ties to a collection.
     _removeReference: function(model, options) {
+      delete this._byId[model.cid];
+      var id = this.modelId(model.attributes);
+      if (id != null) delete this._byId[id];
       if (this === model.collection) delete model.collection;
       model.off('all', this._onModelEvent, this);
     },
@@ -6647,9 +7663,13 @@ module.exports = new (Torso.Router.extend({
     _onModelEvent: function(event, model, collection, options) {
       if ((event === 'add' || event === 'remove') && collection !== this) return;
       if (event === 'destroy') this.remove(model, options);
-      if (model && event === 'change:' + model.idAttribute) {
-        delete this._byId[model.previous(model.idAttribute)];
-        if (model.id != null) this._byId[model.id] = model;
+      if (event === 'change') {
+        var prevId = this.modelId(model.previousAttributes());
+        var id = this.modelId(model.attributes);
+        if (prevId !== id) {
+          if (prevId != null) delete this._byId[prevId];
+          if (id != null) this._byId[id] = model;
+        }
       }
       this.trigger.apply(this, arguments);
     }
@@ -6659,34 +7679,17 @@ module.exports = new (Torso.Router.extend({
   // Underscore methods that we want to implement on the Collection.
   // 90% of the core usefulness of Backbone Collections is actually implemented
   // right here:
-  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
-    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
-    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
-    'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
-    'lastIndexOf', 'isEmpty', 'chain', 'sample'];
+  var collectionMethods = { forEach: 3, each: 3, map: 3, collect: 3, reduce: 4,
+      foldl: 4, inject: 4, reduceRight: 4, foldr: 4, find: 3, detect: 3, filter: 3,
+      select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
+      contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+      head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
+      without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
+      isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
+      sortBy: 3, indexBy: 3};
 
   // Mix in each Underscore method as a proxy to `Collection#models`.
-  _.each(methods, function(method) {
-    Collection.prototype[method] = function() {
-      var args = slice.call(arguments);
-      args.unshift(this.models);
-      return _[method].apply(_, args);
-    };
-  });
-
-  // Underscore methods that take a property name as an argument.
-  var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
-
-  // Use attributes instead of properties.
-  _.each(attributeMethods, function(method) {
-    Collection.prototype[method] = function(value, context) {
-      var iterator = _.isFunction(value) ? value : function(model) {
-        return model.get(value);
-      };
-      return _[method](this.models, iterator, context);
-    };
-  });
+  addUnderscoreMethods(Collection, collectionMethods, 'models');
 
   // Backbone.View
   // -------------
@@ -6703,17 +7706,15 @@ module.exports = new (Torso.Router.extend({
   // if an existing element is not provided...
   var View = Backbone.View = function(options) {
     this.cid = _.uniqueId('view');
-    options || (options = {});
     _.extend(this, _.pick(options, viewOptions));
     this._ensureElement();
     this.initialize.apply(this, arguments);
-    this.delegateEvents();
   };
 
   // Cached regex to split keys for `delegate`.
   var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
-  // List of view options to be merged as properties.
+  // List of view options to be set as properties.
   var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
 
   // Set up all inheritable **Backbone.View** properties and methods.
@@ -6742,19 +7743,35 @@ module.exports = new (Torso.Router.extend({
     // Remove this view by taking the element out of the DOM, and removing any
     // applicable Backbone.Events listeners.
     remove: function() {
-      this.$el.remove();
+      this._removeElement();
       this.stopListening();
       return this;
     },
 
-    // Change the view's element (`this.el` property), including event
-    // re-delegation.
-    setElement: function(element, delegate) {
-      if (this.$el) this.undelegateEvents();
-      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-      this.el = this.$el[0];
-      if (delegate !== false) this.delegateEvents();
+    // Remove this view's element from the document and all event listeners
+    // attached to it. Exposed for subclasses using an alternative DOM
+    // manipulation API.
+    _removeElement: function() {
+      this.$el.remove();
+    },
+
+    // Change the view's element (`this.el` property) and re-delegate the
+    // view's events on the new element.
+    setElement: function(element) {
+      this.undelegateEvents();
+      this._setElement(element);
+      this.delegateEvents();
       return this;
+    },
+
+    // Creates the `this.el` and `this.$el` references for this view using the
+    // given `el`. `el` can be a CSS selector or an HTML string, a jQuery
+    // context or an element. Subclasses can override this to utilize an
+    // alternative DOM manipulation API and are only required to set the
+    // `this.el` property.
+    _setElement: function(el) {
+      this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
+      this.el = this.$el[0];
     },
 
     // Set callbacks, where `this.events` is a hash of
@@ -6770,35 +7787,47 @@ module.exports = new (Torso.Router.extend({
     // pairs. Callbacks will be bound to the view, with `this` set properly.
     // Uses event delegation for efficiency.
     // Omitting the selector binds the event to `this.el`.
-    // This only works for delegate-able events: not `focus`, `blur`, and
-    // not `change`, `submit`, and `reset` in Internet Explorer.
     delegateEvents: function(events) {
-      if (!(events || (events = _.result(this, 'events')))) return this;
+      events || (events = _.result(this, 'events'));
+      if (!events) return this;
       this.undelegateEvents();
       for (var key in events) {
         var method = events[key];
-        if (!_.isFunction(method)) method = this[events[key]];
+        if (!_.isFunction(method)) method = this[method];
         if (!method) continue;
-
         var match = key.match(delegateEventSplitter);
-        var eventName = match[1], selector = match[2];
-        method = _.bind(method, this);
-        eventName += '.delegateEvents' + this.cid;
-        if (selector === '') {
-          this.$el.on(eventName, method);
-        } else {
-          this.$el.on(eventName, selector, method);
-        }
+        this.delegate(match[1], match[2], _.bind(method, this));
       }
       return this;
     },
 
-    // Clears all callbacks previously bound to the view with `delegateEvents`.
+    // Add a single event listener to the view's element (or a child element
+    // using `selector`). This only works for delegate-able events: not `focus`,
+    // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
+    delegate: function(eventName, selector, listener) {
+      this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
+      return this;
+    },
+
+    // Clears all callbacks previously bound to the view by `delegateEvents`.
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      this.$el.off('.delegateEvents' + this.cid);
+      if (this.$el) this.$el.off('.delegateEvents' + this.cid);
       return this;
+    },
+
+    // A finer-grained `undelegateEvents` for removing a single delegated event.
+    // `selector` and `listener` are both optional.
+    undelegate: function(eventName, selector, listener) {
+      this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
+      return this;
+    },
+
+    // Produces a DOM element to be assigned to your view. Exposed for
+    // subclasses using an alternative DOM manipulation API.
+    _createElement: function(tagName) {
+      return document.createElement(tagName);
     },
 
     // Ensure that the View has a DOM element to render into.
@@ -6810,11 +7839,17 @@ module.exports = new (Torso.Router.extend({
         var attrs = _.extend({}, _.result(this, 'attributes'));
         if (this.id) attrs.id = _.result(this, 'id');
         if (this.className) attrs['class'] = _.result(this, 'className');
-        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-        this.setElement($el, false);
+        this.setElement(this._createElement(_.result(this, 'tagName')));
+        this._setAttributes(attrs);
       } else {
-        this.setElement(_.result(this, 'el'), false);
+        this.setElement(_.result(this, 'el'));
       }
+    },
+
+    // Set attributes from a hash on this view's element.  Exposed for
+    // subclasses using an alternative DOM manipulation API.
+    _setAttributes: function(attributes) {
+      this.$el.attr(attributes);
     }
 
   });
@@ -6883,24 +7918,19 @@ module.exports = new (Torso.Router.extend({
       params.processData = false;
     }
 
-    // If we're sending a `PATCH` request, and we're in an old Internet Explorer
-    // that still has ActiveX enabled by default, override jQuery to use that
-    // for XHR instead. Remove this line when jQuery supports `PATCH` on IE8.
-    if (params.type === 'PATCH' && noXhrPatch) {
-      params.xhr = function() {
-        return new ActiveXObject("Microsoft.XMLHTTP");
-      };
-    }
+    // Pass along `textStatus` and `errorThrown` from jQuery.
+    var error = options.error;
+    options.error = function(xhr, textStatus, errorThrown) {
+      options.textStatus = textStatus;
+      options.errorThrown = errorThrown;
+      if (error) error.call(options.context, xhr, textStatus, errorThrown);
+    };
 
     // Make the request, allowing the user to override any Ajax options.
     var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
     model.trigger('request', model, xhr, options);
     return xhr;
   };
-
-  var noXhrPatch =
-    typeof window !== 'undefined' && !!window.ActiveXObject &&
-      !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
 
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
   var methodMap = {
@@ -6959,17 +7989,18 @@ module.exports = new (Torso.Router.extend({
       var router = this;
       Backbone.history.route(route, function(fragment) {
         var args = router._extractParameters(route, fragment);
-        router.execute(callback, args);
-        router.trigger.apply(router, ['route:' + name].concat(args));
-        router.trigger('route', name, args);
-        Backbone.history.trigger('route', router, name, args);
+        if (router.execute(callback, args, name) !== false) {
+          router.trigger.apply(router, ['route:' + name].concat(args));
+          router.trigger('route', name, args);
+          Backbone.history.trigger('route', router, name, args);
+        }
       });
       return this;
     },
 
     // Execute a route handler with the provided parameters.  This is an
     // excellent place to do pre-route setup or post-route cleanup.
-    execute: function(callback, args) {
+    execute: function(callback, args, name) {
       if (callback) callback.apply(this, args);
     },
 
@@ -7027,7 +8058,7 @@ module.exports = new (Torso.Router.extend({
   // falls back to polling.
   var History = Backbone.History = function() {
     this.handlers = [];
-    _.bindAll(this, 'checkUrl');
+    this.checkUrl = _.bind(this.checkUrl, this);
 
     // Ensure that `History` can be used outside of the browser.
     if (typeof window !== 'undefined') {
@@ -7041,12 +8072,6 @@ module.exports = new (Torso.Router.extend({
 
   // Cached regex for stripping leading and trailing slashes.
   var rootStripper = /^\/+|\/+$/g;
-
-  // Cached regex for detecting MSIE.
-  var isExplorer = /msie [\w.]+/;
-
-  // Cached regex for removing a trailing slash.
-  var trailingSlash = /\/$/;
 
   // Cached regex for stripping urls of hash.
   var pathStripper = /#.*$/;
@@ -7063,7 +8088,29 @@ module.exports = new (Torso.Router.extend({
 
     // Are we at the app root?
     atRoot: function() {
-      return this.location.pathname.replace(/[^\/]$/, '$&/') === this.root;
+      var path = this.location.pathname.replace(/[^\/]$/, '$&/');
+      return path === this.root && !this.getSearch();
+    },
+
+    // Does the pathname match the root?
+    matchRoot: function() {
+      var path = this.decodeFragment(this.location.pathname);
+      var root = path.slice(0, this.root.length - 1) + '/';
+      return root === this.root;
+    },
+
+    // Unicode characters in `location.pathname` are percent encoded so they're
+    // decoded for comparison. `%25` should not be decoded since it may be part
+    // of an encoded parameter.
+    decodeFragment: function(fragment) {
+      return decodeURI(fragment.replace(/%25/g, '%2525'));
+    },
+
+    // In IE6, the hash fragment and search params are incorrect if the
+    // fragment contains `?`.
+    getSearch: function() {
+      var match = this.location.href.replace(/#.*/, '').match(/\?.+/);
+      return match ? match[0] : '';
     },
 
     // Gets the true hash value. Cannot use location.hash directly due to bug
@@ -7073,14 +8120,19 @@ module.exports = new (Torso.Router.extend({
       return match ? match[1] : '';
     },
 
-    // Get the cross-browser normalized URL fragment, either from the URL,
-    // the hash, or the override.
-    getFragment: function(fragment, forcePushState) {
+    // Get the pathname and search params, without the root.
+    getPath: function() {
+      var path = this.decodeFragment(
+        this.location.pathname + this.getSearch()
+      ).slice(this.root.length - 1);
+      return path.charAt(0) === '/' ? path.slice(1) : path;
+    },
+
+    // Get the cross-browser normalized URL fragment from the path or hash.
+    getFragment: function(fragment) {
       if (fragment == null) {
-        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-          fragment = decodeURI(this.location.pathname + this.location.search);
-          var root = this.root.replace(trailingSlash, '');
-          if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
+        if (this._usePushState || !this._wantsHashChange) {
+          fragment = this.getPath();
         } else {
           fragment = this.getHash();
         }
@@ -7091,7 +8143,7 @@ module.exports = new (Torso.Router.extend({
     // Start the hash change handling, returning `true` if the current URL matches
     // an existing route, and `false` otherwise.
     start: function(options) {
-      if (History.started) throw new Error("Backbone.history has already been started");
+      if (History.started) throw new Error('Backbone.history has already been started');
       History.started = true;
 
       // Figure out the initial configuration. Do we need an iframe?
@@ -7099,35 +8151,15 @@ module.exports = new (Torso.Router.extend({
       this.options          = _.extend({root: '/'}, this.options, options);
       this.root             = this.options.root;
       this._wantsHashChange = this.options.hashChange !== false;
+      this._hasHashChange   = 'onhashchange' in window && (document.documentMode === void 0 || document.documentMode > 7);
+      this._useHashChange   = this._wantsHashChange && this._hasHashChange;
       this._wantsPushState  = !!this.options.pushState;
-      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
-      var fragment          = this.getFragment();
-      var docMode           = document.documentMode;
-      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+      this._hasPushState    = !!(this.history && this.history.pushState);
+      this._usePushState    = this._wantsPushState && this._hasPushState;
+      this.fragment         = this.getFragment();
 
       // Normalize root to always include a leading and trailing slash.
       this.root = ('/' + this.root + '/').replace(rootStripper, '/');
-
-      if (oldIE && this._wantsHashChange) {
-        var frame = Backbone.$('<iframe src="javascript:0" tabindex="-1">');
-        this.iframe = frame.hide().appendTo('body')[0].contentWindow;
-        this.navigate(fragment);
-      }
-
-      // Depending on whether we're using pushState or hashes, and whether
-      // 'onhashchange' is supported, determine how we check the URL state.
-      if (this._hasPushState) {
-        Backbone.$(window).on('popstate', this.checkUrl);
-      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-        Backbone.$(window).on('hashchange', this.checkUrl);
-      } else if (this._wantsHashChange) {
-        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
-      }
-
-      // Determine if we need to change the base url, for a pushState link
-      // opened by a non-pushState browser.
-      this.fragment = fragment;
-      var loc = this.location;
 
       // Transition from hashChange to pushState or vice versa if both are
       // requested.
@@ -7136,18 +8168,48 @@ module.exports = new (Torso.Router.extend({
         // If we've started off with a route from a `pushState`-enabled
         // browser, but we're currently in a browser that doesn't support it...
         if (!this._hasPushState && !this.atRoot()) {
-          this.fragment = this.getFragment(null, true);
-          this.location.replace(this.root + '#' + this.fragment);
+          var root = this.root.slice(0, -1) || '/';
+          this.location.replace(root + '#' + this.getPath());
           // Return immediately as browser will do redirect to new url
           return true;
 
         // Or if we've started out with a hash-based route, but we're currently
         // in a browser where it could be `pushState`-based instead...
-        } else if (this._hasPushState && this.atRoot() && loc.hash) {
-          this.fragment = this.getHash().replace(routeStripper, '');
-          this.history.replaceState({}, document.title, this.root + this.fragment);
+        } else if (this._hasPushState && this.atRoot()) {
+          this.navigate(this.getHash(), {replace: true});
         }
 
+      }
+
+      // Proxy an iframe to handle location events if the browser doesn't
+      // support the `hashchange` event, HTML5 history, or the user wants
+      // `hashChange` but not `pushState`.
+      if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
+        this.iframe = document.createElement('iframe');
+        this.iframe.src = 'javascript:0';
+        this.iframe.style.display = 'none';
+        this.iframe.tabIndex = -1;
+        var body = document.body;
+        // Using `appendChild` will throw on IE < 9 if the document is not ready.
+        var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
+        iWindow.document.open();
+        iWindow.document.close();
+        iWindow.location.hash = '#' + this.fragment;
+      }
+
+      // Add a cross-platform `addEventListener` shim for older browsers.
+      var addEventListener = window.addEventListener || function (eventName, listener) {
+        return attachEvent('on' + eventName, listener);
+      };
+
+      // Depending on whether we're using pushState or hashes, and whether
+      // 'onhashchange' is supported, determine how we check the URL state.
+      if (this._usePushState) {
+        addEventListener('popstate', this.checkUrl, false);
+      } else if (this._useHashChange && !this.iframe) {
+        addEventListener('hashchange', this.checkUrl, false);
+      } else if (this._wantsHashChange) {
+        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
       }
 
       if (!this.options.silent) return this.loadUrl();
@@ -7156,7 +8218,25 @@ module.exports = new (Torso.Router.extend({
     // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
     // but possibly useful for unit testing Routers.
     stop: function() {
-      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+      // Add a cross-platform `removeEventListener` shim for older browsers.
+      var removeEventListener = window.removeEventListener || function (eventName, listener) {
+        return detachEvent('on' + eventName, listener);
+      };
+
+      // Remove window listeners.
+      if (this._usePushState) {
+        removeEventListener('popstate', this.checkUrl, false);
+      } else if (this._useHashChange && !this.iframe) {
+        removeEventListener('hashchange', this.checkUrl, false);
+      }
+
+      // Clean up the iframe if necessary.
+      if (this.iframe) {
+        document.body.removeChild(this.iframe);
+        this.iframe = null;
+      }
+
+      // Some environments will throw when clearing an undefined interval.
       if (this._checkUrlInterval) clearInterval(this._checkUrlInterval);
       History.started = false;
     },
@@ -7171,9 +8251,13 @@ module.exports = new (Torso.Router.extend({
     // calls `loadUrl`, normalizing across the hidden iframe.
     checkUrl: function(e) {
       var current = this.getFragment();
+
+      // If the user pressed the back button, the iframe's hash will have
+      // changed and we should use that for comparison.
       if (current === this.fragment && this.iframe) {
-        current = this.getFragment(this.getHash(this.iframe));
+        current = this.getHash(this.iframe.contentWindow);
       }
+
       if (current === this.fragment) return false;
       if (this.iframe) this.navigate(current);
       this.loadUrl();
@@ -7183,8 +8267,10 @@ module.exports = new (Torso.Router.extend({
     // match, returns `true`. If no defined routes matches the fragment,
     // returns `false`.
     loadUrl: function(fragment) {
+      // If the root doesn't match, no routes can match either.
+      if (!this.matchRoot()) return false;
       fragment = this.fragment = this.getFragment(fragment);
-      return _.any(this.handlers, function(handler) {
+      return _.some(this.handlers, function(handler) {
         if (handler.route.test(fragment)) {
           handler.callback(fragment);
           return true;
@@ -7203,31 +8289,42 @@ module.exports = new (Torso.Router.extend({
       if (!History.started) return false;
       if (!options || options === true) options = {trigger: !!options};
 
-      var url = this.root + (fragment = this.getFragment(fragment || ''));
+      // Normalize the fragment.
+      fragment = this.getFragment(fragment || '');
 
-      // Strip the hash for matching.
-      fragment = fragment.replace(pathStripper, '');
+      // Don't include a trailing slash on the root.
+      var root = this.root;
+      if (fragment === '' || fragment.charAt(0) === '?') {
+        root = root.slice(0, -1) || '/';
+      }
+      var url = root + fragment;
+
+      // Strip the hash and decode for matching.
+      fragment = this.decodeFragment(fragment.replace(pathStripper, ''));
 
       if (this.fragment === fragment) return;
       this.fragment = fragment;
 
-      // Don't include a trailing slash on the root.
-      if (fragment === '' && url !== '/') url = url.slice(0, -1);
-
       // If pushState is available, we use it to set the fragment as a real URL.
-      if (this._hasPushState) {
+      if (this._usePushState) {
         this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
       // If hash changes haven't been explicitly disabled, update the hash
       // fragment to store history.
       } else if (this._wantsHashChange) {
         this._updateHash(this.location, fragment, options.replace);
-        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
+        if (this.iframe && (fragment !== this.getHash(this.iframe.contentWindow))) {
+          var iWindow = this.iframe.contentWindow;
+
           // Opening and closing the iframe tricks IE7 and earlier to push a
           // history entry on hash-tag change.  When replace is true, we don't
           // want this.
-          if(!options.replace) this.iframe.document.open().close();
-          this._updateHash(this.iframe.location, fragment, options.replace);
+          if (!options.replace) {
+            iWindow.document.open();
+            iWindow.document.close();
+          }
+
+          this._updateHash(iWindow.location, fragment, options.replace);
         }
 
       // If you've told us that you explicitly don't want fallback hashchange-
@@ -7258,7 +8355,7 @@ module.exports = new (Torso.Router.extend({
   // Helpers
   // -------
 
-  // Helper function to correctly set up the prototype chain, for subclasses.
+  // Helper function to correctly set up the prototype chain for subclasses.
   // Similar to `goog.inherits`, but uses a hash of prototype properties and
   // class properties to be extended.
   var extend = function(protoProps, staticProps) {
@@ -7267,7 +8364,7 @@ module.exports = new (Torso.Router.extend({
 
     // The constructor function for the new subclass is either defined by you
     // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent's constructor.
+    // by us to simply call the parent constructor.
     if (protoProps && _.has(protoProps, 'constructor')) {
       child = protoProps.constructor;
     } else {
@@ -7278,7 +8375,7 @@ module.exports = new (Torso.Router.extend({
     _.extend(child, parent, staticProps);
 
     // Set the prototype chain to inherit from `parent`, without calling
-    // `parent`'s constructor function.
+    // `parent` constructor function.
     var Surrogate = function(){ this.constructor = child; };
     Surrogate.prototype = parent.prototype;
     child.prototype = new Surrogate;
@@ -7306,7 +8403,7 @@ module.exports = new (Torso.Router.extend({
   var wrapError = function(model, options) {
     var error = options.error;
     options.error = function(resp) {
-      if (error) error(model, resp, options);
+      if (error) error.call(options.context, model, resp, options);
       model.trigger('error', model, resp, options);
     };
   };
@@ -7315,7 +8412,9 @@ module.exports = new (Torso.Router.extend({
 
 }));
 
-},{"underscore":32}],31:[function(require,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+
+},{"backbone-torso/node_modules/jquery":31,"underscore":32}],31:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
@@ -18061,32 +19160,6 @@ return jQuery;
 }.call(this));
 
 },{}],33:[function(require,module,exports){
-/**
- * Copyright 2014 Vecna Technologies, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you
- * may not use this file except in compliance with the License.  You may
- * obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
-;(function() {
-  jQuery(function($) {
-    $(document).on('click', '.alert__close', function() {
-      $(this).closest('.alert').slideUp();
-      return false;
-    });
-  });
-})();
-
-},{}],34:[function(require,module,exports){
 (function (global){
 "use strict";
 /*globals Handlebars: true */
@@ -18136,7 +19209,7 @@ Handlebars['default'] = Handlebars;
 exports["default"] = Handlebars;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./handlebars/base":35,"./handlebars/exception":36,"./handlebars/runtime":37,"./handlebars/safe-string":38,"./handlebars/utils":39}],35:[function(require,module,exports){
+},{"./handlebars/base":34,"./handlebars/exception":35,"./handlebars/runtime":36,"./handlebars/safe-string":37,"./handlebars/utils":38}],34:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -18380,7 +19453,7 @@ var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":36,"./utils":39}],36:[function(require,module,exports){
+},{"./exception":35,"./utils":38}],35:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -18412,7 +19485,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -18633,7 +19706,7 @@ exports.noop = noop;function initData(context, data) {
   }
   return data;
 }
-},{"./base":35,"./exception":36,"./utils":39}],38:[function(require,module,exports){
+},{"./base":34,"./exception":35,"./utils":38}],37:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -18645,7 +19718,7 @@ SafeString.prototype.toString = SafeString.prototype.toHTML = function() {
 };
 
 exports["default"] = SafeString;
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var escape = {
@@ -18747,15 +19820,15 @@ exports.blockParams = blockParams;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{}],40:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime').default;
 
-},{"./dist/cjs/handlebars.runtime":34}],41:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":33}],40:[function(require,module,exports){
 module.exports = require("handlebars/runtime")["default"];
 
-},{"handlebars/runtime":40}]},{},[1])
+},{"handlebars/runtime":39}]},{},[1])
 
 
 //# sourceMappingURL=app.js.map

@@ -139,7 +139,7 @@ Loading api
 
 The Loading API is NOT added by default. Add it by calling:
 ```
-Torso.Model = Torso.Model.extend(Torso.Mixins.collectionLoading(Torso.Model));
+Torso.Model = Torso.Model.extend(Torso.Mixins.loading(Torso.Model));
 ```
 
 

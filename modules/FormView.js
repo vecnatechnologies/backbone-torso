@@ -200,7 +200,7 @@
       }
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * Selects all data-model references in this view's DOM, and creates stickit bindings

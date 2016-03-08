@@ -47,6 +47,6 @@ module.exports = new (Torso.Router.extend({
     this.current = nextPerspective;
     // Torso View's attach method will fire all of the needed behind-the-scenes
     // code to make sure your view is ready to be used after it is attached to the DOM.
-    this.current.attach($('.app'));
+    this.current.attachTo($('.app'));
   }
 }))();

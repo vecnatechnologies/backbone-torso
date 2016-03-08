@@ -218,7 +218,7 @@
 
     /**
      * Remove a mapping (model or computed) by alias
-     * @model unsetMapping
+     * @method unsetMapping
      * @param aliasOrModel {String or Backbone.Model instance} if a String is provided, it will unset the mapping with that alias.
      *   If a Backbone Model instance is provided, it will remove the model mapping that was bound to that model.
      * @param [removeModelIfUntracked=false] {Boolean} If true, after the mapping is removed, the model will also be unset but only if
@@ -322,7 +322,7 @@
 
     /**
      * Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.
-     * @param unsetTrackedModels
+     * @method unsetTrackedModels
      */
     unsetTrackedModels: function() {
       this.__currentObjectModels = [];
@@ -503,7 +503,7 @@
       return _.values(staleModels);
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * Sets up a listener to update the form model if the model's field (or any field) changes.

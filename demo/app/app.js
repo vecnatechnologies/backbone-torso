@@ -4,8 +4,6 @@ var $ = require('jquery');
 window.$ = $;
 window.jQuery = $;
 
-require('brec-base/js/alerts');
-
 /* START IT UP
   You'll need to start your application to get things going.
   While this file isn't part of Torso, it does show how to start

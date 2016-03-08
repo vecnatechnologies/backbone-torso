@@ -7,10 +7,8 @@ describe("A Form View's nested two-way binding", function() {
   var model, view, NestedExampleFormModel, NestedExampleFormView,
       init, $, _, env;
 
-  /**
-   * Sets up test view
-   */
-   beforeEach(function(done) {
+  // Sets up test view
+  beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;
       $ = env.window.$;
@@ -39,23 +37,21 @@ describe("A Form View's nested two-way binding", function() {
 
 
 
-/**
-validations on foo and bar but binding on foo, bar, baz
-validations on foo, bar, customFormLevel but binding on foo, bar
-validations on foo, bar and bindings on foo, bar
+//validations on foo and bar but binding on foo, bar, baz
+//validations on foo, bar, customFormLevel but binding on foo, bar
+//validations on foo, bar and bindings on foo, bar
 
 
-FOR ARRAYS:
-validations on foo[] and bar but binding on foo[], bar, baz
+//FOR ARRAYS:
+//validations on foo[] and bar but binding on foo[], bar, baz
 
-validations on foo[], bar, customFormLevel but binding on foo[], bar
+//validations on foo[], bar, customFormLevel but binding on foo[], bar
 
-validations on foo[], bar and bindings on foo[], bar
-**/
+//validations on foo[], bar and bindings on foo[], bar
 
 
 
-  /******** PREFILLING FormView from FormModel ********/
+  //******** PREFILLING FormView from FormModel ********//
 
   xit('can prefill DOM text input that correspond to FormModel "specific" array attribute (ex. foo[1]) ', function() {
 
@@ -105,7 +101,7 @@ validations on foo[], bar and bindings on foo[], bar
 
   });
 
-  /******** UPDATING from FormModel to FormView ********/
+  //******** UPDATING from FormModel to FormView ********//
 
   xit("can update DOM text input on change of FormModel array attribute (ex. foo[1]) ", function() {
     expect(view.$el.find('[id="user-addrs[0].street"]').val()).toBe('4 bumble rd.');
@@ -164,7 +160,7 @@ validations on foo[], bar and bindings on foo[], bar
 
   });
 
-  /******** PULLING from FormModel to FormView ********/
+  //******** PULLING from FormModel to FormView ********//
 
   xit("can update model's array attributes on change of DOM text inputs", function() {
     expect(model.get('ranking')).toBe('');

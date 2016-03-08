@@ -5,9 +5,7 @@ var spyOnBackbone = require('./backboneSpy');
 describe("A Form Model's Validation", function() {
   var FormModel, env, $, _;
 
-  /**
-   * Set up virtual dom and dependencies
-   */
+  // Set up virtual dom and dependencies
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;

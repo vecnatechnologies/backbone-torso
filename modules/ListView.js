@@ -189,19 +189,13 @@
      * Constructor for the list view object.
      * @method constructor
      * @param args {Object} - options argument
-     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated
-     *                                                     for every model returned by modelsToRender(). If a function is passed in, then for each model,
-     *                                                     this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
-     *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view
-     *                                                          might provide a default collection. Can be private or public collection
+     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
+     *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
      *   @param [args.itemContext] {Object or Function} - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
      *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
      *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns
-     *                                             an empty list. If a itemContainer is provided, the empty template will be
-     *                                             rendered there.
-     *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom
-     *                                           functionality.
+     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
+     *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom functionality.
      *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
@@ -465,7 +459,7 @@
       return _.map(orderedViewIds, this.getTrackedView, this);
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * Creates all needed item views that don't exist from modelsToRender()

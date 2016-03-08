@@ -16,7 +16,7 @@
    * part of any collections. It should not be used for a model that is a part of a collection.
    * @module    Torso
    * @namespace Torso.Mixins
-   * @class  polling
+   * @class  pollingMixin
    * @author ariel.wexler@vecna.com
    */
   var pollingMixin = {
@@ -77,7 +77,7 @@
       this.fetch();
     },
 
-    /************** Private methods **************/
+    //************** Private methods **************//
 
     /**
      * Private function to recursively call itself and poll for db updates.

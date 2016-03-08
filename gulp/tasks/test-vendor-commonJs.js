@@ -17,36 +17,41 @@
       test = require('./test'),
       tasks = [],
       bundleAll = function(options, callback) {
-        var mergedTasks, tasks = fs.readdirSync(paths.modules).map(function(file) {
-          var bundler,
-              filename = paths.modules + '/' + file;
-          options = options || {};
-          if (options.watch) {
-            bundler = watchify(browserify(filename, watchify.args));
-            bundler.on('update', function() {
-              return bundle(bundler, filename, options.test)
+        $.util.log(fs.readdirSync(paths.modules));
+        var mergedTasks, tasks,
+          handleFile = function(file) {
+            var bundler,
+                filename = this.dir + '/' + file;
+            options = options || {};
+            if (_.last(file, 3).join('') != '.js') {
+              return fs.readdirSync(filename).map(_.bind(handleFile, {dir: filename}));
+            }
+            if (options.watch) {
+              bundler = watchify(browserify(filename, watchify.args));
+              bundler.on('update', function() {
+                return bundle(bundler, filename, options.test)
+              });
+            } else {
+              bundler = browserify(filename);
+            }
+            bundler.transform(requireify);
+            bundler.on('log', $.util.log); // output build logs to terminal
+            bundler.on('error', function() {
+              var args = Array.prototype.slice.call(arguments);
+
+              // Send error to notification center with gulp-notify
+              $.notify.onError({
+                title: "Compile Error",
+                message: "<%= error %>"
+              }).apply(this, args);
+              $.util.log($.util.colors.red("Browserify failed: " + filename));
+              tasks = _.without(tasks, filename);
+              // Keep gulp from hanging on this task
+              this.emit('end');
             });
-          } else {
-            bundler = browserify(filename);
-          }
-          bundler.transform(requireify);
-          bundler.on('log', $.util.log); // output build logs to terminal
-          bundler.on('error', function() {
-            var args = Array.prototype.slice.call(arguments);
-
-            // Send error to notification center with gulp-notify
-            $.notify.onError({
-              title: "Compile Error",
-              message: "<%= error %>"
-            }).apply(this, args);
-            $.util.log($.util.colors.red("Browserify failed: " + filename));
-            tasks = _.without(tasks, filename);
-            // Keep gulp from hanging on this task
-            this.emit('end');
-          });
-
-          return bundle(bundler, filename, options.test)
-        });
+            return bundle(bundler, filename, options.test)
+          };
+        tasks = fs.readdirSync(paths.modules).map(_.bind(handleFile, {dir: paths.modules}));
         mergedTasks = merge(tasks);
         if (!options.watch) {
           return mergedTasks;

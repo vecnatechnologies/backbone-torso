@@ -523,9 +523,7 @@ describe('A List View', function() {
     expect(endTime < threshold).toBe(true);
   });
 
-  /**
-   * Skipping until jsdom adds setSelectionRange: https://github.com/tmpvar/jsdom/pull/804
-   */
+  // Skipping until jsdom adds setSelectionRange: https://github.com/tmpvar/jsdom/pull/804
   xit('can keep position of carat', function() {
     ItemView.prototype.template = Handlebars.compile('<input type="text" value="123"/>');
     var model = new Model();

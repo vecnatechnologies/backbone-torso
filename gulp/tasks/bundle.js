@@ -20,22 +20,22 @@
 
   gulp.task('bundle', function(done) {
     var dependencies = {
-      'Cell'       : ['cellPersistenceRemovalMixin'],
-      'Collection' : ['pollingMixin', 'collectionRegistrationMixin', 'collectionLoadingMixin'],
+      'Cell'       : ['cellMixin'],
+      'Collection' : ['pollingMixin', 'cacheMixin', 'loadingMixin'],
       'validation' : ['pollingMixin', 'NestedModel'],
       'Model'      : ['pollingMixin'],
-      'NestedCell' : ['cellPersistenceRemovalMixin'],
+      'NestedCell' : ['cellMixin'],
       'NestedModel': ['pollingMixin'],
       'FormModel'  : ['pollingMixin', 'NestedModel', 'validation'],
-      'ServiceCell': ['cellPersistenceRemovalMixin', 'Cell'],
-      'View'       : ['Cell', 'cellPersistenceRemovalMixin', 'templateRenderer'],
-      'FormView'   : ['Cell', 'cellPersistenceRemovalMixin', 'templateRenderer', 'View',
+      'ServiceCell': ['cellMixin', 'Cell'],
+      'View'       : ['Cell', 'cellMixin', 'templateRenderer'],
+      'FormView'   : ['Cell', 'cellMixin', 'templateRenderer', 'View',
                       'pollingMixin', 'NestedModel', 'validation', 'FormModel'],
-      'ListView'   : ['Cell', 'cellPersistenceRemovalMixin', 'templateRenderer', 'View']
+      'ListView'   : ['Cell', 'cellMixin', 'templateRenderer', 'View']
     };
+    var dirPath = __dirname + '/../../modules';
     var dontInclude = ['torso'];
     var fileList = [];
-    var dirPath = __dirname + '/../../modules';
     dir.files(dirPath, function(err, files) {
       if (err) throw err;
       files = _.map(files, function(filePath) {
@@ -48,7 +48,9 @@
       var threshold = 10;
       while (!_.isEmpty(files) && count <= threshold) {
         _.each(files, function(file) {
+          $.util.log(files);
           if (!_.has(dependencies, file)) {
+            $.util.log(file);
             fileList.push(file);
             _.each(dependencies, function(deps, key) {
               if (_.contains(deps, file)) {
@@ -64,8 +66,9 @@
       if (count >= threshold) {
         throw new Error('Bundle dependency list could not be created within the depth threshold');
       }
+      $.util.log(fileList);
       fileList = _.map(fileList, function(filePath) {
-        return dirPath + '/' + filePath + '.js';
+        return dirPath + '/' + (_.last(filePath, 5).join('') == 'Mixin' ? 'mixins/' : '') + filePath + '.js';
       });
       return gulp.src(fileList)
         .pipe(bundlePipe())

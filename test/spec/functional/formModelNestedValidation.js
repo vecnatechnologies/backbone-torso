@@ -6,9 +6,7 @@ var Handlebars = require('handlebars'),
 describe('A Form Model\'s Validation of nested attributes', function() {
   var FormModel, FormView, env, $, _;
 
-  /**
-   * Set up virtual dom and dependencies
-   */
+  // Set up virtual dom and dependencies
   beforeEach(function(done) {
     require('./clientEnv')().done(function(environment) {
       env = environment;

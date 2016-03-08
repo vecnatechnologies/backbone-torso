@@ -6,7 +6,7 @@
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.collectionRegistration = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
 }(this, function(_, $) {
   /**
@@ -16,10 +16,10 @@
    *
    * @module    Torso
    * @namespace Torso.Mixins
-   * @class  collectionRegistration
+   * @class  cacheMixin
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
-  var collectionRegistrationMixin = function(base) {
+  var mixin = function(base) {
 
     var cacheMixin, createRequesterCollectionClass;
 
@@ -316,9 +316,9 @@
       };
 
       /**
+       * Overrides the base fetch call if this.fetchUsingTrackedIds is true
        * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
        * it will pass through to the default fetch.
-       * @override
        * @method fetch
        */
       collection.fetch = function(options) {
@@ -473,5 +473,5 @@
     };
   };
 
-  return collectionRegistrationMixin;
+  return mixin;
 }));

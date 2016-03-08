@@ -6,7 +6,7 @@
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cellPersistenceRemovalMixin = factory();
+    root.Torso.Mixins.cell = factory();
   }
 }(this, function() {
   'use strict';
@@ -14,7 +14,7 @@
    * An non-persistable object that can listen to and emit events like a models.
    * @module Torso
    * @namespace Torso.Mixins
-   * @class  cellPersistenceRemoval
+   * @class  cellMixin
    * @author kent.willis@vecna.com
    */
   return {
