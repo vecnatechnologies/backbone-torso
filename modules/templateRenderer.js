@@ -176,9 +176,11 @@
 
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret,
-          activeElement = document.activeElement;
-      if (activeElement && this.supportsSelection(activeElement)) {
-        currentCaret = this.getCaretPosition(activeElement);
+          activeElement;
+      try {
+        activeElement = document.activeElement;
+      } catch (error) {
+        activeElement = null;
       }
       this.hotswap(currentNode, newNode, ignoreElements);
       if (activeElement && this.supportsSelection(activeElement)) {
