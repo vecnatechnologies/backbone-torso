@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso</title>
+    <title>/other/dev/backbone-torso/test/karma/helpers/spyOnBackbone.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -124,67 +124,27 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Torso Class</h1>
-<div class="box meta">
-    
+                        <h1 class="file-heading">File: /other/dev/backbone-torso/test/karma/helpers/spyOnBackbone.js</h1>
 
-    
+<div class="file">
+    <pre class="code prettyprint linenums">
+var _ = require(&#x27;underscore&#x27;);
 
-    
-        <div class="foundat">
-            Defined in: <a href="../files/_other_dev_backbone-torso_modules_torso.js.html#l48"><code>&#x2F;other&#x2F;dev&#x2F;backbone-torso&#x2F;modules&#x2F;torso.js:48</code></a>
-        </div>
-    
-
-    
-        
-            Module: <a href="../modules/Torso.html">Torso</a>
-        
-    
-
-    
-</div>
-
-
-
-<div class="box intro">
-    <p>File containing all dependencies that exports a single object with everything attached (same format as the global).</p>
-
-</div>
-
-
-
-<div id="classdocs" class="tabview">
-    <ul class="api-class-tabs">
-        <li class="api-class-tab index"><a href="#index">Index</a></li>
-
-        
-        
-        
-        
-    </ul>
-
-    <div>
-        <div id="index" class="api-class-tabpanel index">
-            <h2 class="off-left">Item Index</h2>
-
-            
-
-            
-
-            
-
-            
-        </div>
-
-        
-
-        
-
-        
-
-        
-    </div>
+/**
+ * Attaches a jasmine spy to a backbone constructor
+ * Note that you can only call spyOnBackbone on a constructor&#x27;s method once
+ *
+ * @method spyOnBackbone
+ * @param {Function} backboneClass a class constructor created by Backbone&#x27;s extend
+ * @param {String} method name of method to spy on
+ */
+module.exports = function spyOnBackbone(backboneClass, method) {
+  backboneClass.prototype.initialize = _.wrap(backboneClass.prototype.initialize, function(initialize) {
+    spyOn(this, method).and.callThrough();
+    initialize.apply(this);
+  });
+};
+    </pre>
 </div>
 
                     </div>

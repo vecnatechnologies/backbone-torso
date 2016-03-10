@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso</title>
+    <title>/other/dev/backbone-torso/test/spec/functional/clientEnv.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -124,67 +124,65 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Torso Class</h1>
-<div class="box meta">
-    
+                        <h1 class="file-heading">File: /other/dev/backbone-torso/test/spec/functional/clientEnv.js</h1>
 
-    
+<div class="file">
+    <pre class="code prettyprint linenums">
+// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
 
-    
-        <div class="foundat">
-            Defined in: <a href="../files/_other_dev_backbone-torso_modules_torso.js.html#l48"><code>&#x2F;other&#x2F;dev&#x2F;backbone-torso&#x2F;modules&#x2F;torso.js:48</code></a>
-        </div>
-    
+var jsdom = require(&#x27;jsdom&#x27;),
+    Promise = require(&#x27;promise&#x27;),
+    handlebars = require(&#x27;handlebars&#x27;),
+    paths = require(&#x27;../../../paths&#x27;),
+    argv = require(&#x27;minimist&#x27;)(process.argv);
 
-    
-        
-            Module: <a href="../modules/Torso.html">Torso</a>
-        
-    
+/**
+ * @method [Anonymous]
+ * @return a promise that resolves when the environment is set up.
+ * The promise resolves with a window parameter and a routes parameter. The window is the virtual dom window
+ * and the routes is a map from unique key to mockjax entry
+ */
+module.exports = function() {
+  return new Promise(function(resolve, reject) {
+    jsdom.env({
+      html: &#x27;&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;&#x27;,
+      scripts: [__dirname + &#x27;/../../../&#x27; + paths.testSandbox + &#x27;/testEnv.js&#x27;],
+      features: {
+        FetchExternalResources   : [&#x27;script&#x27;],
+        ProcessExternalResources : [&#x27;script&#x27;],
+        MutationEvents           : &#x27;2.0&#x27;,
+        QuerySelector            : false
+      },
+      done: function(error, window) {
+        if (argv.v) {
+          jsdom.getVirtualConsole(window).sendTo(console);
+        }
 
-    
-</div>
+        if (error) {
+          console.log(&quot;Error loading functional testing environment: &quot;);
+          console.log(error);
+          console.log();
+          reject(error)
+        }
 
+        // TODO add handlebarsUtils import function to window/ on torso. then here, add handlebars from window to handlebarsUtils
+        window.Torso.Utils.handlebarsUtils(window.Handlebars);
+        // This sync is needed because TestView.js imports a compiled .hbs file outside of the window&#x27;s scope so it uses a different
+        // Set of handlebars helpers.
+        window._.each(window.Handlebars.helpers, function(helperFunction, helperName) {
+          handlebars.registerHelper(helperName, helperFunction);
+        });
 
+        resolve({
+          window: window,
+          routes: require(&#x27;../../source/mockjax&#x27;)(window.$)
+        });
+      }
+    });
+  });
+};
 
-<div class="box intro">
-    <p>File containing all dependencies that exports a single object with everything attached (same format as the global).</p>
-
-</div>
-
-
-
-<div id="classdocs" class="tabview">
-    <ul class="api-class-tabs">
-        <li class="api-class-tab index"><a href="#index">Index</a></li>
-
-        
-        
-        
-        
-    </ul>
-
-    <div>
-        <div id="index" class="api-class-tabpanel index">
-            <h2 class="off-left">Item Index</h2>
-
-            
-
-            
-
-            
-
-            
-        </div>
-
-        
-
-        
-
-        
-
-        
-    </div>
+    </pre>
 </div>
 
                     </div>

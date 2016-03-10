@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso</title>
+    <title>/other/dev/backbone-torso/modules/stickitUtils.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -124,67 +124,45 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Torso Class</h1>
-<div class="box meta">
-    
+                        <h1 class="file-heading">File: /other/dev/backbone-torso/modules/stickitUtils.js</h1>
 
-    
+<div class="file">
+    <pre class="code prettyprint linenums">
+(function(root, factory) {
+  if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
+    define([&#x27;backbone&#x27;, &#x27;backbone.stickit&#x27;], factory);
+  } else if (typeof exports === &#x27;object&#x27;) {
+    require(&#x27;backbone.stickit&#x27;);
+    factory(require(&#x27;backbone&#x27;));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  &#x27;use strict&#x27;;
 
-    
-        <div class="foundat">
-            Defined in: <a href="../files/_other_dev_backbone-torso_modules_torso.js.html#l48"><code>&#x2F;other&#x2F;dev&#x2F;backbone-torso&#x2F;modules&#x2F;torso.js:48</code></a>
-        </div>
-    
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: &#x27;input[type=&quot;radio&quot;]&#x27;,
+    events: [&#x27;change&#x27;],
+    update: function($el, val) {
+      $el.prop(&#x27;checked&#x27;, false);
+      $el.filter(&#x27;[value=&quot;&#x27; + val + &#x27;&quot;]&#x27;).prop(&#x27;checked&#x27;, true);
+    },
+    getVal: function($el) {
+      return $el.filter(&#x27;:checked&#x27;).val();
+    }
+  });
+}));
 
-    
-        
-            Module: <a href="../modules/Torso.html">Torso</a>
-        
-    
-
-    
-</div>
-
-
-
-<div class="box intro">
-    <p>File containing all dependencies that exports a single object with everything attached (same format as the global).</p>
-
-</div>
-
-
-
-<div id="classdocs" class="tabview">
-    <ul class="api-class-tabs">
-        <li class="api-class-tab index"><a href="#index">Index</a></li>
-
-        
-        
-        
-        
-    </ul>
-
-    <div>
-        <div id="index" class="api-class-tabpanel index">
-            <h2 class="off-left">Item Index</h2>
-
-            
-
-            
-
-            
-
-            
-        </div>
-
-        
-
-        
-
-        
-
-        
-    </div>
+    </pre>
 </div>
 
                     </div>
