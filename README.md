@@ -1,5 +1,4 @@
-# backbone-torso
-A holistic approach to Backbone applications.
+# ![backbone-torso](http://vecnatechnologies.github.io/backbone-torso/images/black_website_logo.svg)
 
 [Backbone](http://www.backbonejs.org) provides many convenient tools for building Single Page Applications (SPAs) out of the box, and we absolutely love using it!  However, Backbone only gives us the bare bones (excuse the overused pun) of what you need to build a complex front end application. Torso gives you the blueprints and some extra tools to build something quickly that scales well. Torso was first created by [Vecna](http://www.vecna.com) employees that needed to build robotics and health care applications that have intense feature sets and large user bases.
 
