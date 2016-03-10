@@ -182,6 +182,9 @@
       } catch (error) {
         activeElement = null;
       }
+      if (activeElement && this.supportsSelection(activeElement)) {
+        currentCaret = this.getCaretPosition(activeElement);
+      }
       this.hotswap(currentNode, newNode, ignoreElements);
       if (activeElement && this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
