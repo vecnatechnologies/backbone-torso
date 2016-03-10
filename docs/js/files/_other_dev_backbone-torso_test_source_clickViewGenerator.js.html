@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso</title>
+    <title>/other/dev/backbone-torso/test/source/clickViewGenerator.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -124,67 +124,46 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Torso Class</h1>
-<div class="box meta">
-    
+                        <h1 class="file-heading">File: /other/dev/backbone-torso/test/source/clickViewGenerator.js</h1>
 
-    
+<div class="file">
+    <pre class="code prettyprint linenums">
+var spyOnBackbone = require(&#x27;../spec/functional/backboneSpy&#x27;);
 
-    
-        <div class="foundat">
-            Defined in: <a href="../files/_other_dev_backbone-torso_modules_torso.js.html#l48"><code>&#x2F;other&#x2F;dev&#x2F;backbone-torso&#x2F;modules&#x2F;torso.js:48</code></a>
-        </div>
-    
+/**
+ * Creates a view class that has various events it&#x27;s listening to
+ * with spies on the callbacks.
+ * @param window {window} the window object
+ * @method clickViewGenerator
+ */
+module.exports = function(window) {
+  var _ = window._;
 
-    
-        
-            Module: <a href="../modules/Torso.html">Torso</a>
-        
-    
+  var ClickView = window.Torso.View.extend({
+    events: {
+      &#x27;click div&#x27; : &#x27;myClick&#x27;
+    },
+    template: &#x27;&lt;div class=&quot;click&quot;&gt;test&lt;/div&gt;&#x27;,
+    initialize: function() {
+      this.on(&#x27;myEvent&#x27;, this.afterMyEvent);
+    },
+    _activate: function() {
+      this.on(&#x27;myDeactivatableEvent&#x27;, this.afterMyDeactivatableEvent);
+    },
+    _deactivate: function() {
+      this.off(&#x27;myDeactivatableEvent&#x27;);
+    },
+    myClick: _.noop,
+    afterMyEvent: _.noop,
+    afterMyDeactivatableEvent: _.noop
+  });
+  spyOnBackbone(ClickView, &#x27;myClick&#x27;);
+  spyOnBackbone(ClickView, &#x27;afterMyEvent&#x27;);
+  spyOnBackbone(ClickView, &#x27;afterMyDeactivatableEvent&#x27;);
+  return ClickView;
+};
 
-    
-</div>
-
-
-
-<div class="box intro">
-    <p>File containing all dependencies that exports a single object with everything attached (same format as the global).</p>
-
-</div>
-
-
-
-<div id="classdocs" class="tabview">
-    <ul class="api-class-tabs">
-        <li class="api-class-tab index"><a href="#index">Index</a></li>
-
-        
-        
-        
-        
-    </ul>
-
-    <div>
-        <div id="index" class="api-class-tabpanel index">
-            <h2 class="off-left">Item Index</h2>
-
-            
-
-            
-
-            
-
-            
-        </div>
-
-        
-
-        
-
-        
-
-        
-    </div>
+    </pre>
 </div>
 
                     </div>

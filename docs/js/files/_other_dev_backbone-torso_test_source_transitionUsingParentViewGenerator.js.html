@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso</title>
+    <title>/other/dev/backbone-torso/test/source/transitionUsingParentViewGenerator.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -124,67 +124,52 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Torso Class</h1>
-<div class="box meta">
-    
+                        <h1 class="file-heading">File: /other/dev/backbone-torso/test/source/transitionUsingParentViewGenerator.js</h1>
 
-    
+<div class="file">
+    <pre class="code prettyprint linenums">
+var transitionableChildViewGenerator = require(&#x27;./transitionableChildViewGenerator&#x27;);
 
-    
-        <div class="foundat">
-            Defined in: <a href="../files/_other_dev_backbone-torso_modules_torso.js.html#l48"><code>&#x2F;other&#x2F;dev&#x2F;backbone-torso&#x2F;modules&#x2F;torso.js:48</code></a>
-        </div>
-    
+/**
+ * Creates a parent view with two children views
+ * @param window {window} the window object
+ * @param ChildView1 {View} the class for the first child view
+ * @param ChildView2 {View} the class for the second child view
+ * @method transitionUsingParentViewGenerator
+ */
+module.exports = function(window) {
+  var _ = window._,
+      ChildView = transitionableChildViewGenerator(window);
+  var ParentView = window.Torso.View.extend({
+    template: &quot;&lt;div class=&#x27;parent&#x27;&gt;test&lt;/div&gt;&lt;div inject=&#x27;current&#x27;&gt;&lt;/div&gt;&quot;,
+    initialize: function(args) {
+      args = args || {};
+      this.transitionTime = args.transitionTime || 500;
+      args.numberOfChildren = args.numberOfChildren || 3;
+      this.myChildViews = [];
+      _.times(args.numberOfChildren, function(i) {
+        this.myChildViews.push(new ChildView({index: i}));
+      }, this);
+      this.listenTo(this.viewState, &#x27;change:current&#x27;, this.render);
+      this.set(&#x27;current&#x27;, 0);
+    },
+    attachTrackedViews: function() {
+      this.transitionPromise = this.attachView(&#x27;current&#x27;, this.getCurrentView(), {
+        useTransition: true,
+        transitionTime: 500
+      });
+    },
+    setCurrentView: function(view) {
+      this.set(&#x27;current&#x27;, this.myChildViews.indexOf(view));
+    },
+    getCurrentView: function() {
+      return this.myChildViews[this.get(&#x27;current&#x27;)];
+    }
+  });
+  return ParentView;
+};
 
-    
-        
-            Module: <a href="../modules/Torso.html">Torso</a>
-        
-    
-
-    
-</div>
-
-
-
-<div class="box intro">
-    <p>File containing all dependencies that exports a single object with everything attached (same format as the global).</p>
-
-</div>
-
-
-
-<div id="classdocs" class="tabview">
-    <ul class="api-class-tabs">
-        <li class="api-class-tab index"><a href="#index">Index</a></li>
-
-        
-        
-        
-        
-    </ul>
-
-    <div>
-        <div id="index" class="api-class-tabpanel index">
-            <h2 class="off-left">Item Index</h2>
-
-            
-
-            
-
-            
-
-            
-        </div>
-
-        
-
-        
-
-        
-
-        
-    </div>
+    </pre>
 </div>
 
                     </div>

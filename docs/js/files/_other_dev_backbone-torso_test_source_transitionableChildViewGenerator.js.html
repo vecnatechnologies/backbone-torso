@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso</title>
+    <title>/other/dev/backbone-torso/test/source/transitionableChildViewGenerator.js</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -124,67 +124,49 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Torso Class</h1>
-<div class="box meta">
-    
+                        <h1 class="file-heading">File: /other/dev/backbone-torso/test/source/transitionableChildViewGenerator.js</h1>
 
-    
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * Creates a view class that has various events it&#x27;s listening to
+ * with spies on the callbacks.
+ * @param window {window} the window object
+ * @method transitionableChildViewGenerator
+ */
+module.exports = function(window) {
+  Handlebars = window.Handlebars;
+  var TransitionableChildView = window.Torso.View.extend({
+    template: Handlebars.compile(&#x27;&lt;div class=&quot;transition-child&quot;&gt;{{view.index}}&lt;/div&gt;&#x27;),
+    initialize: function(args) {
+      args = args || {};
+      this.set(&#x27;index&#x27;, args.index);
+    },
+    transitionIn: function(attach, done, options) {
+      var view = this;
+      var transitionTime = options.transitionTime || 500;
+      view.set(&#x27;transitioning-in&#x27;, true);
+      setTimeout(function() {
+        attach();
+        view.set(&#x27;transitioning-in&#x27;, false);
+        done();
+      }, transitionTime);
+    },
+    transitionOut: function(done, options) {
+      var view = this;
+      var transitionTime = options.transitionTime || 500;
+      view.set(&#x27;transitioning-out&#x27;, true);
+      setTimeout(function() {
+        view.detach();
+        view.set(&#x27;transitioning-out&#x27;, false);
+        done();
+      }, transitionTime);
+    }
+  });
+  return TransitionableChildView;
+};
 
-    
-        <div class="foundat">
-            Defined in: <a href="../files/_other_dev_backbone-torso_modules_torso.js.html#l48"><code>&#x2F;other&#x2F;dev&#x2F;backbone-torso&#x2F;modules&#x2F;torso.js:48</code></a>
-        </div>
-    
-
-    
-        
-            Module: <a href="../modules/Torso.html">Torso</a>
-        
-    
-
-    
-</div>
-
-
-
-<div class="box intro">
-    <p>File containing all dependencies that exports a single object with everything attached (same format as the global).</p>
-
-</div>
-
-
-
-<div id="classdocs" class="tabview">
-    <ul class="api-class-tabs">
-        <li class="api-class-tab index"><a href="#index">Index</a></li>
-
-        
-        
-        
-        
-    </ul>
-
-    <div>
-        <div id="index" class="api-class-tabpanel index">
-            <h2 class="off-left">Item Index</h2>
-
-            
-
-            
-
-            
-
-            
-        </div>
-
-        
-
-        
-
-        
-
-        
-    </div>
+    </pre>
 </div>
 
                     </div>
