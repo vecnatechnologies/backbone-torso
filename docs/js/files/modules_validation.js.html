@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>modules/validation.js - backbone-torso</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.6.1</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Cell.html">Cell</a></li>
+                                <li><a href="../classes/Collection.html">Collection</a></li>
+                                <li><a href="../classes/Events.html">Events</a></li>
+                                <li><a href="../classes/FormModel.html">FormModel</a></li>
+                                <li><a href="../classes/FormView.html">FormView</a></li>
+                                <li><a href="../classes/history.html">history</a></li>
+                                <li><a href="../classes/ListView.html">ListView</a></li>
+                                <li><a href="../classes/Model.html">Model</a></li>
+                                <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+                                <li><a href="../classes/Router.html">Router</a></li>
+                                <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
+                                <li><a href="../classes/Torso.html">Torso</a></li>
+                                <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
+                                <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
+                                <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
+                                <li><a href="../classes/Torso.Utils.templateRenderer.html">Torso.Utils.templateRenderer</a></li>
+                                <li><a href="../classes/Torso.validation.html">Torso.validation</a></li>
+                                <li><a href="../classes/View.html">View</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Torso.html">Torso</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: modules/validation.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+(function(root, factory) {
+  if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
+    define([&#x27;underscore&#x27;, &#x27;./NestedModel&#x27;], factory);
+  } else if (typeof exports === &#x27;object&#x27;) {
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;./NestedModel&#x27;));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.validation = factory(root._, root.Torso.NestedModel);
+    root.Torso.Mixins.validation = root.Torso.validation.mixin;
+  }
+}(this, function(_, NestedModel) {
+  &#x27;use strict&#x27;;
+
+  // Default options
+  // ---------------
+
+  var defaultOptions = {
+    forceUpdate: false,
+    selector: &#x27;name&#x27;,
+    labelFormatter: &#x27;sentenceCase&#x27;,
+    messageFormatter: &#x27;none&#x27;,
+    valid: Function.prototype,
+    invalid: Function.prototype
+  };
+
+
+  // Helper functions
+  // ----------------
+
+  // Formatting functions used for formatting error messages
+  var formatFunctions = {
+    // Uses the configured label formatter to format the attribute name
+    // to make it more readable for the user
+    formatLabel: function(attrName, model) {
+      return defaultLabelFormatters[defaultOptions.labelFormatter](attrName, model);
+    },
+
+    // Replaces nummeric placeholders like {0} in a string with arguments
+    // passed to the function
+    format: function() {
+      return defaultMessageFormatters[defaultOptions.messageFormatter].apply(defaultMessageFormatters, arguments);
+    }
+  };
+
+  // Flattens an object
+  // eg:
+  //
+  //     var o = {
+  //       owner: {
+  //         name: &#x27;Backbone&#x27;,
+  //         address: {
+  //           street: &#x27;Street&#x27;,
+  //           zip: 1234
+  //         }
+  //       }
+  //     };
+  //
+  // becomes:
+  //
+  //     var o = {
+  //       &#x27;owner&#x27;: {
+  //         name: &#x27;Backbone&#x27;,
+  //         address: {
+  //           street: &#x27;Street&#x27;,
+  //           zip: 1234
+  //         }
+  //       },
+  //       &#x27;owner.name&#x27;: &#x27;Backbone&#x27;,
+  //       &#x27;owner.address&#x27;: {
+  //         street: &#x27;Street&#x27;,
+  //         zip: 1234
+  //       },
+  //       &#x27;owner.address.street&#x27;: &#x27;Street&#x27;,
+  //       &#x27;owner.address.zip&#x27;: 1234
+  //     };
+  // This may seem redundant, but it allows for maximum flexibility
+  // in validation rules.
+  var flatten = function (obj, into, prefix) {
+    into = into || {};
+    prefix = prefix || &#x27;&#x27;;
+
+    _.each(obj, function(val, key) {
+      if(obj.hasOwnProperty(key)) {
+        if (!!val &amp;&amp; typeof val === &#x27;object&#x27; &amp;&amp; val.constructor === Object) {
+          flatten(val, into, prefix + key + &#x27;.&#x27;);
+        }
+
+        // Register the current level object as well
+        into[prefix + key] = val;
+      }
+    });
+
+    return into;
+  };
+
+  // Validation
+  // ----------
+
+  /**
+   * Validation object containing validation mixin.
+   *
+   * @module    Torso
+   * @namespace Torso
+   * @class  validation
+   * @author ariel.wexler@vecna.com
+   */
+  var Validation = (function(){
+
+    // Returns an object with undefined properties for all
+    // attributes on the model that has defined one or more
+    // validation rules.
+    var getValidatedAttrs = function(model, attrs) {
+      attrs = attrs || _.keys(_.result(model, &#x27;validation&#x27;) || {});
+      return _.reduce(attrs, function(memo, key) {
+        memo[key] = void 0;
+        return memo;
+      }, {});
+    };
+
+    // Returns an array with attributes passed through options
+    var getOptionsAttrs = function(options, view) {
+      var attrs = options.attributes;
+      if (_.isFunction(attrs)) {
+        attrs = attrs(view);
+      } else if (_.isString(attrs) &amp;&amp; (_.isFunction(defaultAttributeLoaders[attrs]))) {
+        attrs = defaultAttributeLoaders[attrs](view);
+      }
+      if (_.isArray(attrs)) {
+        return attrs;
+      }
+    };
+
+
+    // Looks on the model for validations for a specified
+    // attribute. Returns an array of any validators defined,
+    // or an empty array if none is defined.
+    var getValidators = function(model, attr) {
+      var attrValidationSet = model.validation ? _.result(model, &#x27;validation&#x27;)[attr] || {} : {};
+
+      // If the validator is a function or a string, wrap it in a function validator
+      if (_.isFunction(attrValidationSet) || _.isString(attrValidationSet)) {
+        attrValidationSet = {
+          fn: attrValidationSet
+        };
+      }
+
+      // Stick the validator object into an array
+      if(!_.isArray(attrValidationSet)) {
+        attrValidationSet = [attrValidationSet];
+      }
+
+      // Reduces the array of validators into a new array with objects
+      // with a validation method to call, the value to validate against
+      // and the specified error message, if any
+      return _.reduce(attrValidationSet, function(memo, attrValidation) {
+        _.each(_.without(_.keys(attrValidation), &#x27;msg&#x27;, &#x27;msgKey&#x27;), function(validator) {
+          memo.push({
+            fn: defaultValidators[validator],
+            val: attrValidation[validator],
+            msg: attrValidation.msg,
+            msgKey: attrValidation.msgKey
+          });
+        });
+        return memo;
+      }, []);
+    };
+
+    // Gets the indices out of an attr name: foo[0][1] -&gt; [0, 1] and foo[2] -&gt; [2]
+    var extractIndices = function(attr) {
+      var startIndex, endIndex,
+        i = 0,
+        hasEndBracket = true,
+        indices = [];
+      startIndex = attr.indexOf(&#x27;[&#x27;, i);
+      while (startIndex &gt; 0 &amp;&amp; hasEndBracket) {
+         endIndex = attr.indexOf(&#x27;]&#x27;, i);
+         indices.push(parseInt(attr.substring(startIndex + 1, endIndex), 10));
+         i = endIndex + 1;
+         hasEndBracket = i &gt; 0;
+         startIndex = attr.indexOf(&#x27;[&#x27;, i);
+      }
+      return indices;
+    };
+
+    // Generates an array of all the possible field accessors and their indices when using the &quot;open&quot; array notation
+    // foo[] -&gt; [{attr: &#x27;foo[0]&#x27;, index: [0]}, {attr: &#x27;foo[1]&#x27;, index: [1]}].  Will also perform nested arrays:
+    // foo[][] -&gt; [[{attr: &#x27;foo[0][0]&#x27;, index: [0][0]}], [{attr: &#x27;foo[1][0]&#x27;, index: [1][0]}]]
+    var generateSubAttributes = function(attr, model, subIndices) {
+      var i, attrName, remainder, subAttrs, newIndices,
+        firstBracket = attr.indexOf(&#x27;[]&#x27;);
+      if (_.isEmpty(subIndices)) {
+        subIndices = [];
+      }
+      if (firstBracket === -1) {
+        return {attr: attr, index: subIndices};
+      } else {
+        attrName = attr.substring(0, firstBracket);
+        remainder = attr.substring(firstBracket + 2);
+        subAttrs = [];
+        for (i = 0 ; i &lt; model.get(attrName).length; i++) {
+          newIndices = subIndices.slice();
+          newIndices.push(i);
+          subAttrs.push(generateSubAttributes(attrName + &#x27;[&#x27; + i + &#x27;]&#x27; + remainder, model, newIndices));
+        }
+        return subAttrs;
+      }
+    };
+
+    // Is this model a nested torso model
+    var isNestedModel = function(model) {
+      return NestedModel &amp;&amp; model instanceof NestedModel;
+    };
+
+    // Is the attribute using dot notation or array notation: foo.bar or foo[] or foo[1]
+    var isNestedAttr = function(attr) {
+      return attr.indexOf(&#x27;.&#x27;) &gt; 0 || attr.indexOf(&#x27;]&#x27;) &gt; 0;
+    };
+
+    // Remove the indices for a field name: foo[1][2] -&gt; foo[][]
+    var stripIndices = function(attr) {
+      var startIndex, newAttr,
+        i = 0,
+        hasEndBracket = true;
+      startIndex = attr.indexOf(&#x27;[&#x27;, i);
+      if (startIndex &lt; 0) {
+        return attr;
+      }
+      newAttr = attr.substring(0, startIndex + 1);
+      while (startIndex &gt; 0 &amp;&amp; hasEndBracket) {
+         i = attr.indexOf(&#x27;]&#x27;, i) + 1;
+         hasEndBracket = i &gt; 0;
+         startIndex = attr.indexOf(&#x27;[&#x27;, i);
+         if (startIndex &gt; 0) {
+           newAttr = newAttr + attr.substring(i - 1, startIndex + 1);
+         }
+      }
+      newAttr = newAttr + attr.substring(i - 1);
+      return newAttr;
+    };
+
+    // Validates safely for a nested attribute. If the attr is an array, it will construct
+    // validation errors with the same array structure [&#x27;foo[0]&#x27;, &#x27;foo[1]&#x27;] -&gt; [false, &#x27;Error Example&#x27;]
+    // Also handles nested array structure
+    var validateWithOpenArrayHelper = function(model, attrConfig, value, computed, validators, depth) {
+      var attr, indices;
+
+      if (_.isArray(attrConfig)) {
+        return _.reduce(attrConfig, function(memo, nestedAttrConfig) {
+          memo.push(validateWithOpenArrayHelper(model, nestedAttrConfig, value, computed, validators, depth + 1));
+          return memo;
+        }, []);
+      } else {
+        indices = attrConfig.index;
+        attr = attrConfig.attr;
+        // if the value wasn&#x27;t passed in and the attribute is nested, get the value
+        if (_.isUndefined(value) &amp;&amp; isNestedAttr(attr)) {
+          value = model.get(attr);
+        }
+        return invokeValidator(validators, model, value, attr, computed, indices);
+      }
+    };
+
+    // Invokes the validator set for an attr
+    var invokeValidator = function(validators, model, value, attr, computed, indices) {
+      return _.reduce(validators, function(memo, validator) {
+          // Pass the format functions plus the default
+          // validators as the context to the validator
+          var context = _.extend({msgKey: validator.msgKey}, formatFunctions, defaultValidators),
+              result = validator.fn.call(context, value, attr, validator.val, model, computed, indices);
+
+          if (result === false || memo === false) {
+            return false;
+          }
+          if (result &amp;&amp; !memo) {
+            return _.result(_.extend({}, validator, formatFunctions, defaultValidators), &#x27;msg&#x27;) || result;
+          }
+          return memo;
+        }, &#x27;&#x27;);
+    };
+
+    // Validates an attribute against all validators defined
+    // for that attribute. If one or more errors are found,
+    // the first error message is returned.
+    // If the attribute is valid, an empty string is returned.
+    var validateAttrWithOpenArray = function(model, attr, value, computed) {
+      // Reduces the array of validators to an error message by
+      // applying all the validators and returning the first error
+      // message, if any.
+      var hasErrors, subAttr, result,
+        validators = getValidators(model, attr);
+      subAttr = generateSubAttributes(attr, model);
+      result = validateWithOpenArrayHelper(model, subAttr, value, computed, validators, 0);
+      if (_.isArray(result)) {
+        hasErrors = _.reduce(_.flatten(result), function(memo, val) {
+          return memo || val;
+        }, false);
+        if (!hasErrors) {
+          return &#x27;&#x27;;
+        }
+      }
+      return result;
+    };
+
+    // Loops through the model&#x27;s attributes and validates the specified attrs.
+    // Returns and object containing names of invalid attributes
+    // as well as error messages.
+    var validateModel = function(model, attrs, validatedAttrs) {
+      var error,
+          invalidAttrs = {},
+          isValid = true,
+          computed = _.clone(attrs);
+
+      _.each(validatedAttrs, function(val, attr) {
+        error = validateAttrWithOpenArray(model, attr, val, computed);
+        if (error) {
+          invalidAttrs[attr] = error;
+          isValid = false;
+        }
+      });
+
+      return {
+        invalidAttrs: invalidAttrs,
+        isValid: isValid
+      };
+    };
+
+    // Validates attribute without open array notation.
+    var validateAttr = function(model, value, attr) {
+      var indices, validators,
+        validations = model.validation ? _.result(model, &#x27;validation&#x27;) || {} : {};
+      // If the validations hash contains an entry for the attr
+      if (_.contains(_.keys(validations), attr)) {
+        return validateAttrWithOpenArray(model, attr, value, _.extend({}, model.attributes));
+      } else {
+        indices = extractIndices(attr);
+        attr = stripIndices(attr);
+        validators = getValidators(model, attr);
+        return invokeValidator(validators, model, value, attr, _.extend({}, model.attributes), indices);
+      }
+    };
+
+    // Contains the methods that are mixed in on the model when binding
+    var mixin = function(view, options) {
+      return {
+
+        /**
+         * Check whether an attribute or a set of attributes are valid. It will default to use the model&#x27;s current values but
+         * you can pass in different values to use in the validation process instead.
+         * @param attr {String or Object or Array} Either the name of the attribute, an array containing many attribute names, or
+         * on object with attribute name to values
+         * @param [value] {Any} a value to use for the attribute value instead of using the model&#x27;s value.
+         * @return undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
+         * and the error as the value
+         * @method preValidate
+         */
+        preValidate: function(attr, value) {
+          var self = this,
+              result = {},
+              error;
+          if (_.isArray(attr)) {
+            _.each(attr, function(attr) {
+              error = self.preValidate(attr);
+              if (error) {
+                result[attr] = error;
+              }
+            });
+            return _.isEmpty(result) ? undefined : result;
+          } else if (_.isObject(attr)) {
+            _.each(attr, function(value, key) {
+              error = self.preValidate(key, value);
+              if (error) {
+                result[key] = error;
+              }
+            });
+            return _.isEmpty(result) ? undefined : result;
+          } else {
+            if (_.isUndefined(value) &amp;&amp; isNestedModel(this)) {
+              value = this.get(attr);
+            }
+            return validateAttr(this, value, attr);
+          }
+        },
+
+        // Check to see if an attribute, an array of attributes or the
+        // entire model is valid. Passing true will force a validation
+        // of the model.
+        isValid: function(option) {
+          var flattened, attrs, error, invalidAttrs;
+
+          option = option || getOptionsAttrs(options, view);
+
+          if(_.isString(option)){
+            attrs = [option];
+          } else if(_.isArray(option)) {
+            attrs = option;
+          }
+          if (attrs) {
+            // Loop through all attributes
+            _.each(attrs, function (attr) {
+              var value;
+              if (isNestedModel(this)) {
+                value = this.get(attr);
+              } else {
+                value = flatten(this.attributes)[attr];
+              }
+              error = validateAttr(this, value, attr);
+              if (error) {
+                invalidAttrs = invalidAttrs || {};
+                invalidAttrs[attr] = error;
+              }
+              // Loop through all associated views
+              _.each(this.associatedViews, function(view) {
+                if (error) {
+                  options.invalid(view, attr, error, options.selector);
+                } else {
+                  options.valid(view, attr, options.selector);
+                }
+              }, this);
+            }, this);
+          }
+
+          if (option === true) {
+            invalidAttrs = this.validate();
+          }
+          if (invalidAttrs) {
+            this.trigger(&#x27;invalid&#x27;, this, invalidAttrs, {validationError: invalidAttrs});
+          }
+          return attrs ? !invalidAttrs : this.validation ? this._isValid : true;
+        },
+
+        // This is called by Backbone when it needs to perform validation.
+        // You can call it manually without any parameters to validate the
+        // entire model.
+        validate: function(attrs, setOptions){
+          var model = this, validateAll, opt, validatedAttrs, allAttrs, flattened, changedAttrs, result;
+
+          validateAll = !attrs;
+          opt = _.extend({}, options, setOptions);
+          validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(options, view));
+          allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs);
+          flattened = flatten(allAttrs);
+          changedAttrs = attrs ? flatten(attrs) : flattened;
+          result = validateModel(model, allAttrs, _.pick(flattened, _.keys(validatedAttrs)));
+          model._isValid = result.isValid;
+
+          //After validation is performed, loop through all associated views
+          _.each(model.associatedViews, function(view){
+
+            // After validation is performed, loop through all validated and changed attributes
+            // and call the valid and invalid callbacks so the view is updated.
+            _.each(validatedAttrs, function(val, attr){
+                var invalid = result.invalidAttrs.hasOwnProperty(attr),
+                  changed = changedAttrs.hasOwnProperty(attr);
+
+                if(!invalid){
+                  opt.valid(view, attr, opt.selector);
+                }
+                if(invalid &amp;&amp; (changed || validateAll)){
+                  opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector);
+                }
+            });
+          });
+
+          // Trigger validated events.
+          // Need to defer this so the model is actually updated before
+          // the event is triggered.
+          _.defer(function() {
+            model.trigger(&#x27;validated&#x27;, model._isValid, model, result.invalidAttrs);
+            model.trigger(&#x27;validated:&#x27; + (model._isValid ? &#x27;valid&#x27; : &#x27;invalid&#x27;), model, result.invalidAttrs);
+          });
+
+          // Return any error messages to Backbone, unless the forceUpdate flag is set.
+          // Then we do not return anything and fools Backbone to believe the validation was
+          // a success. That way Backbone will update the model regardless.
+          if (!opt.forceUpdate &amp;&amp; _.intersection(_.keys(result.invalidAttrs), _.keys(changedAttrs)).length &gt; 0) {
+            return result.invalidAttrs;
+          }
+        }
+      };
+    };
+
+    // Helper to mix in validation on a model. Stores the view in the associated views array.
+    var bindModel = function(view, model, options) {
+      if (model.associatedViews) {
+        model.associatedViews.push(view);
+      } else {
+        model.associatedViews = [view];
+      }
+      _.extend(model, mixin(view, options));
+    };
+
+    // Removes view from associated views of the model or the methods
+    // added to a model if no view or single view provided
+    var unbindModel = function(model, view) {
+      if (view &amp;&amp; model.associatedViews.length &gt; 1){
+        model.associatedViews = _.without(model.associatedViews, view);
+      } else {
+        delete model.validate;
+        delete model.preValidate;
+        delete model.isValid;
+        delete model.associatedViews;
+      }
+    };
+
+    // Mix in validation on a model whenever a model is
+    // added to a collection
+    var collectionAdd = function(model) {
+      bindModel(this.view, model, this.options);
+    };
+
+    // Remove validation from a model whenever a model is
+    // removed from a collection
+    var collectionRemove = function(model) {
+      unbindModel(model);
+    };
+
+    // Returns the public methods on Backbone.Validation
+    return {
+
+      // Current version of the library
+      version: &#x27;0.11.3&#x27;,
+
+      // Called to configure the default options
+      configure: function(options) {
+        _.extend(defaultOptions, options);
+      },
+
+      // Hooks up validation on a view with a model
+      // or collection
+      bind: function(view, options) {
+        options = _.extend({}, defaultOptions, defaultCallbacks, options);
+
+        var model = options.model || view.model,
+            collection = options.collection || view.collection;
+
+        if(typeof model === &#x27;undefined&#x27; &amp;&amp; typeof collection === &#x27;undefined&#x27;){
+          throw &#x27;Before you execute the binding your view must have a model or a collection.\n&#x27; +
+                &#x27;See http://thedersen.com/projects/backbone-validation/#using-form-model-validation for more information.&#x27;;
+        }
+
+        if(model) {
+          bindModel(view, model, options);
+        }
+        else if(collection) {
+          collection.each(function(model){
+            bindModel(view, model, options);
+          });
+          collection.bind(&#x27;add&#x27;, collectionAdd, {view: view, options: options});
+          collection.bind(&#x27;remove&#x27;, collectionRemove);
+        }
+      },
+
+      // Removes validation from a view with a model
+      // or collection
+      unbind: function(view, options) {
+        options = _.extend({}, options);
+        var model = options.model || view.model,
+            collection = options.collection || view.collection;
+
+        if(model) {
+          unbindModel(model, view);
+        }
+        else if(collection) {
+          collection.each(function(model){
+            unbindModel(model, view);
+          });
+          collection.unbind(&#x27;add&#x27;, collectionAdd);
+          collection.unbind(&#x27;remove&#x27;, collectionRemove);
+        }
+      },
+
+      // Used to extend the Backbone.Model.prototype
+      // with validation
+      mixin: mixin(null, defaultOptions)
+    };
+  }());
+
+
+  // Callbacks
+  // ---------
+
+  var defaultCallbacks = Validation.callbacks = {
+
+    // Gets called when a previously invalid field in the
+    // view becomes valid. Removes any error message.
+    // Should be overridden with custom functionality.
+    valid: function(view, attr, selector) {
+      view.$(&#x27;[&#x27; + selector + &#x27;~=&quot;&#x27; + attr + &#x27;&quot;]&#x27;)
+          .removeClass(&#x27;invalid&#x27;)
+          .removeAttr(&#x27;data-error&#x27;);
+    },
+
+    // Gets called when a field in the view becomes invalid.
+    // Adds a error message.
+    // Should be overridden with custom functionality.
+    invalid: function(view, attr, error, selector) {
+      view.$(&#x27;[&#x27; + selector + &#x27;~=&quot;&#x27; + attr + &#x27;&quot;]&#x27;)
+          .addClass(&#x27;invalid&#x27;)
+          .attr(&#x27;data-error&#x27;, error);
+    }
+  };
+
+
+  // Patterns
+  // --------
+
+  var defaultPatterns = Validation.patterns = {
+    // Matches any digit(s) (i.e. 0-9)
+    digits: /^\d+$/,
+
+    // Matches any number (e.g. 100.000)
+    number: /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/,
+
+    // Matches a valid email address (e.g. mail@example.com)
+    email: /^((([a-z]|\d|[!#\$%&amp;&#x27;\*\+\-\/=\?\^_&#x60;{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&amp;&#x27;\*\+\-\/=\?\^_&#x60;{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i,
+
+    // Mathes any valid url (e.g. http://www.xample.com)
+    url: /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&amp;&#x27;\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&amp;&#x27;\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&amp;&#x27;\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&amp;&#x27;\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&amp;&#x27;\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i
+  };
+
+
+  // Error messages
+  // --------------
+
+  // Error message for the build in validators.
+  // {x} gets swapped out with arguments form the validator.
+  var defaultMessages = Validation.messages = {
+    required: &#x27;{0} is required&#x27;,
+    acceptance: &#x27;{0} must be accepted&#x27;,
+    min: &#x27;{0} must be greater than or equal to {1}&#x27;,
+    max: &#x27;{0} must be less than or equal to {1}&#x27;,
+    range: &#x27;{0} must be between {1} and {2}&#x27;,
+    length: &#x27;{0} must be {1} characters&#x27;,
+    minLength: &#x27;{0} must be at least {1} characters&#x27;,
+    maxLength: &#x27;{0} must be at most {1} characters&#x27;,
+    rangeLength: &#x27;{0} must be between {1} and {2} characters&#x27;,
+    oneOf: &#x27;{0} must be one of: {1}&#x27;,
+    equalTo: &#x27;{0} must be the same as {1}&#x27;,
+    digits: &#x27;{0} must only contain digits&#x27;,
+    number: &#x27;{0} must be a number&#x27;,
+    email: &#x27;{0} must be a valid email&#x27;,
+    url: &#x27;{0} must be a valid url&#x27;,
+    inlinePattern: &#x27;{0} is invalid&#x27;
+  };
+
+  // Label formatters
+  // ----------------
+
+  // Label formatters are used to convert the attribute name
+  // to a more human friendly label when using the built in
+  // error messages.
+  // Configure which one to use with a call to
+  //
+  //     Backbone.Validation.configure({
+  //       labelFormatter: &#x27;label&#x27;
+  //     });
+  var defaultLabelFormatters = Validation.labelFormatters = {
+
+    // Returns the attribute name with applying any formatting
+    none: function(attrName) {
+      return attrName;
+    },
+
+    // Converts attributeName or attribute_name to Attribute name
+    sentenceCase: function(attrName) {
+      return attrName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(match, index) {
+        return index === 0 ? match.toUpperCase() : &#x27; &#x27; + match.toLowerCase();
+      }).replace(/_/g, &#x27; &#x27;);
+    },
+
+    // Looks for a label configured on the model and returns it
+    //
+    //      var Model = Backbone.Model.extend({
+    //        validation: {
+    //          someAttribute: {
+    //            required: true
+    //          }
+    //        },
+    //
+    //        labels: {
+    //          someAttribute: &#x27;Custom label&#x27;
+    //        }
+    //      });
+    label: function(attrName, model) {
+      return (model.labels &amp;&amp; model.labels[attrName]) || defaultLabelFormatters.sentenceCase(attrName, model);
+    }
+  };
+
+  // Message Formatters
+  // ------------------
+
+  var defaultMessageFormatters = Validation.messageFormatters = {
+    none: function() {
+      var args = Array.prototype.slice.call(arguments),
+        text = args.shift();
+      return text.replace(/\{(\d+)\}/g, function(match, number) {
+        return typeof args[number] !== &#x27;undefined&#x27; ? args[number] : match;
+      });
+    }
+  };
+
+  // AttributeLoaders
+
+  var defaultAttributeLoaders = Validation.attributeLoaders = {
+    inputNames: function (view) {
+      var attrs = [];
+      if (view) {
+        view.$(&#x27;form [name]&#x27;).each(function () {
+          if (/^(?:input|select|textarea)$/i.test(this.nodeName) &amp;&amp; this.name &amp;&amp;
+            this.type !== &#x27;submit&#x27; &amp;&amp; attrs.indexOf(this.name) === -1) {
+            attrs.push(this.name);
+          }
+        });
+      }
+      return attrs;
+    }
+  };
+
+
+  // Built in validators
+  // -------------------
+
+  var defaultValidators = Validation.validators = (function(){
+    // Use native trim when defined
+    var trim = String.prototype.trim ?
+      function(text) {
+        return text === null ? &#x27;&#x27; : String.prototype.trim.call(text);
+      } :
+      function(text) {
+        var trimLeft = /^\s+/,
+            trimRight = /\s+$/;
+
+        return text === null ? &#x27;&#x27; : text.toString().replace(trimLeft, &#x27;&#x27;).replace(trimRight, &#x27;&#x27;);
+      };
+
+    // Determines whether or not a value is a number
+    var isNumber = function(value){
+      return _.isNumber(value) || (_.isString(value) &amp;&amp; value.match(defaultPatterns.number));
+    };
+
+    // Determines whether or not a value is empty
+    var hasValue = function(value) {
+      return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) &amp;&amp; trim(value) === &#x27;&#x27;) || (_.isArray(value) &amp;&amp; _.isEmpty(value)));
+    };
+
+    var getMessageKey = function(msgKey, defaultKey) {
+      return msgKey ? msgKey : defaultKey;
+    };
+
+    return {
+      format: formatFunctions.format,
+      formatLabel: formatFunctions.formatLabel,
+
+      // Function validator
+      // Lets you implement a custom function used for validation
+      fn: function(value, attr, fn, model, computed) {
+        if(_.isString(fn)){
+          fn = model[fn];
+        }
+        return fn.call(model, value, attr, computed);
+      },
+
+      // Allows the creation of an inline function that uses the validators context
+      // instead of the model context.
+      inlineFn: function(value, attr, fn, model, computed, indices) {
+        return fn.call(this, value, attr, model, computed, indices);
+      },
+
+      // Required validator
+      // Validates if the attribute is required or not
+      // This can be specified as either a boolean value or a function that returns a boolean value
+      required: function(value, attr, required, model, computed) {
+        var isRequired = _.isFunction(required) ? required.call(model, value, attr, computed) : required;
+        if(!isRequired &amp;&amp; !hasValue(value)) {
+          return false; // overrides all other validators
+        }
+        if (isRequired &amp;&amp; !hasValue(value)) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.required), this.formatLabel(attr, model));
+        }
+      },
+
+      // Acceptance validator
+      // Validates that something has to be accepted, e.g. terms of use
+      // &#x60;true&#x60; or &#x27;true&#x27; are valid
+      acceptance: function(value, attr, accept, model) {
+        if(value !== &#x27;true&#x27; &amp;&amp; (!_.isBoolean(value) || value === false)) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.acceptance), this.formatLabel(attr, model));
+        }
+      },
+
+      // Min validator
+      // Validates that the value has to be a number and equal to or greater than
+      // the min value specified
+      min: function(value, attr, minValue, model) {
+        if (!isNumber(value) || value &lt; minValue) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.min), this.formatLabel(attr, model), minValue);
+        }
+      },
+
+      // Max validator
+      // Validates that the value has to be a number and equal to or less than
+      // the max value specified
+      max: function(value, attr, maxValue, model) {
+        if (!isNumber(value) || value &gt; maxValue) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.max), this.formatLabel(attr, model), maxValue);
+        }
+      },
+
+      // Range validator
+      // Validates that the value has to be a number and equal to or between
+      // the two numbers specified
+      range: function(value, attr, range, model) {
+        if(!isNumber(value) || value &lt; range[0] || value &gt; range[1]) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.range), this.formatLabel(attr, model), range[0], range[1]);
+        }
+      },
+
+      // Length validator
+      // Validates that the value has to be a string with length equal to
+      // the length value specified
+      length: function(value, attr, length, model) {
+        if (!_.isString(value) || value.length !== length) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.length), this.formatLabel(attr, model), length);
+        }
+      },
+
+      // Min length validator
+      // Validates that the value has to be a string with length equal to or greater than
+      // the min length value specified
+      minLength: function(value, attr, minLength, model) {
+        if (!_.isString(value) || value.length &lt; minLength) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.minLength), this.formatLabel(attr, model), minLength);
+        }
+      },
+
+      // Max length validator
+      // Validates that the value has to be a string with length equal to or less than
+      // the max length value specified
+      maxLength: function(value, attr, maxLength, model) {
+        if (!_.isString(value) || value.length &gt; maxLength) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.maxLength), this.formatLabel(attr, model), maxLength);
+        }
+      },
+
+      // Range length validator
+      // Validates that the value has to be a string and equal to or between
+      // the two numbers specified
+      rangeLength: function(value, attr, range, model) {
+        if (!_.isString(value) || value.length &lt; range[0] || value.length &gt; range[1]) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.rangeLength), this.formatLabel(attr, model), range[0], range[1]);
+        }
+      },
+
+      // One of validator
+      // Validates that the value has to be equal to one of the elements in
+      // the specified array. Case sensitive matching
+      oneOf: function(value, attr, values, model) {
+        if(!_.include(values, value)){
+          return this.format(getMessageKey(this.msgKey, defaultMessages.oneOf), this.formatLabel(attr, model), values.join(&#x27;, &#x27;));
+        }
+      },
+
+      // Equal to validator
+      // Validates that the value has to be equal to the value of the attribute
+      // with the name specified
+      equalTo: function(value, attr, equalTo, model, computed) {
+        if(value !== computed[equalTo]) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages.equalTo), this.formatLabel(attr, model), this.formatLabel(equalTo, model));
+        }
+      },
+
+      // Pattern validator
+      // Validates that the value has to match the pattern specified.
+      // Can be a regular expression or the name of one of the built in patterns
+      pattern: function(value, attr, pattern, model) {
+        if (!hasValue(value) || !value.toString().match(defaultPatterns[pattern] || pattern)) {
+          return this.format(getMessageKey(this.msgKey, defaultMessages[pattern]) || defaultMessages.inlinePattern, this.formatLabel(attr, model), pattern);
+        }
+      }
+    };
+  }());
+
+  return Validation;
+}));
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
