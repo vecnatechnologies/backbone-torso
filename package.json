@@ -6,7 +6,7 @@
     "url": "https://github.com/vecnatechnologies/backbone-torso"
   },
   "scripts": {
-    "build": "gulp",
+    "build": "gulp && npm run doc",
     "prepublish": "gulp prepublish && npm run doc",
     "test": "npm run karma-test && gulp test",
     "karma-test": "./node_modules/karma/bin/karma start",
