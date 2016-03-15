@@ -3,6 +3,6 @@
 
   var gulp = require('gulp');
 
-  gulp.task('watch', ['test:watch', 'doc:watch']);
+  gulp.task('watch', ['test:watch']);
 
 })();

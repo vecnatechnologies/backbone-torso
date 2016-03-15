@@ -3,6 +3,6 @@
 
   var gulp = require('gulp');
 
-  gulp.task('prepublish', ['bundle', 'doc']);
+  gulp.task('prepublish', ['bundle']);
 
 })();
