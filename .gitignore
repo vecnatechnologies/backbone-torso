@@ -3,6 +3,7 @@ target
 .settings
 .project
 node_modules
+docs/js
 *.swp
 testSandbox/
 *.log

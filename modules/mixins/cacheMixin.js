@@ -52,13 +52,18 @@
           /**
            * Will force the cache to fetch just the registered ids of this collection
            * @method requesterMixin.fetch
+           * @param [options] - argument options
+           * @param [options.idsToFetch=collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
+           * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
            * @return {Promise} promise that will resolve when the fetch is complete
            */
-          fetch: function() {
-            var requesterCollection = this;
+          fetch: function(options) {
+            options = options || {};
+            options.idsToFetch = options.idsToFetch || this.trackedIds;
+            options.setOptions = options.setOptions || {remove: false};
             return this.__loadWrapper(function() {
-              if (requesterCollection.trackedIds && requesterCollection.trackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: requesterCollection.trackedIds, setOptions: {remove: false}});
+              if (options.idsToFetch && options.idsToFetch.length) {
+                return parentInstance.fetchByIds(options);
               } else {
                 return $.Deferred().resolve().promise();
               }
@@ -66,7 +71,21 @@
           },
 
           /**
-           * Override the Id registration system to route via the parent collection
+           * Will force the cache to fetch a subset of this collection's tracked ids
+           * @method requesterMixin.fetchByIds
+           * @param ids {Array} array of model ids
+           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetchByIds: function(ids, options) {
+            options = options || {};
+            options.idsToFetch = _.intersection(ids, this.getTrackedIds());
+            return this.fetch(options);
+          },
+
+          /**
+           * Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.
+           * Overrides the Id registration system to route via the parent collection
            * @method requesterMixin.trackIds
            * @param ids The list of ids that this collection wants to track
            */
@@ -75,7 +94,6 @@
             parentInstance.registerIds(ids, ownerKey);
             this.trackedIds = ids;
           },
-
 
           /**
            * Adds a new model to the requester collection and tracks the model.id
@@ -98,56 +116,38 @@
           },
 
           /**
-           * Will register the new ids and then ask the cache to fetch them
-           * @method requesterMixin.fetchByIds
+           * Will begin tracking the new ids and then ask the cache to fetch them
+           * This will reset any previous list of ids being tracked.
+           * @method requesterMixin.trackAndFetch
            * @return the promise of the fetch by ids
            */
-          fetchByIds: function(newIds) {
+          trackAndFetch: function(newIds) {
             this.trackIds(newIds);
             return this.fetch();
           },
 
           /**
-           * Will force the cache to fetch a subset of this collection's tracked ids
-           * @method requesterMixin.fetchSubsetOfTrackedIds
-           * @return {Promise} promise that will resolve when the fetch is complete
-           */
-          fetchSubsetOfTrackedIds: function(ids) {
-            var subsetOfTrackedIds = _.intersection(ids, this.getTrackedIds());
-            return this.__loadWrapper(function() {
-              if (subsetOfTrackedIds && subsetOfTrackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: subsetOfTrackedIds, setOptions: {remove: false}});
-              } else {
-                // handle if subsetOfTrackedIds is empty
-                return $.Deferred().resolve().promise();
-              }
-            });
-          },
-
-          /**
            * Will force the cache to fetch any of this collection's tracked models that are not in the cache
+           * while not fetching models that are already in the cache. Useful when you want the effeciency of
+           * pulling models from the cache and don't need all the models to be up-to-date.
            * @method requesterMixin.pull
+           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete
            */
-          pull: function() {
+          pull: function(options) {
+            options = options || {};
             //find ids that we don't have in cache
-            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
-            return this.__loadWrapper(function() {
-              if (idsNotInCache && idsNotInCache.length) {
-                return parentInstance.fetchByIds({idsToFetch: idsNotInCache, setOptions: {remove: false}});
-              } else {
-                // handle if idsNotInCache is empty
-                return $.Deferred().resolve().promise();
-              }
-            });
+            options.idsToFetch = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            return this.fetch(options);
           },
 
           /**
-           * Will register the new ids and then pull in any models not stored in the cache
-           * @method requesterMixin.pullByIds
+           * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
+           * the difference between pull and fetch.
+           * @method requesterMixin.trackAndPull
            * @return the promise of the fetch by ids
            */
-          pullByIds: function(newIds) {
+          trackAndPull: function(newIds) {
             this.trackIds(newIds);
             return this.pull();
           },
@@ -344,19 +344,17 @@
         options = options || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
         return this.__loadWrapper(function(options) {
-          var requestedIds, idsToFetch;
-          requestedIds = options.idsToFetch || collection.collectionTrackedIds;
-          if (collection.lazyFetch) {
-            idsToFetch = _.difference(requestedIds, this.models.pluck('id'));
-          } else {
-            idsToFetch = requestedIds;
-          }
-          return $.ajax({
+          var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+          var contentType = options.fetchContentType || collection.fetchContentType;
+          var ajaxOpts = {
               type: collection.fetchHttpAction,
               url: _.result(collection, 'url') + collection.getByIdsUrl,
-              contentType: 'application/json; charset=utf-8',
-              data: idsToFetch
-            }).done(
+              data: requestedIds
+            };
+          if (options.fetchContentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() != 'GET')) {
+            ajaxOpts.contentType = options.fetchContentType || 'application/json; charset=utf-8';
+          }
+          return $.ajax(ajaxOpts).done(
               // Success function
               function(data) {
                 var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
@@ -389,24 +387,6 @@
               });
         }, options);
       };
-
-      /**
-       * Sets the lazyFetch mode. When enabled, the collection will assume models don't change, and only fetch each model from the server once.
-       * @method setLazyFetch
-       * @param lazyFetch {boolean} the lazyFetch mode to set
-       */
-      collection.setLazyFetch = function(lazyFetch) {
-        this.lazyFetch = lazyFetch;
-      };
-
-      /**
-       * Gets the lazyFetch mode.
-       * @method isLazyFetch
-       * @return {boolean} true if this collection fetches lazily.
-       */
-      collection.isLazyFetch = function() {
-        return this.lazyFetch;
-      };
     };
 
     return {
@@ -417,7 +397,6 @@
        * @param [options] {Object} - optional options object
        * @param   [options.fetchHttpAction='POST'] {String} http action used to get objects by ids
        * @param   [options.getByIdsUrl='/ids'] {String} path appended to collection.url to get objects by a list of ids
-       * @param   [options.lazyFetch=false] {Boolean} if set to true, the collection will assume that models do not change after first fetch
        * @param   [options.fetchUsingTrackedIds=true] {Boolean} if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
                                                                but will rather call the default fetch method.
        * @method constructor
@@ -431,10 +410,16 @@
           this.requestMap = {};
           this.collectionTrackedIds = [];
           this.knownPrivateCollections = {};
-          this.getByIdsUrl = options.getByIdsUrl || '/ids';
-          this.fetchHttpAction = options.fetchHttpAction || 'POST';
-          this.lazyFetch = options.lazyFetch || false;
-          this.fetchUsingTrackedIds = options.fetchUsingTrackedIds !== false;
+          var cacheDefaults = _.defaults(
+            _.pick(options, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
+            _.pick(this, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
+            {
+              getByIdsUrl: '/ids',
+              fetchHttpAction: 'GET',
+              fetchUsingTrackedIds: true
+            }
+          );
+          _.extend(this, cacheDefaults);
           cacheMixin(this);
         } else {
           this.trackedIds = [];

@@ -57,10 +57,27 @@ module.exports = function($) {
     }
   });
 
+  routes['/myModel/ids|get'] = $.mockjax({
+    url: '/myModel/ids',
+    type: 'GET',
+    responseTime: 100,
+    response: function(settings) {
+      var models = [],
+          data = _.isString(settings.data) ? JSON.parse(settings.data) : settings.data;
+      for (var i = 0; i < data.length; i++) {
+        models.push({
+          id: data[i],
+          count: i
+        });
+      }
+      this.responseText = models;
+    }
+  });
+
   routes['/myModel/ids|post'] = $.mockjax({
     url: '/myModel/ids',
+    type: 'POST',
     dataType: 'json',
-    type: 'post',
     responseTime: 100,
     response: function(settings) {
       var models = [],

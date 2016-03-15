@@ -30,8 +30,6 @@ describe('A Torso Collection', function() {
     expect(collection.registerIds).toBeDefined();
     expect(collection.polledFetch).toBeDefined();
     expect(collection.fetchByIds).toBeDefined();
-    expect(collection.setLazyFetch).toBeDefined();
-    expect(collection.isLazyFetch).toBeDefined();
     expect(collection.foo).toBeDefined();
     // Expect not to see requester API
     expect(collection.getTrackedIds).not.toBeDefined();
@@ -56,8 +54,6 @@ describe('A Torso Collection', function() {
     expect(collection.getAllRequestedIds).not.toBeDefined();
     expect(collection.createPrivateCollection).not.toBeDefined();
     expect(collection.registerIds).not.toBeDefined();
-    expect(collection.setLazyFetch).not.toBeDefined();
-    expect(collection.isLazyFetch).not.toBeDefined();
     // Expect to see requester API
     expect(collection.getTrackedIds).toBeDefined();
     expect(collection.trackIds).toBeDefined();
@@ -65,10 +61,11 @@ describe('A Torso Collection', function() {
     expect(collection.trackNewId).toBeDefined();
     expect(collection.requesterDispose).toBeDefined();
     expect(collection.polledFetch).toBeDefined();
+    expect(collection.fetch).toBeDefined();
     expect(collection.fetchByIds).toBeDefined();
-    expect(collection.fetchSubsetOfTrackedIds).toBeDefined();
+    expect(collection.trackAndFetch).toBeDefined();
     expect(collection.pull).toBeDefined();
-    expect(collection.pullByIds).toBeDefined();
+    expect(collection.trackAndPull).toBeDefined();
     expect(collection.foo).toBeDefined();
   });
 
@@ -348,7 +345,7 @@ describe('A Torso Collection', function() {
     requester1.trackNewId('2');
     expect(cache.size()).toBe(0);
     expect(requester1.size()).toBe(0);
-    requester1.fetchSubsetOfTrackedIds(['1', '3']).done(function(data) {
+    requester1.fetchByIds(['1', '3']).done(function(data) {
       expect(cache.size()).toBe(1);
       expect(requester1.size()).toBe(1);
       var dataIds = _.pluck(data, 'id');
@@ -411,7 +408,7 @@ describe('A Torso Collection', function() {
       expect(requester1.findWhere({id: '1'})).toBeDefined();
       expect(requester1.findWhere({id: '2'})).toBeDefined();
       expect(requester1.findWhere({id: '3'})).not.toBeDefined();
-      requester2.pullByIds(['1', '3']).done(function(data) {
+      requester2.trackAndPull(['1', '3']).done(function(data) {
         expect(cache.size()).toBe(3);
         expect(requester2.size()).toBe(2);
         var dataIds = _.pluck(data, 'id');
