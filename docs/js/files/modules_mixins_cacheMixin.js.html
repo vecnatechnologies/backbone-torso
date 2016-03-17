@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.1</em>
+            <em>API Docs for: 0.6.2</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -452,10 +452,11 @@
           var ajaxOpts = {
               type: collection.fetchHttpAction,
               url: _.result(collection, &#x27;url&#x27;) + collection.getByIdsUrl,
-              data: requestedIds
+              data: {ids: requestedIds.join(&#x27;,&#x27;)}
             };
           if (options.fetchContentType || (ajaxOpts.type &amp;&amp; ajaxOpts.type.toUpperCase() != &#x27;GET&#x27;)) {
             ajaxOpts.contentType = options.fetchContentType || &#x27;application/json; charset=utf-8&#x27;;
+            ajaxOpts.data = JSON.stringify(requestedIds);
           }
           return $.ajax(ajaxOpts).done(
               // Success function

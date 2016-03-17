@@ -2,7 +2,7 @@
     "project": {
         "name": "backbone-torso",
         "description": "backbone-torso",
-        "version": "0.6.1"
+        "version": "0.6.2"
     },
     "files": {
         "modules/mixins/cacheMixin.js": {
@@ -992,7 +992,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 393,
+            "line": 394,
             "description": "The constructor constructor / initialize method for collections.\nAllocate new memory for the local references if they\nwere null when this method was called.",
             "params": [
                 {
