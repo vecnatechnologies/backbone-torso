@@ -349,10 +349,11 @@
           var ajaxOpts = {
               type: collection.fetchHttpAction,
               url: _.result(collection, 'url') + collection.getByIdsUrl,
-              data: requestedIds
+              data: {ids: requestedIds.join(',')}
             };
           if (options.fetchContentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() != 'GET')) {
             ajaxOpts.contentType = options.fetchContentType || 'application/json; charset=utf-8';
+            ajaxOpts.data = JSON.stringify(requestedIds);
           }
           return $.ajax(ajaxOpts).done(
               // Success function
