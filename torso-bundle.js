@@ -4940,21 +4940,12 @@
     },
 
     /**
-     * Override to prepare a context for the HTML template used as the base list view
-     * @method prepare
-     * @return {Object} an object to use for HTML templating the base list view
-     */
-    prepare: function() {
-      return {};
-    },
-
-    /**
-     * Override if you want a different context for your empty template
+     * Override if you want a different context for your empty template. Defaults to this.prepare()
      * @method prepareEmpty
      * @return a context that can be used by the empty list template
      */
     prepareEmpty: function() {
-      return {};
+      return this.prepare();
     },
 
     /**
@@ -5357,10 +5348,7 @@
 
       View.apply(this, arguments);
 
-      if (this.model) {
-        this.listenTo(this.model, 'validated:valid', this.valid);
-        this.listenTo(this.model, 'validated:invalid', this.invalid);
-      }
+      this.resetModel(this.model);
     },
 
     /**
@@ -5388,6 +5376,21 @@
       this.__generateStickitBindings();
       this.stickit();
       View.prototype.delegateEvents.call(this);
+    },
+
+    /**
+     * Resets the form model with the passed in model. Stops listening to current form model
+     * and sets up listeners on the new one.
+     * @method resetModel
+     * @param model {Torso.FormModel} the new form model
+     */
+    resetModel: function(model) {
+      if (this.model) {
+        this.stopListening(this.model);
+      }
+      this.model = model;
+      this.listenTo(this.model, 'validated:valid', this.valid);
+      this.listenTo(this.model, 'validated:invalid', this.invalid);
     },
 
     /**

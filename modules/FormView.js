@@ -88,10 +88,7 @@
 
       View.apply(this, arguments);
 
-      if (this.model) {
-        this.listenTo(this.model, 'validated:valid', this.valid);
-        this.listenTo(this.model, 'validated:invalid', this.invalid);
-      }
+      this.resetModel(this.model);
     },
 
     /**
@@ -119,6 +116,21 @@
       this.__generateStickitBindings();
       this.stickit();
       View.prototype.delegateEvents.call(this);
+    },
+
+    /**
+     * Resets the form model with the passed in model. Stops listening to current form model
+     * and sets up listeners on the new one.
+     * @method resetModel
+     * @param model {Torso.FormModel} the new form model
+     */
+    resetModel: function(model) {
+      if (this.model) {
+        this.stopListening(this.model);
+      }
+      this.model = model;
+      this.listenTo(this.model, 'validated:valid', this.valid);
+      this.listenTo(this.model, 'validated:invalid', this.invalid);
     },
 
     /**
