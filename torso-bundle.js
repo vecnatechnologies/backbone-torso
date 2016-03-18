@@ -227,40 +227,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone', 'backbone.stickit'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    factory(require('backbone'));
-  } else {
-    factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Extensions to stickit handlers.
-   *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  Backbone.Stickit.addHandler({
-    selector: 'input[type="radio"]',
-    events: ['change'],
-    update: function($el, val) {
-      $el.prop('checked', false);
-      $el.filter('[value="' + val + '"]').prop('checked', true);
-    },
-    getVal: function($el) {
-      return $el.filter(':checked').val();
-    }
-  });
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('jquery'));
@@ -539,6 +505,40 @@
   };
 
   return templateRenderer;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    factory(require('backbone'));
+  } else {
+    factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Extensions to stickit handlers.
+   *
+   * @module    Torso
+   * @namespace Torso.Utils
+   * @class     stickitUtils
+   * @static
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  Backbone.Stickit.addHandler({
+    selector: 'input[type="radio"]',
+    events: ['change'],
+    update: function($el, val) {
+      $el.prop('checked', false);
+      $el.filter('[value="' + val + '"]').prop('checked', true);
+    },
+    getVal: function($el) {
+      return $el.filter(':checked').val();
+    }
+  });
 }));
 
 (function(root, factory) {
@@ -3762,12 +3762,12 @@
         _.each(this.getMappings(), function(config, mappingAlias) {
           var modelAliases;
           if (alias === mappingAlias) {
-            this.__pullFromAlias(mappingAlias);
+            this.__pull(mappingAlias);
           }
           if (config.computed) {
             modelAliases = this.__getModelAliases(mappingAlias);
-            if (_.contains(modelAlias, alias)) {
-              this.__pullFromAlias(mappingAlias);
+            if (_.contains(modelAliases, alias)) {
+              this.__pull(mappingAlias);
             }
           }
         }, this);
@@ -4940,21 +4940,12 @@
     },
 
     /**
-     * Override to prepare a context for the HTML template used as the base list view
-     * @method prepare
-     * @return {Object} an object to use for HTML templating the base list view
-     */
-    prepare: function() {
-      return {};
-    },
-
-    /**
-     * Override if you want a different context for your empty template
+     * Override if you want a different context for your empty template. Defaults to this.prepare()
      * @method prepareEmpty
      * @return a context that can be used by the empty list template
      */
     prepareEmpty: function() {
-      return {};
+      return this.prepare();
     },
 
     /**
@@ -5357,10 +5348,7 @@
 
       View.apply(this, arguments);
 
-      if (this.model) {
-        this.listenTo(this.model, 'validated:valid', this.valid);
-        this.listenTo(this.model, 'validated:invalid', this.invalid);
-      }
+      this.resetModelListeners(this.model);
     },
 
     /**
@@ -5388,6 +5376,22 @@
       this.__generateStickitBindings();
       this.stickit();
       View.prototype.delegateEvents.call(this);
+    },
+
+    /**
+     * Resets the form model with the passed in model. Stops listening to current form model
+     * and sets up listeners on the new one.
+     * @method resetModelListeners
+     * @param model {Torso.FormModel} the new form model
+     * @param [stopListening=false] {Boolean} if true, it will stop listening to the previous form model
+     */
+    resetModelListeners: function(model, stopListening) {
+      if (this.model && stopListening) {
+        this.stopListening(this.model);
+      }
+      this.model = model;
+      this.listenTo(this.model, 'validated:valid', this.valid);
+      this.listenTo(this.model, 'validated:invalid', this.invalid);
     },
 
     /**
