@@ -88,7 +88,7 @@
 
       View.apply(this, arguments);
 
-      this.resetModel(this.model);
+      this.resetModelListeners(this.model);
     },
 
     /**
@@ -121,11 +121,12 @@
     /**
      * Resets the form model with the passed in model. Stops listening to current form model
      * and sets up listeners on the new one.
-     * @method resetModel
+     * @method resetModelListeners
      * @param model {Torso.FormModel} the new form model
+     * @param [stopListening=false] {Boolean} if true, it will stop listening to the previous form model
      */
-    resetModel: function(model) {
-      if (this.model) {
+    resetModelListeners: function(model, stopListening) {
+      if (this.model && stopListening) {
         this.stopListening(this.model);
       }
       this.model = model;

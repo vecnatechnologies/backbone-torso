@@ -279,12 +279,12 @@
         _.each(this.getMappings(), function(config, mappingAlias) {
           var modelAliases;
           if (alias === mappingAlias) {
-            this.__pullFromAlias(mappingAlias);
+            this.__pull(mappingAlias);
           }
           if (config.computed) {
             modelAliases = this.__getModelAliases(mappingAlias);
-            if (_.contains(modelAlias, alias)) {
-              this.__pullFromAlias(mappingAlias);
+            if (_.contains(modelAliases, alias)) {
+              this.__pull(mappingAlias);
             }
           }
         }, this);
