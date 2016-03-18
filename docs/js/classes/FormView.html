@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.2</em>
+            <em>API Docs for: 0.6.3</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -169,6 +169,10 @@
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method_resetModelListeners">resetModelListeners</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_valid">valid</a>
 
                             </li>
@@ -248,7 +252,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l234"><code>modules&#x2F;FormView.js:234</code></a>
+        <a href="../files/modules_FormView.js.html#l247"><code>modules&#x2F;FormView.js:247</code></a>
         </p>
 
 
@@ -338,7 +342,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l205"><code>modules&#x2F;FormView.js:205</code></a>
+        <a href="../files/modules_FormView.js.html#l218"><code>modules&#x2F;FormView.js:218</code></a>
         </p>
 
 
@@ -378,7 +382,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l224"><code>modules&#x2F;FormView.js:224</code></a>
+        <a href="../files/modules_FormView.js.html#l237"><code>modules&#x2F;FormView.js:237</code></a>
         </p>
 
 
@@ -434,7 +438,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l142"><code>modules&#x2F;FormView.js:142</code></a>
+        <a href="../files/modules_FormView.js.html#l155"><code>modules&#x2F;FormView.js:155</code></a>
         </p>
 
 
@@ -479,7 +483,7 @@ that shouldn't exist in a dactivated state</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l153"><code>modules&#x2F;FormView.js:153</code></a>
+        <a href="../files/modules_FormView.js.html#l166"><code>modules&#x2F;FormView.js:166</code></a>
         </p>
 
 
@@ -567,7 +571,7 @@ and all fields need to be valid for success).</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l178"><code>modules&#x2F;FormView.js:178</code></a>
+        <a href="../files/modules_FormView.js.html#l191"><code>modules&#x2F;FormView.js:191</code></a>
         </p>
 
 
@@ -764,7 +768,7 @@ and all fields need to be valid for success).</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l113"><code>modules&#x2F;FormView.js:113</code></a>
+        <a href="../files/modules_FormView.js.html#l110"><code>modules&#x2F;FormView.js:110</code></a>
         </p>
 
 
@@ -798,7 +802,7 @@ and all fields need to be valid for success).</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l97"><code>modules&#x2F;FormView.js:97</code></a>
+        <a href="../files/modules_FormView.js.html#l94"><code>modules&#x2F;FormView.js:94</code></a>
         </p>
 
 
@@ -824,6 +828,76 @@ and all fields need to be valid for success).</p>
 
 
 </div>
+<div id="method_resetModelListeners" class="method item">
+    <h3 class="name"><code>resetModelListeners</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>model</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[stopListening=false]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_FormView.js.html#l121"><code>modules&#x2F;FormView.js:121</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Resets the form model with the passed in model. Stops listening to current form model
+and sets up listeners on the new one.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">model</code>
+                        <span class="type">Torso.FormModel</span>
+
+
+                    <div class="param-description">
+                        <p>the new form model</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[stopListening=false]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>if true, it will stop listening to the previous form model</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
 <div id="method_valid" class="method item">
     <h3 class="name"><code>valid</code></h3>
 
@@ -839,7 +913,7 @@ and all fields need to be valid for success).</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l133"><code>modules&#x2F;FormView.js:133</code></a>
+        <a href="../files/modules_FormView.js.html#l137"><code>modules&#x2F;FormView.js:137</code></a>
         </p>
 
 
@@ -847,7 +921,7 @@ and all fields need to be valid for success).</p>
     </div>
 
     <div class="description">
-        <p>Default method called on validation failure.</p>
+        <p>Default method called on validation success.</p>
 
     </div>
 
@@ -870,7 +944,7 @@ and all fields need to be valid for success).</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_FormView.js.html#l124"><code>modules&#x2F;FormView.js:124</code></a>
+        <a href="../files/modules_FormView.js.html#l146"><code>modules&#x2F;FormView.js:146</code></a>
         </p>
 
 
@@ -878,7 +952,7 @@ and all fields need to be valid for success).</p>
     </div>
 
     <div class="description">
-        <p>Default method called on validation success.</p>
+        <p>Default method called on validation failure.</p>
 
     </div>
 
