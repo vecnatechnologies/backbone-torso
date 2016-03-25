@@ -241,7 +241,7 @@
      * @method unsetMappings
      */
     unsetMappings: function() {
-      this.__currentMappings = [];
+      this.__currentMappings = {};
       this.resetUpdating();
     },
 
