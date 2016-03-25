@@ -2,7 +2,7 @@
     "project": {
         "name": "backbone-torso",
         "description": "backbone-torso",
-        "version": "0.6.3"
+        "version": "0.6.4"
     },
     "files": {
         "modules/mixins/cacheMixin.js": {
