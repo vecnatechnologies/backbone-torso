@@ -2,7 +2,7 @@
     "project": {
         "name": "backbone-torso",
         "description": "backbone-torso",
-        "version": "0.6.4"
+        "version": "0.6.5"
     },
     "files": {
         "modules/mixins/cacheMixin.js": {
@@ -1982,7 +1982,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 792,
+            "line": 794,
             "description": "Create a hash value of a simple object",
             "params": [
                 {
@@ -2003,7 +2003,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 803,
+            "line": 805,
             "description": "Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.",
             "itemtype": "method",
             "name": "__findAlias",
@@ -2025,7 +2025,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 824,
+            "line": 826,
             "params": [
                 {
                     "name": "model",
@@ -2046,7 +2046,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 835,
+            "line": 837,
             "return": {
                 "description": "a map of model's cid to the hash value of the model making sure to only use the tracked fields",
                 "type": "Object"
@@ -2060,7 +2060,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 848,
+            "line": 850,
             "description": "Deep clones the attributes. There should be no functions in the attributes",
             "params": [
                 {
@@ -2081,7 +2081,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 867,
+            "line": 869,
             "description": "Attaches listeners to the tracked object models with callbacks that will copy new properties into this form model.",
             "access": "private",
             "tagname": "",
@@ -2092,7 +2092,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 903,
+            "line": 905,
             "description": "Copies fields from one backbone model to another. Is useful during a pull or push to/from Object models. The values will\nbe deep cloned from the origin to the destination.",
             "params": [
                 {
@@ -2121,7 +2121,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 928,
+            "line": 930,
             "description": "Sets the mapping using the form model's default mapping or the options mappings if available.\nAlso sets the tracked models if options.models is provided.",
             "itemtype": "method",
             "name": "__initMappings",
@@ -2140,7 +2140,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 945,
+            "line": 947,
             "description": "Returns a map where the keys are the fields that are being tracked on tracked model and values are\nthe with current values of those fields.",
             "params": [
                 {
@@ -2162,7 +2162,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 982,
+            "line": 984,
             "description": "Returns a useful data structure that binds a tracked model to the fields being tracked on a mapping.",
             "itemtype": "method",
             "name": "__createModelConfig",
@@ -2188,7 +2188,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 1002,
+            "line": 1004,
             "description": "Returns an array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,\nincluding model mappings inside computed mappings. There will be a model config for each tracked model on a computed mapping\nmeaning there can be multiple model configs for the same tracked model.",
             "itemtype": "method",
             "name": "__getAllModelConfigs",
@@ -2203,7 +2203,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 1029,
+            "line": 1031,
             "description": "A wrapper function that can invoke the pull callback on a computed mapping during an event callback.\nBecause an event callback predetermines the argument list, this method assumes the necessary computed configuration is\nbound as the part of the function context.\nWhen invoking the pull callback, it will pass in a object map from model alias to shallow copy of the tracked fields the\ncomputed value uses. It is NOT just the model, but a  copy of its attributes - feel free to change the properties.\nExample:\nfooBar: {\n  myModel: 'foo bar',\n  pull: function(models) {\n    console.log(models.myModel.foo, models.myModel.bar)\n  }\n}\nIf any model mapping is tracking all fields by passing true as its config, a copy of all the attributes for that model will be provided.",
             "params": [
                 {
