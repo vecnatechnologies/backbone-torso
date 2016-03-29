@@ -782,7 +782,9 @@
       if (!model) {
         this.__cache = {};
         _.each(this.getTrackedModels(), function(model) {
-          this.__updateCache(model);
+          if (model) {
+            this.__updateCache(model);
+          }
         }, this);
       } else {
         this.__cache[model.cid] = this.__generateHashValue(model);
