@@ -63,7 +63,7 @@ module.exports = function($) {
     responseTime: 100,
     response: function(settings) {
       var models = [],
-          data = _.isString(settings.data) ? JSON.parse(settings.data) : settings.data;
+          data = settings.data.ids.split(',');
       for (var i = 0; i < data.length; i++) {
         models.push({
           id: data[i],
