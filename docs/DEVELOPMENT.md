@@ -86,3 +86,13 @@ instead of
 ```
 gulp
 ```
+
+### Release Commands:
+Run once to install release-it:
+```
+npm install release-it -g
+```
+Then when you want to release run this (run from the upstream repo, i.e. the one directly from vecnatechnologies, not your fork).  You will need appropritate rights to push.
+```
+release-it
+```
