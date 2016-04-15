@@ -10,7 +10,7 @@ var FeedbackView = TorsoView.extend({
         '#my-checkbox': ['change']
       },
       then: function(evt) {
-        this.checkboxChange++;
+        this.increase();
         return {};
       },
       to: 'checkbox-test'
@@ -25,6 +25,10 @@ var FeedbackView = TorsoView.extend({
 
   resetCheckboxChange: function() {
     this.checkboxChange = 0;
+  },
+
+  increase: function() {
+    this.checkboxChange++;
   }
 });
 
