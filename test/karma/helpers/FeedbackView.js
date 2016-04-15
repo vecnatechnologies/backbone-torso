@@ -17,7 +17,7 @@ var FeedbackView = TorsoView.extend({
     }
   ],
 
-  template: '<input id="my-checkbox" type="checkbox" name="test" value="test"></input><div data-feedback="checkbox-test"></div>',
+  template: '<input id="my-checkbox" type="checkbox" name="test" value="test"></input><label id="my-label" for="my-checkbox">Test</label><div data-feedback="checkbox-test"></div>',
 
   initialize: function() {
     this.resetCheckboxChange();
