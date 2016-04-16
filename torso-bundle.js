@@ -1579,6 +1579,7 @@
      * @method delegateEvents
      */
     delegateEvents: function() {
+      this.undelegateEvents(); // always undelegate events - backbone sometimes doesn't.
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackCellCallbacks();
