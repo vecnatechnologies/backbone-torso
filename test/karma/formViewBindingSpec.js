@@ -1,39 +1,29 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var _ = require('underscore');
+var $ = require('jquery');
+var UpdateProfileFormModel = require('./helpers/UpdateProfileFormModel');
+var UpdateProfileFormView = require('./helpers/UpdateProfileFormView');
+var setupInjectionSite = require('./helpers/setupInjectionSite');
+require('../../modules/stickitUtils');
 
 describe("A Form View's two-way binding", function() {
-  var model, view, UpdateProfileFormModel, UpdateProfileFormView,
-    $, _, env;
+  var model, view;
 
-   // Sets up test view
-   beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      $ = env.window.$;
-      _ = env.window._;
+  setupInjectionSite.apply(this);
 
-      /* Example Form Model */
-      UpdateProfileFormModel = require(testSrcPath + '/UpdateProfileFormModel')(env.window.Torso.FormModel, _);
-
-      /* Example form view */
-      UpdateProfileFormView = require(testSrcPath + '/UpdateProfileFormView')(env.window.Torso.FormView, _);
-
-      /* Create basic model and view */
-      model = new UpdateProfileFormModel();
-      view = new UpdateProfileFormView({
-        model: model
-      });
-      view.attachTo($('body'));
-
-      done();
+  // Sets up test view
+  beforeEach(function() {
+    /* Create basic model and view */
+    model = new UpdateProfileFormModel();
+    view = new UpdateProfileFormView({
+      model: model
     });
+    view.attachTo(this.$app);
   });
 
-   afterEach(function() {
+  afterEach(function() {
     view.dispose();
-   });
+  });
 
   //******** PUSHING from FormModel to FormView ********//
 

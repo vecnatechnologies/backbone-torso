@@ -1,38 +1,26 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var NestedExampleFormModel = require('./helpers/NestedExampleFormModel');
+var NestedExampleFormView = require('./helpers/NestedExampleFormView');
+var setupInjectionSite = require('./helpers/setupInjectionSite');
+require('../../modules/stickitUtils');
 
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+describe("A Form View's two-way binding", function() {
+  var model, view;
 
-describe("A Form View's nested two-way binding", function() {
-  var model, view, NestedExampleFormModel, NestedExampleFormView,
-      init, $, _, env;
+  setupInjectionSite.apply(this);
 
   // Sets up test view
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      $ = env.window.$;
-      _ = env.window._;
-
-      /* Example Form Model */
-      NestedExampleFormModel = require(testSrcPath + '/NestedExampleFormModel')(env.window.Torso.FormModel, _);
-
-      /* Example form view */
-      NestedExampleFormView = require(testSrcPath + '/NestedExampleFormView')(env.window.Torso.FormView, _);
-
-      /* Create basic model and view */
-      model = new NestedExampleFormModel();
-      view = new NestedExampleFormView({
-        model: model
-      });
-      $('body').append(view.$el);
-
-      done();
+  beforeEach(function() {
+    /* Create basic model and view */
+    model = new NestedExampleFormModel();
+    view = new NestedExampleFormView({
+      model: model
     });
+    view.attachTo(this.$app);
   });
 
   afterEach(function() {
-   view.dispose();
+    view.dispose();
   });
 
 

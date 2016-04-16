@@ -1,28 +1,17 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var $ = require('jquery');
+var ClickView = require('./helpers/ClickView');
+var ParentView = require('./helpers/ParentClickView');
+var setupInjectionSite = require('./helpers/setupInjectionSite');
 
 describe('A View being deactivated and activated', function() {
 
-  var env, $, ClickView, ParentView;
-
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      $ = env.window.$;
-      ClickView = require(testSrcPath + '/clickViewGenerator')(env.window);
-      ParentView = require(testSrcPath + '/parentClickViewGenerator')(env.window);
-      $('body').append('<div class="app"></div>');
-      done();
-    });
-  });
+  setupInjectionSite.apply(this);
 
   it('can be deactivated correctly', function() {
     var view = new ClickView();
     expect(view.$el).toBeDefined();
     expect(view.isActive()).toBe(true);
-    view.attachTo($('div.app'));
+    view.attachTo(this.$app);
     expect(view.isActive()).toBe(true);
     view.deactivate();
     expect(view.isActive()).toBe(false);
@@ -69,7 +58,7 @@ describe('A View being deactivated and activated', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attachTo($('div.app'));
+    view.attachTo(this.$app);
 
     expect(view.myClick).not.toHaveBeenCalled();
     expect(childView1.myClick).not.toHaveBeenCalled();
@@ -118,12 +107,12 @@ describe('A View being deactivated and activated', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attachTo($('div.app'));
+    view.attachTo(this.$app);
     view.deactivate();
     expect($('div.parent').length).toBe(1);
     expect($('div.app').length).toBe(0);
     expect(view.$el).toBeDefined();
-    $('div.app').append('<div class="parent child">Dont trigger event!</div>');
+    this.$app.append('<div class="parent child">Dont trigger event!</div>');
 
     expect(view.myClick).not.toHaveBeenCalled();
     expect(childView1.myClick).not.toHaveBeenCalled();
@@ -169,11 +158,11 @@ describe('A View being deactivated and activated', function() {
     expect(view.$el).toBeDefined();
     expect(childView1.$el).toBeDefined();
     expect(childView2.$el).toBeDefined();
-    view.attachTo($('div.app'));
+    view.attachTo(this.$app);
     expect($('div.parent').length).toBe(1);
     expect($('div.app').length).toBe(0);
     expect(view.$el).toBeDefined();
-    $('div.app').append('<div class="parent child">Dont trigger event!</div>');
+    this.$app.append('<div class="parent child">Dont trigger event!</div>');
 
     expect(view.myClick).not.toHaveBeenCalled();
     expect(childView1.myClick).not.toHaveBeenCalled();

@@ -1,16 +1,7 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
+var templateRenderer = require('../../modules/templateRenderer');
+var $ = require('jquery');
 
 describe('TemplateRenderer.hotswap', function() {
-  var env, $, templateRenderer;
-
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment){
-      env = environment;
-      templateRenderer = env.window.Torso.Utils.templateRenderer;
-      $ = env.window.$;
-      done();
-    });
-  });
 
   describe('when replacing DOM elements', function() {
     function validateDOMReplacement(oldHTML, newHTML) {

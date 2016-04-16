@@ -1,22 +1,10 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var Handlebars = require('handlebars'),
-    spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var _ = require('underscore');
+var $ = require('jquery');
+var FormModel = require('../../modules/FormModel');
+var FormView = require('../../modules/FormView');
 
 describe('A Form Model\'s Validation of nested attributes', function() {
-  var FormModel, FormView, env, $, _;
-
-  // Set up virtual dom and dependencies
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      _ = env.window._;
-      $ = env.window.$;
-      FormModel = env.window.Torso.FormModel;
-      FormView = env.window.Torso.FormView;
-      done();
-    });
-  });
 
   describe('during multifield validation', function() {
     describe('at a form level', function() {

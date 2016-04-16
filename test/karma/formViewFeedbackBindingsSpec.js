@@ -1,25 +1,17 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var _ = require('underscore');
+var $ = require('jquery');
+var TorsoFormModel = require('../../modules/FormModel');
+var UpdateProfileFormView = require('./helpers/UpdateProfileFormView');
+var setupInjectionSite = require('./helpers/setupInjectionSite');
+require('../../modules/stickitUtils');
 
 describe("A Form View's feedback bindings", function() {
-  var model, view, UpdateProfileFormView,
-      init, $, _, env;
 
-  // Sets up test view
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      $ = env.window.$;
-      _ = env.window._;
-      UpdateProfileFormView = require(testSrcPath + '/UpdateProfileFormView')(env.window.Torso.FormView, _);
-      done();
-    });
-  });
+  setupInjectionSite.apply(this);
 
   it('can update a feedback zone on change of an input', function() {
-    var TestFormModel = env.window.Torso.FormModel.extend({
+    var TestFormModel = TorsoFormModel.extend({
       defaults: {
         fullName: ''
       },
@@ -32,7 +24,7 @@ describe("A Form View's feedback bindings", function() {
     var testView = new UpdateProfileFormView({
       model: new TestFormModel()
     });
-    testView.attachTo($('body'));
+    testView.attachTo(this.$app);
     var feedbackZone = testView.$el.find('[data-feedback="fullName-error"]');
     var input = testView.$el.find('[data-model="fullName"]');
     expect(feedbackZone.text()).toBe('');
@@ -43,7 +35,7 @@ describe("A Form View's feedback bindings", function() {
   });
 
   it('can update a feedback zone on change of a radio group', function() {
-    var TestFormModel = env.window.Torso.FormModel.extend({
+    var TestFormModel = TorsoFormModel.extend({
       defaults: {
         gender: undefined
       },
@@ -56,7 +48,7 @@ describe("A Form View's feedback bindings", function() {
     var testView = new UpdateProfileFormView({
       model: new TestFormModel()
     });
-    testView.attachTo($('body'));
+    testView.attachTo(this.$app);
     var feedbackZone = testView.$el.find('[data-feedback="gender-error"]');
     var maleInput = testView.$el.find('[data-model="gender"][value="male"]');
     var femaleInput = testView.$el.find('[data-model="gender"][value="female"]');
@@ -68,7 +60,7 @@ describe("A Form View's feedback bindings", function() {
   });
 
   it('can update a feedback zone on change of a checkbox group', function() {
-    var TestFormModel = env.window.Torso.FormModel.extend({
+    var TestFormModel = TorsoFormModel.extend({
       defaults: {
         schedule: []
       },
@@ -82,7 +74,7 @@ describe("A Form View's feedback bindings", function() {
     var testView = new UpdateProfileFormView({
       model: new TestFormModel()
     });
-    testView.attachTo($('body'));
+    testView.attachTo(this.$app);
     var feedbackZone = testView.$el.find('[data-feedback="schedule-error"]');
     var mondayCheckbox = testView.$el.find('[data-model="schedule"][value="M"]');
     var tuesdayCheckbox = testView.$el.find('[data-model="schedule"][value="T"]');

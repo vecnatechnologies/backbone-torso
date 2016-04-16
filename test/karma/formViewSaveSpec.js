@@ -1,23 +1,20 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var FormView = require('../../modules/FormView');
+var FormModel = require('../../modules/FormModel');
+var _ = require('underscore');
+var $ = require('jquery');
+var TestModel = require('./helpers/TestModel');
+var TestModel2 = require('./helpers/TestModel2');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var setupInjectionSite = require('./helpers/setupInjectionSite');
 
 describe('A Form View saving', function() {
+  var testModel, testModel2, testFormModel, routes;
 
-  var testModel, testModel2, testFormModel, TestModel, TestModel2, FormModel, FormView, env, _, $;
+  setupInjectionSite.apply(this);
 
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      $ = env.window.$;
-      _ = env.window._;
-      TestModel = require(testSrcPath + '/TestModel')(env.window.Torso.NestedModel),
-      FormModel = env.window.Torso.FormModel;
-      testModel = new TestModel();
-      FormView = env.window.Torso.FormView;
-      done();
-    });
+  beforeEach(function() {
+    routes = require('./helpers/mockjax')();
+    testModel = new TestModel();
   });
 
   //********** Save *********/
@@ -25,8 +22,8 @@ describe('A Form View saving', function() {
   it('can consume response from failed server-side save from the object model and update view', function(done) {
 
     var testFormModel, View, view;
-    env.window.$.mockjax.clear(env.routes['/tests|post']);
-    env.window.$.mockjax({
+    $.mockjax.clear(routes['/tests|post']);
+    $.mockjax({
       url: '/tests',
       dataType: 'json',
       type: 'post',
@@ -72,7 +69,7 @@ describe('A Form View saving', function() {
       }
     });
     View = FormView.extend({
-      template: require(testSrcPath + '/save-errors-template'),
+      template: require('./helpers/save-errors-template.hbs'),
       events: {
         'click .submit': 'submit'
       },
@@ -108,7 +105,7 @@ describe('A Form View saving', function() {
     view = new View({
       model: testFormModel
     });
-    view.attachTo($('body'));
+    view.attachTo(this.$app);
     view.$el.find('.submit').click();
   });
 

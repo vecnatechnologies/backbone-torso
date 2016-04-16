@@ -1,18 +1,9 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var _ = require('underscore');
+var $ = require('jquery');
+var FormModel = require('../../modules/FormModel');
 
 describe("A Form Model's Validation", function() {
-  var FormModel, env, $, _;
-
-  // Set up virtual dom and dependencies
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      FormModel = env.window.Torso.FormModel;
-      done();
-    });
-  });
 
   it("can validate using custom functions", function() {
     var formModel = new FormModel({

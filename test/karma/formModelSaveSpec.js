@@ -1,22 +1,19 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var _ = require('underscore');
+var FormModel = require('../../modules/FormModel');
+var TestModel = require('./helpers/TestModel');
+var TestModel2 = require('./helpers/TestModel2');
+var $ = require('jquery');
+var util = require('util');
 
 describe('A Form Model saving', function() {
 
-  var testModel, testModel2, testFormModel, TestModel, TestModel2, FormModel, env;
+  var testModel, testModel2, testFormModel, routes;
 
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      TestModel = require(testSrcPath + '/TestModel')(env.window.Torso.NestedModel),
-      TestModel2 = require(testSrcPath + '/TestModel2')(env.window.Torso.NestedModel),
-      FormModel = env.window.Torso.FormModel;
-      testModel = new TestModel();
-      testModel2 = new TestModel2();
-      done();
-    });
+  beforeEach(function() {
+    routes = require('./helpers/mockjax')();
+    testModel = new TestModel();
+    testModel2 = new TestModel2();
   });
 
   //********** Save *********/
@@ -119,8 +116,8 @@ describe('A Form Model saving', function() {
 
   it('can consume response from failed server-side save from the object model', function(done) {
     var testFormModel;
-    env.window.$.mockjax.clear(env.routes['/tests|post']);
-    env.window.$.mockjax({
+    $.mockjax.clear(routes['/tests|post']);
+    $.mockjax({
       url: '/tests',
       dataType: 'json',
       type: 'post',
@@ -194,8 +191,8 @@ describe('A Form Model saving', function() {
 
   it('can reset the the object models after save failures', function(done) {
     var testFormModel;
-    env.window.$.mockjax.clear(env.routes['/tests|post']);
-    env.window.$.mockjax({
+    $.mockjax.clear(routes['/tests|post']);
+    $.mockjax({
       url: '/tests',
       dataType: 'json',
       type: 'post',
@@ -256,7 +253,7 @@ describe('A Form Model saving', function() {
         textStatus = testModelResponse.response[1],
         jqXHR = testModelResponse.response[2],
         anotherResponse = responses[anotherTestModel.cid];
-      expect(env.window._.size(responses)).toBe(2);
+      expect(_.size(responses)).toBe(2);
       expect(testModelResponse.success).toBe(true);
       expect(data.foo).toBe(444);
       expect(data.bar).toBe('test');
@@ -268,6 +265,7 @@ describe('A Form Model saving', function() {
       done();
     }).fail(function(responses) {
       console.log('Should not have failed the save');
+      console.log(util.inspect(responses, false, null));
       expect(true).toBe(false);
       done();
     });
@@ -285,8 +283,8 @@ describe('A Form Model saving', function() {
           testModel2: testModel2
         }
       });
-    env.window.$.mockjax.clear(env.routes['/tests|post']);
-    env.window.$.mockjax({
+    $.mockjax.clear(routes['/tests|post']);
+    $.mockjax({
       url: '/tests',
       dataType: 'json',
       type: 'post',
@@ -310,7 +308,7 @@ describe('A Form Model saving', function() {
         textStatus = testModelResponse.response[1],
         errorThrown = testModelResponse.response[2],
         testModel2Response = responses[testModel2.cid];
-      expect(env.window._.size(responses)).toBe(2);
+      expect(_.size(responses)).toBe(2);
       expect(testModelResponse.success).toBe(false);
       expect(jqXHR.responseJSON.error).toBe('404');
       expect(textStatus).toBe('error');
@@ -376,8 +374,8 @@ describe('A Form Model saving', function() {
         }
       });
     testFormModel.url = '/unified';
-    env.window.$.mockjax.clear(env.routes['/unified|post']);
-    env.window.$.mockjax({
+    $.mockjax.clear(routes['/unified|post']);
+    $.mockjax({
       url: '/unified',
       dataType: 'json',
       type: 'post',

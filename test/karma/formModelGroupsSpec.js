@@ -1,5 +1,3 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
 describe('A Group of Form Models', function() {
 
   //*****************************************************

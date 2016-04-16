@@ -26,7 +26,7 @@ describe('A View', function() {
     });
 
     it('will be rendered to the DOM', function() {
-      expect(this.$appContainer.html()).toMatch(this.clickView.className);
+      expect(this.$appContainer.html()).toMatch('click');
     });
 
     it('will trigger event handlers defined in the events hash', function() {
@@ -60,7 +60,7 @@ describe('A View', function() {
     });
 
     it('will not be rendered to the DOM', function() {
-      expect(this.$appContainer.html()).not.toMatch(this.clickView.className);
+      expect(this.$appContainer.html()).not.toMatch('click');
     });
 
     it('will not trigger event handlers defined in the events hash', function() {
@@ -225,7 +225,7 @@ describe('A view with two children', function() {
     });
 
     it('children will not be rendered in dom', function() {
-      expect(this.$appContainer.html()).not.toMatch(this.childView1.className);
+      expect(this.$appContainer.html()).not.toMatch('click');
     });
 
     it('parent will not be attached to a parent', function() {

@@ -1,8 +1,10 @@
 var _ = require('underscore');
+jQuery = $ = require('jquery')
+require('jquery-mockjax');
 
-module.exports = function($) {
-
+module.exports = function() {
   var routes = {};
+  $.mockjax.clear();
 
   // Adds a route for: a GET to /tests. Will return new static data
   routes['/tests|get'] = $.mockjax({
@@ -93,4 +95,4 @@ module.exports = function($) {
   });
 
   return routes;
-}
+};

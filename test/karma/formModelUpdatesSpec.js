@@ -1,22 +1,15 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var FormModel = require('../../modules/FormModel');
+var TestModel = require('./helpers/TestModel');
+var TestModel2 = require('./helpers/TestModel2');
 
 describe('A Form Model, as object models are updated,', function() {
 
-  var testModel, testModel2, testFormModel, TestModel, TestModel2, FormModel, env;
+  var testModel, testModel2, testFormModel;
 
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      TestModel = require(testSrcPath + '/TestModel')(env.window.Torso.NestedModel),
-      TestModel2 = require(testSrcPath + '/TestModel2')(env.window.Torso.NestedModel),
-      FormModel = env.window.Torso.FormModel;
-      testModel = new TestModel();
-      testModel2 = new TestModel2();
-      done();
-    });
+  beforeEach(function() {
+    testModel = new TestModel();
+    testModel2 = new TestModel2();
   });
 
   //********** Updates ***********//

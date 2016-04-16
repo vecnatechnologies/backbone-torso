@@ -1,52 +1,46 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var _ = require('underscore');
+var $ = require('jquery');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var setupInjectionSite = require('./helpers/setupInjectionSite');
+var Handlebars = require('handlebars');
+var View = require('../../modules/View');
+var Model = require('../../modules/Model');
+var ListView = require('../../modules/ListView');
+var Collection = require('../../modules/Collection');
+var templateRenderer = require('../../modules/templateRenderer');
 
 describe('A List View', function() {
+  var MyListView, MyCollection, ItemView, myCollection, myListView;
 
-  var env, _, $, Handlebars, View, ListView, Collection, Model, MyListView, MyCollection,
-      ItemView, myCollection, myListView, templateRenderer;
+  setupInjectionSite.apply(this);
 
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      $ = env.window.$;
-      _ = env.window._;
-      Handlebars = env.window.Handlebars;
-      ListView = env.window.Torso.ListView;
-      View = env.window.Torso.View;
-      Collection = env.window.Torso.Collection;
-      Model = env.window.Torso.Model;
-      templateRenderer = env.window.Torso.Utils.templateRenderer;
-      MyListView = ListView.extend({
-        className: 'list'
-      });
-      spyOnBackbone(MyListView, 'render');
-      MyCollection = Collection.extend({
-        model: Model
-      });
-      ItemView = View.extend({
-        events: {
-          'click div.item-details': 'myClick'
-        },
-        template: Handlebars.compile('<div class="item-details">{{model.cid}}</div>'),
-        initialize: function(args) {
-          this.model = args.item;
-        },
-        className: 'item',
-        myClick: _.noop
-      });
-      spyOnBackbone(ItemView, 'myClick');
-      myCollection = new MyCollection();
-      myListView = new MyListView({
-        collection: myCollection,
-        modelName: 'item',
-        itemView: ItemView
-      });
-      myListView.render();
-      done();
+  beforeEach(function() {
+    MyListView = ListView.extend({
+      className: 'list'
     });
+    spyOnBackbone(MyListView, 'render');
+    MyCollection = Collection.extend({
+      model: Model
+    });
+    ItemView = View.extend({
+      events: {
+        'click div.item-details': 'myClick'
+      },
+      template: Handlebars.compile('<div class="item-details">{{model.cid}}</div>'),
+      initialize: function(args) {
+        this.model = args.item;
+      },
+      className: 'item',
+      myClick: _.noop
+    });
+    spyOnBackbone(ItemView, 'myClick');
+    myCollection = new MyCollection();
+    myListView = new MyListView({
+      collection: myCollection,
+      modelName: 'item',
+      itemView: ItemView
+    });
+    myListView.render();
   });
 
   afterEach(function() {
@@ -108,7 +102,7 @@ describe('A List View', function() {
       itemView: ItemView,
       emptyTemplate: Handlebars.compile('<div class="empty-list"></div>')
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     expect(myListView.$el.find('div.empty-list').length).toBe(1);
     expect(myListView.$el.find('div').length).toBe(1);
     var model = new Model();
@@ -131,7 +125,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     // Does empty template affect the injection site or the list view?
     expect(myListView.$el.find('div.empty-list').length).toBe(1);
     expect(myListView.$el.find('div').length).toBe(2);
@@ -156,7 +150,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     expect(myListView.$el.find('div.templated-list').length).toBe(1);
     expect(myListView.$el.find('[inject="children"]').length).toBe(1);
     expect(myListView.$el.find('div').length).toBe(2);
@@ -266,7 +260,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     var model = new Model({order: 3});
     myCollection.add(model);
     var model2 = new Model({order: 2});
@@ -286,7 +280,7 @@ describe('A List View', function() {
     var startTime, endTime, i,
         numberOfViews = 1000,
         threshold = 1000;
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }
@@ -317,7 +311,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }
@@ -346,7 +340,7 @@ describe('A List View', function() {
       modelName: 'item',
       itemView: ItemView
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     for (i = 0; i < numberOfViews; i++) {
       models.push(new Model())
     }
@@ -361,7 +355,7 @@ describe('A List View', function() {
   });
 
   it('can add view to a large list in a reasonable time', function() {
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     var startTime, endTime, i,
         models = [],
         numberOfViews = 1000,
@@ -397,7 +391,7 @@ describe('A List View', function() {
         modelName: 'item',
         itemView: ItemView
       });
-      myListView.attachTo($('body'));
+      myListView.attachTo(this.$app);
       myCollection.reset(models);
     });
 
@@ -462,7 +456,7 @@ describe('A List View', function() {
           template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
           itemContainer: 'children'
         });
-        myListView.attachTo($('body'));
+        myListView.attachTo(this.$app);
         myCollection.reset(models);
         newModels = []
         for (i = 0; i < 100; i++) {
@@ -509,7 +503,7 @@ describe('A List View', function() {
       modelName: 'item',
       itemView: ItemView
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
@@ -553,7 +547,7 @@ describe('A List View', function() {
       template: Handlebars.compile('<div class="templated-list"></div><div inject="children"></div>'),
       itemContainer: 'children'
     });
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     for (i = 0; i < numberOfViews; i++) {
        models.push(new Model())
     }
@@ -602,7 +596,7 @@ describe('A List View', function() {
   });
 
   it('can get list of item views sorted correctly', function() {
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     var model = new Model({order: 1});
     myCollection.add(model);
     var model2 = new Model({order: 2});
@@ -637,7 +631,7 @@ describe('A List View', function() {
     var numberOfViews = 1000,
       threshold = 50;
     myCollection.comparator = 'order';
-    myListView.attachTo($('body'));
+    myListView.attachTo(this.$app);
     for (i = 0; i < numberOfViews; i++) {
       myCollection.add(new Model({order: numberOfViews - i}), {silent: true});
     }

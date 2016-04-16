@@ -1,22 +1,15 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+var _ = require('underscore');
+var FormModel = require('../../modules/FormModel');
+var TestModel = require('./helpers/TestModel');
+var TestModel2 = require('./helpers/TestModel2');
 
 describe('A Form Model during initialization', function() {
-  var FormModel, TestModel, testModel, TestModel2, testModel2, env, _;
+  var testModel, testModel2;
 
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      _ = env.window._;
-      FormModel = env.window.Torso.FormModel;
-      TestModel = require(testSrcPath + '/TestModel')(env.window.Torso.NestedModel),
-      TestModel2 = require(testSrcPath + '/TestModel2')(env.window.Torso.NestedModel),
-      testModel = new TestModel();
-      testModel2 = new TestModel2();
-      done();
-    });
+  beforeEach(function() {
+    testModel = new TestModel();
+    testModel2 = new TestModel2();
   });
 
   it('can be initialized without an object model', function() {

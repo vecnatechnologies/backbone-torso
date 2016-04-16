@@ -1,21 +1,10 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
-var testSrcPath = '../../source',
-    spyOnBackbone = require('./backboneSpy');
+var spyOnBackbone = require('./helpers/spyOnBackbone');
+require('./helpers/mockjax')();
+var _ = require('underscore');
+var Collection = require('../../modules/Collection');
+var Model = require('../../modules/Model');
 
 describe('A Torso Collection', function() {
-
-  var env, _, Collection, Model;
-
-  beforeEach(function(done) {
-    require('./clientEnv')().done(function(environment) {
-      env = environment;
-      Collection = env.window.Torso.Collection;
-      Model = env.window.Torso.Model;
-      _ = env.window._;
-      done();
-    });
-  });
 
   it('can iniatialize a cache correctly', function() {
     var MyModel = Model.extend({});
