@@ -4,8 +4,6 @@ var spyOnBackbone = require('./spyOnBackbone');
 
 var CheckboxFeedbackView = TorsoView.extend({
 
-  // DO NOT ADD events HASH! Important for tests.
-
   feedback: [
     {
       when: {
@@ -34,6 +32,39 @@ var CheckboxFeedbackView = TorsoView.extend({
   }
 });
 
+var EmptyEventsFeedbackView = TorsoView.extend({
+
+  // DO NOT ADD events HASH! Important for tests.
+
+  feedback: [
+    {
+      when: {
+        '#my-div': ['click']
+      },
+      then: function(evt) {
+        this.increase();
+        return {};
+      },
+      to: 'my-feedback'
+    }
+  ],
+
+  template: '<div id="my-div"/><div data-feedback="my-feedback"></div>',
+
+  initialize: function() {
+    this.resetIncrease();
+  },
+
+  resetIncrease: function() {
+    this.change = 0;
+  },
+
+  increase: function() {
+    this.change++;
+  }
+});
+
 module.exports = {
-  CheckboxFeedbackView: CheckboxFeedbackView
+  CheckboxFeedbackView: CheckboxFeedbackView,
+  EmptyEventsFeedbackView: EmptyEventsFeedbackView
 };

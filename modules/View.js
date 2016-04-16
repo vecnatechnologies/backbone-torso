@@ -582,7 +582,7 @@
 
     /**
      * Invokes a feedback entry's "then" method
-     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
+     * @param to {String} the "to" field corresponding to the feedback entry to be invoked.
      * @param [evt] {Event} the event to be passed to the "then" method
      * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
      * @method invokeFeedback

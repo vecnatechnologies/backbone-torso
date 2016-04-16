@@ -280,6 +280,7 @@
      * @method delegateEvents
      */
     delegateEvents: function() {
+      this.undelegateEvents(); // always undelegate events - backbone sometimes doesn&#x27;t.
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackCellCallbacks();
@@ -684,7 +685,7 @@
 
     /**
      * Invokes a feedback entry&#x27;s &quot;then&quot; method
-     * @param to {String} the &quot;to&quot; field corresponding to the feedback entry to be invoked
+     * @param to {String} the &quot;to&quot; field corresponding to the feedback entry to be invoked.
      * @param [evt] {Event} the event to be passed to the &quot;then&quot; method
      * @param [indexMap] {Object} a map from index variable name to index value. Needed for &quot;to&quot; fields with array notation.
      * @method invokeFeedback

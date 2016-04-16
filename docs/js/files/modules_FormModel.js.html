@@ -276,7 +276,13 @@
       if (computed) {
         config.mapping = mapping;
         _.each(this.__getModelAliases(config), function(modelAlias) {
-          config.mapping[modelAlias] = config.mapping[modelAlias].split(&#x27; &#x27;);
+          var configMappingForAlias = config.mapping[modelAlias];
+          if (_.isString(configMappingForAlias)) {
+            configMappingForAlias = configMappingForAlias.split(&#x27; &#x27;);
+          } else if (configMappingForAlias === true) {
+            configMappingForAlias = undefined;
+          }
+          config.mapping[modelAlias] = configMappingForAlias;
         });
       } else {
         config.mapping = fields;

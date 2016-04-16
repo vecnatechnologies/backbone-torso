@@ -173,7 +173,13 @@
       if (computed) {
         config.mapping = mapping;
         _.each(this.__getModelAliases(config), function(modelAlias) {
-          config.mapping[modelAlias] = config.mapping[modelAlias].split(' ');
+          var configMappingForAlias = config.mapping[modelAlias];
+          if (_.isString(configMappingForAlias)) {
+            configMappingForAlias = configMappingForAlias.split(' ');
+          } else if (configMappingForAlias === true) {
+            configMappingForAlias = undefined;
+          }
+          config.mapping[modelAlias] = configMappingForAlias;
         });
       } else {
         config.mapping = fields;
