@@ -103,7 +103,7 @@
    * @module    Torso
    * @namespace Torso
    * @class  validation
-   * @author ariel.wexler@vecna.com
+   * @author ariel.wexler@vecna.com, kent.willis@mostlyepic.com
    */
   var Validation = (function(){
 
@@ -119,12 +119,10 @@
     };
 
     // Returns an array with attributes passed through options
-    var getOptionsAttrs = function(options, view) {
+    var getOptionsAttrs = function(options) {
       var attrs = options.attributes;
       if (_.isFunction(attrs)) {
-        attrs = attrs(view);
-      } else if (_.isString(attrs) && (_.isFunction(defaultAttributeLoaders[attrs]))) {
-        attrs = defaultAttributeLoaders[attrs](view);
+        attrs = attrs();
       }
       if (_.isArray(attrs)) {
         return attrs;
@@ -342,7 +340,7 @@
     };
 
     // Contains the methods that are mixed in on the model when binding
-    var mixin = function(view, options) {
+    var mixin = function(options) {
       return {
 
         /**
@@ -389,7 +387,7 @@
         isValid: function(option) {
           var flattened, attrs, error, invalidAttrs;
 
-          option = option || getOptionsAttrs(options, view);
+          option = option || getOptionsAttrs(options);
 
           if(_.isString(option)){
             attrs = [option];
@@ -410,14 +408,6 @@
                 invalidAttrs = invalidAttrs || {};
                 invalidAttrs[attr] = error;
               }
-              // Loop through all associated views
-              _.each(this.associatedViews, function(view) {
-                if (error) {
-                  options.invalid(view, attr, error, options.selector);
-                } else {
-                  options.valid(view, attr, options.selector);
-                }
-              }, this);
             }, this);
           }
 
@@ -434,34 +424,14 @@
         // You can call it manually without any parameters to validate the
         // entire model.
         validate: function(attrs, setOptions){
-          var model = this, validateAll, opt, validatedAttrs, allAttrs, flattened, changedAttrs, result;
-
-          validateAll = !attrs;
-          opt = _.extend({}, options, setOptions);
-          validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(options, view));
-          allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs);
-          flattened = flatten(allAttrs);
-          changedAttrs = attrs ? flatten(attrs) : flattened;
-          result = validateModel(model, allAttrs, _.pick(flattened, _.keys(validatedAttrs)));
+          var model = this;
+          var opt = _.extend({}, options, setOptions);
+          var validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(options));
+          var allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs);
+          var flattened = _.extend(flatten(allAttrs), attrs); // allow people to pass in nested attributes
+          var changedAttrs = attrs ? flatten(attrs) : flattened;
+          var result = validateModel(model, allAttrs, _.pick(flattened, _.keys(validatedAttrs)));
           model._isValid = result.isValid;
-
-          //After validation is performed, loop through all associated views
-          _.each(model.associatedViews, function(view){
-
-            // After validation is performed, loop through all validated and changed attributes
-            // and call the valid and invalid callbacks so the view is updated.
-            _.each(validatedAttrs, function(val, attr){
-                var invalid = result.invalidAttrs.hasOwnProperty(attr),
-                  changed = changedAttrs.hasOwnProperty(attr);
-
-                if(!invalid){
-                  opt.valid(view, attr, opt.selector);
-                }
-                if(invalid && (changed || validateAll)){
-                  opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector);
-                }
-            });
-          });
 
           // Trigger validated events.
           // Need to defer this so the model is actually updated before
@@ -481,41 +451,6 @@
       };
     };
 
-    // Helper to mix in validation on a model. Stores the view in the associated views array.
-    var bindModel = function(view, model, options) {
-      if (model.associatedViews) {
-        model.associatedViews.push(view);
-      } else {
-        model.associatedViews = [view];
-      }
-      _.extend(model, mixin(view, options));
-    };
-
-    // Removes view from associated views of the model or the methods
-    // added to a model if no view or single view provided
-    var unbindModel = function(model, view) {
-      if (view && model.associatedViews.length > 1){
-        model.associatedViews = _.without(model.associatedViews, view);
-      } else {
-        delete model.validate;
-        delete model.preValidate;
-        delete model.isValid;
-        delete model.associatedViews;
-      }
-    };
-
-    // Mix in validation on a model whenever a model is
-    // added to a collection
-    var collectionAdd = function(model) {
-      bindModel(this.view, model, this.options);
-    };
-
-    // Remove validation from a model whenever a model is
-    // removed from a collection
-    var collectionRemove = function(model) {
-      unbindModel(model);
-    };
-
     // Returns the public methods on Backbone.Validation
     return {
 
@@ -527,80 +462,11 @@
         _.extend(defaultOptions, options);
       },
 
-      // Hooks up validation on a view with a model
-      // or collection
-      bind: function(view, options) {
-        options = _.extend({}, defaultOptions, defaultCallbacks, options);
-
-        var model = options.model || view.model,
-            collection = options.collection || view.collection;
-
-        if(typeof model === 'undefined' && typeof collection === 'undefined'){
-          throw 'Before you execute the binding your view must have a model or a collection.\n' +
-                'See http://thedersen.com/projects/backbone-validation/#using-form-model-validation for more information.';
-        }
-
-        if(model) {
-          bindModel(view, model, options);
-        }
-        else if(collection) {
-          collection.each(function(model){
-            bindModel(view, model, options);
-          });
-          collection.bind('add', collectionAdd, {view: view, options: options});
-          collection.bind('remove', collectionRemove);
-        }
-      },
-
-      // Removes validation from a view with a model
-      // or collection
-      unbind: function(view, options) {
-        options = _.extend({}, options);
-        var model = options.model || view.model,
-            collection = options.collection || view.collection;
-
-        if(model) {
-          unbindModel(model, view);
-        }
-        else if(collection) {
-          collection.each(function(model){
-            unbindModel(model, view);
-          });
-          collection.unbind('add', collectionAdd);
-          collection.unbind('remove', collectionRemove);
-        }
-      },
-
       // Used to extend the Backbone.Model.prototype
       // with validation
-      mixin: mixin(null, defaultOptions)
+      mixin: mixin(defaultOptions)
     };
   }());
-
-
-  // Callbacks
-  // ---------
-
-  var defaultCallbacks = Validation.callbacks = {
-
-    // Gets called when a previously invalid field in the
-    // view becomes valid. Removes any error message.
-    // Should be overridden with custom functionality.
-    valid: function(view, attr, selector) {
-      view.$('[' + selector + '~="' + attr + '"]')
-          .removeClass('invalid')
-          .removeAttr('data-error');
-    },
-
-    // Gets called when a field in the view becomes invalid.
-    // Adds a error message.
-    // Should be overridden with custom functionality.
-    invalid: function(view, attr, error, selector) {
-      view.$('[' + selector + '~="' + attr + '"]')
-          .addClass('invalid')
-          .attr('data-error', error);
-    }
-  };
 
 
   // Patterns
@@ -700,24 +566,6 @@
       });
     }
   };
-
-  // AttributeLoaders
-
-  var defaultAttributeLoaders = Validation.attributeLoaders = {
-    inputNames: function (view) {
-      var attrs = [];
-      if (view) {
-        view.$('form [name]').each(function () {
-          if (/^(?:input|select|textarea)$/i.test(this.nodeName) && this.name &&
-            this.type !== 'submit' && attrs.indexOf(this.name) === -1) {
-            attrs.push(this.name);
-          }
-        });
-      }
-      return attrs;
-    }
-  };
-
 
   // Built in validators
   // -------------------

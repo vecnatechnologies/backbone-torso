@@ -21,43 +21,34 @@ npm test
 ```
 or
 ```
-gulp test
+# Functional tests
+npm run test-func
+# Import tests
+npm run test-import
 ```
-#### To run the tests with the window console output on the command line:
+
+#### To run a specific import test:
+
 ```
-gulp test -v
-gulp test:watch -v
-```
-#### To run a specific test:
-```
-gulp test --test-folder [import or functional] --test [test spec file name w/o extension]
-gulp test:watch --test-folder [import or functional] --test [test spec file name w/o extension]
-```
-example to run test/spec/functional/formModelSave.js:
-```
-gulp test --test formModelSave
+gulp test-import --test-folder import --test [test spec file name w/o extension]
+gulp test-import:watch --test-folder import --test [test spec file name w/o extension]
 ```
 example from another folder (test/spec/import/commonJsImportTest.js)
 ```
 gulp test --test-folder import --test commonJsImportTest
 ```
 
-### Watch changes and run tests:
-```
-npm run test:watch
-```
-or
-```
-gulp test:watch
-```
+#### To run a specific function test:
 
-### Watch changes and run tests and docs:
+**Unknown - to be determined**
+
+### Watch changes and run import tests:
 ```
-npm run watch
+npm run watch-import
 ```
 or
 ```
-gulp watch
+gulp watch-import
 ```
 
 ### Generate Docs:

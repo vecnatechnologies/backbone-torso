@@ -8,11 +8,12 @@
   "scripts": {
     "build": "gulp && npm run doc",
     "prepublish": "gulp prepublish && npm run doc",
-    "test": "npm run karma-test && gulp test",
-    "karma-test": "./node_modules/karma/bin/karma start",
+    "test": "npm run test-func && npm run test-import",
+    "test-func": "./node_modules/karma/bin/karma start",
+    "test-import": "gulp test-import",
     "doc": "mkdir docs/js -p && yuidoc",
     "doc:dev": "mkdir docs/js -p && yuidoc --server",
-    "watch": "gulp watch & npm run doc:dev",
+    "watch-import": "gulp watch-import & npm run doc:dev",
     "clean": "gulp clean"
   },
   "main": "modules/torso.js",

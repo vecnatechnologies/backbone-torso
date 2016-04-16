@@ -4734,7 +4734,7 @@
         },
         {
             "file": "modules/validation.js",
-            "line": 348,
+            "line": 346,
             "description": "Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but\nyou can pass in different values to use in the validation process instead.",
             "params": [
                 {
