@@ -198,11 +198,12 @@
         attrName = attr.substring(0, firstBracket);
         remainder = attr.substring(firstBracket + 2);
         subAttrs = [];
-        for (i = 0 ; i < model.get(attrName).length; i++) {
+        var valueArray = model.get(attrName);
+        _.each(valueArray, function(value, i) {
           newIndices = subIndices.slice();
           newIndices.push(i);
           subAttrs.push(generateSubAttributes(attrName + '[' + i + ']' + remainder, model, newIndices));
-        }
+        });
         return subAttrs;
       }
     };
