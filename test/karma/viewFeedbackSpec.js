@@ -1,13 +1,13 @@
 var $ = require('jquery');
 var _ = require('underscore');
-var FeedbackView = require('./helpers/FeedbackView');
+var feedbackViews = require('./helpers/feedbackViews');
 var setupInjectionSite = require('./helpers/setupInjectionSite');
 
 describe('A View', function() {
   setupInjectionSite.apply(this);
 
   beforeEach(function() {
-    this.feedbackView = new FeedbackView();
+    this.feedbackView = new feedbackViews.CheckboxFeedbackView();
     this.feedbackView.attachTo(this.$app);
   });
 
@@ -15,8 +15,7 @@ describe('A View', function() {
     this.feedbackView.resetCheckboxChange();
   });
 
-  // THIS FAILS! See https://github.com/vecnatechnologies/backbone-torso/issues/247
-  xit('can invoke feedback once after render', function() {
+  it('can invoke feedback once after render', function() {
     expect(this.feedbackView.checkboxChange).toBe(0);
     this.feedbackView.$el.find('#my-checkbox').click();
     expect(this.feedbackView.checkboxChange).toBe(1);

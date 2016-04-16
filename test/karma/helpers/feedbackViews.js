@@ -2,7 +2,9 @@ var _ = require('underscore');
 var TorsoView = require('./../../../modules/View');
 var spyOnBackbone = require('./spyOnBackbone');
 
-var FeedbackView = TorsoView.extend({
+var CheckboxFeedbackView = TorsoView.extend({
+
+  // DO NOT ADD events HASH! Important for tests.
 
   feedback: [
     {
@@ -32,4 +34,6 @@ var FeedbackView = TorsoView.extend({
   }
 });
 
-module.exports = FeedbackView;
+module.exports = {
+  CheckboxFeedbackView: CheckboxFeedbackView
+};
