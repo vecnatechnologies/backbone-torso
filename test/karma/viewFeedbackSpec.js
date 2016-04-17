@@ -84,6 +84,31 @@ describe('A View', function() {
       expect(this.listenToFeedbackView.change).toBe(1);
     });
 
+    it('can invoke the then when model is present', function() {
+      this.listenToFeedbackView.feedback = [
+        {
+          when: {
+            'listenTo': [
+              {
+                object: 'model',
+                events: 'change',
+              }
+            ]
+          },
+          then: function(evt) {
+            this.increase();
+            return {};
+          },
+          to: 'my-feedback'
+        }
+      ],
+      this.listenToFeedbackView.model = new TorsoModel();
+      this.listenToFeedbackView.delegateEvents();
+      expect(this.listenToFeedbackView.change).toBe(0);
+      this.listenToFeedbackView.model.set('foo', 1);
+      expect(this.listenToFeedbackView.change).toBe(1);
+    });
+
     it('can skip the then when model is not present', function() {
       var model = new TorsoModel();
       expect(this.listenToFeedbackView.change).toBe(0);

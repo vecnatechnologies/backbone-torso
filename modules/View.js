@@ -1040,7 +1040,12 @@
             });
             // Special "listenTo" listeners
             _.each(declaration.when.listenTo, function(listenToConfig) {
-              var obj = _.isFunction(listenToConfig.object) ? _.bind(listenToConfig.object, self)() : listenToConfig.object;
+              var obj = listenToConfig.object;
+              if (_.isFunction(obj)) {
+                obj = _.bind(listenToConfig.object, self)();
+              } else if (_.isString(obj)) {
+                obj = _.result(self, listenToConfig.object);
+              }
               if (obj) {
                 var invokeThen = _.bind(self.__generateThenCallback(bindInfo, listenToConfig.events), self);
                 self.listenTo(obj, listenToConfig.events, invokeThen);

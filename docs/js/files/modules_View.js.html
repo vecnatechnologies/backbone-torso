@@ -133,7 +133,8 @@
     __isAttachedToParent: false,
     __isDisposed: false,
     __attachedCallbackInvoked: false,
-    __feedbackEvents: null,
+    __feedbackOnEvents: null,
+    __feedbackListenToEvents: null,
     /**
      * Array of feedback when-then-to&#x27;s. Example:
      * [{
@@ -157,7 +158,8 @@
       this.__childViews = {};
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
-      this.__feedbackEvents = [];
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
@@ -1064,11 +1066,16 @@
       var i,
           self = this;
 
-      // Cleanup previous &quot;on&quot; events
-      for (i = 0; i &lt; this.__feedbackEvents.length; i++) {
-        this.off(null, this.__feedbackEvents[i]);
+      // Cleanup previous &quot;on&quot; and &quot;listenTo&quot; events
+      for (i = 0; i &lt; this.__feedbackOnEvents.length; i++) {
+        this.off(null, this.__feedbackOnEvents[i]);
       }
-      this.__feedbackEvents = [];
+      for (i = 0; i &lt; this.__feedbackListenToEvents.length; i++) {
+        var feedbackListenToConfig = this.__feedbackListenToEvents[i];
+        this.stopListening(feedbackListenToConfig.obj, feedbackListenToConfig.name, feedbackListenToConfig.callback);
+      }
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
 
       // For each feedback configuration
       _.each(this.feedback, function(declaration) {
@@ -1130,22 +1137,55 @@
             });
             // Special &quot;on&quot; listeners
             _.each(declaration.when.on, function(eventKey) {
-              var invokeThen = function() {
-                var result,
-                    args = [{
-                      args: arguments,
-                      type: eventKey
-                    }];
-                args.push(bindInfo.indices);
-                result = bindInfo.fn.apply(self, args);
-                self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
-              };
+              var invokeThen = self.__generateThenCallback(bindInfo, eventKey);
               self.on(eventKey, invokeThen, self);
-              self.__feedbackEvents.push(invokeThen);
+              self.__feedbackOnEvents.push(invokeThen);
+            });
+            // Special &quot;listenTo&quot; listeners
+            _.each(declaration.when.listenTo, function(listenToConfig) {
+              var obj = listenToConfig.object;
+              if (_.isFunction(obj)) {
+                obj = _.bind(listenToConfig.object, self)();
+              } else if (_.isString(obj)) {
+                obj = _.result(self, listenToConfig.object);
+              }
+              if (obj) {
+                var invokeThen = _.bind(self.__generateThenCallback(bindInfo, listenToConfig.events), self);
+                self.listenTo(obj, listenToConfig.events, invokeThen);
+                self.__feedbackListenToEvents.push({
+                  object: obj,
+                  name: listenToConfig.events,
+                  callback: invokeThen
+                });
+              }
             });
           });
         });
       });
+    },
+
+
+    /**
+     * Returns a properly wrapped &quot;then&quot; using a configuration object &quot;bindInfo&quot; and an &quot;eventKey&quot; that will be passed as the type
+     * @param bindInfo {Object}
+     * @param   bindInfo.feedbackCellField the property name of the feedback cell to store the &quot;then&quot; instructions
+     * @param   bindInfo.fn the original &quot;then&quot; function
+     * @param   [bindInfo.indices] the index map
+     * @return {Function} the properly wrapped &quot;then&quot; function
+     * @private
+     * @method __generateThenCallback
+     */
+    __generateThenCallback: function(bindInfo, eventKey) {
+      return function() {
+        var result,
+            args = [{
+              args: arguments,
+              type: eventKey
+            }];
+        args.push(bindInfo.indices);
+        result = bindInfo.fn.apply(this, args);
+        this.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
+      };
     },
 
     /**
@@ -1188,7 +1228,7 @@
             qualifiedFields = [whenField],
             useAtNotation = (whenField.charAt(0) === &#x27;@&#x27;);
 
-        if (whenField !== &#x27;on&#x27;) {
+        if (whenField !== &#x27;on&#x27; || when !== &#x27;listenTo&#x27;) {
           if (useAtNotation) {
             whenField = whenField.substring(1);
             // substitute indices in to &quot;when&quot; placeholders
