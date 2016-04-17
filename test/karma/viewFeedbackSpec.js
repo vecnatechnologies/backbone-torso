@@ -84,7 +84,7 @@ describe('A View', function() {
       expect(this.listenToFeedbackView.change).toBe(1);
     });
 
-    it('can invoke the then when model is present', function() {
+    it('can invoke the then when model is present and referenced by name', function() {
       this.listenToFeedbackView.feedback = [
         {
           when: {
