@@ -2,6 +2,7 @@ var $ = require('jquery');
 var _ = require('underscore');
 var feedbackViews = require('./helpers/feedbackViews');
 var setupInjectionSite = require('./helpers/setupInjectionSite');
+var TorsoModel = require('../../modules/Model');
 
 describe('A View', function() {
   setupInjectionSite.apply(this);
@@ -63,5 +64,37 @@ describe('A View', function() {
       expect(this.checkboxFeedbackView.checkboxChange).toBe(2);
       expect(this.checkboxFeedbackView.$el.find('#my-checkbox').prop('checked')).toBe(false);
     });
-  })
+  });
+
+  describe('that uses listenTo on "when"s', function() {
+    beforeEach(function() {
+      this.listenToFeedbackView = new feedbackViews.ListenToFeedbackView();
+      this.listenToFeedbackView.attachTo(this.$app);
+    });
+
+    afterEach(function() {
+      this.listenToFeedbackView.resetIncrease();
+    });
+
+    it('can invoke the then when model is present', function() {
+      expect(this.listenToFeedbackView.change).toBe(0);
+      this.listenToFeedbackView.model = new TorsoModel();
+      this.listenToFeedbackView.delegateEvents();
+      this.listenToFeedbackView.model.set('foo', 1);
+      expect(this.listenToFeedbackView.change).toBe(1);
+    });
+
+    it('can skip the then when model is not present', function() {
+      var model = new TorsoModel();
+      expect(this.listenToFeedbackView.change).toBe(0);
+      this.listenToFeedbackView.model = model;
+      this.listenToFeedbackView.delegateEvents();
+      this.listenToFeedbackView.model.set('foo', 1);
+      expect(this.listenToFeedbackView.change).toBe(1);
+      this.listenToFeedbackView.model = undefined;
+      this.listenToFeedbackView.delegateEvents();
+      model.set('bar', 2);
+      expect(this.listenToFeedbackView.change).toBe(1);
+    });
+  });
 });

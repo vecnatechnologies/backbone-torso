@@ -30,7 +30,8 @@
     __isAttachedToParent: false,
     __isDisposed: false,
     __attachedCallbackInvoked: false,
-    __feedbackEvents: null,
+    __feedbackOnEvents: null,
+    __feedbackListenToEvents: null,
     /**
      * Array of feedback when-then-to's. Example:
      * [{
@@ -54,7 +55,8 @@
       this.__childViews = {};
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
-      this.__feedbackEvents = [];
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
@@ -961,11 +963,16 @@
       var i,
           self = this;
 
-      // Cleanup previous "on" events
-      for (i = 0; i < this.__feedbackEvents.length; i++) {
-        this.off(null, this.__feedbackEvents[i]);
+      // Cleanup previous "on" and "listenTo" events
+      for (i = 0; i < this.__feedbackOnEvents.length; i++) {
+        this.off(null, this.__feedbackOnEvents[i]);
       }
-      this.__feedbackEvents = [];
+      for (i = 0; i < this.__feedbackListenToEvents.length; i++) {
+        var feedbackListenToConfig = this.__feedbackListenToEvents[i];
+        this.stopListening(feedbackListenToConfig.obj, feedbackListenToConfig.name, feedbackListenToConfig.callback);
+      }
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
 
       // For each feedback configuration
       _.each(this.feedback, function(declaration) {
@@ -1027,22 +1034,50 @@
             });
             // Special "on" listeners
             _.each(declaration.when.on, function(eventKey) {
-              var invokeThen = function() {
-                var result,
-                    args = [{
-                      args: arguments,
-                      type: eventKey
-                    }];
-                args.push(bindInfo.indices);
-                result = bindInfo.fn.apply(self, args);
-                self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
-              };
+              var invokeThen = self.__generateThenCallback(bindInfo, eventKey);
               self.on(eventKey, invokeThen, self);
-              self.__feedbackEvents.push(invokeThen);
+              self.__feedbackOnEvents.push(invokeThen);
+            });
+            // Special "listenTo" listeners
+            _.each(declaration.when.listenTo, function(listenToConfig) {
+              var obj = _.isFunction(listenToConfig.object) ? _.bind(listenToConfig.object, self)() : listenToConfig.object;
+              if (obj) {
+                var invokeThen = _.bind(self.__generateThenCallback(bindInfo, listenToConfig.events), self);
+                self.listenTo(obj, listenToConfig.events, invokeThen);
+                self.__feedbackListenToEvents.push({
+                  object: obj,
+                  name: listenToConfig.events,
+                  callback: invokeThen
+                });
+              }
             });
           });
         });
       });
+    },
+
+
+    /**
+     * Returns a properly wrapped "then" using a configuration object "bindInfo" and an "eventKey" that will be passed as the type
+     * @param bindInfo {Object}
+     * @param   bindInfo.feedbackCellField the property name of the feedback cell to store the "then" instructions
+     * @param   bindInfo.fn the original "then" function
+     * @param   [bindInfo.indices] the index map
+     * @return {Function} the properly wrapped "then" function
+     * @private
+     * @method __generateThenCallback
+     */
+    __generateThenCallback: function(bindInfo, eventKey) {
+      return function() {
+        var result,
+            args = [{
+              args: arguments,
+              type: eventKey
+            }];
+        args.push(bindInfo.indices);
+        result = bindInfo.fn.apply(this, args);
+        this.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
+      };
     },
 
     /**
@@ -1085,7 +1120,7 @@
             qualifiedFields = [whenField],
             useAtNotation = (whenField.charAt(0) === '@');
 
-        if (whenField !== 'on') {
+        if (whenField !== 'on' || when !== 'listenTo') {
           if (useAtNotation) {
             whenField = whenField.substring(1);
             // substitute indices in to "when" placeholders

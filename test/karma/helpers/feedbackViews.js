@@ -64,7 +64,44 @@ var EmptyEventsFeedbackView = TorsoView.extend({
   }
 });
 
+
+var ListenToFeedbackView = TorsoView.extend({
+
+  feedback: [
+    {
+      when: {
+        'listenTo': [
+          {
+            object: function() { return this.model; },
+            events: 'change',
+          }
+        ]
+      },
+      then: function(evt) {
+        this.increase();
+        return {};
+      },
+      to: 'my-feedback'
+    }
+  ],
+
+  template: '<div data-feedback="my-feedback"></div>',
+
+  initialize: function() {
+    this.resetIncrease();
+  },
+
+  resetIncrease: function() {
+    this.change = 0;
+  },
+
+  increase: function() {
+    this.change++;
+  }
+});
+
 module.exports = {
   CheckboxFeedbackView: CheckboxFeedbackView,
-  EmptyEventsFeedbackView: EmptyEventsFeedbackView
+  EmptyEventsFeedbackView: EmptyEventsFeedbackView,
+  ListenToFeedbackView: ListenToFeedbackView
 };
