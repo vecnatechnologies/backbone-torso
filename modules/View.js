@@ -24,6 +24,8 @@
     template: null,
     feedback: null,
     feedbackCell: null,
+    behaviors: null,
+    __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
     __isActive: false,
@@ -58,7 +60,7 @@
       this.__feedbackOnEvents = [];
       this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
-      this._initializeBehaviors();
+      this._initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -81,16 +83,21 @@
       return this.viewState.set.apply(this.viewState, arguments);
     },
 
-    _initializeBehaviors: function() {
+    _initializeBehaviors: function(viewOptions) {
       var self = this;
       if (!_.isEmpty(this.behaviors)) {
         self.__behaviorInstances = {};
         _.each(this.behaviors, function(behaviorDefinition, alias) {
           var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass && _.isFunction(BehaviorClass))) {
+            throw new Error('Incorrect behavior definition. Expected key "behavior" to be a class but instead got ' +
+              String(BehaviorClass));
+          }
+
           var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
             return key !== 'behavior';
           });
-          // Is it okay to override potential 'view' parameters?
+          behaviorOptions = _.extend({}, viewOptions, behaviorOptions);
           behaviorOptions.view = self;
           self.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions);
         });

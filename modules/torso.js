@@ -1,6 +1,7 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['./Cell',
+    define(['/Behavior',
+            './Cell',
             './Collection',
             './Events',
             './mixins/loadingMixin', './mixins/cacheMixin', './mixins/cellMixin', './mixins/pollingMixin',
@@ -17,8 +18,9 @@
            factory);
   } else if (typeof exports === 'object') {
     require('./stickitUtils');
-    require('./configure')
-    module.exports = factory(require('./Cell'),
+    require('./configure');
+    module.exports = factory(require('./Behavior'),
+                             require('./Cell'),
                              require('./Collection'),
                              require('./Events'),
                              require('./mixins/loadingMixin'), require('./mixins/cacheMixin'), require('./mixins/cellMixin'), require('./mixins/pollingMixin'),
@@ -32,7 +34,8 @@
   } else {
     root.Torso = root.Torso || {};
   }
-}(this, function(Cell,
+}(this, function(Behavior,
+                 Cell,
                  Collection,
                  Events,
                  loadingMixin, cacheMixin, cellMixin, pollingMixin,
@@ -54,6 +57,7 @@
    * @author    jyoung@vecna.com
    */
   return {
+    Behavior: Behavior,
     Cell: Cell,
     Collection: Collection,
     Events: Events,

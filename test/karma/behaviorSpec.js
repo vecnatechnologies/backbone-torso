@@ -2,7 +2,6 @@ var _ = require('underscore');
 var TorsoBehavior = require('./../../modules/Behavior');
 var TorsoView = require('./../../modules/View');
 
-var spyOnBackbone = require('./helpers/spyOnBackbone');
 var setupInjectionSite = require('./helpers/setupInjectionSite');
 
 var ViewWithBehavior = TorsoView.extend({
@@ -13,58 +12,11 @@ var ViewWithBehavior = TorsoView.extend({
   }
 });
 
-/**
- * @method generateBehaviorTracking
- * @param methodsCalled {Array} to push method descriptor when executed
- * @param methodName {String} to track
- * @return {Torso.Behavior} that will push string to methodsCalled when method executes
- */
-function generateBehaviorTracking(methodsCalled, methodName) {
-  var classDefinition = {};
-  classDefinition[methodName] = function() {
-    methodsCalled.push('behavior:' + methodName);
-  };
-  return TorsoBehavior.extend(classDefinition);
-}
-
-/**
- * @method generateViewAndBehaviorTracking
- * @param methodsCalled {Array} to push method descriptor when executed
- * @param methodName {String} to track
- * @return {Torso.View} with behavior
- */
-function generateViewAndBehaviorTracking(methodsCalled, methodName) {
-  var BehaviorClass = generateBehaviorTracking(methodsCalled, methodName);
-  var viewClassDefinition = {
-    behaviors: {
-      generatedBehavior: {
-        behavior: BehaviorClass
-      }
-    }
-  };
-  viewClassDefinition[methodName] = function() {
-    methodsCalled.push('view:' + methodName);
-  };
-  return TorsoView.extend(viewClassDefinition);
-}
-
-/**
- * Generates Behavior and View class definitions with tracked methods
- * When condition runs, verifies that the behavior's method runs before the view's method
- *
- * @method expectBehaviorMethodToRunBeforeViewMethod
- * @param methodName {String} on behavior and view
- * @param condition {Function} to trigger methods. Will be passed in the generated View class
- */
-function expectBehaviorMethodToRunBeforeViewMethod(methodName, condition) {
-  var methodsCalled = [];
-  var ViewTrackingMethod = generateViewAndBehaviorTracking(methodsCalled, methodName);
-  condition(ViewTrackingMethod);
-
-  // TODO: write better matcher
-  expect(methodsCalled[0]).toBe('behavior:' + methodName);
-  expect(methodsCalled[1]).toBe('view:' + methodName);
-}
+var BehaviorRecordingInitializeArguments = TorsoBehavior.extend({
+  initialize: function() {
+    this.initializeArguments = arguments;
+  }
+});
 
 describe('A Torso Behavior', function() {
 
@@ -74,17 +26,16 @@ describe('A Torso Behavior', function() {
     expect(TorsoBehavior).toBeDefined();
   });
 
-  it('can be instantiated', function() {
-    expect(new TorsoBehavior()).toBeDefined();
-  });
-
   it('can be extended', function() {
     expect(TorsoBehavior.extend).toBeDefined();
   });
 
   describe('instance', function() {
     beforeEach(function() {
-      this.behavior = new TorsoBehavior();
+      var behaviorOptions = {view:
+        (new TorsoView())
+      };
+      this.behavior = new TorsoBehavior(behaviorOptions);
     });
 
     it('can set and get properties', function() {
@@ -96,13 +47,31 @@ describe('A Torso Behavior', function() {
   });
 
   describe('when instantiated', function() {
+
+    it('accepts a view as an option', function() {
+      var behaviorOptions = {view:
+        (new TorsoView())
+      };
+      expect(new TorsoBehavior(behaviorOptions)).toBeDefined();
+    });
+
+    it('throws an error if not instantiated with a view', function() {
+      try {
+        new TorsoBehavior();
+        fail('Expected error');
+      } catch (e) {}
+    });
+
     it('options are passed to initialize', function() {
       var BehaviorWithInitialize = TorsoBehavior.extend({
         initialize: function() {
           this.initializeArguments = arguments;
         }
       });
-      var options = {propertyKey: 'propertyValue'};
+      var options = {
+        propertyKey: 'propertyValue',
+        view: (new TorsoView())
+      };
 
       var behaviorWithInitialize = new BehaviorWithInitialize(options);
       expect(behaviorWithInitialize.initializeArguments).toBeDefined();
@@ -117,12 +86,13 @@ describe('A Torso Behavior', function() {
           TorsoBehavior.apply(this, arguments);
         }
       });
-      var options = {propertyKey: 'propertyValue'};
-      var view = new TorsoView();
+      var options = {
+        propertyKey: 'propertyValue',
+        view: (new TorsoView())
+      };
 
-      var behaviorWithConstructor = new BehaviorWithConstructor(options, view);
+      var behaviorWithConstructor = new BehaviorWithConstructor(options);
       expect(behaviorWithConstructor.constructorArguments[0]).toBe(options);
-      expect(behaviorWithConstructor.constructorArguments[1]).toBe(view);
     });
 
     it('will set reference to view', function() {
@@ -139,7 +109,7 @@ describe('A Torso Behavior', function() {
     expect(behaviorInView).toBeDefined();
   });
 
-  it('Behaviors are not static fields, i.e. they are instantiated per view instance', function() {
+  it('are not static fields on view, i.e. they are instantiated per view instance', function() {
     var firstViewWithBehavior = new ViewWithBehavior();
     var secondViewWithBehavior = new ViewWithBehavior();
 
@@ -168,7 +138,6 @@ describe('A Torso Behavior', function() {
     expect(firstBehavior).not.toBe(secondBehavior);
   });
 
-
   it('instantiated as part of a view has a reference to its containing view', function() {
     var viewWithBehavior = new ViewWithBehavior();
     var behaviorInView = viewWithBehavior.getBehavior('torsoBehavior');
@@ -189,26 +158,57 @@ describe('A Torso Behavior', function() {
     } catch (e) {}
   });
 
-  it('options defined in the view are passed to the behavior in its "initialize"', function() {
-    var BehaviorWithInitialize = TorsoBehavior.extend({
-      initialize: function() {
-        this.initializeArguments = arguments;
-      }
-    });
-
+  it('behavior options defined in the view are passed to the behavior in its "initialize"', function() {
     var ViewWithBehaviorWithInitialize = TorsoView.extend({
       behaviors: {
-        behaviorWithInitialize: {
-          behavior: BehaviorWithInitialize,
+        behaviorRecordingInitializeArguments: {
+          behavior: BehaviorRecordingInitializeArguments,
           propertyKey: 'propertyValue'
         }
       }
     });
     var viewWithBehaviorWithInitialize = new ViewWithBehaviorWithInitialize();
 
-    var behaviorWithInitialize = viewWithBehaviorWithInitialize.getBehavior('behaviorWithInitialize');
-    expect(behaviorWithInitialize.initializeArguments).toBeDefined();
-    expect(_.isMatch(behaviorWithInitialize.initializeArguments[0])).toBe(true);
+    var behaviorRecordingInitializeArguments = viewWithBehaviorWithInitialize.getBehavior('behaviorRecordingInitializeArguments');
+    expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
+    var recordedBehaviorOptions = behaviorRecordingInitializeArguments.initializeArguments[0];
+    expect(_.isMatch(recordedBehaviorOptions, {propertyKey: 'propertyValue'})).toBe(true);
+  });
+
+  it('view options are passed to behavior initialize', function() {
+    var viewOptions = {propertyKey: 'propertyValue'};
+
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        behaviorRecordingInitializeArguments: {
+          behavior: BehaviorRecordingInitializeArguments
+        }
+      }
+    });
+
+    var viewWithBehavior = new ViewWithBehavior(viewOptions);
+    var behaviorRecordingInitializeArguments = viewWithBehavior.getBehavior('behaviorRecordingInitializeArguments');
+    expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
+    var recordedBehaviorOptions = behaviorRecordingInitializeArguments.initializeArguments[0];
+    expect(_.isMatch(recordedBehaviorOptions, viewOptions)).toBe(true);
+  });
+
+  it('behavior options override view options', function() {
+    var viewOptions = {propertyKey: 'viewPropertyValue'};
+    var behaviorOptions = {propertyKey: 'behaviorPropertyValue'};
+
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        behaviorRecordingInitializeArguments: {
+          behavior: BehaviorRecordingInitializeArguments,
+          propertyKey: 'behaviorPropertyValue'
+        }
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior(viewOptions);
+    var behaviorRecordingInitializeArguments = viewWithBehavior.getBehavior('behaviorRecordingInitializeArguments');
+    expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
+    expect(_.isMatch(behaviorRecordingInitializeArguments.initializeArguments[0], behaviorOptions)).toBe(true);
   });
 
   describe('runs lifecycle methods at the appropriate time', function() {
@@ -235,7 +235,11 @@ describe('A Torso Behavior', function() {
 
     it('prerender before view.updateDOM', function() {
       var methodsCalled = [];
-      var BehaviorTrackingPrerender = generateBehaviorTracking(methodsCalled, 'prerender');
+      var BehaviorTrackingPrerender = TorsoBehavior.extend({
+        prerender: function() {
+          methodsCalled.push('behavior:prerender');
+        }
+      });
 
       var ViewTrackingUpdateDom = TorsoView.extend({
         behaviors: {
@@ -305,11 +309,23 @@ describe('A Torso Behavior', function() {
       expect(methodsCalled[1]).toBe('behavior:attachTrackedViews');
     });
 
-
-
     it('_attached before view._attached', function() {
       var methodsCalled = [];
-      var ViewTrackingAttached = generateViewAndBehaviorTracking(methodsCalled, '_attached');
+      var BehaviorTrackingAttached = TorsoBehavior.extend({
+        _attached: function() {
+          methodsCalled.push('behavior:_attached');
+        }
+      });
+      var ViewTrackingAttached = TorsoView.extend({
+        behaviors: {
+          behaviorTrackingAttached: {
+            behavior: BehaviorTrackingAttached
+          }
+        },
+        _attached: function() {
+          methodsCalled.push('view:_attached');
+        }
+      });
       var viewTrackingAttached = new ViewTrackingAttached();
 
       viewTrackingAttached.attachTo(this.$app);
@@ -319,7 +335,22 @@ describe('A Torso Behavior', function() {
 
     it('_detached before view._detached', function() {
       var methodsCalled = [];
-      var ViewTrackingDetached = generateViewAndBehaviorTracking(methodsCalled, '_detached');
+      var BehaviorTrackingDetached = TorsoBehavior.extend({
+        _detached: function() {
+          methodsCalled.push('behavior:_detached');
+        }
+      });
+      var ViewTrackingDetached = TorsoView.extend({
+        behaviors: {
+          behaviorTrackingDetached: {
+            behavior: BehaviorTrackingDetached
+          }
+        },
+        _detached: function() {
+          methodsCalled.push('view:_detached');
+        }
+      });
+
       var viewTrackingDetached = new ViewTrackingDetached();
 
       viewTrackingDetached.attachTo(this.$app);
@@ -331,7 +362,22 @@ describe('A Torso Behavior', function() {
 
     it('_activate before view._activate', function() {
       var methodsCalled = [];
-      var ViewTrackingActivate = generateViewAndBehaviorTracking(methodsCalled, '_activate');
+      var BehaviorTrackingActivate = TorsoBehavior.extend({
+        _activate: function() {
+          methodsCalled.push('behavior:_activate');
+        }
+      });
+      var ViewTrackingActivate = TorsoView.extend({
+        behaviors: {
+          behaviorTrackingActivate: {
+            behavior: BehaviorTrackingActivate
+          }
+        },
+        _activate: function() {
+          methodsCalled.push('view:_activate');
+        }
+      });
+
       // Views are activated upon instantiation
       var viewTrackingActivate = new ViewTrackingActivate();
 
@@ -341,7 +387,22 @@ describe('A Torso Behavior', function() {
 
     it('_deactivate before view._deactivate', function() {
       var methodsCalled = [];
-      var ViewTrackingDeactivate = generateViewAndBehaviorTracking(methodsCalled, '_deactivate');
+      var BehaviorTrackingDeactivate = TorsoBehavior.extend({
+        _deactivate: function() {
+          methodsCalled.push('behavior:_deactivate');
+        }
+      });
+      var ViewTrackingDeactivate = TorsoView.extend({
+        behaviors: {
+          behaviorTrackingDeactivate: {
+            behavior: BehaviorTrackingDeactivate
+          }
+        },
+        _deactivate: function() {
+          methodsCalled.push('view:_deactivate');
+        }
+      });
+
       var viewTrackingDeactivate = new ViewTrackingDeactivate();
       viewTrackingDeactivate.deactivate();
 
@@ -351,20 +412,73 @@ describe('A Torso Behavior', function() {
 
     it('_dispose before view._dispose', function() {
       var methodsCalled = [];
-      var ViewTrackingDispose = generateViewAndBehaviorTracking(methodsCalled, '_dispose');
+      var BehaviorTrackingDispose = TorsoBehavior.extend({
+        _dispose: function() {
+          methodsCalled.push('behavior:_dispose');
+        }
+      });
+      var ViewTrackingDispose = TorsoView.extend({
+        behaviors: {
+          behaviorTrackingDispose: {
+            behavior: BehaviorTrackingDispose
+          }
+        },
+        _dispose: function() {
+          methodsCalled.push('view:_dispose');
+        }
+      });
+
       var viewTrackingDispose = new ViewTrackingDispose();
       viewTrackingDispose.dispose();
 
       expect(methodsCalled[0]).toBe('behavior:_dispose');
       expect(methodsCalled[1]).toBe('view:_dispose');
-
-      function triggerDispose(ViewClass) {
-        var viewToDispose = new ViewClass();
-        viewToDispose.dispose();
-      }
-      expectBehaviorMethodToRunBeforeViewMethod('_dispose', triggerDispose);
     });
 
+    it('if view has multiple behaviors, lifecycle methods run in order of behavior definition', function() {
+      var methodsCalled = [];
+      var BehaviorOneTrackingAttached = TorsoBehavior.extend({
+        _attached: function() {
+          methodsCalled.push('behaviorOne:_attached');
+        }
+      });
+      var BehaviorTwoTrackingAttached = TorsoBehavior.extend({
+        _attached: function() {
+          methodsCalled.push('behaviorTwo:_attached');
+        }
+      });
+      var ViewWithBehaviorOneFirst = TorsoView.extend({
+        behaviors: {
+          behaviorOne: {
+            behavior: BehaviorOneTrackingAttached
+          },
+          behaviorTwo: {
+            behavior: BehaviorTwoTrackingAttached
+          }
+        }
+      });
+      var viewWithBehaviorOneFirst = new ViewWithBehaviorOneFirst();
+      viewWithBehaviorOneFirst.attachTo(this.$app);
+
+      expect(methodsCalled[0]).toBe('behaviorOne:_attached');
+      expect(methodsCalled[1]).toBe('behaviorTwo:_attached');
+
+      methodsCalled = [];
+      var ViewWithBehaviorTwoFirst = TorsoView.extend({
+        behaviors: {
+          behaviorTwo: {
+            behavior: BehaviorTwoTrackingAttached
+          },
+          behaviorOne: {
+            behavior: BehaviorOneTrackingAttached
+          }
+        }
+      });
+      var viewWithBehaviorTwoFirst = new ViewWithBehaviorTwoFirst();
+      viewWithBehaviorTwoFirst.attachTo(this.$app);
+      expect(methodsCalled[0]).toBe('behaviorTwo:_attached');
+      expect(methodsCalled[1]).toBe('behaviorOne:_attached');
+    });
   });
 
   describe('events', function() {
@@ -494,7 +608,7 @@ describe('A Torso Behavior', function() {
       });
     });
 
-    it('if duplicate events are defined in view and behavior event hash, only view handler runs', function() {
+    it('if duplicate events are defined in view and behavior event hash, both events run', function() {
       var ViewWithBehaviorAndEvent = TorsoView.extend({
         behaviors: {
           behaviorWithClickEvent: {
@@ -513,10 +627,41 @@ describe('A Torso Behavior', function() {
       var behaviorWithClickEvent = viewWithBehaviorAndEvent.getBehavior('behaviorWithClickEvent');
 
       expect(viewWithBehaviorAndEvent.onClick).toHaveBeenCalled();
-      expect(behaviorWithClickEvent.onClick).not.toHaveBeenCalled();
+      expect(behaviorWithClickEvent.onClick).toHaveBeenCalled();
     });
 
+    it('if we have multiple behaviors with the same event then both event callbacks will run', function() {
+      var SecondBehaviorWithClickEvent = TorsoBehavior.extend({
+        events:{
+          'click':'onClick'
+        },
+        onClick: jasmine.createSpy('onClick')
+      });
+
+      var ViewWithTwoBehaviors = TorsoView.extend({
+        behaviors: {
+          firstBehavior: {
+            behavior: this.BehaviorWithClickEvent
+          },
+          secondBehavior: {
+            behavior: SecondBehaviorWithClickEvent
+          }
+        }
+      });
+      var viewWithTwoBehaviors = new ViewWithTwoBehaviors();
+      viewWithTwoBehaviors.attachTo(this.$app);
+      viewWithTwoBehaviors.$el.click();
+      var firstBehavior = viewWithTwoBehaviors.getBehavior('firstBehavior');
+      var secondBehavior = viewWithTwoBehaviors.getBehavior('secondBehavior');
+
+      expect(firstBehavior.onClick).toHaveBeenCalled();
+      expect(secondBehavior.onClick).toHaveBeenCalled();
+    });
   });
 
 });
+
+
+
+
 
