@@ -43,6 +43,7 @@
 
     /**
      * @method constructor
+     * @override
      * @param behaviorOptions {Object}
      * @param behaviorOptions.view {Backbone.View} that Behavior is attached to
      * @param [viewOptions] {Object} options passed to View's initialize
