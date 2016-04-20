@@ -175,7 +175,7 @@ describe('A Torso Behavior', function() {
     expect(_.isMatch(recordedBehaviorOptions, {propertyKey: 'propertyValue'})).toBe(true);
   });
 
-  it('view options are passed to behavior initialize', function() {
+  it('view options are passed to behavior initialize as second argument', function() {
     var viewOptions = {propertyKey: 'propertyValue'};
 
     var ViewWithBehavior = TorsoView.extend({
@@ -189,26 +189,8 @@ describe('A Torso Behavior', function() {
     var viewWithBehavior = new ViewWithBehavior(viewOptions);
     var behaviorRecordingInitializeArguments = viewWithBehavior.getBehavior('behaviorRecordingInitializeArguments');
     expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
-    var recordedBehaviorOptions = behaviorRecordingInitializeArguments.initializeArguments[0];
-    expect(_.isMatch(recordedBehaviorOptions, viewOptions)).toBe(true);
-  });
-
-  it('behavior options override view options', function() {
-    var viewOptions = {propertyKey: 'viewPropertyValue'};
-    var behaviorOptions = {propertyKey: 'behaviorPropertyValue'};
-
-    var ViewWithBehavior = TorsoView.extend({
-      behaviors: {
-        behaviorRecordingInitializeArguments: {
-          behavior: BehaviorRecordingInitializeArguments,
-          propertyKey: 'behaviorPropertyValue'
-        }
-      }
-    });
-    var viewWithBehavior = new ViewWithBehavior(viewOptions);
-    var behaviorRecordingInitializeArguments = viewWithBehavior.getBehavior('behaviorRecordingInitializeArguments');
-    expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
-    expect(_.isMatch(behaviorRecordingInitializeArguments.initializeArguments[0], behaviorOptions)).toBe(true);
+    var recordedViewOptions = behaviorRecordingInitializeArguments.initializeArguments[1];
+    expect(_.isMatch(recordedViewOptions, viewOptions)).toBe(true);
   });
 
   describe('runs lifecycle methods at the appropriate time', function() {

@@ -97,9 +97,8 @@
           var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
             return key !== 'behavior';
           });
-          behaviorOptions = _.extend({}, viewOptions, behaviorOptions);
           behaviorOptions.view = self;
-          self.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions);
+          self.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
         });
       }
     },

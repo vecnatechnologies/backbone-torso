@@ -43,15 +43,16 @@
 
     /**
      * @method constructor
-     * @param options {Object}
-     * @param options.view {Backbone.View} that Behavior is attached to
+     * @param behaviorOptions {Object}
+     * @param behaviorOptions.view {Backbone.View} that Behavior is attached to
+     * @param [viewOptions] {Object} options passed to View's initialize
      */
-    constructor: function(options) {
-      options = options || {};
-      if (!options.view) {
-        throw new Error('Torso Behavior constructed without options.view');
+    constructor: function(behaviorOptions, viewOptions) {
+      behaviorOptions = behaviorOptions || {};
+      if (!behaviorOptions.view) {
+        throw new Error('Torso Behavior constructed without behaviorOptions.view');
       }
-      this.view = options.view;
+      this.view = behaviorOptions.view;
       this.cid = _.uniqueId(this.cidPrefix);
       this.__bindLifecycleMethods();
       this.__bindEventCallbacks();
