@@ -51,6 +51,15 @@
                 "Torso.Mixins": 1
             }
         },
+        "modules/Behavior.js": {
+            "name": "modules/Behavior.js",
+            "modules": {},
+            "classes": {
+                "Behavior": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "modules/Cell.js": {
             "name": "modules/Cell.js",
             "modules": {},
@@ -230,6 +239,7 @@
                 "Torso.Mixins.cellMixin": 1,
                 "Torso.Mixins.loadingMixin": 1,
                 "Torso.Mixins.pollingMixin": 1,
+                "Behavior": 1,
                 "Cell": 1,
                 "Collection": 1,
                 "Events": 1,
@@ -259,6 +269,7 @@
             "line": 100,
             "description": "Custom additions to the Backbone Collection object.\n- safe disposal methods for memory + event management\n- special functional overrides to support ID registration for different views",
             "author": "ariel.wexler@vecna.com, kent.willis@vecna.com",
+            "itemtype": "method",
             "is_constructor": 1,
             "static": 1
         }
@@ -319,6 +330,20 @@
             "file": "modules/mixins/pollingMixin.js",
             "line": 12,
             "description": "Periodic Polling Object to be mixed into Backbone Collections and Models.\n\nThe polling functionality should only be used for collections and for models that are not\npart of any collections. It should not be used for a model that is a part of a collection."
+        },
+        "Behavior": {
+            "name": "Behavior",
+            "shortname": "Behavior",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Torso",
+            "namespace": "",
+            "file": "modules/Behavior.js",
+            "line": 29,
+            "description": "Allows abstraction of common view logic into separate object"
         },
         "Cell": {
             "name": "Cell",
@@ -541,7 +566,7 @@
             "module": "Torso",
             "namespace": "",
             "file": "modules/torso.js",
-            "line": 48,
+            "line": 51,
             "description": "File containing all dependencies that exports a single object with everything attached (same format as the global)."
         },
         "Torso.validation": {
@@ -1210,6 +1235,109 @@
             "class": "Torso.Mixins.pollingMixin",
             "module": "Torso",
             "namespace": "Torso.Mixins"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 38,
+            "itemtype": "property",
+            "name": "cidPrefix of Behaviors",
+            "type": "{String}",
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 44,
+            "itemtype": "method",
+            "name": "constructor",
+            "override": "",
+            "params": [
+                {
+                    "name": "behaviorOptions",
+                    "description": "",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "view",
+                            "description": "that Behavior is attached to",
+                            "type": "Backbone.View"
+                        }
+                    ]
+                },
+                {
+                    "name": "viewOptions",
+                    "description": "options passed to View's initialize",
+                    "type": "Object",
+                    "optional": true
+                }
+            ],
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 63,
+            "description": "Registers defined lifecycle methods to be called at appropriate time in view's lifecycle",
+            "itemtype": "method",
+            "name": "__bindLifecycleMethods",
+            "access": "private",
+            "tagname": "",
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 75,
+            "description": "Adds behavior's event handlers to view\nBehavior's event handlers fire on view events but are run in the context of the behavior",
+            "itemtype": "method",
+            "name": "__bindEventCallbacks",
+            "access": "private",
+            "tagname": "",
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 106,
+            "description": "Namespaces events in event hash",
+            "itemtype": "method",
+            "name": "__namespaceEvents",
+            "params": [
+                {
+                    "name": "eventHash",
+                    "description": "to namespace",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "with event namespaced with '.behavior' and the cid of the behavior",
+                "type": "Object"
+            },
+            "access": "private",
+            "tagname": "",
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 129,
+            "itemtype": "method",
+            "name": "__bindEventCallbacksToBehavior",
+            "params": [
+                {
+                    "name": "eventHash",
+                    "description": "keys are event descriptors, values are String method names or functions",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "event hash with values as methods bound to view",
+                "type": "Object"
+            },
+            "access": "private",
+            "tagname": "",
+            "class": "Behavior",
+            "module": "Torso"
         },
         {
             "file": "modules/Collection.js",
@@ -3146,7 +3274,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 35,
+            "line": 37,
             "description": "Array of feedback when-then-to's. Example:\n[{\n  when: {'@fullName': ['change']},\n  then: function(event) { return {text: this.feedbackCell.get('fullName')};},\n  to: 'fullName-feedback'\n}]",
             "access": "private",
             "tagname": "",
@@ -3158,7 +3286,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 47,
+            "line": 49,
             "description": "Overrides constructor to create needed fields and invoke activate/render after initialization",
             "itemtype": "method",
             "name": "constructor",
@@ -3167,7 +3295,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 67,
+            "line": 70,
             "description": "Alias to this.viewState.get()",
             "itemtype": "method",
             "name": "get",
@@ -3176,7 +3304,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 75,
+            "line": 78,
             "description": "Alias to this.viewState.set()",
             "itemtype": "method",
             "name": "set",
@@ -3185,7 +3313,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 83,
+            "line": 112,
             "return": {
                 "description": "context for a render method. Defaults to:\n   {view: this.viewState.toJSON(), model: this.model.toJSON()}",
                 "type": "Object"
@@ -3197,7 +3325,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 101,
+            "line": 130,
             "description": "Rebuilds the html for this view's element. Should be able to be called at any time.\nDefaults to using this.templateRender. Assumes that this.template is a javascript\nfunction that accepted a single JSON context.\nThe render method returns a promise that resolves when rendering is complete. Typically render\nis synchronous and the rendering is complete upon completion of the method. However, when utilizing\ntransitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.",
             "itemtype": "method",
             "name": "render",
@@ -3210,7 +3338,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 133,
+            "line": 163,
             "description": "Hook during render that is invoked before any DOM rendering is performed.\nThis method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);\nNOTE: if you require the view to be detached from the DOM, consider using _detach callback",
             "itemtype": "method",
             "name": "prerender",
@@ -3223,7 +3351,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 142,
+            "line": 172,
             "description": "Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.\nDefaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare());\nExamples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.",
             "itemtype": "method",
             "name": "updateDOM",
@@ -3232,7 +3360,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 154,
+            "line": 184,
             "description": "Hook during render that is invoked after all DOM rendering is done and tracked views attached.\nThis method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);\nNOTE: if you require the view to be attached to the DOM, consider using _attach callback",
             "itemtype": "method",
             "name": "postrender",
@@ -3245,7 +3373,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 163,
+            "line": 193,
             "description": "Hotswap rendering system reroute method.",
             "itemtype": "method",
             "name": "templateRender\nSee Torso.templateRenderer#render for params",
@@ -3254,7 +3382,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 176,
+            "line": 206,
             "description": "Overrides the base delegateEvents\nBinds DOM events with the view using events hash while also adding feedback event bindings",
             "itemtype": "method",
             "name": "delegateEvents",
@@ -3263,7 +3391,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 193,
+            "line": 223,
             "description": "Overrides undelegateEvents\nUnbinds DOM events from the view.",
             "itemtype": "method",
             "name": "undelegateEvents",
@@ -3272,7 +3400,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 205,
+            "line": 235,
             "description": "If detached, will replace the element passed in with this view's element and activate the view.",
             "params": [
                 {
@@ -3314,7 +3442,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 235,
+            "line": 266,
             "description": "Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument\nThe element argument can be a String that references an element with the corresponding \"inject\" attribute.\nWhen using attachView with options.useTransition:\n  Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view\n  previously had another view at this injections site, this previous view will be removed with that view's transitionOut.\n  If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even\n  though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.\n  If the previous view is the same as the new view, it is injected normally without transitioning in.\n  The previous view must has used an injection site with the standard \"inject=<name of injection site>\" attribute to be found.\n  When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields\n  will be added to the options parameter to allow better handling of the transitions. These include:\n  {\n    newView: the new view\n    previousView: the previous view (can be undefined)\n    parentView: the parent view transitioning in or out the tracked view\n  }",
             "params": [
                 {
@@ -3381,7 +3509,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 289,
+            "line": 320,
             "description": "Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.\nThis method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);",
             "itemtype": "method",
             "name": "attachTrackedViews",
@@ -3394,7 +3522,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 297,
+            "line": 328,
             "description": "Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view\nafter the DOM has been attached to the document. The default implementation is a no-op.",
             "itemtype": "method",
             "name": "_attached",
@@ -3403,7 +3531,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 304,
+            "line": 335,
             "return": {
                 "description": "true if the view is attached to a parent",
                 "type": "Boolean"
@@ -3415,7 +3543,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 312,
+            "line": 343,
             "description": "NOTE: depends on a global variable \"document\"",
             "return": {
                 "description": "true if the view is attached to the DOM",
@@ -3428,7 +3556,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 321,
+            "line": 352,
             "description": "If attached, will detach the view from the DOM.\nThis method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach\ncallback on each tracked view recursively.",
             "itemtype": "method",
             "name": "detach",
@@ -3437,7 +3565,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 346,
+            "line": 378,
             "description": "Detach all tracked views or a subset of them based on the options parameter.\nNOTE: this is not recursive - it will not separate the entire view tree.",
             "params": [
                 {
@@ -3469,7 +3597,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 362,
+            "line": 394,
             "description": "Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state\nafter the view has been removed from the document. The default implementation is a no-op.",
             "itemtype": "method",
             "name": "_detached",
@@ -3478,7 +3606,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 369,
+            "line": 401,
             "description": "Resets listeners and events in order for the view to be reattached to the visible DOM",
             "itemtype": "method",
             "name": "activate",
@@ -3487,7 +3615,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 381,
+            "line": 414,
             "description": "Method to be invoked when activate is called. Use this method to turn on any\ncustom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.",
             "itemtype": "method",
             "name": "_activate",
@@ -3496,7 +3624,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 388,
+            "line": 421,
             "return": {
                 "description": "true if the view is active",
                 "type": "Boolean"
@@ -3508,7 +3636,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 396,
+            "line": 429,
             "description": "Maintains view state and DOM but prevents view from becoming a zombie by removing listeners\nand events that may affect user experience. Recursively invokes deactivate on child views",
             "itemtype": "method",
             "name": "deactivate",
@@ -3517,7 +3645,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 409,
+            "line": 443,
             "description": "Method to be invoked when deactivate is called. Use this method to turn off any\ncustom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.",
             "itemtype": "method",
             "name": "_deactivate",
@@ -3526,7 +3654,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 416,
+            "line": 450,
             "description": "Removes all listeners, disposes children views, stops listening to events, removes DOM.\nAfter dispose is called, the view can be safely garbage collected. Called while\nrecursively removing views from the hierarchy.",
             "itemtype": "method",
             "name": "dispose",
@@ -3535,7 +3663,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 449,
+            "line": 484,
             "description": "Method to be invoked when dispose is called. By default calling dispose will remove the\nview's element, its on's, listenTo's, and any registered children.\nOverride this method to destruct any extra",
             "itemtype": "method",
             "name": "_dispose",
@@ -3544,7 +3672,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 457,
+            "line": 492,
             "return": {
                 "description": "true if the view was disposed",
                 "type": "Boolean"
@@ -3556,7 +3684,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 465,
+            "line": 500,
             "return": {
                 "description": "true if this view has tracked views (limited by the options parameter)",
                 "type": "Boolean"
@@ -3591,7 +3719,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 477,
+            "line": 512,
             "description": "Returns all tracked views, both child views and shared views.",
             "itemtype": "method",
             "name": "getTrackedViews",
@@ -3627,7 +3755,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 490,
+            "line": 525,
             "return": {
                 "description": "the view with the given cid.  Will look in both shared and child views."
             },
@@ -3645,7 +3773,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 501,
+            "line": 536,
             "description": "Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will\nbe done to the tracked view as well.  Except dispose for shared views. This method defaults to register the\nview as a child view unless specified by options.shared.",
             "params": [
                 {
@@ -3679,7 +3807,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 523,
+            "line": 558,
             "description": "Unbinds the tracked view - no recursive calls will be made to this shared view",
             "params": [
                 {
@@ -3699,7 +3827,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 535,
+            "line": 570,
             "description": "Unbinds all tracked view - no recursive calls will be made to this shared view\nYou can limit the types of views that will be unregistered by using the options parameter.",
             "params": [
                 {
@@ -3740,7 +3868,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 553,
+            "line": 588,
             "description": "Override to provide your own transition out logic. Default logic is to just detach from the page.\nThe method is passed a callback that should be invoked when the transition out has fully completed.",
             "itemtype": "method",
             "name": "transitionOut",
@@ -3778,7 +3906,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 568,
+            "line": 603,
             "description": "Override to provide your own transition in logic. Default logic is to just attach to the page.\nThe method is passed a callback that should be invoked when the transition in has fully completed.",
             "itemtype": "method",
             "name": "transitionIn",
@@ -3821,7 +3949,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 585,
+            "line": 620,
             "description": "Invokes a feedback entry's \"then\" method",
             "params": [
                 {
@@ -3849,7 +3977,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 614,
+            "line": 649,
             "description": "If the view is attaching during the render process, then it replaces the injection site\nwith the view's element after the view has generated its DOM.",
             "itemtype": "method",
             "name": "__performPendingAttach",
@@ -3860,7 +3988,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 625,
+            "line": 660,
             "description": "Deactivates all tracked views or a subset of them based on the options parameter.",
             "params": [
                 {
@@ -3894,7 +4022,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 640,
+            "line": 675,
             "description": "Activates all tracked views or a subset of them based on the options parameter.",
             "params": [
                 {
@@ -3928,7 +4056,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 655,
+            "line": 690,
             "description": "Disposes all child views recursively",
             "itemtype": "method",
             "name": "disposeChildViews",
@@ -3939,7 +4067,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 666,
+            "line": 701,
             "description": "Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view\npreviously had another view at this injections site, this previous view will be removed with that view's transitionOut.\nIf this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even\nthough they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.\nIf the previous view is the same as the new view, it is injected normally without transitioning in.\nThe previous view must has used an injection site with the standard \"inject=<name of injection site>\" attribute to be found.",
             "itemtype": "method",
             "name": "transitionNewViewIntoSite",
@@ -3994,7 +4122,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 717,
+            "line": 752,
             "description": "Will transition out previousView at the same time as transitioning in newView.",
             "itemtype": "method",
             "name": "__performTwoWayTransition",
@@ -4041,7 +4169,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 752,
+            "line": 787,
             "description": "Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.\nThis method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.",
             "params": [
                 {
@@ -4090,7 +4218,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 778,
+            "line": 813,
             "description": "Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.\nNOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.\nThis means that you can add \"add\" or \"remove\" tracked view using this method, however you can interact with the views inside the map completely.",
             "params": [
                 {
@@ -4127,7 +4255,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 805,
+            "line": 840,
             "description": "Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.",
             "access": "private",
             "tagname": "",
@@ -4138,7 +4266,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 820,
+            "line": 855,
             "description": "Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).\nWhen used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.",
             "access": "private",
             "tagname": "",
@@ -4160,7 +4288,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 844,
+            "line": 879,
             "description": "Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method",
             "itemtype": "method",
             "name": "__replaceInjectionSite",
@@ -4199,7 +4327,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 861,
+            "line": 896,
             "description": "Call this method when a view is attached to the DOM. It is recursive to child views, but checks whether each child view is attached.",
             "itemtype": "method",
             "name": "__invokeAttached",
@@ -4210,7 +4338,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 879,
+            "line": 914,
             "description": "Call this method when a view is detached from the DOM. It is recursive to child views.",
             "itemtype": "method",
             "name": "__invokeDetached",
@@ -4219,7 +4347,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 896,
+            "line": 931,
             "description": "Generates callbacks for changes in feedback cell fields\n'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback cell\nIf feedbackCell.get('fullName') returns:\n{ text: 'my text',\n  attr: {class: 'newClass'}\n  hide: [100, function() {...}]\n...}\nThen it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.",
             "access": "private",
             "tagname": "",
@@ -4230,7 +4358,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 943,
+            "line": 978,
             "description": "Processes the result of the then method. Adds to the feedback cell.",
             "params": [
                 {
@@ -4253,7 +4381,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 956,
+            "line": 991,
             "description": "Creates the \"when\" bindings, and collates and invokes the \"then\" methods for all feedbacks\nFinds all feedback zones that match the \"to\" field, and binds the \"when\" events to invoke the \"then\" method",
             "access": "private",
             "tagname": "",
@@ -4264,7 +4392,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1065,
+            "line": 1100,
             "description": "Returns a properly wrapped \"then\" using a configuration object \"bindInfo\" and an \"eventKey\" that will be passed as the type",
             "params": [
                 {
@@ -4301,7 +4429,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1088,
+            "line": 1123,
             "description": "Returns all elements on the page that match the feedback mapping\nIf dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback=\"my-feedback-foo[*][*]\"",
             "params": [
                 {
@@ -4323,7 +4451,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1111,
+            "line": 1146,
             "description": "Generates the events needed to listen to the feedback's when methods. A when event is only created\nif the appropriate element exist on the page",
             "params": [
                 {
@@ -4347,7 +4475,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1151,
+            "line": 1186,
             "description": "Returns an array of all the values and variables used within the array notations in a string\nExample: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers\nThis does not handle or return any \"open\" array notations: []",
             "access": "private",
             "tagname": "",
@@ -4358,7 +4486,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1170,
+            "line": 1205,
             "description": "Replaces all array notations with open array notations.\nExample: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]",
             "access": "private",
             "tagname": "",
@@ -4369,7 +4497,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1183,
+            "line": 1218,
             "description": "Takes a map from variable name to value to be replaced and processes a string with them.\nExample: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]",
             "access": "private",
             "tagname": "",
@@ -4380,7 +4508,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1201,
+            "line": 1236,
             "description": "Generates an array of all the possible field accessors and their indices when using\nthe \"open\" array notation:\n   foo[] -> ['foo[0]', 'foo[1]'].\nWill also perform nested arrays:\n   foo[][] -> ['foo[0][0]', foo[1][0]']",
             "itemtype": "method",
             "name": "__generateSubAttributes",
@@ -4796,5 +4924,10 @@
             "namespace": "Torso"
         }
     ],
-    "warnings": []
+    "warnings": [
+        {
+            "message": "unknown tag: override",
+            "line": " modules/Behavior.js:44"
+        }
+    ]
 }

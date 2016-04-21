@@ -24,6 +24,8 @@
     template: null,
     feedback: null,
     feedbackCell: null,
+    behaviors: null,
+    __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
     __isActive: false,
@@ -58,6 +60,7 @@
       this.__feedbackOnEvents = [];
       this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
+      this._initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -78,6 +81,32 @@
      */
     set: function() {
       return this.viewState.set.apply(this.viewState, arguments);
+    },
+
+    _initializeBehaviors: function(viewOptions) {
+      var self = this;
+      if (!_.isEmpty(this.behaviors)) {
+        self.__behaviorInstances = {};
+        _.each(this.behaviors, function(behaviorDefinition, alias) {
+          var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass && _.isFunction(BehaviorClass))) {
+            throw new Error('Incorrect behavior definition. Expected key "behavior" to be a class but instead got ' +
+              String(BehaviorClass));
+          }
+
+          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
+            return key !== 'behavior';
+          });
+          behaviorOptions.view = self;
+          self.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+        });
+      }
+    },
+
+    getBehavior: function(alias) {
+      if (this.__behaviorInstances) {
+        return this.__behaviorInstances[alias];
+      }
     },
 
     /**
@@ -123,6 +152,7 @@
       this.trigger('render:after-dom-update');
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
+      this.trigger('render:before-attach-tracked-views');
       promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
@@ -215,6 +245,7 @@
      * @method attachTo
      */
     attachTo: function($el, options) {
+      this.trigger('before-attach');
       options = options || {};
       var view = this;
       if (!this.isAttachedToParent()) {
@@ -326,6 +357,7 @@
      */
     detach: function() {
       var wasAttached;
+      this.trigger('before-detach');
       if (this.isAttachedToParent()) {
          wasAttached = this.isAttached();
         // Detach view from DOM
@@ -371,6 +403,7 @@
      * @method activate
      */
     activate: function() {
+      this.trigger('before-activate');
       this.__activateTrackedViews();
       if (!this.isActive()) {
         this._activate();
@@ -399,6 +432,7 @@
      * @method deactivate
      */
     deactivate: function() {
+      this.trigger('before-deactivate');
       this.__deactivateTrackedViews();
       if (this.isActive()) {
         this._deactivate();
@@ -420,6 +454,7 @@
      * @method dispose
      */
     dispose: function() {
+      this.trigger('before-dispose');
       this._dispose();
 
       // Detach DOM and deactivate the view
