@@ -38,6 +38,7 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Behavior.html">Behavior</a></li>
                                 <li><a href="../classes/Cell.html">Cell</a></li>
                                 <li><a href="../classes/Collection.html">Collection</a></li>
                                 <li><a href="../classes/Events.html">Events</a></li>
@@ -103,7 +104,8 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;./Cell&#x27;,
+    define([&#x27;/Behavior&#x27;,
+            &#x27;./Cell&#x27;,
             &#x27;./Collection&#x27;,
             &#x27;./Events&#x27;,
             &#x27;./mixins/loadingMixin&#x27;, &#x27;./mixins/cacheMixin&#x27;, &#x27;./mixins/cellMixin&#x27;, &#x27;./mixins/pollingMixin&#x27;,
@@ -120,8 +122,9 @@
            factory);
   } else if (typeof exports === &#x27;object&#x27;) {
     require(&#x27;./stickitUtils&#x27;);
-    require(&#x27;./configure&#x27;)
-    module.exports = factory(require(&#x27;./Cell&#x27;),
+    require(&#x27;./configure&#x27;);
+    module.exports = factory(require(&#x27;./Behavior&#x27;),
+                             require(&#x27;./Cell&#x27;),
                              require(&#x27;./Collection&#x27;),
                              require(&#x27;./Events&#x27;),
                              require(&#x27;./mixins/loadingMixin&#x27;), require(&#x27;./mixins/cacheMixin&#x27;), require(&#x27;./mixins/cellMixin&#x27;), require(&#x27;./mixins/pollingMixin&#x27;),
@@ -135,7 +138,8 @@
   } else {
     root.Torso = root.Torso || {};
   }
-}(this, function(Cell,
+}(this, function(Behavior,
+                 Cell,
                  Collection,
                  Events,
                  loadingMixin, cacheMixin, cellMixin, pollingMixin,
@@ -157,6 +161,7 @@
    * @author    jyoung@vecna.com
    */
   return {
+    Behavior: Behavior,
     Cell: Cell,
     Collection: Collection,
     Events: Events,

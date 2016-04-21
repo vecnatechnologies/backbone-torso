@@ -38,6 +38,7 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Behavior.html">Behavior</a></li>
                                 <li><a href="../classes/Cell.html">Cell</a></li>
                                 <li><a href="../classes/Collection.html">Collection</a></li>
                                 <li><a href="../classes/Events.html">Events</a></li>
@@ -127,6 +128,8 @@
     template: null,
     feedback: null,
     feedbackCell: null,
+    behaviors: null,
+    __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
     __isActive: false,
@@ -161,6 +164,7 @@
       this.__feedbackOnEvents = [];
       this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
+      this._initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -181,6 +185,32 @@
      */
     set: function() {
       return this.viewState.set.apply(this.viewState, arguments);
+    },
+
+    _initializeBehaviors: function(viewOptions) {
+      var self = this;
+      if (!_.isEmpty(this.behaviors)) {
+        self.__behaviorInstances = {};
+        _.each(this.behaviors, function(behaviorDefinition, alias) {
+          var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass &amp;&amp; _.isFunction(BehaviorClass))) {
+            throw new Error(&#x27;Incorrect behavior definition. Expected key &quot;behavior&quot; to be a class but instead got &#x27; +
+              String(BehaviorClass));
+          }
+
+          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
+            return key !== &#x27;behavior&#x27;;
+          });
+          behaviorOptions.view = self;
+          self.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+        });
+      }
+    },
+
+    getBehavior: function(alias) {
+      if (this.__behaviorInstances) {
+        return this.__behaviorInstances[alias];
+      }
     },
 
     /**
@@ -226,6 +256,7 @@
       this.trigger(&#x27;render:after-dom-update&#x27;);
       this.delegateEvents();
       this.trigger(&#x27;render:after-delegate-events&#x27;);
+      this.trigger(&#x27;render:before-attach-tracked-views&#x27;);
       promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
@@ -318,6 +349,7 @@
      * @method attachTo
      */
     attachTo: function($el, options) {
+      this.trigger(&#x27;before-attach&#x27;);
       options = options || {};
       var view = this;
       if (!this.isAttachedToParent()) {
@@ -429,6 +461,7 @@
      */
     detach: function() {
       var wasAttached;
+      this.trigger(&#x27;before-detach&#x27;);
       if (this.isAttachedToParent()) {
          wasAttached = this.isAttached();
         // Detach view from DOM
@@ -474,6 +507,7 @@
      * @method activate
      */
     activate: function() {
+      this.trigger(&#x27;before-activate&#x27;);
       this.__activateTrackedViews();
       if (!this.isActive()) {
         this._activate();
@@ -502,6 +536,7 @@
      * @method deactivate
      */
     deactivate: function() {
+      this.trigger(&#x27;before-deactivate&#x27;);
       this.__deactivateTrackedViews();
       if (this.isActive()) {
         this._deactivate();
@@ -523,6 +558,7 @@
      * @method dispose
      */
     dispose: function() {
+      this.trigger(&#x27;before-dispose&#x27;);
       this._dispose();
 
       // Detach DOM and deactivate the view
