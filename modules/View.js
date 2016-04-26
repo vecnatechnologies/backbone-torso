@@ -1160,7 +1160,7 @@
             qualifiedFields = [whenField],
             useAtNotation = (whenField.charAt(0) === '@');
 
-        if (whenField !== 'on' || when !== 'listenTo') {
+        if (whenField !== 'on' || whenField !== 'listenTo') {
           if (useAtNotation) {
             whenField = whenField.substring(1);
             // substitute indices in to "when" placeholders
