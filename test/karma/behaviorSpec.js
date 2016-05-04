@@ -103,6 +103,64 @@ describe('A Torso Behavior', function() {
     });
   });
 
+  describe('using the mixin field', function() {
+
+    it('will add to the view\'s public API', function() {
+      var BehaviorWithMixin = TorsoBehavior.extend({
+        addToFoo: function() {
+          this.set('foo', this.has('foo') ? this.get('foo') + 1 : 1);
+        },
+
+        mixin: {
+          addAndGetFoo: function() {
+            this.addToFoo();
+            return this.get('foo');
+          }
+        }
+      });
+      var ViewWithMixinBehavior = TorsoView.extend({
+        behaviors: {
+          foo: {
+            behavior: BehaviorWithMixin
+          }
+        }
+      });
+      var view = new ViewWithMixinBehavior();
+      expect(view.addAndGetFoo).toBeDefined();
+      expect(view.addToFoo).not.toBeDefined();
+      expect(view.addAndGetFoo()).toBe(1);
+      expect(view.addAndGetFoo()).toBe(2);
+    });
+
+    it('will not override a view\'s method', function() {
+      var BehaviorWithMixin = TorsoBehavior.extend({
+        mixin: {
+          getFoo: function() {
+            return 'behavior-foo';
+          }
+        }
+      });
+      var ViewWithMixinBehavior = TorsoView.extend({
+        behaviors: {
+          foo: {
+            behavior: BehaviorWithMixin
+          }
+        },
+
+        initialize: function() {
+          this.set('foo', 'view-foo');
+        },
+
+        getFoo: function() {
+          return this.get('foo');
+        }
+      });
+      var view = new ViewWithMixinBehavior();
+      expect(view.getFoo).toBeDefined();
+      expect(view.getFoo()).toBe('view-foo');
+    });
+  });
+
   it('A view can reference its behavior using an alias', function() {
     var viewWithBehavior = new ViewWithBehavior();
     var behaviorInView = viewWithBehavior.getBehavior('torsoBehavior');
@@ -431,10 +489,10 @@ describe('A Torso Behavior', function() {
       });
       var ViewWithBehaviorOneFirst = TorsoView.extend({
         behaviors: {
-          behaviorOne: {
+          one: {
             behavior: BehaviorOneTrackingAttached
           },
-          behaviorTwo: {
+          two: {
             behavior: BehaviorTwoTrackingAttached
           }
         }
@@ -444,14 +502,15 @@ describe('A Torso Behavior', function() {
 
       expect(methodsCalled[0]).toBe('behaviorOne:_attached');
       expect(methodsCalled[1]).toBe('behaviorTwo:_attached');
+      viewWithBehaviorOneFirst.detach();
 
       methodsCalled = [];
       var ViewWithBehaviorTwoFirst = TorsoView.extend({
         behaviors: {
-          behaviorTwo: {
+          two: {
             behavior: BehaviorTwoTrackingAttached
           },
-          behaviorOne: {
+          one: {
             behavior: BehaviorOneTrackingAttached
           }
         }

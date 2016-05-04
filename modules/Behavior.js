@@ -14,11 +14,11 @@
 
   // Map of eventName: lifecycleMethod
   var eventMap = {
-    'before-attach': '_attached',
-    'before-detach':  '_detached',
-    'before-activate': '_activate',
-    'before-deactivate': '_deactivate',
-    'before-dispose': '_dispose',
+    'before-attached-callback': '_attached',
+    'before-detached-callback':  '_detached',
+    'before-activate-callback': '_activate',
+    'before-deactivate-callback': '_deactivate',
+    'before-dispose-callback': '_dispose',
     'render:before-attach-tracked-views': 'attachTrackedViews',
     'render:begin': 'prerender',
     'render:complete': 'postrender',
@@ -40,6 +40,13 @@
      * @type {String}
      */
     cidPrefix: 'b',
+
+    /**
+     * Add functions to be added to the view's public API. They will be behavior-scoped.
+     * @property mixin
+     * @type {Object}
+     */
+    mixin: {},
 
     /**
      * @method constructor

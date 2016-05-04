@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.6</em>
+            <em>API Docs for: 0.6.8</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -181,6 +181,10 @@
                                 <a href="#method___getTrackedViewsHash">__getTrackedViewsHash</a>
 
                             </li>
+                            <li class="index-item method">
+                                <a href="#method___initializeBehaviors">__initializeBehaviors</a>
+
+                            </li>
                             <li class="index-item method private">
                                 <a href="#method___invokeAttached">__invokeAttached</a>
 
@@ -283,6 +287,10 @@
                             </li>
                             <li class="index-item method">
                                 <a href="#method_get">get</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_getBehavior">getBehavior</a>
 
                             </li>
                             <li class="index-item method">
@@ -421,7 +429,7 @@ See Torso.templateRenderer#render for params</a>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l675"><code>modules&#x2F;View.js:675</code></a>
+        <a href="../files/modules_View.js.html#l697"><code>modules&#x2F;View.js:697</code></a>
         </p>
 
 
@@ -502,7 +510,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l660"><code>modules&#x2F;View.js:660</code></a>
+        <a href="../files/modules_View.js.html#l682"><code>modules&#x2F;View.js:682</code></a>
         </p>
 
 
@@ -577,7 +585,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l991"><code>modules&#x2F;View.js:991</code></a>
+        <a href="../files/modules_View.js.html#l1015"><code>modules&#x2F;View.js:1015</code></a>
         </p>
 
 
@@ -610,7 +618,7 @@ Finds all feedback zones that match the &quot;to&quot; field, and binds the &quo
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l931"><code>modules&#x2F;View.js:931</code></a>
+        <a href="../files/modules_View.js.html#l955"><code>modules&#x2F;View.js:955</code></a>
         </p>
 
 
@@ -658,7 +666,7 @@ Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'})
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1236"><code>modules&#x2F;View.js:1236</code></a>
+        <a href="../files/modules_View.js.html#l1260"><code>modules&#x2F;View.js:1260</code></a>
         </p>
 
 
@@ -729,7 +737,7 @@ foo[][] -&gt; ['foo[0][0]', foo[1][0]']</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1100"><code>modules&#x2F;View.js:1100</code></a>
+        <a href="../files/modules_View.js.html#l1124"><code>modules&#x2F;View.js:1124</code></a>
         </p>
 
 
@@ -831,7 +839,7 @@ foo[][] -&gt; ['foo[0][0]', foo[1][0]']</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1146"><code>modules&#x2F;View.js:1146</code></a>
+        <a href="../files/modules_View.js.html#l1170"><code>modules&#x2F;View.js:1170</code></a>
         </p>
 
 
@@ -900,7 +908,7 @@ if the appropriate element exist on the page</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1186"><code>modules&#x2F;View.js:1186</code></a>
+        <a href="../files/modules_View.js.html#l1210"><code>modules&#x2F;View.js:1210</code></a>
         </p>
 
 
@@ -943,7 +951,7 @@ This does not handle or return any &quot;open&quot; array notations: []</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1123"><code>modules&#x2F;View.js:1123</code></a>
+        <a href="../files/modules_View.js.html#l1147"><code>modules&#x2F;View.js:1147</code></a>
         </p>
 
 
@@ -1011,7 +1019,7 @@ If dest is: my-feedback-foo[x][y] then it will find all elements that match: dat
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l855"><code>modules&#x2F;View.js:855</code></a>
+        <a href="../files/modules_View.js.html#l877"><code>modules&#x2F;View.js:877</code></a>
         </p>
 
 
@@ -1079,7 +1087,7 @@ When used with the render method, it will return the view at a injections site b
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l813"><code>modules&#x2F;View.js:813</code></a>
+        <a href="../files/modules_View.js.html#l835"><code>modules&#x2F;View.js:835</code></a>
         </p>
 
 
@@ -1148,6 +1156,37 @@ which are disposed when the parent is disposed.</p>
 
 
 </div>
+<div id="method___initializeBehaviors" class="method item">
+    <h3 class="name"><code>__initializeBehaviors</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_View.js.html#l632"><code>modules&#x2F;View.js:632</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Initializes the behaviors</p>
+
+    </div>
+
+
+
+
+</div>
 <div id="method___invokeAttached" class="method item private">
     <h3 class="name"><code>__invokeAttached</code></h3>
 
@@ -1164,7 +1203,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l896"><code>modules&#x2F;View.js:896</code></a>
+        <a href="../files/modules_View.js.html#l918"><code>modules&#x2F;View.js:918</code></a>
         </p>
 
 
@@ -1195,7 +1234,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l914"><code>modules&#x2F;View.js:914</code></a>
+        <a href="../files/modules_View.js.html#l937"><code>modules&#x2F;View.js:937</code></a>
         </p>
 
 
@@ -1227,7 +1266,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l649"><code>modules&#x2F;View.js:649</code></a>
+        <a href="../files/modules_View.js.html#l671"><code>modules&#x2F;View.js:671</code></a>
         </p>
 
 
@@ -1278,7 +1317,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l752"><code>modules&#x2F;View.js:752</code></a>
+        <a href="../files/modules_View.js.html#l774"><code>modules&#x2F;View.js:774</code></a>
         </p>
 
 
@@ -1392,7 +1431,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l978"><code>modules&#x2F;View.js:978</code></a>
+        <a href="../files/modules_View.js.html#l1002"><code>modules&#x2F;View.js:1002</code></a>
         </p>
 
 
@@ -1461,7 +1500,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l879"><code>modules&#x2F;View.js:879</code></a>
+        <a href="../files/modules_View.js.html#l901"><code>modules&#x2F;View.js:901</code></a>
         </p>
 
 
@@ -1546,7 +1585,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1205"><code>modules&#x2F;View.js:1205</code></a>
+        <a href="../files/modules_View.js.html#l1229"><code>modules&#x2F;View.js:1229</code></a>
         </p>
 
 
@@ -1579,7 +1618,7 @@ Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1218"><code>modules&#x2F;View.js:1218</code></a>
+        <a href="../files/modules_View.js.html#l1242"><code>modules&#x2F;View.js:1242</code></a>
         </p>
 
 
@@ -1612,7 +1651,7 @@ Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l840"><code>modules&#x2F;View.js:840</code></a>
+        <a href="../files/modules_View.js.html#l862"><code>modules&#x2F;View.js:862</code></a>
         </p>
 
 
@@ -1643,7 +1682,7 @@ Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l414"><code>modules&#x2F;View.js:414</code></a>
+        <a href="../files/modules_View.js.html#l397"><code>modules&#x2F;View.js:397</code></a>
         </p>
 
 
@@ -1675,7 +1714,7 @@ custom timers, listenTo's or on's that should be activatable. The default implem
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l328"><code>modules&#x2F;View.js:328</code></a>
+        <a href="../files/modules_View.js.html#l312"><code>modules&#x2F;View.js:312</code></a>
         </p>
 
 
@@ -1707,7 +1746,7 @@ after the DOM has been attached to the document. The default implementation is a
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l443"><code>modules&#x2F;View.js:443</code></a>
+        <a href="../files/modules_View.js.html#l426"><code>modules&#x2F;View.js:426</code></a>
         </p>
 
 
@@ -1739,7 +1778,7 @@ custom timers, listenTo's or on's that should be deactivatable. The default impl
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l394"><code>modules&#x2F;View.js:394</code></a>
+        <a href="../files/modules_View.js.html#l377"><code>modules&#x2F;View.js:377</code></a>
         </p>
 
 
@@ -1771,7 +1810,7 @@ after the view has been removed from the document. The default implementation is
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l484"><code>modules&#x2F;View.js:484</code></a>
+        <a href="../files/modules_View.js.html#l467"><code>modules&#x2F;View.js:467</code></a>
         </p>
 
 
@@ -1804,7 +1843,7 @@ Override this method to destruct any extra</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l401"><code>modules&#x2F;View.js:401</code></a>
+        <a href="../files/modules_View.js.html#l384"><code>modules&#x2F;View.js:384</code></a>
         </p>
 
 
@@ -1847,7 +1886,7 @@ Override this method to destruct any extra</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l235"><code>modules&#x2F;View.js:235</code></a>
+        <a href="../files/modules_View.js.html#l220"><code>modules&#x2F;View.js:220</code></a>
         </p>
 
 
@@ -1947,7 +1986,7 @@ make it asynchronous.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l320"><code>modules&#x2F;View.js:320</code></a>
+        <a href="../files/modules_View.js.html#l304"><code>modules&#x2F;View.js:304</code></a>
         </p>
 
 
@@ -2003,7 +2042,7 @@ This method can be overwritten as usual OR extended using <baseClass>.prototype.
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l266"><code>modules&#x2F;View.js:266</code></a>
+        <a href="../files/modules_View.js.html#l250"><code>modules&#x2F;View.js:250</code></a>
         </p>
 
 
@@ -2187,7 +2226,7 @@ If using transitions and no previousView is provided, it will look to see if a v
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l429"><code>modules&#x2F;View.js:429</code></a>
+        <a href="../files/modules_View.js.html#l412"><code>modules&#x2F;View.js:412</code></a>
         </p>
 
 
@@ -2219,7 +2258,7 @@ and events that may affect user experience. Recursively invokes deactivate on ch
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l206"><code>modules&#x2F;View.js:206</code></a>
+        <a href="../files/modules_View.js.html#l191"><code>modules&#x2F;View.js:191</code></a>
         </p>
 
 
@@ -2251,7 +2290,7 @@ Binds DOM events with the view using events hash while also adding feedback even
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l352"><code>modules&#x2F;View.js:352</code></a>
+        <a href="../files/modules_View.js.html#l336"><code>modules&#x2F;View.js:336</code></a>
         </p>
 
 
@@ -2290,7 +2329,7 @@ callback on each tracked view recursively.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l378"><code>modules&#x2F;View.js:378</code></a>
+        <a href="../files/modules_View.js.html#l361"><code>modules&#x2F;View.js:361</code></a>
         </p>
 
 
@@ -2365,7 +2404,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l450"><code>modules&#x2F;View.js:450</code></a>
+        <a href="../files/modules_View.js.html#l433"><code>modules&#x2F;View.js:433</code></a>
         </p>
 
 
@@ -2399,7 +2438,7 @@ recursively removing views from the hierarchy.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l690"><code>modules&#x2F;View.js:690</code></a>
+        <a href="../files/modules_View.js.html#l712"><code>modules&#x2F;View.js:712</code></a>
         </p>
 
 
@@ -2446,6 +2485,71 @@ recursively removing views from the hierarchy.</p>
 
 
 </div>
+<div id="method_getBehavior" class="method item">
+    <h3 class="name"><code>getBehavior</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>alias</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type">Torso.Behavior</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_View.js.html#l86"><code>modules&#x2F;View.js:86</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">alias</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>the name/alias of the behavior</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Torso.Behavior</span>:
+                    <p>the behavior instance if one exists with that alias</p>
+
+            </div>
+        </div>
+
+
+</div>
 <div id="method_getTrackedView" class="method item">
     <h3 class="name"><code>getTrackedView</code></h3>
 
@@ -2470,7 +2574,7 @@ recursively removing views from the hierarchy.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l525"><code>modules&#x2F;View.js:525</code></a>
+        <a href="../files/modules_View.js.html#l508"><code>modules&#x2F;View.js:508</code></a>
         </p>
 
 
@@ -2534,7 +2638,7 @@ recursively removing views from the hierarchy.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l512"><code>modules&#x2F;View.js:512</code></a>
+        <a href="../files/modules_View.js.html#l495"><code>modules&#x2F;View.js:495</code></a>
         </p>
 
 
@@ -2626,7 +2730,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l500"><code>modules&#x2F;View.js:500</code></a>
+        <a href="../files/modules_View.js.html#l483"><code>modules&#x2F;View.js:483</code></a>
         </p>
 
 
@@ -2720,7 +2824,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l620"><code>modules&#x2F;View.js:620</code></a>
+        <a href="../files/modules_View.js.html#l603"><code>modules&#x2F;View.js:603</code></a>
         </p>
 
 
@@ -2795,7 +2899,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l421"><code>modules&#x2F;View.js:421</code></a>
+        <a href="../files/modules_View.js.html#l404"><code>modules&#x2F;View.js:404</code></a>
         </p>
 
 
@@ -2837,7 +2941,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l343"><code>modules&#x2F;View.js:343</code></a>
+        <a href="../files/modules_View.js.html#l327"><code>modules&#x2F;View.js:327</code></a>
         </p>
 
 
@@ -2880,7 +2984,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l335"><code>modules&#x2F;View.js:335</code></a>
+        <a href="../files/modules_View.js.html#l319"><code>modules&#x2F;View.js:319</code></a>
         </p>
 
 
@@ -2922,7 +3026,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l492"><code>modules&#x2F;View.js:492</code></a>
+        <a href="../files/modules_View.js.html#l475"><code>modules&#x2F;View.js:475</code></a>
         </p>
 
 
@@ -2964,7 +3068,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l184"><code>modules&#x2F;View.js:184</code></a>
+        <a href="../files/modules_View.js.html#l169"><code>modules&#x2F;View.js:169</code></a>
         </p>
 
 
@@ -3009,7 +3113,7 @@ NOTE: if you require the view to be attached to the DOM, consider using _attach 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l112"><code>modules&#x2F;View.js:112</code></a>
+        <a href="../files/modules_View.js.html#l97"><code>modules&#x2F;View.js:97</code></a>
         </p>
 
 
@@ -3052,7 +3156,7 @@ NOTE: if you require the view to be attached to the DOM, consider using _attach 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l163"><code>modules&#x2F;View.js:163</code></a>
+        <a href="../files/modules_View.js.html#l148"><code>modules&#x2F;View.js:148</code></a>
         </p>
 
 
@@ -3106,7 +3210,7 @@ NOTE: if you require the view to be detached from the DOM, consider using _detac
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l536"><code>modules&#x2F;View.js:536</code></a>
+        <a href="../files/modules_View.js.html#l519"><code>modules&#x2F;View.js:519</code></a>
         </p>
 
 
@@ -3194,7 +3298,7 @@ which are disposed when the parent is disposed. If false, registers view as a ch
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l130"><code>modules&#x2F;View.js:130</code></a>
+        <a href="../files/modules_View.js.html#l115"><code>modules&#x2F;View.js:115</code></a>
         </p>
 
 
@@ -3272,7 +3376,7 @@ See Torso.templateRenderer#render for params</code></h3>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l193"><code>modules&#x2F;View.js:193</code></a>
+        <a href="../files/modules_View.js.html#l178"><code>modules&#x2F;View.js:178</code></a>
         </p>
 
 
@@ -3315,7 +3419,7 @@ See Torso.templateRenderer#render for params</code></h3>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l603"><code>modules&#x2F;View.js:603</code></a>
+        <a href="../files/modules_View.js.html#l586"><code>modules&#x2F;View.js:586</code></a>
         </p>
 
 
@@ -3435,7 +3539,7 @@ If you are trying to transition in a tracked view, consider using this.transitio
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l787"><code>modules&#x2F;View.js:787</code></a>
+        <a href="../files/modules_View.js.html#l809"><code>modules&#x2F;View.js:809</code></a>
         </p>
 
 
@@ -3556,7 +3660,7 @@ This method is invoked on the parent view to attach a tracked view where the tra
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l701"><code>modules&#x2F;View.js:701</code></a>
+        <a href="../files/modules_View.js.html#l723"><code>modules&#x2F;View.js:723</code></a>
         </p>
 
 
@@ -3693,7 +3797,7 @@ parentView: the parent view transitioning in or out the tracked view
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l588"><code>modules&#x2F;View.js:588</code></a>
+        <a href="../files/modules_View.js.html#l571"><code>modules&#x2F;View.js:571</code></a>
         </p>
 
 
@@ -3785,7 +3889,7 @@ The method is passed a callback that should be invoked when the transition out h
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l223"><code>modules&#x2F;View.js:223</code></a>
+        <a href="../files/modules_View.js.html#l208"><code>modules&#x2F;View.js:208</code></a>
         </p>
 
 
@@ -3829,7 +3933,7 @@ Unbinds DOM events from the view.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l570"><code>modules&#x2F;View.js:570</code></a>
+        <a href="../files/modules_View.js.html#l553"><code>modules&#x2F;View.js:553</code></a>
         </p>
 
 
@@ -3933,7 +4037,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l558"><code>modules&#x2F;View.js:558</code></a>
+        <a href="../files/modules_View.js.html#l541"><code>modules&#x2F;View.js:541</code></a>
         </p>
 
 
@@ -3990,7 +4094,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l172"><code>modules&#x2F;View.js:172</code></a>
+        <a href="../files/modules_View.js.html#l157"><code>modules&#x2F;View.js:157</code></a>
         </p>
 
 

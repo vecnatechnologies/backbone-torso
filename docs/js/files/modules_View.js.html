@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.6</em>
+            <em>API Docs for: 0.6.8</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -164,7 +164,7 @@
       this.__feedbackOnEvents = [];
       this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
-      this._initializeBehaviors(options);
+      this.__initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -187,26 +187,11 @@
       return this.viewState.set.apply(this.viewState, arguments);
     },
 
-    _initializeBehaviors: function(viewOptions) {
-      var self = this;
-      if (!_.isEmpty(this.behaviors)) {
-        self.__behaviorInstances = {};
-        _.each(this.behaviors, function(behaviorDefinition, alias) {
-          var BehaviorClass = behaviorDefinition.behavior;
-          if (!(BehaviorClass &amp;&amp; _.isFunction(BehaviorClass))) {
-            throw new Error(&#x27;Incorrect behavior definition. Expected key &quot;behavior&quot; to be a class but instead got &#x27; +
-              String(BehaviorClass));
-          }
-
-          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
-            return key !== &#x27;behavior&#x27;;
-          });
-          behaviorOptions.view = self;
-          self.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
-        });
-      }
-    },
-
+    /**
+     * @param alias {String} the name/alias of the behavior
+     * @return {Torso.Behavior} the behavior instance if one exists with that alias
+     * @method getBehavior
+     */
     getBehavior: function(alias) {
       if (this.__behaviorInstances) {
         return this.__behaviorInstances[alias];
@@ -349,7 +334,6 @@
      * @method attachTo
      */
     attachTo: function($el, options) {
-      this.trigger(&#x27;before-attach&#x27;);
       options = options || {};
       var view = this;
       if (!this.isAttachedToParent()) {
@@ -461,7 +445,6 @@
      */
     detach: function() {
       var wasAttached;
-      this.trigger(&#x27;before-detach&#x27;);
       if (this.isAttachedToParent()) {
          wasAttached = this.isAttached();
         // Detach view from DOM
@@ -507,9 +490,9 @@
      * @method activate
      */
     activate: function() {
-      this.trigger(&#x27;before-activate&#x27;);
       this.__activateTrackedViews();
       if (!this.isActive()) {
+        this.trigger(&#x27;before-activate-callback&#x27;);
         this._activate();
         this.__isActive = true;
       }
@@ -536,9 +519,9 @@
      * @method deactivate
      */
     deactivate: function() {
-      this.trigger(&#x27;before-deactivate&#x27;);
       this.__deactivateTrackedViews();
       if (this.isActive()) {
+        this.trigger(&#x27;before-deactivate-callback&#x27;);
         this._deactivate();
         this.__isActive = false;
       }
@@ -558,7 +541,7 @@
      * @method dispose
      */
     dispose: function() {
-      this.trigger(&#x27;before-dispose&#x27;);
+      this.trigger(&#x27;before-dispose-callback&#x27;);
       this._dispose();
 
       // Detach DOM and deactivate the view
@@ -749,6 +732,45 @@
     },
 
     //************** Private methods **************//
+
+    /**
+     * Initializes the behaviors
+     * @method __initializeBehaviors
+     */
+    __initializeBehaviors: function(viewOptions) {
+      var view = this;
+      if (!_.isEmpty(this.behaviors)) {
+        view.__behaviorInstances = {};
+        _.each(this.behaviors, function(behaviorDefinition, alias) {
+          var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass &amp;&amp; _.isFunction(BehaviorClass))) {
+            throw new Error(&#x27;Incorrect behavior definition. Expected key &quot;behavior&quot; to be a class but instead got &#x27; +
+              String(BehaviorClass));
+          }
+
+          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
+            return key !== &#x27;behavior&#x27;;
+          });
+          behaviorOptions.view = view;
+          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+          // Add the behavior&#x27;s mixin fields to the view&#x27;s public API
+          if (behaviorInstance.mixin) {
+            var mixin = _.result(behaviorInstance, &#x27;mixin&#x27;);
+            _.each(mixin, function(field, fieldName) {
+              // Default to a view&#x27;s field over a behavior mixin
+              if (_.isUndefined(view[fieldName])) {
+                if (_.isFunction(field)) {
+                  // Behavior mixin functions will be behavior-scoped - the context will be the behavior.
+                  view[fieldName] = _.bind(field, behaviorInstance);
+                } else {
+                  view[fieldName] = field;
+                }
+              }
+            });
+          }
+        });
+      }
+    },
 
     /**
      * If the view is attaching during the render process, then it replaces the injection site
@@ -1005,6 +1027,7 @@
     __invokeAttached: function() {
       // Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.
       if (!this.__attachedCallbackInvoked) {
+        this.trigger(&#x27;before-attached-callback&#x27;);
         this._attached();
         this.__attachedCallbackInvoked = true;
         _.each(this.getTrackedViews(), function(view) {
@@ -1021,6 +1044,7 @@
      */
     __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {
+        this.trigger(&#x27;before-detached-callback&#x27;);
         this._detached();
         this.__attachedCallbackInvoked = false;
       }
@@ -1264,7 +1288,7 @@
             qualifiedFields = [whenField],
             useAtNotation = (whenField.charAt(0) === &#x27;@&#x27;);
 
-        if (whenField !== &#x27;on&#x27; || when !== &#x27;listenTo&#x27;) {
+        if (whenField !== &#x27;on&#x27; || whenField !== &#x27;listenTo&#x27;) {
           if (useAtNotation) {
             whenField = whenField.substring(1);
             // substitute indices in to &quot;when&quot; placeholders
@@ -1373,6 +1397,7 @@
 
   return View;
 }));
+
     </pre>
 </div>
                     </div>

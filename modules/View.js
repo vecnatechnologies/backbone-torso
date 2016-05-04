@@ -60,7 +60,7 @@
       this.__feedbackOnEvents = [];
       this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
-      this._initializeBehaviors(options);
+      this.__initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -83,26 +83,11 @@
       return this.viewState.set.apply(this.viewState, arguments);
     },
 
-    _initializeBehaviors: function(viewOptions) {
-      var self = this;
-      if (!_.isEmpty(this.behaviors)) {
-        self.__behaviorInstances = {};
-        _.each(this.behaviors, function(behaviorDefinition, alias) {
-          var BehaviorClass = behaviorDefinition.behavior;
-          if (!(BehaviorClass && _.isFunction(BehaviorClass))) {
-            throw new Error('Incorrect behavior definition. Expected key "behavior" to be a class but instead got ' +
-              String(BehaviorClass));
-          }
-
-          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
-            return key !== 'behavior';
-          });
-          behaviorOptions.view = self;
-          self.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
-        });
-      }
-    },
-
+    /**
+     * @param alias {String} the name/alias of the behavior
+     * @return {Torso.Behavior} the behavior instance if one exists with that alias
+     * @method getBehavior
+     */
     getBehavior: function(alias) {
       if (this.__behaviorInstances) {
         return this.__behaviorInstances[alias];
@@ -245,7 +230,6 @@
      * @method attachTo
      */
     attachTo: function($el, options) {
-      this.trigger('before-attach');
       options = options || {};
       var view = this;
       if (!this.isAttachedToParent()) {
@@ -357,7 +341,6 @@
      */
     detach: function() {
       var wasAttached;
-      this.trigger('before-detach');
       if (this.isAttachedToParent()) {
          wasAttached = this.isAttached();
         // Detach view from DOM
@@ -403,9 +386,9 @@
      * @method activate
      */
     activate: function() {
-      this.trigger('before-activate');
       this.__activateTrackedViews();
       if (!this.isActive()) {
+        this.trigger('before-activate-callback');
         this._activate();
         this.__isActive = true;
       }
@@ -432,9 +415,9 @@
      * @method deactivate
      */
     deactivate: function() {
-      this.trigger('before-deactivate');
       this.__deactivateTrackedViews();
       if (this.isActive()) {
+        this.trigger('before-deactivate-callback');
         this._deactivate();
         this.__isActive = false;
       }
@@ -454,7 +437,7 @@
      * @method dispose
      */
     dispose: function() {
-      this.trigger('before-dispose');
+      this.trigger('before-dispose-callback');
       this._dispose();
 
       // Detach DOM and deactivate the view
@@ -645,6 +628,45 @@
     },
 
     //************** Private methods **************//
+
+    /**
+     * Initializes the behaviors
+     * @method __initializeBehaviors
+     */
+    __initializeBehaviors: function(viewOptions) {
+      var view = this;
+      if (!_.isEmpty(this.behaviors)) {
+        view.__behaviorInstances = {};
+        _.each(this.behaviors, function(behaviorDefinition, alias) {
+          var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass && _.isFunction(BehaviorClass))) {
+            throw new Error('Incorrect behavior definition. Expected key "behavior" to be a class but instead got ' +
+              String(BehaviorClass));
+          }
+
+          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
+            return key !== 'behavior';
+          });
+          behaviorOptions.view = view;
+          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+          // Add the behavior's mixin fields to the view's public API
+          if (behaviorInstance.mixin) {
+            var mixin = _.result(behaviorInstance, 'mixin');
+            _.each(mixin, function(field, fieldName) {
+              // Default to a view's field over a behavior mixin
+              if (_.isUndefined(view[fieldName])) {
+                if (_.isFunction(field)) {
+                  // Behavior mixin functions will be behavior-scoped - the context will be the behavior.
+                  view[fieldName] = _.bind(field, behaviorInstance);
+                } else {
+                  view[fieldName] = field;
+                }
+              }
+            });
+          }
+        });
+      }
+    },
 
     /**
      * If the view is attaching during the render process, then it replaces the injection site
@@ -901,6 +923,7 @@
     __invokeAttached: function() {
       // Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.
       if (!this.__attachedCallbackInvoked) {
+        this.trigger('before-attached-callback');
         this._attached();
         this.__attachedCallbackInvoked = true;
         _.each(this.getTrackedViews(), function(view) {
@@ -917,6 +940,7 @@
      */
     __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {
+        this.trigger('before-detached-callback');
         this._detached();
         this.__attachedCallbackInvoked = false;
       }

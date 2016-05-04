@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.6</em>
+            <em>API Docs for: 0.6.8</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -118,11 +118,11 @@
 
   // Map of eventName: lifecycleMethod
   var eventMap = {
-    &#x27;before-attach&#x27;: &#x27;_attached&#x27;,
-    &#x27;before-detach&#x27;:  &#x27;_detached&#x27;,
-    &#x27;before-activate&#x27;: &#x27;_activate&#x27;,
-    &#x27;before-deactivate&#x27;: &#x27;_deactivate&#x27;,
-    &#x27;before-dispose&#x27;: &#x27;_dispose&#x27;,
+    &#x27;before-attached-callback&#x27;: &#x27;_attached&#x27;,
+    &#x27;before-detached-callback&#x27;:  &#x27;_detached&#x27;,
+    &#x27;before-activate-callback&#x27;: &#x27;_activate&#x27;,
+    &#x27;before-deactivate-callback&#x27;: &#x27;_deactivate&#x27;,
+    &#x27;before-dispose-callback&#x27;: &#x27;_dispose&#x27;,
     &#x27;render:before-attach-tracked-views&#x27;: &#x27;attachTrackedViews&#x27;,
     &#x27;render:begin&#x27;: &#x27;prerender&#x27;,
     &#x27;render:complete&#x27;: &#x27;postrender&#x27;,
@@ -144,6 +144,13 @@
      * @type {String}
      */
     cidPrefix: &#x27;b&#x27;,
+
+    /**
+     * Add functions to be added to the view&#x27;s public API. They will be behavior-scoped.
+     * @property mixin
+     * @type {Object}
+     */
+    mixin: {},
 
     /**
      * @method constructor
