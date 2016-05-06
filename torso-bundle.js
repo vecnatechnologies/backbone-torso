@@ -1328,32 +1328,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
-  }
-}(this, function(_, Backbone, cellMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellMixin);
-
-  return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1376,6 +1350,32 @@
   _.extend(NestedModel.prototype, pollingMixin);
 
   return NestedModel;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
+  }
+}(this, function(_, Backbone, cellMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedCell = Backbone.NestedModel.extend({});
+  _.extend(NestedCell.prototype, cellMixin);
+
+  return NestedCell;
 }));
 
 (function(root, factory) {
@@ -1569,6 +1569,31 @@
   'use strict';
 
   /**
+   * ViewStateCell is a NestedCell that holds view state data and can trigger
+   * change events. These changes events will propogate up and trigger on the view
+   * as well.
+   */
+  var ViewStateCell = NestedCell.extend({
+
+    initialize: function(attrs, opts) {
+      opts = opts || {};
+      this.view = opts.view;
+    },
+
+    /**
+     * Retrigger view state change events on the view as well.
+     * @method trigger
+     * @override
+     */
+    trigger: function(name) {
+      if (name === 'change' || name.indexOf('change:') === 0) {
+        View.prototype.trigger.apply(this.view, arguments);
+      }
+      NestedCell.prototype.trigger.apply(this, arguments);
+    }
+  });
+
+  /**
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
@@ -1610,7 +1635,7 @@
      */
     constructor: function(options) {
       options = options || {};
-      this.viewState = new NestedCell();
+      this.viewState = new ViewStateCell({}, { view: this });
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};

@@ -11,6 +11,31 @@
   'use strict';
 
   /**
+   * ViewStateCell is a NestedCell that holds view state data and can trigger
+   * change events. These changes events will propogate up and trigger on the view
+   * as well.
+   */
+  var ViewStateCell = NestedCell.extend({
+
+    initialize: function(attrs, opts) {
+      opts = opts || {};
+      this.view = opts.view;
+    },
+
+    /**
+     * Retrigger view state change events on the view as well.
+     * @method trigger
+     * @override
+     */
+    trigger: function(name) {
+      if (name === 'change' || name.indexOf('change:') === 0) {
+        View.prototype.trigger.apply(this.view, arguments);
+      }
+      NestedCell.prototype.trigger.apply(this, arguments);
+    }
+  });
+
+  /**
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
@@ -52,7 +77,7 @@
      */
     constructor: function(options) {
       options = options || {};
-      this.viewState = new NestedCell();
+      this.viewState = new ViewStateCell({}, { view: this });
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
