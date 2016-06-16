@@ -184,6 +184,7 @@
       } else {
         config.mapping = fields;
       }
+      this.__currentMappings[alias] = config;
       if (models) {
         if (computed) {
           this.setTrackedModels(models, copy);
@@ -191,7 +192,6 @@
           this.setTrackedModel(alias, models, copy);
         }
       }
-      this.__currentMappings[alias] = config;
     },
 
     /**
