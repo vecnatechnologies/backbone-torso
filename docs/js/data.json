@@ -286,7 +286,7 @@
             "module": "Torso",
             "namespace": "Torso.Mixins",
             "file": "modules/mixins/cacheMixin.js",
-            "line": 12,
+            "line": 14,
             "description": "Custom additions to the Backbone Collection object.\n- safe disposal methods for memory + event management\n- special functional overrides to support ID registration for different views"
         },
         "Torso.Mixins.cellMixin": {
@@ -588,7 +588,7 @@
     "classitems": [
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 26,
+            "line": 28,
             "description": "Returns a new class of collection that inherits from the parent but not the cacheMixin\nand adds a requesterMixin that connects this cache to it's parent",
             "itemtype": "method",
             "name": "createRequesterCollectionClass",
@@ -610,7 +610,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 37,
+            "line": 39,
             "description": "A mixin that overrides base collection methods meant for cache's and tailors them\nto a requester.",
             "itemtype": "method",
             "name": "requesterMixin",
@@ -620,7 +620,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 44,
+            "line": 46,
             "itemtype": "method",
             "name": "requesterMixin.getTrackedIds",
             "return": {
@@ -633,7 +633,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 52,
+            "line": 54,
             "description": "Will force the cache to fetch just the registered ids of this collection",
             "itemtype": "method",
             "name": "requesterMixin.fetch",
@@ -669,7 +669,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 73,
+            "line": 75,
             "description": "Will force the cache to fetch a subset of this collection's tracked ids",
             "itemtype": "method",
             "name": "requesterMixin.fetchByIds",
@@ -696,7 +696,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 86,
+            "line": 88,
             "description": "Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.\nOverrides the Id registration system to route via the parent collection",
             "itemtype": "method",
             "name": "requesterMixin.trackIds",
@@ -712,7 +712,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 98,
+            "line": 100,
             "description": "Adds a new model to the requester collection and tracks the model.id",
             "itemtype": "method",
             "name": "requesterMixin.addModelAndTrack",
@@ -729,7 +729,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 109,
+            "line": 111,
             "description": "Tracks a new id",
             "itemtype": "method",
             "name": "requesterMixin.trackNewId",
@@ -746,7 +746,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 118,
+            "line": 120,
             "description": "Will begin tracking the new ids and then ask the cache to fetch them\nThis will reset any previous list of ids being tracked.",
             "itemtype": "method",
             "name": "requesterMixin.trackAndFetch",
@@ -759,7 +759,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 129,
+            "line": 131,
             "description": "Will force the cache to fetch any of this collection's tracked models that are not in the cache\nwhile not fetching models that are already in the cache. Useful when you want the effeciency of\npulling models from the cache and don't need all the models to be up-to-date.",
             "itemtype": "method",
             "name": "requesterMixin.pull",
@@ -781,7 +781,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 144,
+            "line": 147,
             "description": "Will register the new ids and then pull in any models not stored in the cache. See this.pull() for\nthe difference between pull and fetch.",
             "itemtype": "method",
             "name": "requesterMixin.trackAndPull",
@@ -794,7 +794,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 155,
+            "line": 158,
             "description": "Handles the disposing of this collection as it relates to a requester collection.",
             "itemtype": "method",
             "name": "requesterMixin.requesterDispose",
@@ -804,7 +804,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 168,
+            "line": 171,
             "description": "Adds functions to manage state of requesters",
             "itemtype": "method",
             "name": "cacheMixin",
@@ -821,7 +821,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 177,
+            "line": 180,
             "access": "private",
             "tagname": "",
             "itemtype": "method",
@@ -844,7 +844,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 192,
+            "line": 195,
             "itemtype": "method",
             "name": "cacheMixin.getRequesterIds",
             "params": [
@@ -864,7 +864,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 201,
+            "line": 204,
             "itemtype": "method",
             "name": "cacheMixin.getRequesterIdsAsDictionary\nThis method is used for quick look up of a certain id within the list of requested ids",
             "params": [
@@ -884,7 +884,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 211,
+            "line": 214,
             "itemtype": "method",
             "name": "cacheMixin.removeRequester\nRemoves a requester from this cache. No longer receives updates",
             "params": [
@@ -900,7 +900,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 221,
+            "line": 224,
             "description": "NOTE: this methods returns only the guids for requester collections that are currently tracking ids\nTODO: should this return just the knownPrivateCollections",
             "itemtype": "method",
             "name": "cacheMixin.getRequesters",
@@ -914,7 +914,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 231,
+            "line": 234,
             "description": "Return the list of Ids requested by this collection",
             "itemtype": "method",
             "name": "cacheMixin.getAllRequestedIds",
@@ -928,7 +928,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 240,
+            "line": 243,
             "description": "Used to return a collection of desired models given the requester object.\nBinds a custom \"resized\" event to the private collections.\nOverrides the fetch method to call the parent collection's fetchByIds method.\nOverrides the registerIds method to redirect to its parent collection.",
             "itemtype": "method",
             "name": "cacheMixin.createPrivateCollection",
@@ -949,7 +949,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 258,
+            "line": 261,
             "description": "Registers a list of Ids that a particular object cares about and pushes\nany cached models its way.\n\nThis method intelligently updates the \"_requestedIds\" field to contain all unique\nrequests for Ids to be fetched.  Furthermore, the \"polledFetch\" method\nis overriden such that it no longer routes through Backbone's fetch all,\nbut rather a custom \"fetchByIds\" method.",
             "itemtype": "method",
             "name": "cacheMixin.registerIds",
@@ -971,7 +971,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 318,
+            "line": 321,
             "description": "Overrides the base fetch call if this.fetchUsingTrackedIds is true\nCalling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise\nit will pass through to the default fetch.",
             "itemtype": "method",
             "name": "fetch",
@@ -981,7 +981,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 335,
+            "line": 338,
             "description": "A custom fetch operation to only fetch the requested Ids.",
             "itemtype": "method",
             "name": "cacheMixin.fetchByIds",
@@ -1017,7 +1017,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 394,
+            "line": 405,
             "description": "The constructor constructor / initialize method for collections.\nAllocate new memory for the local references if they\nwere null when this method was called.",
             "params": [
                 {

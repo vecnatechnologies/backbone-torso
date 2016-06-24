@@ -552,6 +552,8 @@
     root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
 }(this, function(_, $) {
+
+  var fetchIdentifier = 0;
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -681,6 +683,7 @@
             options = options || {};
             //find ids that we don't have in cache
             options.idsToFetch = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            options.idsToFetch = _.difference(options.idsToFetch, _.uniq(_.flatten(_.values(parentInstance.idsFetching))));
             return this.fetch(options);
           },
 
@@ -884,6 +887,7 @@
        * @return {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(options) {
+        var fetchId = fetchIdentifier++;
         options = options || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
         return this.__loadWrapper(function(options) {
@@ -894,10 +898,14 @@
               url: _.result(collection, 'url') + collection.getByIdsUrl,
               data: {ids: requestedIds.join(',')}
             };
-          if (options.fetchContentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() != 'GET')) {
-            ajaxOpts.contentType = options.fetchContentType || 'application/json; charset=utf-8';
+          if (contentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() != 'GET')) {
+            ajaxOpts.contentType = contentType || 'application/json; charset=utf-8';
             ajaxOpts.data = JSON.stringify(requestedIds);
           }
+          if (!collection.idsFetching) {
+            collection.idsFetching = {};
+          }
+          collection.idsFetching[fetchId] = requestedIds;
           return $.ajax(ajaxOpts).done(
               // Success function
               function(data) {
@@ -929,7 +937,10 @@
                   privateCollection.set(models, {remove: false});
                 }
               });
-        }, options);
+        }, options)
+        .always(function() {
+          delete collection.idsFetching[fetchId];
+        });
       };
     };
 
@@ -1328,32 +1339,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedModel = Backbone.NestedModel.extend({});
-  _.extend(NestedModel.prototype, pollingMixin);
-
-  return NestedModel;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1376,6 +1361,32 @@
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedModel = Backbone.NestedModel.extend({});
+  _.extend(NestedModel.prototype, pollingMixin);
+
+  return NestedModel;
 }));
 
 (function(root, factory) {
@@ -3798,6 +3809,7 @@
       } else {
         config.mapping = fields;
       }
+      this.__currentMappings[alias] = config;
       if (models) {
         if (computed) {
           this.setTrackedModels(models, copy);
@@ -3805,7 +3817,6 @@
           this.setTrackedModel(alias, models, copy);
         }
       }
-      this.__currentMappings[alias] = config;
     },
 
     /**
