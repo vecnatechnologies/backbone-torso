@@ -19,15 +19,14 @@
   "main": "modules/torso.js",
   "peerDependencies": {
     "jquery": "2.1.x",
-    "backbone": "1.2.x",
     "underscore": "1.8.x"
   },
   "dependencies": {
+    "backbone": "1.2.3",
     "backbone-nested": "2.0.4",
     "backbone.stickit": "0.9.2"
   },
   "devDependencies": {
-    "backbone": "1.2.3",
     "browserify": "^12.0.2",
     "del": "^1.1.1",
     "gulp": "^3.8.8",
