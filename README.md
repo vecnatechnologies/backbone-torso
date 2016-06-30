@@ -4,9 +4,9 @@
 
 ### What is Torso?
 
-Torso is a 2-part project. The first is the [guidelines](/docs/RULES.md) on the principles of a good Backbone (including Torso) application. These come from hard-fought lessons building large-scale Backbone webapps. The seconds is a set of Backbone [modules](http://vecnatechnologies.github.io/backbone-torso/#modules) that you can bring in all at once, or use pick-and-choose style that fill functionality holes in Backbone. These additions to Backbone's base building blocks include form handling, two-way binding, smart rerendering, data validation tools, polling caches, sub-view management, and more.
+Torso is a two-part project. The first part is the [guidelines](/docs/RULES.md) on the principles of a good Backbone (including Torso) application. These come from hard-fought lessons building large-scale Backbone webapps. The second part is a set of Backbone [modules](http://vecnatechnologies.github.io/backbone-torso/#modules) that you can bring in all at once, or use pick-and-choose style, that fill functionality holes in Backbone. These additions to Backbone's base building blocks include form handling, two-way binding, smart rerendering, data validation tools, polling caches, sub-view management, and more.
 
-We've created Torso's documentation through a tool called [TonicDev](http://tonicdev.com). Typically, tonicdev lets you run code inline to your documentation, but because of the DOM-manipulation and setup of Torso, the code blocks don't run. But you can still see "live" examples inline to the documentation. 
+We've created Torso's documentation through a tool called [TonicDev](http://tonicdev.com). Typically, tonicdev lets you run code inline to your documentation, but because of the DOM manipulation and setup of Torso, the code blocks don't run. But you can still see "live" examples inline to the documentation. 
 
 #### Torso Intro
 An explanation about what Torso is and how to get it
@@ -27,9 +27,9 @@ More documentation to come on the other Torso modules.
 Besides the guidelines and modules, there is a [documentation](/docs/DOCUMENTATION.md) page that touches on every module of Torso but at a higher level than the tonicdev pages. Also, a list of the added modules and their API is found [here](/docs/API.md).
 
 ### Play with Torso Live:
-Check out a basic RequireBin setup [Here](http://requirebin.com/?gist=889b60ab18d9194ccca7) using Torso.
+Check out a basic RequireBin setup [here](http://requirebin.com/?gist=889b60ab18d9194ccca7) using Torso.
 
-You can also look at a torso application setup [Here](https://cdn.rawgit.com/vecnatechnologies/backbone-torso/master/demo/dist/index.html). It's not particularly functional at the moment, but if you inspect the source code, you'll see a standard torso application setup with detailed comments.
+You can also look at a torso application setup [here](https://cdn.rawgit.com/vecnatechnologies/backbone-torso/master/demo/dist/index.html). It's extremely basic, but if you inspect the source code, you'll see a standard torso application setup with detailed comments.
 
 
 ### Getting started  
@@ -169,7 +169,8 @@ Torso.View.extend({
 ```
 
 ### Philosophy
-You might have heard "convention over configuration" as a way to hide framework implementation and reduce code. Typically, if you have desires to do something that lies just over the edge of convention approaching the unconventional, those frameworks are a headache to get working. Torso is a how-to for "configuration using convention". The goal of Torso is to define some abstractions, [rules of thumb](/docs/RULES.md), and conventions that sit on top of an unopinionated framework like Backbone, that allows us to move quickly through the easy bits and flexibility to handle the edge cases. Think of Torso as more of a practiced martial art than a weapon to wield.
+You might have heard "convention over configuration" as a way to hide framework implementation and reduce code. Typically, if you have desires to do something that lies just over the edge of convention approaching the unconventional, those frameworks are a headache to get working. Torso is a how-to for "configuration using convention". The goal of Torso is to define some abstractions, [rules of thumb](/docs/RULES.md), and conventions that sit on top of an unopinionated framework like Backbone, which allows us to move quickly through the easy bits and still have the flexibility to handle the edge cases.
+
 To see this, let's examine a simple Backbone View:
 ``` js
 var basicView = Backbone.View.extend({
@@ -181,15 +182,15 @@ var basicView = Backbone.View.extend({
   handler: function() {...}
 });
 ```
-Backbone offers an easy jumping off point, but there are many unanswered questions.
+Backbone offers an easy starting point, but there are many unanswered questions.
 * What happens when you add event listeners or timers that need to be removed after the view is done?
 * Should the render method take arguments?
 * Does calling render change the state of the application?
 * When can I call render on this view?
 * Is there any way to keep the functionality of the view going but not have it be part of the DOM?
 
-So many questions, each one can break functionality if they are inconsistent within your app. With Torso, we lay down the laws that answer questions just like these and keep your application consistent.
-A Torso view's render methods never take arguments, can be called at any time, and never change the state of the application. We'll explain how to make this possible and other rules [here](/docs/RULES.md)
+Each point raised here can break functionality if it is inconsistent within your app. With Torso, we lay down the laws that answer questions just like these and keep your application consistent.
+A Torso view's render methods never take arguments, can be called at any time, and never change the state of the application. We'll explain how to make this possible, as well as covering other rules, [here](/docs/RULES.md).
 
 ### Want to help out?
 Check out the [dev page](/docs/DEVELOPMENT.md).
