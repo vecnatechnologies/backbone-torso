@@ -3,7 +3,6 @@ var TorsoView = require('./../../../modules/View');
 var spyOnBackbone = require('./spyOnBackbone');
 
 var ClickView = TorsoView.extend({
-  className: 'click',
   events: {
     'click div' : 'myClick'
   },

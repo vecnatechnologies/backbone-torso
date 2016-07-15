@@ -14,7 +14,7 @@
       browserify = require('browserify'),
       requireify = require('requireify'),
       paths = require('../../paths'),
-      test = require('./test'),
+      test = require('./test-import'),
       tasks = [],
       bundleAll = function(options, callback) {
         var mergedTasks, tasks,

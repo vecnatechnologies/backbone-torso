@@ -1,5 +1,3 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
 var commonJsImportTest,
     _ = require('underscore');
 
@@ -82,6 +80,7 @@ commonJsImportTest('/modules/configure', ['backbone', 'jquery']);
 commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
                                '/modules/stickitUtils',
                                '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/mixins/cellMixin', '/modules/validation',
+                               '/modules/Behavior',
                                '/modules/Cell',
                                '/modules/Collection',
                                '/modules/Events',

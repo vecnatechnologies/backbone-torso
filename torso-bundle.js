@@ -57,28 +57,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -223,6 +201,28 @@
       }
     });
   };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
 }));
 
 (function(root, factory) {
@@ -552,6 +552,8 @@
     root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
 }(this, function(_, $) {
+
+  var fetchIdentifier = 0;
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -595,13 +597,18 @@
           /**
            * Will force the cache to fetch just the registered ids of this collection
            * @method requesterMixin.fetch
+           * @param [options] - argument options
+           * @param [options.idsToFetch=collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
+           * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
            * @return {Promise} promise that will resolve when the fetch is complete
            */
-          fetch: function() {
-            var requesterCollection = this;
+          fetch: function(options) {
+            options = options || {};
+            options.idsToFetch = options.idsToFetch || this.trackedIds;
+            options.setOptions = options.setOptions || {remove: false};
             return this.__loadWrapper(function() {
-              if (requesterCollection.trackedIds && requesterCollection.trackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: requesterCollection.trackedIds, setOptions: {remove: false}});
+              if (options.idsToFetch && options.idsToFetch.length) {
+                return parentInstance.fetchByIds(options);
               } else {
                 return $.Deferred().resolve().promise();
               }
@@ -609,7 +616,21 @@
           },
 
           /**
-           * Override the Id registration system to route via the parent collection
+           * Will force the cache to fetch a subset of this collection's tracked ids
+           * @method requesterMixin.fetchByIds
+           * @param ids {Array} array of model ids
+           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetchByIds: function(ids, options) {
+            options = options || {};
+            options.idsToFetch = _.intersection(ids, this.getTrackedIds());
+            return this.fetch(options);
+          },
+
+          /**
+           * Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.
+           * Overrides the Id registration system to route via the parent collection
            * @method requesterMixin.trackIds
            * @param ids The list of ids that this collection wants to track
            */
@@ -618,7 +639,6 @@
             parentInstance.registerIds(ids, ownerKey);
             this.trackedIds = ids;
           },
-
 
           /**
            * Adds a new model to the requester collection and tracks the model.id
@@ -641,56 +661,39 @@
           },
 
           /**
-           * Will register the new ids and then ask the cache to fetch them
-           * @method requesterMixin.fetchByIds
+           * Will begin tracking the new ids and then ask the cache to fetch them
+           * This will reset any previous list of ids being tracked.
+           * @method requesterMixin.trackAndFetch
            * @return the promise of the fetch by ids
            */
-          fetchByIds: function(newIds) {
+          trackAndFetch: function(newIds) {
             this.trackIds(newIds);
             return this.fetch();
           },
 
           /**
-           * Will force the cache to fetch a subset of this collection's tracked ids
-           * @method requesterMixin.fetchSubsetOfTrackedIds
-           * @return {Promise} promise that will resolve when the fetch is complete
-           */
-          fetchSubsetOfTrackedIds: function(ids) {
-            var subsetOfTrackedIds = _.intersection(ids, this.getTrackedIds());
-            return this.__loadWrapper(function() {
-              if (subsetOfTrackedIds && subsetOfTrackedIds.length) {
-                return parentInstance.fetchByIds({idsToFetch: subsetOfTrackedIds, setOptions: {remove: false}});
-              } else {
-                // handle if subsetOfTrackedIds is empty
-                return $.Deferred().resolve().promise();
-              }
-            });
-          },
-
-          /**
            * Will force the cache to fetch any of this collection's tracked models that are not in the cache
+           * while not fetching models that are already in the cache. Useful when you want the effeciency of
+           * pulling models from the cache and don't need all the models to be up-to-date.
            * @method requesterMixin.pull
+           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete
            */
-          pull: function() {
+          pull: function(options) {
+            options = options || {};
             //find ids that we don't have in cache
-            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
-            return this.__loadWrapper(function() {
-              if (idsNotInCache && idsNotInCache.length) {
-                return parentInstance.fetchByIds({idsToFetch: idsNotInCache, setOptions: {remove: false}});
-              } else {
-                // handle if idsNotInCache is empty
-                return $.Deferred().resolve().promise();
-              }
-            });
+            options.idsToFetch = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            options.idsToFetch = _.difference(options.idsToFetch, _.uniq(_.flatten(_.values(parentInstance.idsFetching))));
+            return this.fetch(options);
           },
 
           /**
-           * Will register the new ids and then pull in any models not stored in the cache
-           * @method requesterMixin.pullByIds
+           * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
+           * the difference between pull and fetch.
+           * @method requesterMixin.trackAndPull
            * @return the promise of the fetch by ids
            */
-          pullByIds: function(newIds) {
+          trackAndPull: function(newIds) {
             this.trackIds(newIds);
             return this.pull();
           },
@@ -884,22 +887,26 @@
        * @return {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(options) {
+        var fetchId = fetchIdentifier++;
         options = options || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
         return this.__loadWrapper(function(options) {
-          var requestedIds, idsToFetch;
-          requestedIds = options.idsToFetch || collection.collectionTrackedIds;
-          if (collection.lazyFetch) {
-            idsToFetch = _.difference(requestedIds, this.models.pluck('id'));
-          } else {
-            idsToFetch = requestedIds;
-          }
-          return $.ajax({
+          var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+          var contentType = options.fetchContentType || collection.fetchContentType;
+          var ajaxOpts = {
               type: collection.fetchHttpAction,
               url: _.result(collection, 'url') + collection.getByIdsUrl,
-              contentType: 'application/json; charset=utf-8',
-              data: idsToFetch
-            }).done(
+              data: {ids: requestedIds.join(',')}
+            };
+          if (contentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() != 'GET')) {
+            ajaxOpts.contentType = contentType || 'application/json; charset=utf-8';
+            ajaxOpts.data = JSON.stringify(requestedIds);
+          }
+          if (!collection.idsFetching) {
+            collection.idsFetching = {};
+          }
+          collection.idsFetching[fetchId] = requestedIds;
+          return $.ajax(ajaxOpts).done(
               // Success function
               function(data) {
                 var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
@@ -930,25 +937,10 @@
                   privateCollection.set(models, {remove: false});
                 }
               });
-        }, options);
-      };
-
-      /**
-       * Sets the lazyFetch mode. When enabled, the collection will assume models don't change, and only fetch each model from the server once.
-       * @method setLazyFetch
-       * @param lazyFetch {boolean} the lazyFetch mode to set
-       */
-      collection.setLazyFetch = function(lazyFetch) {
-        this.lazyFetch = lazyFetch;
-      };
-
-      /**
-       * Gets the lazyFetch mode.
-       * @method isLazyFetch
-       * @return {boolean} true if this collection fetches lazily.
-       */
-      collection.isLazyFetch = function() {
-        return this.lazyFetch;
+        }, options)
+        .always(function() {
+          delete collection.idsFetching[fetchId];
+        });
       };
     };
 
@@ -960,7 +952,6 @@
        * @param [options] {Object} - optional options object
        * @param   [options.fetchHttpAction='POST'] {String} http action used to get objects by ids
        * @param   [options.getByIdsUrl='/ids'] {String} path appended to collection.url to get objects by a list of ids
-       * @param   [options.lazyFetch=false] {Boolean} if set to true, the collection will assume that models do not change after first fetch
        * @param   [options.fetchUsingTrackedIds=true] {Boolean} if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
                                                                but will rather call the default fetch method.
        * @method constructor
@@ -974,10 +965,16 @@
           this.requestMap = {};
           this.collectionTrackedIds = [];
           this.knownPrivateCollections = {};
-          this.getByIdsUrl = options.getByIdsUrl || '/ids';
-          this.fetchHttpAction = options.fetchHttpAction || 'POST';
-          this.lazyFetch = options.lazyFetch || false;
-          this.fetchUsingTrackedIds = options.fetchUsingTrackedIds !== false;
+          var cacheDefaults = _.defaults(
+            _.pick(options, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
+            _.pick(this, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
+            {
+              getByIdsUrl: '/ids',
+              fetchHttpAction: 'GET',
+              fetchUsingTrackedIds: true
+            }
+          );
+          _.extend(this, cacheDefaults);
           cacheMixin(this);
         } else {
           this.trackedIds = [];
@@ -1394,6 +1391,162 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', './Cell'], factory);
+  } else if (typeof exports === 'object') {
+    var _ = require('underscore');
+    var TorsoCell = require('./Cell');
+    module.exports = factory(_, TorsoCell);
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Behavior = factory(root._, root.Torso.Cell);
+  }
+}(this, function(_, Cell) {
+  'use strict';
+
+  // Map of eventName: lifecycleMethod
+  var eventMap = {
+    'before-attached-callback': '_attached',
+    'before-detached-callback':  '_detached',
+    'before-activate-callback': '_activate',
+    'before-deactivate-callback': '_deactivate',
+    'before-dispose-callback': '_dispose',
+    'render:before-attach-tracked-views': 'attachTrackedViews',
+    'render:begin': 'prerender',
+    'render:complete': 'postrender',
+    'initialize:begin':  '_preinitialize',
+    'initialize:complete': '_postinitialize'
+  };
+
+  /**
+   * Allows abstraction of common view logic into separate object
+   *
+   * @module Torso
+   * @class  Behavior
+   * @method constructor
+   * @author  deena.wang@vecna.com
+   */
+  var Behavior = Cell.extend({
+    /**
+     * @property cidPrefix of Behaviors
+     * @type {String}
+     */
+    cidPrefix: 'b',
+
+    /**
+     * Add functions to be added to the view's public API. They will be behavior-scoped.
+     * @property mixin
+     * @type {Object}
+     */
+    mixin: {},
+
+    /**
+     * @method constructor
+     * @override
+     * @param behaviorOptions {Object}
+     * @param behaviorOptions.view {Backbone.View} that Behavior is attached to
+     * @param [viewOptions] {Object} options passed to View's initialize
+     */
+    constructor: function(behaviorOptions, viewOptions) {
+      behaviorOptions = behaviorOptions || {};
+      if (!behaviorOptions.view) {
+        throw new Error('Torso Behavior constructed without behaviorOptions.view');
+      }
+      this.view = behaviorOptions.view;
+      this.cid = _.uniqueId(this.cidPrefix);
+      this.__bindLifecycleMethods();
+      this.__bindEventCallbacks();
+      Cell.apply(this, arguments);
+    },
+
+    /**
+     * Registers defined lifecycle methods to be called at appropriate time in view's lifecycle
+     *
+     * @method __bindLifecycleMethods
+     * @private
+     */
+    __bindLifecycleMethods: function() {
+      _.each(eventMap, function(callback, event) {
+        this.listenTo(this.view, event, this[callback]);
+      }, this);
+    },
+
+    /**
+     * Adds behavior's event handlers to view
+     * Behavior's event handlers fire on view events but are run in the context of the behavior
+     *
+     * @method __bindEventCallbacks
+     * @private
+     */
+    __bindEventCallbacks: function() {
+      var behaviorEvents = _.result(this, 'events');
+      var viewEvents = this.view.events;
+
+      if (!viewEvents) {
+        if (!behaviorEvents) {
+          return;
+        } else {
+          viewEvents = {};
+        }
+      }
+
+      var namespacedEvents = this.__namespaceEvents(behaviorEvents);
+      var boundBehaviorEvents = this.__bindEventCallbacksToBehavior(namespacedEvents);
+
+      if (_.isFunction(viewEvents)) {
+        this.view.events = _.wrap(_.bind(viewEvents, this.view), function(viewEventFunction) {
+          return _.extend(boundBehaviorEvents, viewEventFunction());
+        });
+      } else if (_.isObject(viewEvents)) {
+        this.view.events = _.extend(boundBehaviorEvents, viewEvents);
+      }
+    },
+
+    /**
+     * Namespaces events in event hash
+     *
+     * @method __namespaceEvents
+     * @param eventHash {Object} to namespace
+     * @return {Object} with event namespaced with '.behavior' and the cid of the behavior
+     * @private
+     */
+    __namespaceEvents: function(eventHash) {
+      // coped from Backbone
+      var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+      var namespacedEvents = {};
+      var behaviorId = this.cid;
+      _.each(eventHash, function(value, key) {
+        var splitEventKey = key.match(delegateEventSplitter);
+        var eventName = splitEventKey[1];
+        var selector = splitEventKey[2];
+        var namespacedEventName = eventName + '.behavior.' + behaviorId;
+        namespacedEvents[[namespacedEventName, selector].join(' ')] = value;
+      });
+      return namespacedEvents;
+    },
+
+    /**
+     * @method __bindEventCallbacksToBehavior
+     * @param eventHash {Object} keys are event descriptors, values are String method names or functions
+     * @return {Object} event hash with values as methods bound to view
+     * @private
+     */
+    __bindEventCallbacksToBehavior: function(eventHash) {
+      return _.mapObject(eventHash, function(method) {
+        if (!_.isFunction(method)) {
+          method = this[method];
+        }
+        return _.bind(method, this);
+      }, this);
+    }
+
+  });
+
+  return Behavior;
+}));
+
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['./Cell'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('./Cell'));
@@ -1427,6 +1580,31 @@
   'use strict';
 
   /**
+   * ViewStateCell is a NestedCell that holds view state data and can trigger
+   * change events. These changes events will propogate up and trigger on the view
+   * as well.
+   */
+  var ViewStateCell = NestedCell.extend({
+
+    initialize: function(attrs, opts) {
+      opts = opts || {};
+      this.view = opts.view;
+    },
+
+    /**
+     * Retrigger view state change events on the view as well.
+     * @method trigger
+     * @override
+     */
+    trigger: function(name) {
+      if (name === 'change' || name.indexOf('change:') === 0) {
+        View.prototype.trigger.apply(this.view, arguments);
+      }
+      NestedCell.prototype.trigger.apply(this, arguments);
+    }
+  });
+
+  /**
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
@@ -1440,13 +1618,16 @@
     template: null,
     feedback: null,
     feedbackCell: null,
+    behaviors: null,
+    __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
     __isActive: false,
     __isAttachedToParent: false,
     __isDisposed: false,
     __attachedCallbackInvoked: false,
-    __feedbackEvents: null,
+    __feedbackOnEvents: null,
+    __feedbackListenToEvents: null,
     /**
      * Array of feedback when-then-to's. Example:
      * [{
@@ -1465,13 +1646,15 @@
      */
     constructor: function(options) {
       options = options || {};
-      this.viewState = new NestedCell();
+      this.viewState = new ViewStateCell({}, { view: this });
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
-      this.__feedbackEvents = [];
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
+      this.__initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -1492,6 +1675,17 @@
      */
     set: function() {
       return this.viewState.set.apply(this.viewState, arguments);
+    },
+
+    /**
+     * @param alias {String} the name/alias of the behavior
+     * @return {Torso.Behavior} the behavior instance if one exists with that alias
+     * @method getBehavior
+     */
+    getBehavior: function(alias) {
+      if (this.__behaviorInstances) {
+        return this.__behaviorInstances[alias];
+      }
     },
 
     /**
@@ -1537,6 +1731,7 @@
       this.trigger('render:after-dom-update');
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
+      this.trigger('render:before-attach-tracked-views');
       promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
@@ -1593,6 +1788,7 @@
      * @method delegateEvents
      */
     delegateEvents: function() {
+      this.undelegateEvents(); // always undelegate events - backbone sometimes doesn't.
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackCellCallbacks();
@@ -1786,6 +1982,7 @@
     activate: function() {
       this.__activateTrackedViews();
       if (!this.isActive()) {
+        this.trigger('before-activate-callback');
         this._activate();
         this.__isActive = true;
       }
@@ -1814,6 +2011,7 @@
     deactivate: function() {
       this.__deactivateTrackedViews();
       if (this.isActive()) {
+        this.trigger('before-deactivate-callback');
         this._deactivate();
         this.__isActive = false;
       }
@@ -1833,6 +2031,7 @@
      * @method dispose
      */
     dispose: function() {
+      this.trigger('before-dispose-callback');
       this._dispose();
 
       // Detach DOM and deactivate the view
@@ -1997,7 +2196,7 @@
 
     /**
      * Invokes a feedback entry's "then" method
-     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
+     * @param to {String} the "to" field corresponding to the feedback entry to be invoked.
      * @param [evt] {Event} the event to be passed to the "then" method
      * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
      * @method invokeFeedback
@@ -2023,6 +2222,45 @@
     },
 
     //************** Private methods **************//
+
+    /**
+     * Initializes the behaviors
+     * @method __initializeBehaviors
+     */
+    __initializeBehaviors: function(viewOptions) {
+      var view = this;
+      if (!_.isEmpty(this.behaviors)) {
+        view.__behaviorInstances = {};
+        _.each(this.behaviors, function(behaviorDefinition, alias) {
+          var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass && _.isFunction(BehaviorClass))) {
+            throw new Error('Incorrect behavior definition. Expected key "behavior" to be a class but instead got ' +
+              String(BehaviorClass));
+          }
+
+          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
+            return key !== 'behavior';
+          });
+          behaviorOptions.view = view;
+          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+          // Add the behavior's mixin fields to the view's public API
+          if (behaviorInstance.mixin) {
+            var mixin = _.result(behaviorInstance, 'mixin');
+            _.each(mixin, function(field, fieldName) {
+              // Default to a view's field over a behavior mixin
+              if (_.isUndefined(view[fieldName])) {
+                if (_.isFunction(field)) {
+                  // Behavior mixin functions will be behavior-scoped - the context will be the behavior.
+                  view[fieldName] = _.bind(field, behaviorInstance);
+                } else {
+                  view[fieldName] = field;
+                }
+              }
+            });
+          }
+        });
+      }
+    },
 
     /**
      * If the view is attaching during the render process, then it replaces the injection site
@@ -2279,6 +2517,7 @@
     __invokeAttached: function() {
       // Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.
       if (!this.__attachedCallbackInvoked) {
+        this.trigger('before-attached-callback');
         this._attached();
         this.__attachedCallbackInvoked = true;
         _.each(this.getTrackedViews(), function(view) {
@@ -2295,6 +2534,7 @@
      */
     __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {
+        this.trigger('before-detached-callback');
         this._detached();
         this.__attachedCallbackInvoked = false;
       }
@@ -2376,11 +2616,16 @@
       var i,
           self = this;
 
-      // Cleanup previous "on" events
-      for (i = 0; i < this.__feedbackEvents.length; i++) {
-        this.off(null, this.__feedbackEvents[i]);
+      // Cleanup previous "on" and "listenTo" events
+      for (i = 0; i < this.__feedbackOnEvents.length; i++) {
+        this.off(null, this.__feedbackOnEvents[i]);
       }
-      this.__feedbackEvents = [];
+      for (i = 0; i < this.__feedbackListenToEvents.length; i++) {
+        var feedbackListenToConfig = this.__feedbackListenToEvents[i];
+        this.stopListening(feedbackListenToConfig.obj, feedbackListenToConfig.name, feedbackListenToConfig.callback);
+      }
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
 
       // For each feedback configuration
       _.each(this.feedback, function(declaration) {
@@ -2442,22 +2687,55 @@
             });
             // Special "on" listeners
             _.each(declaration.when.on, function(eventKey) {
-              var invokeThen = function() {
-                var result,
-                    args = [{
-                      args: arguments,
-                      type: eventKey
-                    }];
-                args.push(bindInfo.indices);
-                result = bindInfo.fn.apply(self, args);
-                self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
-              };
+              var invokeThen = self.__generateThenCallback(bindInfo, eventKey);
               self.on(eventKey, invokeThen, self);
-              self.__feedbackEvents.push(invokeThen);
+              self.__feedbackOnEvents.push(invokeThen);
+            });
+            // Special "listenTo" listeners
+            _.each(declaration.when.listenTo, function(listenToConfig) {
+              var obj = listenToConfig.object;
+              if (_.isFunction(obj)) {
+                obj = _.bind(listenToConfig.object, self)();
+              } else if (_.isString(obj)) {
+                obj = _.result(self, listenToConfig.object);
+              }
+              if (obj) {
+                var invokeThen = _.bind(self.__generateThenCallback(bindInfo, listenToConfig.events), self);
+                self.listenTo(obj, listenToConfig.events, invokeThen);
+                self.__feedbackListenToEvents.push({
+                  object: obj,
+                  name: listenToConfig.events,
+                  callback: invokeThen
+                });
+              }
             });
           });
         });
       });
+    },
+
+
+    /**
+     * Returns a properly wrapped "then" using a configuration object "bindInfo" and an "eventKey" that will be passed as the type
+     * @param bindInfo {Object}
+     * @param   bindInfo.feedbackCellField the property name of the feedback cell to store the "then" instructions
+     * @param   bindInfo.fn the original "then" function
+     * @param   [bindInfo.indices] the index map
+     * @return {Function} the properly wrapped "then" function
+     * @private
+     * @method __generateThenCallback
+     */
+    __generateThenCallback: function(bindInfo, eventKey) {
+      return function() {
+        var result,
+            args = [{
+              args: arguments,
+              type: eventKey
+            }];
+        args.push(bindInfo.indices);
+        result = bindInfo.fn.apply(this, args);
+        this.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
+      };
     },
 
     /**
@@ -2500,7 +2778,7 @@
             qualifiedFields = [whenField],
             useAtNotation = (whenField.charAt(0) === '@');
 
-        if (whenField !== 'on') {
+        if (whenField !== 'on' || whenField !== 'listenTo') {
           if (useAtNotation) {
             whenField = whenField.substring(1);
             // substitute indices in to "when" placeholders
@@ -2609,6 +2887,7 @@
 
   return View;
 }));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', './NestedModel'], factory);
@@ -2714,7 +2993,7 @@
    * @module    Torso
    * @namespace Torso
    * @class  validation
-   * @author ariel.wexler@vecna.com
+   * @author ariel.wexler@vecna.com, kent.willis@mostlyepic.com
    */
   var Validation = (function(){
 
@@ -2730,12 +3009,10 @@
     };
 
     // Returns an array with attributes passed through options
-    var getOptionsAttrs = function(options, view) {
+    var getOptionsAttrs = function(options) {
       var attrs = options.attributes;
       if (_.isFunction(attrs)) {
-        attrs = attrs(view);
-      } else if (_.isString(attrs) && (_.isFunction(defaultAttributeLoaders[attrs]))) {
-        attrs = defaultAttributeLoaders[attrs](view);
+        attrs = attrs();
       }
       if (_.isArray(attrs)) {
         return attrs;
@@ -2809,11 +3086,12 @@
         attrName = attr.substring(0, firstBracket);
         remainder = attr.substring(firstBracket + 2);
         subAttrs = [];
-        for (i = 0 ; i < model.get(attrName).length; i++) {
+        var valueArray = model.get(attrName);
+        _.each(valueArray, function(value, i) {
           newIndices = subIndices.slice();
           newIndices.push(i);
           subAttrs.push(generateSubAttributes(attrName + '[' + i + ']' + remainder, model, newIndices));
-        }
+        });
         return subAttrs;
       }
     };
@@ -2952,7 +3230,7 @@
     };
 
     // Contains the methods that are mixed in on the model when binding
-    var mixin = function(view, options) {
+    var mixin = function(options) {
       return {
 
         /**
@@ -2999,7 +3277,7 @@
         isValid: function(option) {
           var flattened, attrs, error, invalidAttrs;
 
-          option = option || getOptionsAttrs(options, view);
+          option = option || getOptionsAttrs(options);
 
           if(_.isString(option)){
             attrs = [option];
@@ -3020,14 +3298,6 @@
                 invalidAttrs = invalidAttrs || {};
                 invalidAttrs[attr] = error;
               }
-              // Loop through all associated views
-              _.each(this.associatedViews, function(view) {
-                if (error) {
-                  options.invalid(view, attr, error, options.selector);
-                } else {
-                  options.valid(view, attr, options.selector);
-                }
-              }, this);
             }, this);
           }
 
@@ -3044,34 +3314,14 @@
         // You can call it manually without any parameters to validate the
         // entire model.
         validate: function(attrs, setOptions){
-          var model = this, validateAll, opt, validatedAttrs, allAttrs, flattened, changedAttrs, result;
-
-          validateAll = !attrs;
-          opt = _.extend({}, options, setOptions);
-          validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(options, view));
-          allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs);
-          flattened = flatten(allAttrs);
-          changedAttrs = attrs ? flatten(attrs) : flattened;
-          result = validateModel(model, allAttrs, _.pick(flattened, _.keys(validatedAttrs)));
+          var model = this;
+          var opt = _.extend({}, options, setOptions);
+          var validatedAttrs = getValidatedAttrs(model, getOptionsAttrs(options));
+          var allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs);
+          var flattened = _.extend(flatten(allAttrs), attrs); // allow people to pass in nested attributes
+          var changedAttrs = attrs ? flatten(attrs) : flattened;
+          var result = validateModel(model, allAttrs, _.pick(flattened, _.keys(validatedAttrs)));
           model._isValid = result.isValid;
-
-          //After validation is performed, loop through all associated views
-          _.each(model.associatedViews, function(view){
-
-            // After validation is performed, loop through all validated and changed attributes
-            // and call the valid and invalid callbacks so the view is updated.
-            _.each(validatedAttrs, function(val, attr){
-                var invalid = result.invalidAttrs.hasOwnProperty(attr),
-                  changed = changedAttrs.hasOwnProperty(attr);
-
-                if(!invalid){
-                  opt.valid(view, attr, opt.selector);
-                }
-                if(invalid && (changed || validateAll)){
-                  opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector);
-                }
-            });
-          });
 
           // Trigger validated events.
           // Need to defer this so the model is actually updated before
@@ -3091,41 +3341,6 @@
       };
     };
 
-    // Helper to mix in validation on a model. Stores the view in the associated views array.
-    var bindModel = function(view, model, options) {
-      if (model.associatedViews) {
-        model.associatedViews.push(view);
-      } else {
-        model.associatedViews = [view];
-      }
-      _.extend(model, mixin(view, options));
-    };
-
-    // Removes view from associated views of the model or the methods
-    // added to a model if no view or single view provided
-    var unbindModel = function(model, view) {
-      if (view && model.associatedViews.length > 1){
-        model.associatedViews = _.without(model.associatedViews, view);
-      } else {
-        delete model.validate;
-        delete model.preValidate;
-        delete model.isValid;
-        delete model.associatedViews;
-      }
-    };
-
-    // Mix in validation on a model whenever a model is
-    // added to a collection
-    var collectionAdd = function(model) {
-      bindModel(this.view, model, this.options);
-    };
-
-    // Remove validation from a model whenever a model is
-    // removed from a collection
-    var collectionRemove = function(model) {
-      unbindModel(model);
-    };
-
     // Returns the public methods on Backbone.Validation
     return {
 
@@ -3137,80 +3352,11 @@
         _.extend(defaultOptions, options);
       },
 
-      // Hooks up validation on a view with a model
-      // or collection
-      bind: function(view, options) {
-        options = _.extend({}, defaultOptions, defaultCallbacks, options);
-
-        var model = options.model || view.model,
-            collection = options.collection || view.collection;
-
-        if(typeof model === 'undefined' && typeof collection === 'undefined'){
-          throw 'Before you execute the binding your view must have a model or a collection.\n' +
-                'See http://thedersen.com/projects/backbone-validation/#using-form-model-validation for more information.';
-        }
-
-        if(model) {
-          bindModel(view, model, options);
-        }
-        else if(collection) {
-          collection.each(function(model){
-            bindModel(view, model, options);
-          });
-          collection.bind('add', collectionAdd, {view: view, options: options});
-          collection.bind('remove', collectionRemove);
-        }
-      },
-
-      // Removes validation from a view with a model
-      // or collection
-      unbind: function(view, options) {
-        options = _.extend({}, options);
-        var model = options.model || view.model,
-            collection = options.collection || view.collection;
-
-        if(model) {
-          unbindModel(model, view);
-        }
-        else if(collection) {
-          collection.each(function(model){
-            unbindModel(model, view);
-          });
-          collection.unbind('add', collectionAdd);
-          collection.unbind('remove', collectionRemove);
-        }
-      },
-
       // Used to extend the Backbone.Model.prototype
       // with validation
-      mixin: mixin(null, defaultOptions)
+      mixin: mixin(defaultOptions)
     };
   }());
-
-
-  // Callbacks
-  // ---------
-
-  var defaultCallbacks = Validation.callbacks = {
-
-    // Gets called when a previously invalid field in the
-    // view becomes valid. Removes any error message.
-    // Should be overridden with custom functionality.
-    valid: function(view, attr, selector) {
-      view.$('[' + selector + '~="' + attr + '"]')
-          .removeClass('invalid')
-          .removeAttr('data-error');
-    },
-
-    // Gets called when a field in the view becomes invalid.
-    // Adds a error message.
-    // Should be overridden with custom functionality.
-    invalid: function(view, attr, error, selector) {
-      view.$('[' + selector + '~="' + attr + '"]')
-          .addClass('invalid')
-          .attr('data-error', error);
-    }
-  };
 
 
   // Patterns
@@ -3310,24 +3456,6 @@
       });
     }
   };
-
-  // AttributeLoaders
-
-  var defaultAttributeLoaders = Validation.attributeLoaders = {
-    inputNames: function (view) {
-      var attrs = [];
-      if (view) {
-        view.$('form [name]').each(function () {
-          if (/^(?:input|select|textarea)$/i.test(this.nodeName) && this.name &&
-            this.type !== 'submit' && attrs.indexOf(this.name) === -1) {
-            attrs.push(this.name);
-          }
-        });
-      }
-      return attrs;
-    }
-  };
-
 
   // Built in validators
   // -------------------
@@ -3670,11 +3798,18 @@
       if (computed) {
         config.mapping = mapping;
         _.each(this.__getModelAliases(config), function(modelAlias) {
-          config.mapping[modelAlias] = config.mapping[modelAlias].split(' ');
+          var configMappingForAlias = config.mapping[modelAlias];
+          if (_.isString(configMappingForAlias)) {
+            configMappingForAlias = configMappingForAlias.split(' ');
+          } else if (configMappingForAlias === true) {
+            configMappingForAlias = undefined;
+          }
+          config.mapping[modelAlias] = configMappingForAlias;
         });
       } else {
         config.mapping = fields;
       }
+      this.__currentMappings[alias] = config;
       if (models) {
         if (computed) {
           this.setTrackedModels(models, copy);
@@ -3682,7 +3817,6 @@
           this.setTrackedModel(alias, models, copy);
         }
       }
-      this.__currentMappings[alias] = config;
     },
 
     /**
@@ -3738,7 +3872,7 @@
      * @method unsetMappings
      */
     unsetMappings: function() {
-      this.__currentMappings = [];
+      this.__currentMappings = {};
       this.resetUpdating();
     },
 
@@ -3776,12 +3910,12 @@
         _.each(this.getMappings(), function(config, mappingAlias) {
           var modelAliases;
           if (alias === mappingAlias) {
-            this.__pullFromAlias(mappingAlias);
+            this.__pull(mappingAlias);
           }
           if (config.computed) {
             modelAliases = this.__getModelAliases(mappingAlias);
-            if (_.contains(modelAlias, alias)) {
-              this.__pullFromAlias(mappingAlias);
+            if (_.contains(modelAliases, alias)) {
+              this.__pull(mappingAlias);
             }
           }
         }, this);
@@ -4279,7 +4413,9 @@
       if (!model) {
         this.__cache = {};
         _.each(this.getTrackedModels(), function(model) {
-          this.__updateCache(model);
+          if (model) {
+            this.__updateCache(model);
+          }
         }, this);
       } else {
         this.__cache[model.cid] = this.__generateHashValue(model);
@@ -4954,21 +5090,12 @@
     },
 
     /**
-     * Override to prepare a context for the HTML template used as the base list view
-     * @method prepare
-     * @return {Object} an object to use for HTML templating the base list view
-     */
-    prepare: function() {
-      return {};
-    },
-
-    /**
-     * Override if you want a different context for your empty template
+     * Override if you want a different context for your empty template. Defaults to this.prepare()
      * @method prepareEmpty
      * @return a context that can be used by the empty list template
      */
     prepareEmpty: function() {
-      return {};
+      return this.prepare();
     },
 
     /**
@@ -5371,10 +5498,7 @@
 
       View.apply(this, arguments);
 
-      if (this.model) {
-        this.listenTo(this.model, 'validated:valid', this.valid);
-        this.listenTo(this.model, 'validated:invalid', this.invalid);
-      }
+      this.resetModelListeners(this.model);
     },
 
     /**
@@ -5402,6 +5526,22 @@
       this.__generateStickitBindings();
       this.stickit();
       View.prototype.delegateEvents.call(this);
+    },
+
+    /**
+     * Resets the form model with the passed in model. Stops listening to current form model
+     * and sets up listeners on the new one.
+     * @method resetModelListeners
+     * @param model {Torso.FormModel} the new form model
+     * @param [stopListening=false] {Boolean} if true, it will stop listening to the previous form model
+     */
+    resetModelListeners: function(model, stopListening) {
+      if (this.model && stopListening) {
+        this.stopListening(this.model);
+      }
+      this.model = model;
+      this.listenTo(this.model, 'validated:valid', this.valid);
+      this.listenTo(this.model, 'validated:invalid', this.invalid);
     },
 
     /**

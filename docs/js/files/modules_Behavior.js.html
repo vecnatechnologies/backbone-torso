@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>modules/Behavior.js - backbone-torso</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.6.10</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Behavior.html">Behavior</a></li>
+                                <li><a href="../classes/Cell.html">Cell</a></li>
+                                <li><a href="../classes/Collection.html">Collection</a></li>
+                                <li><a href="../classes/Events.html">Events</a></li>
+                                <li><a href="../classes/FormModel.html">FormModel</a></li>
+                                <li><a href="../classes/FormView.html">FormView</a></li>
+                                <li><a href="../classes/history.html">history</a></li>
+                                <li><a href="../classes/ListView.html">ListView</a></li>
+                                <li><a href="../classes/Model.html">Model</a></li>
+                                <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+                                <li><a href="../classes/Router.html">Router</a></li>
+                                <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
+                                <li><a href="../classes/Torso.html">Torso</a></li>
+                                <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
+                                <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
+                                <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
+                                <li><a href="../classes/Torso.Utils.templateRenderer.html">Torso.Utils.templateRenderer</a></li>
+                                <li><a href="../classes/Torso.validation.html">Torso.validation</a></li>
+                                <li><a href="../classes/View.html">View</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Torso.html">Torso</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1 class="file-heading">File: modules/Behavior.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+(function(root, factory) {
+  if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
+    define([&#x27;underscore&#x27;, &#x27;./Cell&#x27;], factory);
+  } else if (typeof exports === &#x27;object&#x27;) {
+    var _ = require(&#x27;underscore&#x27;);
+    var TorsoCell = require(&#x27;./Cell&#x27;);
+    module.exports = factory(_, TorsoCell);
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Behavior = factory(root._, root.Torso.Cell);
+  }
+}(this, function(_, Cell) {
+  &#x27;use strict&#x27;;
+
+  // Map of eventName: lifecycleMethod
+  var eventMap = {
+    &#x27;before-attached-callback&#x27;: &#x27;_attached&#x27;,
+    &#x27;before-detached-callback&#x27;:  &#x27;_detached&#x27;,
+    &#x27;before-activate-callback&#x27;: &#x27;_activate&#x27;,
+    &#x27;before-deactivate-callback&#x27;: &#x27;_deactivate&#x27;,
+    &#x27;before-dispose-callback&#x27;: &#x27;_dispose&#x27;,
+    &#x27;render:before-attach-tracked-views&#x27;: &#x27;attachTrackedViews&#x27;,
+    &#x27;render:begin&#x27;: &#x27;prerender&#x27;,
+    &#x27;render:complete&#x27;: &#x27;postrender&#x27;,
+    &#x27;initialize:begin&#x27;:  &#x27;_preinitialize&#x27;,
+    &#x27;initialize:complete&#x27;: &#x27;_postinitialize&#x27;
+  };
+
+  /**
+   * Allows abstraction of common view logic into separate object
+   *
+   * @module Torso
+   * @class  Behavior
+   * @method constructor
+   * @author  deena.wang@vecna.com
+   */
+  var Behavior = Cell.extend({
+    /**
+     * @property cidPrefix of Behaviors
+     * @type {String}
+     */
+    cidPrefix: &#x27;b&#x27;,
+
+    /**
+     * Add functions to be added to the view&#x27;s public API. They will be behavior-scoped.
+     * @property mixin
+     * @type {Object}
+     */
+    mixin: {},
+
+    /**
+     * @method constructor
+     * @override
+     * @param behaviorOptions {Object}
+     * @param behaviorOptions.view {Backbone.View} that Behavior is attached to
+     * @param [viewOptions] {Object} options passed to View&#x27;s initialize
+     */
+    constructor: function(behaviorOptions, viewOptions) {
+      behaviorOptions = behaviorOptions || {};
+      if (!behaviorOptions.view) {
+        throw new Error(&#x27;Torso Behavior constructed without behaviorOptions.view&#x27;);
+      }
+      this.view = behaviorOptions.view;
+      this.cid = _.uniqueId(this.cidPrefix);
+      this.__bindLifecycleMethods();
+      this.__bindEventCallbacks();
+      Cell.apply(this, arguments);
+    },
+
+    /**
+     * Registers defined lifecycle methods to be called at appropriate time in view&#x27;s lifecycle
+     *
+     * @method __bindLifecycleMethods
+     * @private
+     */
+    __bindLifecycleMethods: function() {
+      _.each(eventMap, function(callback, event) {
+        this.listenTo(this.view, event, this[callback]);
+      }, this);
+    },
+
+    /**
+     * Adds behavior&#x27;s event handlers to view
+     * Behavior&#x27;s event handlers fire on view events but are run in the context of the behavior
+     *
+     * @method __bindEventCallbacks
+     * @private
+     */
+    __bindEventCallbacks: function() {
+      var behaviorEvents = _.result(this, &#x27;events&#x27;);
+      var viewEvents = this.view.events;
+
+      if (!viewEvents) {
+        if (!behaviorEvents) {
+          return;
+        } else {
+          viewEvents = {};
+        }
+      }
+
+      var namespacedEvents = this.__namespaceEvents(behaviorEvents);
+      var boundBehaviorEvents = this.__bindEventCallbacksToBehavior(namespacedEvents);
+
+      if (_.isFunction(viewEvents)) {
+        this.view.events = _.wrap(_.bind(viewEvents, this.view), function(viewEventFunction) {
+          return _.extend(boundBehaviorEvents, viewEventFunction());
+        });
+      } else if (_.isObject(viewEvents)) {
+        this.view.events = _.extend(boundBehaviorEvents, viewEvents);
+      }
+    },
+
+    /**
+     * Namespaces events in event hash
+     *
+     * @method __namespaceEvents
+     * @param eventHash {Object} to namespace
+     * @return {Object} with event namespaced with &#x27;.behavior&#x27; and the cid of the behavior
+     * @private
+     */
+    __namespaceEvents: function(eventHash) {
+      // coped from Backbone
+      var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+      var namespacedEvents = {};
+      var behaviorId = this.cid;
+      _.each(eventHash, function(value, key) {
+        var splitEventKey = key.match(delegateEventSplitter);
+        var eventName = splitEventKey[1];
+        var selector = splitEventKey[2];
+        var namespacedEventName = eventName + &#x27;.behavior.&#x27; + behaviorId;
+        namespacedEvents[[namespacedEventName, selector].join(&#x27; &#x27;)] = value;
+      });
+      return namespacedEvents;
+    },
+
+    /**
+     * @method __bindEventCallbacksToBehavior
+     * @param eventHash {Object} keys are event descriptors, values are String method names or functions
+     * @return {Object} event hash with values as methods bound to view
+     * @private
+     */
+    __bindEventCallbacksToBehavior: function(eventHash) {
+      return _.mapObject(eventHash, function(method) {
+        if (!_.isFunction(method)) {
+          method = this[method];
+        }
+        return _.bind(method, this);
+      }, this);
+    }
+
+  });
+
+  return Behavior;
+}));
+
+
+    </pre>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

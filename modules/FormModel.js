@@ -173,11 +173,18 @@
       if (computed) {
         config.mapping = mapping;
         _.each(this.__getModelAliases(config), function(modelAlias) {
-          config.mapping[modelAlias] = config.mapping[modelAlias].split(' ');
+          var configMappingForAlias = config.mapping[modelAlias];
+          if (_.isString(configMappingForAlias)) {
+            configMappingForAlias = configMappingForAlias.split(' ');
+          } else if (configMappingForAlias === true) {
+            configMappingForAlias = undefined;
+          }
+          config.mapping[modelAlias] = configMappingForAlias;
         });
       } else {
         config.mapping = fields;
       }
+      this.__currentMappings[alias] = config;
       if (models) {
         if (computed) {
           this.setTrackedModels(models, copy);
@@ -185,7 +192,6 @@
           this.setTrackedModel(alias, models, copy);
         }
       }
-      this.__currentMappings[alias] = config;
     },
 
     /**
@@ -241,7 +247,7 @@
      * @method unsetMappings
      */
     unsetMappings: function() {
-      this.__currentMappings = [];
+      this.__currentMappings = {};
       this.resetUpdating();
     },
 
@@ -279,12 +285,12 @@
         _.each(this.getMappings(), function(config, mappingAlias) {
           var modelAliases;
           if (alias === mappingAlias) {
-            this.__pullFromAlias(mappingAlias);
+            this.__pull(mappingAlias);
           }
           if (config.computed) {
             modelAliases = this.__getModelAliases(mappingAlias);
-            if (_.contains(modelAlias, alias)) {
-              this.__pullFromAlias(mappingAlias);
+            if (_.contains(modelAliases, alias)) {
+              this.__pull(mappingAlias);
             }
           }
         }, this);
@@ -782,7 +788,9 @@
       if (!model) {
         this.__cache = {};
         _.each(this.getTrackedModels(), function(model) {
-          this.__updateCache(model);
+          if (model) {
+            this.__updateCache(model);
+          }
         }, this);
       } else {
         this.__cache[model.cid] = this.__generateHashValue(model);

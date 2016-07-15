@@ -20,6 +20,7 @@
 
   gulp.task('bundle', function(done) {
     var dependencies = {
+      'Behavior'   : ['Cell'],
       'Cell'       : ['cellMixin'],
       'Collection' : ['pollingMixin', 'cacheMixin', 'loadingMixin'],
       'validation' : ['pollingMixin', 'NestedModel'],

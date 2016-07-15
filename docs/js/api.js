@@ -1,6 +1,7 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
+        "Behavior",
         "Cell",
         "Collection",
         "Events",
@@ -30,8 +31,9 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "Torso",
             "name": "Torso",
-            "description": "An non-persistable object that can listen to and emit events like a models."
+            "description": "Custom additions to the Backbone Collection object.\n- safe disposal methods for memory + event management\n- special functional overrides to support ID registration for different views"
         }
-    ]
+    ],
+    "elements": []
 } };
 });

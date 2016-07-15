@@ -11,6 +11,31 @@
   'use strict';
 
   /**
+   * ViewStateCell is a NestedCell that holds view state data and can trigger
+   * change events. These changes events will propogate up and trigger on the view
+   * as well.
+   */
+  var ViewStateCell = NestedCell.extend({
+
+    initialize: function(attrs, opts) {
+      opts = opts || {};
+      this.view = opts.view;
+    },
+
+    /**
+     * Retrigger view state change events on the view as well.
+     * @method trigger
+     * @override
+     */
+    trigger: function(name) {
+      if (name === 'change' || name.indexOf('change:') === 0) {
+        View.prototype.trigger.apply(this.view, arguments);
+      }
+      NestedCell.prototype.trigger.apply(this, arguments);
+    }
+  });
+
+  /**
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
@@ -24,13 +49,16 @@
     template: null,
     feedback: null,
     feedbackCell: null,
+    behaviors: null,
+    __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
     __isActive: false,
     __isAttachedToParent: false,
     __isDisposed: false,
     __attachedCallbackInvoked: false,
-    __feedbackEvents: null,
+    __feedbackOnEvents: null,
+    __feedbackListenToEvents: null,
     /**
      * Array of feedback when-then-to's. Example:
      * [{
@@ -49,13 +77,15 @@
      */
     constructor: function(options) {
       options = options || {};
-      this.viewState = new NestedCell();
+      this.viewState = new ViewStateCell({}, { view: this });
       this.feedbackCell = new Cell();
       this.__childViews = {};
       this.__sharedViews = {};
       this.__injectionSiteMap = {};
-      this.__feedbackEvents = [];
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
+      this.__initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
         this.activate();
@@ -76,6 +106,17 @@
      */
     set: function() {
       return this.viewState.set.apply(this.viewState, arguments);
+    },
+
+    /**
+     * @param alias {String} the name/alias of the behavior
+     * @return {Torso.Behavior} the behavior instance if one exists with that alias
+     * @method getBehavior
+     */
+    getBehavior: function(alias) {
+      if (this.__behaviorInstances) {
+        return this.__behaviorInstances[alias];
+      }
     },
 
     /**
@@ -121,6 +162,7 @@
       this.trigger('render:after-dom-update');
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
+      this.trigger('render:before-attach-tracked-views');
       promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
@@ -177,6 +219,7 @@
      * @method delegateEvents
      */
     delegateEvents: function() {
+      this.undelegateEvents(); // always undelegate events - backbone sometimes doesn't.
       Backbone.View.prototype.delegateEvents.call(this);
       this.__generateFeedbackBindings();
       this.__generateFeedbackCellCallbacks();
@@ -370,6 +413,7 @@
     activate: function() {
       this.__activateTrackedViews();
       if (!this.isActive()) {
+        this.trigger('before-activate-callback');
         this._activate();
         this.__isActive = true;
       }
@@ -398,6 +442,7 @@
     deactivate: function() {
       this.__deactivateTrackedViews();
       if (this.isActive()) {
+        this.trigger('before-deactivate-callback');
         this._deactivate();
         this.__isActive = false;
       }
@@ -417,6 +462,7 @@
      * @method dispose
      */
     dispose: function() {
+      this.trigger('before-dispose-callback');
       this._dispose();
 
       // Detach DOM and deactivate the view
@@ -581,7 +627,7 @@
 
     /**
      * Invokes a feedback entry's "then" method
-     * @param to {String} the "to" field corresponding to the feedback entry to be invoked
+     * @param to {String} the "to" field corresponding to the feedback entry to be invoked.
      * @param [evt] {Event} the event to be passed to the "then" method
      * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
      * @method invokeFeedback
@@ -607,6 +653,45 @@
     },
 
     //************** Private methods **************//
+
+    /**
+     * Initializes the behaviors
+     * @method __initializeBehaviors
+     */
+    __initializeBehaviors: function(viewOptions) {
+      var view = this;
+      if (!_.isEmpty(this.behaviors)) {
+        view.__behaviorInstances = {};
+        _.each(this.behaviors, function(behaviorDefinition, alias) {
+          var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass && _.isFunction(BehaviorClass))) {
+            throw new Error('Incorrect behavior definition. Expected key "behavior" to be a class but instead got ' +
+              String(BehaviorClass));
+          }
+
+          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
+            return key !== 'behavior';
+          });
+          behaviorOptions.view = view;
+          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+          // Add the behavior's mixin fields to the view's public API
+          if (behaviorInstance.mixin) {
+            var mixin = _.result(behaviorInstance, 'mixin');
+            _.each(mixin, function(field, fieldName) {
+              // Default to a view's field over a behavior mixin
+              if (_.isUndefined(view[fieldName])) {
+                if (_.isFunction(field)) {
+                  // Behavior mixin functions will be behavior-scoped - the context will be the behavior.
+                  view[fieldName] = _.bind(field, behaviorInstance);
+                } else {
+                  view[fieldName] = field;
+                }
+              }
+            });
+          }
+        });
+      }
+    },
 
     /**
      * If the view is attaching during the render process, then it replaces the injection site
@@ -863,6 +948,7 @@
     __invokeAttached: function() {
       // Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.
       if (!this.__attachedCallbackInvoked) {
+        this.trigger('before-attached-callback');
         this._attached();
         this.__attachedCallbackInvoked = true;
         _.each(this.getTrackedViews(), function(view) {
@@ -879,6 +965,7 @@
      */
     __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {
+        this.trigger('before-detached-callback');
         this._detached();
         this.__attachedCallbackInvoked = false;
       }
@@ -960,11 +1047,16 @@
       var i,
           self = this;
 
-      // Cleanup previous "on" events
-      for (i = 0; i < this.__feedbackEvents.length; i++) {
-        this.off(null, this.__feedbackEvents[i]);
+      // Cleanup previous "on" and "listenTo" events
+      for (i = 0; i < this.__feedbackOnEvents.length; i++) {
+        this.off(null, this.__feedbackOnEvents[i]);
       }
-      this.__feedbackEvents = [];
+      for (i = 0; i < this.__feedbackListenToEvents.length; i++) {
+        var feedbackListenToConfig = this.__feedbackListenToEvents[i];
+        this.stopListening(feedbackListenToConfig.obj, feedbackListenToConfig.name, feedbackListenToConfig.callback);
+      }
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
 
       // For each feedback configuration
       _.each(this.feedback, function(declaration) {
@@ -1026,22 +1118,55 @@
             });
             // Special "on" listeners
             _.each(declaration.when.on, function(eventKey) {
-              var invokeThen = function() {
-                var result,
-                    args = [{
-                      args: arguments,
-                      type: eventKey
-                    }];
-                args.push(bindInfo.indices);
-                result = bindInfo.fn.apply(self, args);
-                self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
-              };
+              var invokeThen = self.__generateThenCallback(bindInfo, eventKey);
               self.on(eventKey, invokeThen, self);
-              self.__feedbackEvents.push(invokeThen);
+              self.__feedbackOnEvents.push(invokeThen);
+            });
+            // Special "listenTo" listeners
+            _.each(declaration.when.listenTo, function(listenToConfig) {
+              var obj = listenToConfig.object;
+              if (_.isFunction(obj)) {
+                obj = _.bind(listenToConfig.object, self)();
+              } else if (_.isString(obj)) {
+                obj = _.result(self, listenToConfig.object);
+              }
+              if (obj) {
+                var invokeThen = _.bind(self.__generateThenCallback(bindInfo, listenToConfig.events), self);
+                self.listenTo(obj, listenToConfig.events, invokeThen);
+                self.__feedbackListenToEvents.push({
+                  object: obj,
+                  name: listenToConfig.events,
+                  callback: invokeThen
+                });
+              }
             });
           });
         });
       });
+    },
+
+
+    /**
+     * Returns a properly wrapped "then" using a configuration object "bindInfo" and an "eventKey" that will be passed as the type
+     * @param bindInfo {Object}
+     * @param   bindInfo.feedbackCellField the property name of the feedback cell to store the "then" instructions
+     * @param   bindInfo.fn the original "then" function
+     * @param   [bindInfo.indices] the index map
+     * @return {Function} the properly wrapped "then" function
+     * @private
+     * @method __generateThenCallback
+     */
+    __generateThenCallback: function(bindInfo, eventKey) {
+      return function() {
+        var result,
+            args = [{
+              args: arguments,
+              type: eventKey
+            }];
+        args.push(bindInfo.indices);
+        result = bindInfo.fn.apply(this, args);
+        this.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
+      };
     },
 
     /**
@@ -1084,7 +1209,7 @@
             qualifiedFields = [whenField],
             useAtNotation = (whenField.charAt(0) === '@');
 
-        if (whenField !== 'on') {
+        if (whenField !== 'on' || whenField !== 'listenTo') {
           if (useAtNotation) {
             whenField = whenField.substring(1);
             // substitute indices in to "when" placeholders

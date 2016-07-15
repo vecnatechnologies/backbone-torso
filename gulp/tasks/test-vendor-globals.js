@@ -6,7 +6,7 @@
       paths = require('../../paths'),
       lazypipe = require('lazypipe'),
       bundleFile = paths.bundleDest + '/torso-bundle.js',
-      test = require('./test'),
+      test = require('./test-import'),
       testVendorGlobalsPipe = lazypipe()
         .pipe(gulp.src, ['node_modules/jquery/dist/jquery.js',
                          'node_modules/underscore/underscore.js',

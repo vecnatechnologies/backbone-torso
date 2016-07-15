@@ -1,5 +1,3 @@
-// Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
-
 describe('Global Module imports', function() {
   var window, globalIndex,
       // Define the globals layout, each array is a global to verify
@@ -8,6 +6,7 @@ describe('Global Module imports', function() {
       // e.g. ['Torso', 'Mixins', 'loading'] = window.Torso.Mixins.loading
       globals = [
         ['Torso'],
+        ['Torso', 'Behavior'],
         ['Torso', 'Cell'],
         ['Torso', 'Collection'],
         ['Torso', 'Events'],

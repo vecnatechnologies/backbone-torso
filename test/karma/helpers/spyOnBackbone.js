@@ -11,6 +11,6 @@ var _ = require('underscore');
 module.exports = function spyOnBackbone(backboneClass, method) {
   backboneClass.prototype.initialize = _.wrap(backboneClass.prototype.initialize, function(initialize) {
     spyOn(this, method).and.callThrough();
-    initialize.apply(this);
+    initialize.apply(this, Array.prototype.slice.call(arguments, 1));
   });
 };
