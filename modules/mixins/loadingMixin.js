@@ -78,16 +78,16 @@
         var object = this;
         this.loading = true;
         this.trigger('load-begin');
-        return $.when(fetchMethod.call(object, options)).done(function(data, textStatus, jqXHR) {
-          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
-        }).always(function() {
+        return $.when(fetchMethod.call(object, options)).always(function() {
           if (!object.loadedOnce) {
             object.loadedOnce = true;
             object.loadedOnceDeferred.resolve();
           }
           object.loading = false;
+        }).done(function(data, textStatus, jqXHR) {
+          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
         });
       }
     };
