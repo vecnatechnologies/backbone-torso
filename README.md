@@ -10,17 +10,17 @@ We've created Torso's documentation through a tool called [TonicDev](http://toni
 
 #### Torso Intro
 An explanation about what Torso is and how to get it
-- **Intro**: http://tonicdev.com/kentmw/torso-intro
+- **Intro**: http://tonicdev.com/torso/introduction
 
 #### Torso Views
 
 What makes them special?
-- **Basics**: http://tonicdev.com/kentmw/torso-view-basics
-- **Lifecycle**: http://tonicdev.com/kentmw/torso-view-lifecycle
-- **Child Views**: http://tonicdev.com/kentmw/torso-view-child-views
-- **Feedback**: http://tonicdev.com/kentmw/torso-view-feedback
-- **Forms**: http://tonicdev.com/kentmw/torso-view-forms
-- **Transitions**: http://tonicdev.com/kentmw/torso-view-transitions
+- **Basics**: http://tonicdev.com/torso/view-basics
+- **Lifecycle**: http://tonicdev.com/torso/view-lifecycle
+- **Child Views**: http://tonicdev.com/torso/view-child-views
+- **Feedback**: http://tonicdev.com/torso/view-feedback
+- **Forms**: http://tonicdev.com/torso/view-forms
+- **Transitions**: http://tonicdev.com/torso/view-transitions
 
 More documentation to come on the other Torso modules.
 
