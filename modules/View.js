@@ -50,6 +50,7 @@
     feedback: null,
     feedbackCell: null,
     behaviors: null,
+    templateRendererOptions: null,
     __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
@@ -85,6 +86,7 @@
       this.__feedbackOnEvents = [];
       this.__feedbackListenToEvents = [];
       this.template = options.template || this.template;
+      this.templateRendererOptions = options.templateRendererOptions || this.templateRendererOptions;
       this.__initializeBehaviors(options);
       Backbone.View.apply(this, arguments);
       if (!options.noActivate) {
@@ -181,13 +183,15 @@
 
     /**
      * Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.
-     * Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare());
+     * Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);
+     * this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.
      * Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.
      * @method updateDOM
      */
     updateDOM: function() {
       if (this.template) {
-        this.templateRender(this.$el, this.template, this.prepare());
+        var templateRendererOptions = _.result(this, 'templateeRendererOptions');
+        this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);
       }
     },
 
