@@ -1761,7 +1761,7 @@
      */
     updateDOM: function() {
       if (this.template) {
-        var templateRendererOptions = _.result(this, 'templateeRendererOptions');
+        var templateRendererOptions = _.result(this, 'templateRendererOptions');
         this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);
       }
     },
