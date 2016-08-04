@@ -88,7 +88,9 @@
       this.template = options.template || this.template;
       this.templateRendererOptions = options.templateRendererOptions || this.templateRendererOptions;
       this.__initializeBehaviors(options);
+      this.trigger('initialize:begin');
       Backbone.View.apply(this, arguments);
+      this.trigger('initialize:complete');
       if (!options.noActivate) {
         this.activate();
       }

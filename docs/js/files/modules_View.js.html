@@ -192,7 +192,9 @@
       this.template = options.template || this.template;
       this.templateRendererOptions = options.templateRendererOptions || this.templateRendererOptions;
       this.__initializeBehaviors(options);
+      this.trigger(&#x27;initialize:begin&#x27;);
       Backbone.View.apply(this, arguments);
+      this.trigger(&#x27;initialize:complete&#x27;);
       if (!options.noActivate) {
         this.activate();
       }
