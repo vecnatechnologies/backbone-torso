@@ -46,11 +46,11 @@
    */
   var View = Backbone.View.extend({
     viewState: null,
-    template: null,
+    template: undefined,
     feedback: null,
     feedbackCell: null,
     behaviors: null,
-    templateRendererOptions: null,
+    templateRendererOptions: undefined,
     __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
