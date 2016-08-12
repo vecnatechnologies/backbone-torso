@@ -1239,6 +1239,16 @@
         {
             "file": "modules/Behavior.js",
             "line": 38,
+            "description": "Unique name of the behavior instance w/in a view.  More human readable than the cid.",
+            "itemtype": "property",
+            "name": "alias",
+            "type": "String",
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 42,
             "itemtype": "property",
             "name": "cidPrefix of Behaviors",
             "type": "{String}",
@@ -1247,7 +1257,7 @@
         },
         {
             "file": "modules/Behavior.js",
-            "line": 44,
+            "line": 48,
             "description": "Add functions to be added to the view's public API. They will be behavior-scoped.",
             "itemtype": "property",
             "name": "mixin",
@@ -1257,7 +1267,19 @@
         },
         {
             "file": "modules/Behavior.js",
-            "line": 51,
+            "line": 55,
+            "description": "The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.\neffectively: { <behaviorName>: behavior.prepare() } will be combined with the view's prepare result.",
+            "itemtype": "method",
+            "name": "prepare",
+            "return": {
+                "description": "a prepare context suitable to being added to the view's prepare result."
+            },
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 63,
             "itemtype": "method",
             "name": "constructor",
             "override": "",
@@ -1270,6 +1292,11 @@
                         {
                             "name": "view",
                             "description": "that Behavior is attached to",
+                            "type": "Backbone.View"
+                        },
+                        {
+                            "name": "alias",
+                            "description": "the alias for the behavior in this view.",
                             "type": "Backbone.View"
                         }
                     ]
@@ -1286,7 +1313,40 @@
         },
         {
             "file": "modules/Behavior.js",
-            "line": 70,
+            "line": 87,
+            "description": "This is called after the view's initialize method is called and will wrap the view's prepare()\nsuch that it returns the combination of the view's prepare result with the behavior's prepare result\ninside it under the behavior's alias.",
+            "itemtype": "method",
+            "name": "__augmentViewPrepare",
+            "access": "private",
+            "tagname": "",
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 100,
+            "description": "Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.",
+            "itemtype": "method",
+            "name": "__viewPrepareWrapper",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "viewPrepare",
+                    "description": "the prepare method from the view.",
+                    "type": "Function"
+                }
+            ],
+            "return": {
+                "description": "the combined view and behavior prepare() results.\n{\n  <behavior alias>: behavior.prepare(),\n  ... // view prepare properties.\n}",
+                "type": "Object"
+            },
+            "class": "Behavior",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/Behavior.js",
+            "line": 119,
             "description": "Registers defined lifecycle methods to be called at appropriate time in view's lifecycle",
             "itemtype": "method",
             "name": "__bindLifecycleMethods",
@@ -1297,7 +1357,7 @@
         },
         {
             "file": "modules/Behavior.js",
-            "line": 82,
+            "line": 132,
             "description": "Adds behavior's event handlers to view\nBehavior's event handlers fire on view events but are run in the context of the behavior",
             "itemtype": "method",
             "name": "__bindEventCallbacks",
@@ -1308,7 +1368,7 @@
         },
         {
             "file": "modules/Behavior.js",
-            "line": 113,
+            "line": 163,
             "description": "Namespaces events in event hash",
             "itemtype": "method",
             "name": "__namespaceEvents",
@@ -1330,7 +1390,7 @@
         },
         {
             "file": "modules/Behavior.js",
-            "line": 136,
+            "line": 186,
             "itemtype": "method",
             "name": "__bindEventCallbacksToBehavior",
             "params": [
@@ -4032,7 +4092,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 702,
+            "line": 703,
             "description": "If the view is attaching during the render process, then it replaces the injection site\nwith the view's element after the view has generated its DOM.",
             "itemtype": "method",
             "name": "__performPendingAttach",
@@ -4043,7 +4103,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 713,
+            "line": 714,
             "description": "Deactivates all tracked views or a subset of them based on the options parameter.",
             "params": [
                 {
@@ -4077,7 +4137,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 728,
+            "line": 729,
             "description": "Activates all tracked views or a subset of them based on the options parameter.",
             "params": [
                 {
@@ -4111,7 +4171,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 743,
+            "line": 744,
             "description": "Disposes all child views recursively",
             "itemtype": "method",
             "name": "disposeChildViews",
@@ -4122,7 +4182,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 754,
+            "line": 755,
             "description": "Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view\npreviously had another view at this injections site, this previous view will be removed with that view's transitionOut.\nIf this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even\nthough they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.\nIf the previous view is the same as the new view, it is injected normally without transitioning in.\nThe previous view must has used an injection site with the standard \"inject=<name of injection site>\" attribute to be found.",
             "itemtype": "method",
             "name": "transitionNewViewIntoSite",
@@ -4177,7 +4237,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 805,
+            "line": 806,
             "description": "Will transition out previousView at the same time as transitioning in newView.",
             "itemtype": "method",
             "name": "__performTwoWayTransition",
@@ -4224,7 +4284,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 840,
+            "line": 841,
             "description": "Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.\nThis method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.",
             "params": [
                 {
@@ -4273,7 +4333,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 866,
+            "line": 867,
             "description": "Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.\nNOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.\nThis means that you can add \"add\" or \"remove\" tracked view using this method, however you can interact with the views inside the map completely.",
             "params": [
                 {
@@ -4310,7 +4370,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 893,
+            "line": 894,
             "description": "Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.",
             "access": "private",
             "tagname": "",
@@ -4321,7 +4381,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 908,
+            "line": 909,
             "description": "Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).\nWhen used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.",
             "access": "private",
             "tagname": "",
@@ -4343,7 +4403,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 932,
+            "line": 933,
             "description": "Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method",
             "itemtype": "method",
             "name": "__replaceInjectionSite",
@@ -4382,7 +4442,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 949,
+            "line": 950,
             "description": "Call this method when a view is attached to the DOM. It is recursive to child views, but checks whether each child view is attached.",
             "itemtype": "method",
             "name": "__invokeAttached",
@@ -4393,7 +4453,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 968,
+            "line": 969,
             "description": "Call this method when a view is detached from the DOM. It is recursive to child views.",
             "itemtype": "method",
             "name": "__invokeDetached",
@@ -4402,7 +4462,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 986,
+            "line": 987,
             "description": "Generates callbacks for changes in feedback cell fields\n'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback cell\nIf feedbackCell.get('fullName') returns:\n{ text: 'my text',\n  attr: {class: 'newClass'}\n  hide: [100, function() {...}]\n...}\nThen it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.",
             "access": "private",
             "tagname": "",
@@ -4413,7 +4473,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1033,
+            "line": 1034,
             "description": "Processes the result of the then method. Adds to the feedback cell.",
             "params": [
                 {
@@ -4436,7 +4496,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1046,
+            "line": 1047,
             "description": "Creates the \"when\" bindings, and collates and invokes the \"then\" methods for all feedbacks\nFinds all feedback zones that match the \"to\" field, and binds the \"when\" events to invoke the \"then\" method",
             "access": "private",
             "tagname": "",
@@ -4447,7 +4507,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1155,
+            "line": 1156,
             "description": "Returns a properly wrapped \"then\" using a configuration object \"bindInfo\" and an \"eventKey\" that will be passed as the type",
             "params": [
                 {
@@ -4484,7 +4544,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1178,
+            "line": 1179,
             "description": "Returns all elements on the page that match the feedback mapping\nIf dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback=\"my-feedback-foo[*][*]\"",
             "params": [
                 {
@@ -4506,7 +4566,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1201,
+            "line": 1202,
             "description": "Generates the events needed to listen to the feedback's when methods. A when event is only created\nif the appropriate element exist on the page",
             "params": [
                 {
@@ -4530,7 +4590,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1241,
+            "line": 1242,
             "description": "Returns an array of all the values and variables used within the array notations in a string\nExample: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers\nThis does not handle or return any \"open\" array notations: []",
             "access": "private",
             "tagname": "",
@@ -4541,7 +4601,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1260,
+            "line": 1261,
             "description": "Replaces all array notations with open array notations.\nExample: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]",
             "access": "private",
             "tagname": "",
@@ -4552,7 +4612,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1273,
+            "line": 1274,
             "description": "Takes a map from variable name to value to be replaced and processes a string with them.\nExample: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]",
             "access": "private",
             "tagname": "",
@@ -4563,7 +4623,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1291,
+            "line": 1292,
             "description": "Generates an array of all the possible field accessors and their indices when using\nthe \"open\" array notation:\n   foo[] -> ['foo[0]', 'foo[1]'].\nWill also perform nested arrays:\n   foo[][] -> ['foo[0][0]', foo[1][0]']",
             "itemtype": "method",
             "name": "__generateSubAttributes",
@@ -4982,7 +5042,7 @@
     "warnings": [
         {
             "message": "unknown tag: override",
-            "line": " modules/Behavior.js:51"
+            "line": " modules/Behavior.js:63"
         },
         {
             "message": "unknown tag: override",

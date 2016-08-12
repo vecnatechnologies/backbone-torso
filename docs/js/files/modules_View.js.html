@@ -783,6 +783,7 @@
             return key !== &#x27;behavior&#x27;;
           });
           behaviorOptions.view = view;
+          behaviorOptions.alias = alias;
           var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
           // Add the behavior&#x27;s mixin fields to the view&#x27;s public API
           if (behaviorInstance.mixin) {

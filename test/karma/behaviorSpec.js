@@ -32,8 +32,9 @@ describe('A Torso Behavior', function() {
 
   describe('instance', function() {
     beforeEach(function() {
-      var behaviorOptions = {view:
-        (new TorsoView())
+      var behaviorOptions = {
+        alias: 'foo',
+        view: new TorsoView()
       };
       this.behavior = new TorsoBehavior(behaviorOptions);
     });
@@ -49,15 +50,23 @@ describe('A Torso Behavior', function() {
   describe('when instantiated', function() {
 
     it('accepts a view as an option', function() {
-      var behaviorOptions = {view:
-        (new TorsoView())
+      var behaviorOptions = {
+        alias: 'foo',
+        view: new TorsoView()
       };
       expect(new TorsoBehavior(behaviorOptions)).toBeDefined();
     });
 
     it('throws an error if not instantiated with a view', function() {
       try {
-        new TorsoBehavior();
+        new TorsoBehavior({ alias: 'foo' });
+        fail('Expected error');
+      } catch (e) {}
+    });
+
+    it('throws an error if not instantiated with an alias', function() {
+      try {
+        new TorsoBehavior({ view: new TorsoView() });
         fail('Expected error');
       } catch (e) {}
     });
@@ -70,6 +79,7 @@ describe('A Torso Behavior', function() {
       });
       var options = {
         propertyKey: 'propertyValue',
+        alias: 'foo',
         view: (new TorsoView())
       };
 
@@ -88,6 +98,7 @@ describe('A Torso Behavior', function() {
       });
       var options = {
         propertyKey: 'propertyValue',
+        alias: 'foo',
         view: (new TorsoView())
       };
 
@@ -97,10 +108,197 @@ describe('A Torso Behavior', function() {
 
     it('will set reference to view', function() {
       var view = new TorsoView();
-      var behaviorCreatedWithView = new TorsoBehavior({view: view});
+      var behaviorCreatedWithView = new TorsoBehavior({ alias: 'foo', view: view});
       expect(behaviorCreatedWithView.view).toBeDefined();
       expect(behaviorCreatedWithView.view).toEqual(view);
     });
+
+    it('will have its alias set on the instance', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias1: {
+            behavior: TorsoBehavior
+          },
+          behaviorAlias2: {
+            behavior: TorsoBehavior
+          }
+        }
+      }))();
+      expect(view.getBehavior('behaviorAlias1').alias).toBe('behaviorAlias1');
+      expect(view.getBehavior('behaviorAlias2').alias).toBe('behaviorAlias2');
+    });
+  });
+
+  describe('with a prepare method', function() {
+    var BehaviorClassWithPrepare = TorsoBehavior.extend({
+      context: 'behavior',
+      prepare: function() {
+        return {
+          from: 'behavior',
+          context: this.context
+        }
+      }
+    });
+
+    it('can add to the view\'s prepare context as a property that matches the behavior\'s alias', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias: {
+            behavior: BehaviorClassWithPrepare
+          }
+        }
+      }))();
+      expect(view.prepare().behaviorAlias).toBeDefined();
+      expect(view.prepare().behaviorAlias.from).toBe('behavior');
+    });
+
+    it('can combine the prepare results from two behaviors on the same view', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias1: {
+            behavior: BehaviorClassWithPrepare
+          },
+          behaviorAlias2: {
+            behavior: BehaviorClassWithPrepare
+          }
+        }
+      }))();
+      expect(view.prepare().behaviorAlias1).toBeDefined();
+      expect(view.prepare().behaviorAlias1.from).toBe('behavior');
+      expect(view.prepare().behaviorAlias2).toBeDefined();
+      expect(view.prepare().behaviorAlias2.from).toBe('behavior');
+    });
+
+    it('will run the view\'s prepare using the view as the context', function() {
+      var view = new (TorsoView.extend({
+        context: 'view',
+        behaviors: {
+          behaviorAlias: {
+            behavior: BehaviorClassWithPrepare
+          }
+        },
+        prepare: function() {
+          return {
+            context: this.context
+          };
+        }
+      }))();
+      expect(view.prepare().context).toBe('view');
+    });
+
+    it('will run the behavior\'s prepare using the behavior as the context', function() {
+      var view = new (TorsoView.extend({
+        context: 'view',
+        behaviors: {
+          behaviorAlias: {
+            behavior: BehaviorClassWithPrepare
+          }
+        },
+        prepare: function() {
+          return {
+            context: this.context
+          };
+        }
+      }))();
+      expect(view.prepare().behaviorAlias).toBeDefined();
+      expect(view.prepare().behaviorAlias.context).toBe('behavior');
+    });
+  });
+
+  describe('with local data', function() {
+    var BehaviorClassWithData = TorsoBehavior.extend({
+      initialize: function() {
+        this.set('localData', 'hello');
+      }
+    });
+
+    it('will have the data added to the view\'s prepare', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias: {
+            behavior: BehaviorClassWithData
+          }
+        }
+      }))();
+      expect(view.prepare().behaviorAlias).toBeDefined();
+      expect(view.prepare().behaviorAlias.localData).toBe('hello');
+    });
+
+    it('will have the data added to the view\'s prepare from two behaviors', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias1: {
+            behavior: BehaviorClassWithData
+          },
+          behaviorAlias2: {
+            behavior: BehaviorClassWithData
+          }
+        }
+      }))();
+      expect(view.prepare().behaviorAlias1).toBeDefined();
+      expect(view.prepare().behaviorAlias1.localData).toBe('hello');
+      expect(view.prepare().behaviorAlias2).toBeDefined();
+      expect(view.prepare().behaviorAlias2.localData).toBe('hello');
+    })
+  });
+
+  describe('with local data and prepare', function() {
+    var BehaviorClassWithDataAndPrepare = TorsoBehavior.extend({
+      initialize: function() {
+        this.set('localData', 'hello');
+        this.set('from', 'data');
+      },
+      prepare: function() {
+        return {
+          from: 'prepare',
+          prepareData: 'anything'
+        }
+      }
+    });
+
+    it('will have the data and prepare added to the view\'s prepare', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias: {
+            behavior: BehaviorClassWithDataAndPrepare
+          }
+        }
+      }))();
+      expect(view.prepare().behaviorAlias).toBeDefined();
+      expect(view.prepare().behaviorAlias.localData).toBe('hello');
+      expect(view.prepare().behaviorAlias.prepareData).toBe('anything');
+    });
+
+    it('will overwrite the behavior\'s data with results from the behavior\'s prepare', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias: {
+            behavior: BehaviorClassWithDataAndPrepare
+          }
+        }
+      }))();
+      expect(view.prepare().behaviorAlias).toBeDefined();
+      expect(view.prepare().behaviorAlias.from).toBe('prepare');
+    });
+
+    it('will have the data added to the view\'s prepare from two behaviors', function() {
+      var view = new (TorsoView.extend({
+        behaviors: {
+          behaviorAlias1: {
+            behavior: BehaviorClassWithDataAndPrepare
+          },
+          behaviorAlias2: {
+            behavior: BehaviorClassWithDataAndPrepare
+          }
+        }
+      }))();
+      expect(view.prepare().behaviorAlias1).toBeDefined();
+      expect(view.prepare().behaviorAlias1.localData).toBe('hello');
+      expect(view.prepare().behaviorAlias1.prepareData).toBe('anything');
+      expect(view.prepare().behaviorAlias2).toBeDefined();
+      expect(view.prepare().behaviorAlias2.localData).toBe('hello');
+      expect(view.prepare().behaviorAlias2.prepareData).toBe('anything');
+    })
   });
 
   describe('using the mixin field', function() {
