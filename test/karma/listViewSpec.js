@@ -206,7 +206,9 @@ describe('A List View', function() {
       expect(data.model.cid).toBe(model.cid);
       expect(data.view.cid).toBe(itemView.cid);
       expect(itemView.isDisposed()).toBe(true);
-      done();
+      myListView.on('render:complete', function(data) {
+        done();
+      });
     });
     myCollection.remove(model);
   });
@@ -216,7 +218,9 @@ describe('A List View', function() {
     myListView.on('item-view-added', function(data) {
       expect(data.model.cid).toBe(model.cid);
       expect(data.view.cid).toBe(myListView.getItemViewFromModel(model).cid);
-      done();
+      myListView.on('render:complete', function(data) {
+        done();
+      });
     });
     myCollection.add(model);
   });
