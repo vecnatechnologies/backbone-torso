@@ -134,6 +134,10 @@
 
                     <ul class="index-list methods">
                             <li class="index-item method private">
+                                <a href="#method___augmentViewPrepare">__augmentViewPrepare</a>
+
+                            </li>
+                            <li class="index-item method private">
                                 <a href="#method___bindEventCallbacks">__bindEventCallbacks</a>
 
                             </li>
@@ -149,8 +153,16 @@
                                 <a href="#method___namespaceEvents">__namespaceEvents</a>
 
                             </li>
+                            <li class="index-item method private">
+                                <a href="#method___viewPrepareWrapper">__viewPrepareWrapper</a>
+
+                            </li>
                             <li class="index-item method">
                                 <a href="#method_constructor">constructor</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_prepare">prepare</a>
 
                             </li>
                     </ul>
@@ -160,6 +172,10 @@
                     <h3>Properties</h3>
 
                     <ul class="index-list properties">
+                            <li class="index-item property">
+                                <a href="#property_alias">alias</a>
+
+                            </li>
                             <li class="index-item property">
                                 <a href="#property_cidPrefix of Behaviors">cidPrefix of Behaviors</a>
 
@@ -177,6 +193,40 @@
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method___augmentViewPrepare" class="method item private">
+    <h3 class="name"><code>__augmentViewPrepare</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_Behavior.js.html#l87"><code>modules&#x2F;Behavior.js:87</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>This is called after the view's initialize method is called and will wrap the view's prepare()
+such that it returns the combination of the view's prepare result with the behavior's prepare result
+inside it under the behavior's alias.</p>
+
+    </div>
+
+
+
+
+</div>
 <div id="method___bindEventCallbacks" class="method item private">
     <h3 class="name"><code>__bindEventCallbacks</code></h3>
 
@@ -193,7 +243,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_Behavior.js.html#l82"><code>modules&#x2F;Behavior.js:82</code></a>
+        <a href="../files/modules_Behavior.js.html#l132"><code>modules&#x2F;Behavior.js:132</code></a>
         </p>
 
 
@@ -235,7 +285,7 @@ Behavior's event handlers fire on view events but are run in the context of the 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_Behavior.js.html#l136"><code>modules&#x2F;Behavior.js:136</code></a>
+        <a href="../files/modules_Behavior.js.html#l186"><code>modules&#x2F;Behavior.js:186</code></a>
         </p>
 
 
@@ -292,7 +342,7 @@ Behavior's event handlers fire on view events but are run in the context of the 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_Behavior.js.html#l70"><code>modules&#x2F;Behavior.js:70</code></a>
+        <a href="../files/modules_Behavior.js.html#l119"><code>modules&#x2F;Behavior.js:119</code></a>
         </p>
 
 
@@ -333,7 +383,7 @@ Behavior's event handlers fire on view events but are run in the context of the 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_Behavior.js.html#l113"><code>modules&#x2F;Behavior.js:113</code></a>
+        <a href="../files/modules_Behavior.js.html#l163"><code>modules&#x2F;Behavior.js:163</code></a>
         </p>
 
 
@@ -375,6 +425,77 @@ Behavior's event handlers fire on view events but are run in the context of the 
 
 
 </div>
+<div id="method___viewPrepareWrapper" class="method item private">
+    <h3 class="name"><code>__viewPrepareWrapper</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>viewPrepare</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_Behavior.js.html#l100"><code>modules&#x2F;Behavior.js:100</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">viewPrepare</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+
+                    <div class="param-description">
+                        <p>the prepare method from the view.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
+                    <p>the combined view and behavior prepare() results.
+{
+<behavior alias>: behavior.prepare(),
+... // view prepare properties.
+}</p>
+
+            </div>
+        </div>
+
+
+</div>
 <div id="method_constructor" class="method item">
     <h3 class="name"><code>constructor</code></h3>
 
@@ -399,7 +520,7 @@ Behavior's event handlers fire on view events but are run in the context of the 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_Behavior.js.html#l51"><code>modules&#x2F;Behavior.js:51</code></a>
+        <a href="../files/modules_Behavior.js.html#l63"><code>modules&#x2F;Behavior.js:63</code></a>
         </p>
 
 
@@ -434,6 +555,16 @@ Behavior's event handlers fire on view events but are run in the context of the 
                                 </div>
 
                             </li>
+                            <li class="param">
+                                    <code class="param-name">alias</code>
+                                    <span class="type">Backbone.View</span>
+
+                                <div class="param-description">
+                                    <p>the alias for the behavior in this view.</p>
+
+                                </div>
+
+                            </li>
                         </ul>
                 </li>
                 <li class="param">
@@ -454,11 +585,79 @@ Behavior's event handlers fire on view events but are run in the context of the 
 
 
 </div>
+<div id="method_prepare" class="method item">
+    <h3 class="name"><code>prepare</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_Behavior.js.html#l55"><code>modules&#x2F;Behavior.js:55</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
+effectively: { <behaviorName>: behavior.prepare() } will be combined with the view's prepare result.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                    <p>a prepare context suitable to being added to the view's prepare result.</p>
+
+            </div>
+        </div>
+
+
+</div>
             </div>
 
             <div id="properties" class="api-class-tabpanel">
                 <h2 class="off-left">Properties</h2>
 
+<div id="property_alias" class="property item">
+    <h3 class="name"><code>alias</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_Behavior.js.html#l38"><code>modules&#x2F;Behavior.js:38</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Unique name of the behavior instance w/in a view.  More human readable than the cid.</p>
+
+    </div>
+
+
+
+</div>
 <div id="property_cidPrefix of Behaviors" class="property item">
     <h3 class="name"><code>cidPrefix of Behaviors</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
@@ -470,7 +669,7 @@ Behavior's event handlers fire on view events but are run in the context of the 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_Behavior.js.html#l38"><code>modules&#x2F;Behavior.js:38</code></a>
+        <a href="../files/modules_Behavior.js.html#l42"><code>modules&#x2F;Behavior.js:42</code></a>
         </p>
 
 
@@ -494,7 +693,7 @@ Behavior's event handlers fire on view events but are run in the context of the 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_Behavior.js.html#l44"><code>modules&#x2F;Behavior.js:44</code></a>
+        <a href="../files/modules_Behavior.js.html#l48"><code>modules&#x2F;Behavior.js:48</code></a>
         </p>
 
 

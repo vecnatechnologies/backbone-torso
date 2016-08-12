@@ -22,8 +22,8 @@
     'render:before-attach-tracked-views': 'attachTrackedViews',
     'render:begin': 'prerender',
     'render:complete': 'postrender',
-    'initialize:begin':  '_preinitialize',
-    'initialize:complete': '_postinitialize'
+    'initialize:begin':  'preinitialize',
+    'initialize:complete': 'postinitialize'
   };
 
   /**
@@ -35,6 +35,10 @@
    * @author  deena.wang@vecna.com
    */
   var Behavior = Cell.extend({
+    /**
+     * Unique name of the behavior instance w/in a view.  More human readable than the cid.
+     * @property alias {String}
+     */
     /**
      * @property cidPrefix of Behaviors
      * @type {String}
@@ -49,10 +53,19 @@
     mixin: {},
 
     /**
+     * The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
+     * effectively: { <behaviorName>: behavior.prepare() } will be combined with the view's prepare result.
+     * @method prepare
+     * @return a prepare context suitable to being added to the view's prepare result.
+     */
+    prepare: _.noop,
+
+    /**
      * @method constructor
      * @override
      * @param behaviorOptions {Object}
-     * @param behaviorOptions.view {Backbone.View} that Behavior is attached to
+     *   @param behaviorOptions.view {Backbone.View} that Behavior is attached to
+     *   @param behaviorOptions.alias {Backbone.View} the alias for the behavior in this view.
      * @param [viewOptions] {Object} options passed to View's initialize
      */
     constructor: function(behaviorOptions, viewOptions) {
@@ -61,10 +74,46 @@
         throw new Error('Torso Behavior constructed without behaviorOptions.view');
       }
       this.view = behaviorOptions.view;
+      if (!behaviorOptions.alias) {
+        throw new Error('Torso Behavior constructed without behaviorOptions.alias');
+      }
+      this.alias = behaviorOptions.alias;
       this.cid = _.uniqueId(this.cidPrefix);
       this.__bindLifecycleMethods();
       Cell.apply(this, arguments);
       this.__bindEventCallbacks();
+    },
+
+    /**
+     * This is called after the view's initialize method is called and will wrap the view's prepare()
+     * such that it returns the combination of the view's prepare result with the behavior's prepare result
+     * inside it under the behavior's alias.
+     * @method __augmentViewPrepare
+     * @private
+     */
+    __augmentViewPrepare: function() {
+      var originalViewPrepareFn = _.bind(this.view.prepare, this.view);
+      var wrappedPrepareFn = _.wrap(originalViewPrepareFn, this.__viewPrepareWrapper);
+      this.view.prepare = _.bind(wrappedPrepareFn, this);
+    },
+
+    /**
+     * Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.
+     * @method __viewPrepareWrapper
+     * @private
+     * @param viewPrepare {Function} the prepare method from the view.
+     * @return {Object} the combined view and behavior prepare() results.
+     * {
+     *   <behavior alias>: behavior.prepare(),
+     *   ... // view prepare properties.
+     * }
+     */
+    __viewPrepareWrapper: function(viewPrepare) {
+      var viewContext = viewPrepare() || {};
+      var behaviorContext = _.omit(this.toJSON(), 'view');
+      _.extend(behaviorContext, this.prepare());
+      viewContext[this.alias] = behaviorContext;
+      return viewContext;
     },
 
     /**
@@ -74,6 +123,7 @@
      * @private
      */
     __bindLifecycleMethods: function() {
+      this.listenTo(this.view, 'initialize:complete', this.__augmentViewPrepare);
       _.each(eventMap, function(callback, event) {
         this.listenTo(this.view, event, this[callback]);
       }, this);
