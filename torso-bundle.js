@@ -4393,12 +4393,19 @@
      * @private
      */
     __pull: function(alias) {
-      var model,
-        config = this.getMapping(alias);
+      var config = this.getMapping(alias);
       if (config.computed && config.mapping.pull) {
         this.__invokeComputedPull.call({formModel: this, alias: alias});
+      } else if (config.computed) {
+        var modelAliases = this.__getModelAliases(alias);
+        _.each(modelAliases, function(modelAlias) {
+          var model = this.getTrackedModel(modelAlias);
+          if (model) {
+            this.__copyFields(config.mapping[modelAlias], this, model);
+          }
+        }, this);
       } else {
-        model = this.getTrackedModel(alias);
+        var model = this.getTrackedModel(alias);
         if (model) {
           this.__copyFields(config.mapping, this, model);
         }
@@ -4413,15 +4420,22 @@
      * @private
      */
     __push: function(alias) {
-      var model,
-        config = this.getMapping(alias);
+      var config = this.getMapping(alias);
       if (config.computed && config.mapping.push) {
         var models = this.__getComputedModels(alias);
         if (models) {
           config.mapping.push.call(this, models);
         }
+      } else if (config.computed) {
+        var modelAliases = this.__getModelAliases(alias);
+        _.each(modelAliases, function(modelAlias) {
+          var model = this.getTrackedModel(modelAlias);
+          if (model) {
+            this.__copyFields(config.mapping[modelAlias], model, this);
+          }
+        }, this);
       } else {
-        model = this.getTrackedModel(alias);
+        var model = this.getTrackedModel(alias);
         if (model) {
           this.__copyFields(config.mapping, model, this);
         }
@@ -4601,7 +4615,7 @@
      * @method __copyFields
      */
     __copyFields: function(fields, destination, origin) {
-      if (!fields && this === origin && _.size(this.getTrackedModels()) > 1) {
+      if ((!fields || fields === true) && this === origin && _.size(this.getTrackedModels()) > 1) {
         // only copy attributes that exist on object model when the form model is tracking all the properties
         // of that object model, but is also tracking other models as well.
         fields = _.keys(destination.attributes);

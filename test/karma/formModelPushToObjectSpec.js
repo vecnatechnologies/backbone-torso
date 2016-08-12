@@ -4,6 +4,11 @@ var FormModel = require('../../modules/FormModel');
 var TestModel = require('./helpers/TestModel');
 var TestModel2 = require('./helpers/TestModel2');
 
+// Helper function to trim whitespace from a string.
+function trim(s) { 
+  return ( s || '' ).replace( /^\s+|\s+$/g, '' ); 
+}
+
 describe('A Form Model when it pushes new data to Object Models', function() {
 
   var testModel, testModel2, testFormModel;
@@ -19,6 +24,29 @@ describe('A Form Model when it pushes new data to Object Models', function() {
     var testFormModel = new FormModel({}, {
       mapping: {
         testModel: true
+      },
+      models: {
+        testModel: testModel
+      }
+    });
+    testFormModel.set('foo', 555);
+    expect(testModel.get('foo')).toBe(123);
+    testFormModel.push();
+    expect(testModel.get('foo')).toBe(555);
+    expect(testFormModel.get('foo')).toBe(555);
+    testFormModel.set('bar', 'new value');
+    expect(testModel.get('bar')).toBe('test');
+    testFormModel.push();
+    expect(testModel.get('bar')).toBe('new value');
+    expect(testFormModel.get('bar')).toBe('new value');
+  });
+
+  it('can push simple, one-depth attributes to an Object Model using computed aliases', function() {
+    var testFormModel = new FormModel({}, {
+      mapping: {
+        myFoo: {
+          testModel: true
+        }
       },
       models: {
         testModel: testModel
@@ -120,6 +148,28 @@ describe('A Form Model when it pushes new data to Object Models', function() {
     expect(combinedFormModel.get('ingredients[0].name')).toBe('chocolate');
 
     expect(combinedFormModel.get('ingredients[2]')).not.toBeDefined();
+  });
+
+  it('can perform an asymmetrical operation on push', function() {
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        fooTrim: {
+          testModel: 'bar',
+          push: function(models) {
+            var trimmedBar = trim(this.get('bar'));
+            models.testModel.set('bar', trimmedBar);
+          }
+        }
+      },
+      models: {
+        testModel: testModel
+      }
+    });
+    expect(testModel.get('bar')).toBe('test');
+    expect(combinedFormModel.get('bar')).toBe('test');
+    combinedFormModel.set('bar', ' new ');
+    combinedFormModel.push();
+    expect(testModel.get('bar')).toBe('new');
   });
 
   it('can separate a single form attribute and push many parts to an Object Model', function() {
