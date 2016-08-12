@@ -1454,8 +1454,8 @@
       this.view = behaviorOptions.view;
       this.cid = _.uniqueId(this.cidPrefix);
       this.__bindLifecycleMethods();
-      this.__bindEventCallbacks();
       Cell.apply(this, arguments);
+      this.__bindEventCallbacks();
     },
 
     /**
