@@ -4,6 +4,11 @@ var FormModel = require('../../modules/FormModel');
 var TestModel = require('./helpers/TestModel');
 var TestModel2 = require('./helpers/TestModel2');
 
+// Helper function to trim whitespace from a string.
+function trim(s) { 
+  return ( s || '' ).replace( /^\s+|\s+$/g, '' ); 
+}
+
 describe('A Form Model when it pulls from object models', function() {
   var testModel, testModel2, testFormModel;
 
@@ -44,6 +49,22 @@ describe('A Form Model when it pulls from object models', function() {
       }
     });
     expect(computedFormModel.get('myFoo')).toBe(-123);
+  });
+
+  it('can pull simple, one-depth attributes from an Object Model using computed aliases', function() {
+    var computedFormModel;
+    expect(testModel.get('foo')).toBe(123);
+    computedFormModel = new FormModel({}, {
+      mapping: {
+        myFoo: {
+          testModel: 'foo'
+        }
+      },
+      models: {
+        testModel: testModel
+      }
+    });
+    expect(computedFormModel.get('foo')).toBe(123);
   });
 
   it('can pull only select simple, one-depth attributes from an Object Model', function() {
@@ -206,6 +227,29 @@ describe('A Form Model when it pulls from object models', function() {
     expect(combinedFormModel.get('foo')).not.toBeDefined();
     expect(combinedFormModel.get('bar')).not.toBeDefined();
     expect(combinedFormModel.get('fooBar')).toBe('123 test');
+  });
+
+  it('can perform an asymmetrical operation on pull', function() {
+    testModel.set('bar', ' test ');
+    var combinedFormModel = new FormModel({}, {
+      mapping: {
+        fooTrim: {
+          testModel: 'bar',
+          pull: function(models) {
+            var trimmedBar = trim(models.testModel.bar);
+            this.set('bar', trimmedBar);
+          }
+        }
+      },
+      models: {
+        testModel: testModel
+      }
+    });
+    expect(testModel.get('bar')).toBe(' test ');
+    expect(combinedFormModel.get('bar')).toBe('test');
+    combinedFormModel.set('bar', ' new ');
+    combinedFormModel.push();
+    expect(testModel.get('bar')).toBe(' new ');
   });
 
   it('can combine attributes from multiple Object Models into a single form attribute', function() {
