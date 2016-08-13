@@ -793,7 +793,8 @@
           });
           behaviorOptions.view = view;
           behaviorOptions.alias = alias;
-          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+          var behaviorAttributes = behaviorDefinition.attributes || {};
+          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorAttributes, behaviorOptions, viewOptions);
           // Add the behavior&#x27;s mixin fields to the view&#x27;s public API
           if (behaviorInstance.mixin) {
             var mixin = _.result(behaviorInstance, &#x27;mixin&#x27;);
