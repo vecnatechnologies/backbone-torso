@@ -130,7 +130,7 @@
         MODEL_KEY = &#x27;model&#x27;;
 
     /**
-     * Usage: {{label &#x27;fieldName&#x27; value=&quot;suffix&quot;}}
+     * Usage: {{labelFor &#x27;fieldName&#x27; value=&quot;suffix&quot;}}
      * Generates: for=&quot;field-name-suffix&quot;
      * @method Handlebars.helpers.labelFor
      * @param field {String} The field name to convert to a compliant &quot;for&quot; attribute
@@ -169,7 +169,7 @@
 
     /**
      * Usage: {{formAttr &#x27;fieldName[x].sub&#x27; &#x27;id, for&#x27; value=&#x27;demo&#x27; x=123}}
-     * Generates: id=&quot;first-name-123_sub-demo&quot; for=&quot;first-name-123_sub&quot;
+     * Generates: id=&quot;first-name-123_sub-demo&quot; for=&quot;first-name-123_sub&quot; value=&quot;demo&quot;
      * @method Handlebars.helpers.formAttr
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {&lt;Handlebars context&gt;} Always passed in as final argument

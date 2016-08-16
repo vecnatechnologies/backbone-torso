@@ -552,7 +552,7 @@
             "module": "Torso",
             "namespace": "Torso.Utils",
             "file": "modules/templateRenderer.js",
-            "line": 132,
+            "line": 154,
             "description": "Static Template Engine.\nAll template renders should be piped through this method."
         },
         "Torso": {
@@ -4646,7 +4646,7 @@
         {
             "file": "modules/handlebarsUtils.js",
             "line": 28,
-            "description": "Usage: {{label 'fieldName' value=\"suffix\"}}\nGenerates: for=\"field-name-suffix\"",
+            "description": "Usage: {{labelFor 'fieldName' value=\"suffix\"}}\nGenerates: for=\"field-name-suffix\"",
             "itemtype": "method",
             "name": "Handlebars.helpers.labelFor",
             "params": [
@@ -4738,7 +4738,7 @@
         {
             "file": "modules/handlebarsUtils.js",
             "line": 66,
-            "description": "Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}\nGenerates: id=\"first-name-123_sub-demo\" for=\"first-name-123_sub\"",
+            "description": "Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}\nGenerates: id=\"first-name-123_sub-demo\" for=\"first-name-123_sub\" value=\"demo\"",
             "itemtype": "method",
             "name": "Handlebars.helpers.formAttr",
             "params": [
@@ -4844,7 +4844,22 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 143,
+            "line": 40,
+            "description": "Stickit will rely on the 'stickit-bind-val' jQuery data attribute to determine the value to use for a given option.\nIf the value DOM attribute is not the same as the stickit-bind-val, then this will clear the jquery data attribute\nso that stickit will use the value DOM attribute of the option.  This happens when templateRenderer merges\nthe attributes of the newNode into a current node of the same type when the current node has the stickit-bind-val\njQuery data attribute set.\n\nIf the node value is not set, then the stickit-bind-val might be how the view is communicating the value for stickit to use\n(possibly in the case of non-string values).  In this case trust the stickit-bind-val.",
+            "params": [
+                {
+                    "name": "node",
+                    "description": "the DoM element to test and fix the stickit data on.",
+                    "type": "Node"
+                }
+            ],
+            "class": "Torso.Utils.templateRenderer",
+            "module": "Torso",
+            "namespace": "Torso.Utils"
+        },
+        {
+            "file": "modules/templateRenderer.js",
+            "line": 165,
             "description": "Performs efficient re-rendering of a template.",
             "itemtype": "method",
             "name": "render",
@@ -4898,7 +4913,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 169,
+            "line": 191,
             "description": "Call this.hotswap but also keeps the caret position the same",
             "params": [
                 {
@@ -4925,7 +4940,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 197,
+            "line": 219,
             "description": "Produces a copy of the element tag with attributes but with no contents",
             "params": [
                 {
@@ -4946,7 +4961,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 211,
+            "line": 233,
             "description": "Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply\nselection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome",
             "params": [
                 {
@@ -4967,7 +4982,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 222,
+            "line": 244,
             "description": "Method that returns the current caret (cursor) position of a given element.\nSource: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field",
             "itemtype": "method",
             "name": "getCaretPosition",
@@ -4988,7 +5003,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 252,
+            "line": 274,
             "description": "Method that returns sets the current caret (cursor) position of a given element and puts it in focus.\nSource: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox",
             "itemtype": "method",
             "name": "setCaretPosition",
@@ -5051,6 +5066,10 @@
         {
             "message": "Missing item type\nViewStateCell is a NestedCell that holds view state data and can trigger\nchange events. These changes events will propogate up and trigger on the view\nas well.",
             "line": " modules/View.js:13"
+        },
+        {
+            "message": "Missing item type\nStickit will rely on the 'stickit-bind-val' jQuery data attribute to determine the value to use for a given option.\nIf the value DOM attribute is not the same as the stickit-bind-val, then this will clear the jquery data attribute\nso that stickit will use the value DOM attribute of the option.  This happens when templateRenderer merges\nthe attributes of the newNode into a current node of the same type when the current node has the stickit-bind-val\njQuery data attribute set.\n\nIf the node value is not set, then the stickit-bind-val might be how the view is communicating the value for stickit to use\n(possibly in the case of non-string values).  In this case trust the stickit-bind-val.",
+            "line": " modules/templateRenderer.js:40"
         }
     ]
 }
