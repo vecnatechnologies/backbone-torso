@@ -83,7 +83,7 @@
         MODEL_KEY = 'model';
 
     /**
-     * Usage: {{label 'fieldName' value="suffix"}}
+     * Usage: {{labelFor 'fieldName' value="suffix"}}
      * Generates: for="field-name-suffix"
      * @method Handlebars.helpers.labelFor
      * @param field {String} The field name to convert to a compliant "for" attribute
@@ -122,7 +122,7 @@
 
     /**
      * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
-     * Generates: id="first-name-123_sub-demo" for="first-name-123_sub"
+     * Generates: id="first-name-123_sub-demo" for="first-name-123_sub" value="demo"
      * @method Handlebars.helpers.formAttr
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {<Handlebars context>} Always passed in as final argument
@@ -298,6 +298,26 @@
     }
   }
 
+  /**
+   * Stickit will rely on the 'stickit-bind-val' jQuery data attribute to determine the value to use for a given option.
+   * If the value DOM attribute is not the same as the stickit-bind-val, then this will clear the jquery data attribute
+   * so that stickit will use the value DOM attribute of the option.  This happens when templateRenderer merges
+   * the attributes of the newNode into a current node of the same type when the current node has the stickit-bind-val
+   * jQuery data attribute set.
+   *
+   * If the node value is not set, then the stickit-bind-val might be how the view is communicating the value for stickit to use
+   * (possibly in the case of non-string values).  In this case trust the stickit-bind-val.
+   *
+   * @param node {Node} the DoM element to test and fix the stickit data on.
+   */
+  function cleanupStickitData(node) {
+    var $node = $(node);
+    var stickitValue = $node.data('stickit-bind-val');
+    if (node.tagName === 'OPTION' && node.value !== undefined && stickitValue !== node.value) {
+      $node.removeData('stickit-bind-val');
+    }
+  }
+
   /*
    * Swap method for Element Nodes
    * @param currentNode {Element} The pre-existing DOM Element to update
@@ -341,6 +361,8 @@
     _.each(newNode.attributes, function(attrib) {
       currentNode.setAttribute(attrib.name, attrib.value);
     });
+
+    cleanupStickitData(currentNode);
 
     // Quick check to see if we need to bother comparing sub-levels
     if ($currentNode.html() === $newNode.html()) {
