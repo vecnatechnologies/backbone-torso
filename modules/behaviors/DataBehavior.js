@@ -14,6 +14,21 @@
   }
 }(this, function(_, $, Behavior, Collection) {
   'use strict';
+
+  /**
+   * Converts string or number values into an array with a single string or number item.
+   * If the input is not a string, number or array then undefined is returned.
+   * @param ids {String|Number|String[]|Number[]} the ids to convert.
+   * @return {String[]|Number[]} an array of strings or numbers.
+   */
+  function normalizeIds(ids) {
+    if (_.isArray(ids)) {
+      return ids;
+    } else if (_.isString(ids) || _.isNumber(ids)) {
+      return [ids];
+    }
+  }
+
   /**
    * This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
    * This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
@@ -48,12 +63,12 @@
    *                property on that object to use. The object needs to fire the change event for the given property
    *                and have a .get('propertyName') method. Only one property can be identified as supplying the id
    *                for this data model. If the identified object does not fire a change event then the id will never change.
-   *     - property {String} - the name of the property is the key and the object containing the property is the value.
-   *                           The value can either be an object that fires a change event for the given property name
-   *                           or a string identifying the object to use. Uses the view as the root to get the identified
-   *                           property (i.e. 'viewState.', 'model.', etc). Will get the property before the first '.' from
-   *                           the view and if it is an object will try to use a .get('propertyName') on it and set a 'change:'
-   *                           listener on it. If it is a string/number or array of string/number, then it will use that as the ids
+   *     - property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+   *                           context is defined. The context is the object that fires a change event for the given property name.
+   *                           Uses the view or the context as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
+   *                           Will get the property before the first '.' from the view and if it is an object will try to use a
+   *                           .get('propertyName') on it and set a 'change:' listener on it.
+   *                           If it is a string/number or array of string/number, then it will use that as the ids
    *     - cell {Torso.Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
    *                           events and has a .get('propertyName') function. It isn't required to fire events -
    *                           the change event is only required if it needs to refetch when the id property value changes.
@@ -127,13 +142,164 @@
         throw new Error('Torso Data Behavior constructed without a way to identify the ids for this data.  Please define either id or ids.');
       }
 
+      if (!_.isUndefined(this.__ids.property) && !_.isString(this.__ids.property)) {
+        throw new Error('Torso Data Behavior uses an object to define the ids to use, but it does not have a string field name property.  Id object: ' + JSON.stringify(this.__ids));
+      }
+
       this.__returnSingleResult = behaviorOptions.returnSingleResult;
       this.__alwaysFetch = behaviorOptions.alwaysFetch;
 
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.privateCollection = this.__cache.createPrivateCollection(this.cid);
 
+      this.on('retrieve', this.retrieve);
+      this.on('pull', this.pull);
+      this.on('fetch', this.fetch);
+
       Behavior.apply(this, arguments);
+
+      this.trigger('retrieve');
+    },
+
+    /**
+     * Adds the
+     * @method prepare
+     * @override
+     */
+    prepare: function() {
+      var behaviorContext = Behavior.prototype.prepare.apply(this);
+      _.extend(behaviorContext, this.privateCollection.toJSON());
+      return behaviorContext;
+    },
+
+    /**
+     * Get the full data object contents (either an array of model attributes or a single model attribute based on the
+     * value of returnSingleResult) or the value of a specific property if a single result is expected.
+     * @method getData
+     * @param singleResultProperty {String} the property to get from the model (only valid if returnSingleResult is true).
+     * @return {Object} containing the full contents of either the collection or model.
+     */
+    getData: function(singleResultProperty) {
+      if (!this.__returnSingleResult) {
+        return this.privateCollection.toJSON();
+      }
+
+      if (this.privateCollection.length === 0) {
+        return undefined;
+      } else if (this.privateCollection.length === 1) {
+        var singleResultModel = this.privateCollection.at(0);
+        if (_.isString(singleResultProperty)) {
+          return singleResultModel.get(singleResultProperty);
+        }
+        return singleResultModel.toJSON();
+      } else {
+        throw new Error('Multiple results found, but single result expected: ' + JSON.stringify(this.privateCollection.toJSON()));
+      }
+    },
+
+    /**
+     * Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
+     * @method pull
+     */
+    pull: function() {
+      var thisDataBehavior = this;
+      this.__getIds()
+        .then(function(ids) {
+          return thisDataBehavior.privateCollection.trackAndPull(ids);
+        });
+    },
+
+    /**
+     * Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
+     * @method fetch
+     */
+    fetch: function() {
+      var thisDataBehavior = this;
+      this.__getIds()
+        .then(function(ids) {
+          return thisDataBehavior.privateCollection.trackAndFetch(ids);
+        });
+    },
+
+    /**
+     * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
+     * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
+     * @method retrieve
+     */
+    retrieve: function() {
+      if (this.__alwaysFetch) {
+        return this.fetch();
+      } else {
+        return this.pull();
+      }
+    },
+
+    /**
+     * @method __getIds
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the ids to track in the private collection
+     *                              or rejects with the error message.
+     * @private
+     */
+    __getIds: function() {
+      var idsDeferred = $.Deferred();
+      var ids = this.__ids;
+      var normalizedIds = normalizeIds(ids);
+      if (!_.isUndefined(normalizedIds)) {
+        idsDeferred.resolve(normalizedIds);
+      } else if (_.isFunction(this.__ids)) {
+        ids = this.__ids(this.__cache);
+        normalizedIds = normalizeIds(ids);
+        if (!_.isUndefined(normalizedIds)) {
+          idsDeferred.resolve(normalizedIds);
+        } else if (!_.isUndefined(ids) && _.isFunction(ids.promise)) {
+          idsDeferred = ids;
+        } else {
+          idsDeferred.resolve([]);
+        }
+      } else if (_.isString(this.__ids.property)) {
+        var context;
+        if (_.isUndefined(this.__ids.context)) {
+          context = this.view;
+        } else if (_.isFunction(this.__ids.context)) {
+          context = this.__ids.context();
+        } else if (_.isString(this.__ids.context)) {
+          context = _.result(this, this.__ids.context);
+        } else if (_.isObject(this.__ids.context)) {
+          context = this.__ids.context;
+        } else if (_.isFunction(this.__ids.context)) {
+          context = this.__ids.context();
+        } else {
+          throw new Error('Data Behavior ids: Invalid context.  Not a string, object or function.');
+        }
+
+        var property = this.__ids.property;
+
+        var propertyParts = property.split('.');
+        var isNestedProperty = propertyParts.length > 1;
+        if (isNestedProperty) {
+          var rootPropertyName = propertyParts[0];
+          if (rootPropertyName === 'behaviors' || rootPropertyName === 'behavior') {
+            var behaviorName = propertyParts[1];
+            context = this.view.getBehavior(behaviorName);
+            property = propertyParts.slice(2).join('.');
+          } else if (!_.isUndefined(context[rootPropertyName])) {
+            context = context[rootPropertyName];
+            property = propertyParts.slice(1).join('.');
+          }
+        }
+
+        ids = context[property];
+        normalizedIds = normalizeIds(ids);
+        if (_.isUndefined(normalizedIds) && _.isFunction(context.get)) {
+          ids = context.get(property);
+          normalizedIds = normalizeIds(ids);
+        }
+
+        idsDeferred.resolve(normalizedIds || []);
+      } else {
+        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function.');
+      }
+      return idsDeferred.promise();
     }
   });
 }));

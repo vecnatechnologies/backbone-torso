@@ -6,10 +6,14 @@ var Torso  = require('./../../modules/torso');
 
 var setupInjectionSite = require('./helpers/setupInjectionSite');
 
+var TorsoTestCacheCollection = TorsoCollection.extend({
+  url: '/myModel'
+});
+
 function getBasicBehaviorConfiguration() {
   return {
     behavior: TorsoDataBehavior,
-    cache: new TorsoCollection(),
+    cache: new TorsoTestCacheCollection(),
     ids: [1, 2]
   };
 }
@@ -22,6 +26,10 @@ var ViewWithDataBehavior = TorsoView.extend({
 describe('A Torso Data Behavior', function() {
 
   setupInjectionSite.apply(this);
+
+  beforeEach(function() {
+    this.routes = require('./helpers/mockjax')();
+  });
 
   it('exists', function() {
     expect(TorsoDataBehavior).toBeDefined();
@@ -185,8 +193,243 @@ describe('A Torso Data Behavior', function() {
       var testPrivateCollectionView = new TestPrivateCollectionView();
       expect(testPrivateCollectionView.testPrivateCollection).toBeDefined();
     });
-  });
 
+    it('can specify a single numeric value for id', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfigurationSingleNumericId.ids;
+      defaultBehaviorConfigurationSingleNumericId.id = 1;
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a single string value for id', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfigurationSingleNumericId.ids;
+      defaultBehaviorConfigurationSingleNumericId.id = '1';
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['1']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an array of numeric values for ids', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = [1, 2];
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1, 2]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an array of string values for ids', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = ['1', '2'];
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['1', '2']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a function returning a single numeric value for ids', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+        return 1;
+      };
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a function returning a single string value for ids', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+        return '1';
+      };
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['1']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a function returning an array of numeric values for ids', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+        return [1, 2];
+      };
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1, 2]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a function returning an array of string values for ids', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+        return ['1', '2'];
+      };
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['1', '2']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a function for ids that gets the cache as the first argument', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+
+      var actualCacheArgument = null;
+      defaultBehaviorConfiguration.ids = function(cache) {
+        actualCacheArgument = cache;
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds();
+      expect(actualCacheArgument).toBe(dataBehavior.__cache);
+    });
+
+    it('can specify a function for ids that returns a jquery deferred object resolving to the ids sync', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+        return $.Deferred().resolve([1, 2]).promise();
+      };
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1, 2]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a function for ids that returns a jquery deferred object resolving to the ids async', function(done) {
+      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          deferred.resolve([1, 2]);
+        }, 1);
+        return deferred.promise();
+      };
+      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+        }
+      });
+      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
+      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
+      dataBehaviorSingleNumericId.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1, 2]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+  });
 });
 
 

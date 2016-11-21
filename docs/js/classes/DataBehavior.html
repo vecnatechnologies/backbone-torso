@@ -105,7 +105,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l17"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:17</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l32"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:32</code></a>
         </div>
 
             Module: <a href="../modules/Torso.behaviors.html">Torso.behaviors</a>
@@ -147,8 +147,32 @@ id: { property: '_patientVecnaId' }
                     <h3>Methods</h3>
 
                     <ul class="index-list methods">
+                            <li class="index-item method private">
+                                <a href="#method___getIds">__getIds</a>
+
+                            </li>
                             <li class="index-item method">
                                 <a href="#method_constructor">constructor</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_fetch">fetch</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_getData">getData</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_prepare">prepare</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_pull">pull</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_retrieve">retrieve</a>
 
                             </li>
                     </ul>
@@ -161,6 +185,50 @@ id: { property: '_patientVecnaId' }
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method___getIds" class="method item private">
+    <h3 class="name"><code>__getIds</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l237"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:237</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the ids to track in the private collection
+or rejects with the error message.</p>
+
+            </div>
+        </div>
+
+
+</div>
 <div id="method_constructor" class="method item">
     <h3 class="name"><code>constructor</code></h3>
 
@@ -185,7 +253,7 @@ id: { property: '_patientVecnaId' }
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l92"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:92</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l107"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:107</code></a>
         </p>
 
 
@@ -291,6 +359,198 @@ id: { property: '_patientVecnaId' }
                 </li>
             </ul>
         </div>
+
+
+
+</div>
+<div id="method_fetch" class="method item">
+    <h3 class="name"><code>fetch</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l212"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:212</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_getData" class="method item">
+    <h3 class="name"><code>getData</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>singleResultProperty</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l175"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:175</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the full data object contents (either an array of model attributes or a single model attribute based on the
+value of returnSingleResult) or the value of a specific property if a single result is expected.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">singleResultProperty</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>the property to get from the model (only valid if returnSingleResult is true).</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
+                    <p>containing the full contents of either the collection or model.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_prepare" class="method item">
+    <h3 class="name"><code>prepare</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l164"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:164</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds the</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_pull" class="method item">
+    <h3 class="name"><code>pull</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l200"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:200</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_retrieve" class="method item">
+    <h3 class="name"><code>retrieve</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l224"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:224</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Retrieves the ids for this data object and passes them off to the private collection to track and then does a
+pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).</p>
+
+    </div>
+
 
 
 
