@@ -1,6 +1,6 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['./behaviors/DataSourceBehavior',
+    define(['./behaviors/DataBehavior',
             './Behavior',
             './Cell',
             './Collection',
@@ -20,7 +20,7 @@
   } else if (typeof exports === 'object') {
     require('./stickitUtils');
     require('./configure');
-    module.exports = factory(require('./behaviors/DataSourceBehavior'),
+    module.exports = factory(require('./behaviors/DataBehavior'),
                              require('./Behavior'),
                              require('./Cell'),
                              require('./Collection'),
@@ -36,7 +36,7 @@
   } else {
     root.Torso = root.Torso || {};
   }
-}(this, function(DataSourceBehavior,
+}(this, function(DataBehavior,
                  Behavior,
                  Cell,
                  Collection,
@@ -61,7 +61,7 @@
    */
   return {
     behaviors: {
-      DataSourceBehavior: DataSourceBehavior
+      DataBehavior: DataBehavior
     },
     Behavior: Behavior,
     Cell: Cell,

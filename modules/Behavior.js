@@ -78,7 +78,7 @@
         throw new Error('Torso Behavior constructed without behaviorOptions.alias');
       }
       this.alias = behaviorOptions.alias;
-      this.cid = _.uniqueId(this.cidPrefix);
+      this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.__bindLifecycleMethods();
       Cell.apply(this, arguments);
       this.__bindEventCallbacks();

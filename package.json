@@ -15,7 +15,8 @@
     "doc": "mkdir docs/js -p && yuidoc",
     "doc:dev": "mkdir docs/js -p && yuidoc --server",
     "watch-import": "gulp watch-import & npm run doc:dev",
-    "clean": "gulp clean"
+    "clean": "gulp clean",
+    "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev"
   },
   "main": "modules/torso.js",
   "dependencies": {

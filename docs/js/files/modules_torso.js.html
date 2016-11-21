@@ -41,6 +41,7 @@
                                 <li><a href="../classes/Behavior.html">Behavior</a></li>
                                 <li><a href="../classes/Cell.html">Cell</a></li>
                                 <li><a href="../classes/Collection.html">Collection</a></li>
+                                <li><a href="../classes/DataBehavior.html">DataBehavior</a></li>
                                 <li><a href="../classes/Events.html">Events</a></li>
                                 <li><a href="../classes/FormModel.html">FormModel</a></li>
                                 <li><a href="../classes/FormView.html">FormView</a></li>
@@ -65,6 +66,7 @@
                 
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/Torso.html">Torso</a></li>
+                                <li><a href="../modules/Torso.behaviors.html">Torso.behaviors</a></li>
                             </ul>
                         </div>
                     </div>
@@ -104,7 +106,8 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;/Behavior&#x27;,
+    define([&#x27;./behaviors/DataBehavior&#x27;,
+            &#x27;./Behavior&#x27;,
             &#x27;./Cell&#x27;,
             &#x27;./Collection&#x27;,
             &#x27;./Events&#x27;,
@@ -123,7 +126,8 @@
   } else if (typeof exports === &#x27;object&#x27;) {
     require(&#x27;./stickitUtils&#x27;);
     require(&#x27;./configure&#x27;);
-    module.exports = factory(require(&#x27;./Behavior&#x27;),
+    module.exports = factory(require(&#x27;./behaviors/DataBehavior&#x27;),
+                             require(&#x27;./Behavior&#x27;),
                              require(&#x27;./Cell&#x27;),
                              require(&#x27;./Collection&#x27;),
                              require(&#x27;./Events&#x27;),
@@ -138,7 +142,8 @@
   } else {
     root.Torso = root.Torso || {};
   }
-}(this, function(Behavior,
+}(this, function(DataBehavior,
+                 Behavior,
                  Cell,
                  Collection,
                  Events,
@@ -161,6 +166,9 @@
    * @author    jyoung@vecna.com
    */
   return {
+    behaviors: {
+      DataBehavior: DataBehavior
+    },
     Behavior: Behavior,
     Cell: Cell,
     Collection: Collection,

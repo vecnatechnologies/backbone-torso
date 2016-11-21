@@ -19,20 +19,28 @@
         .pipe(gulp.dest, paths.bundleDest);
 
   gulp.task('bundle', function(done) {
+    var subDirectories = {
+      'DataBehavior': 'behaviors/',
+      'cellMixin': 'mixins/',
+      'pollingMixin': 'mixins/',
+      'cacheMixin': 'mixins/',
+      'loadingMixin': 'mixins/'
+    };
     var dependencies = {
-      'Behavior'   : ['Cell'],
-      'Cell'       : ['cellMixin'],
-      'Collection' : ['pollingMixin', 'cacheMixin', 'loadingMixin'],
-      'validation' : ['pollingMixin', 'NestedModel'],
-      'Model'      : ['pollingMixin'],
-      'NestedCell' : ['cellMixin'],
-      'NestedModel': ['pollingMixin'],
-      'FormModel'  : ['pollingMixin', 'NestedModel', 'validation'],
-      'ServiceCell': ['cellMixin', 'Cell'],
-      'View'       : ['Cell', 'cellMixin', 'templateRenderer'],
-      'FormView'   : ['Cell', 'cellMixin', 'templateRenderer', 'View',
-                      'pollingMixin', 'NestedModel', 'validation', 'FormModel'],
-      'ListView'   : ['Cell', 'cellMixin', 'templateRenderer', 'View']
+      'Behavior'     : ['Cell'],
+      'DataBehavior' : ['Behavior', 'Collection'],
+      'Cell'         : ['cellMixin'],
+      'Collection'   : ['pollingMixin', 'cacheMixin', 'loadingMixin'],
+      'validation'   : ['pollingMixin', 'NestedModel'],
+      'Model'        : ['pollingMixin'],
+      'NestedCell'   : ['cellMixin'],
+      'NestedModel'  : ['pollingMixin'],
+      'FormModel'    : ['pollingMixin', 'NestedModel', 'validation'],
+      'ServiceCell'  : ['cellMixin', 'Cell'],
+      'View'         : ['Cell', 'cellMixin', 'templateRenderer'],
+      'FormView'     : ['Cell', 'cellMixin', 'templateRenderer', 'View',
+                        'pollingMixin', 'NestedModel', 'validation', 'FormModel'],
+      'ListView'     : ['Cell', 'cellMixin', 'templateRenderer', 'View']
     };
     var dirPath = __dirname + '/../../modules';
     var dontInclude = ['torso'];
@@ -66,7 +74,8 @@
         throw new Error('Bundle dependency list could not be created within the depth threshold');
       }
       fileList = _.map(fileList, function(filePath) {
-        return dirPath + '/' + (_.last(filePath, 5).join('') == 'Mixin' ? 'mixins/' : '') + filePath + '.js';
+        var subDirectory = subDirectories[filePath] || '';
+        return dirPath + '/' + subDirectory + filePath + '.js';
       });
       return gulp.src(fileList)
         .pipe(bundlePipe())

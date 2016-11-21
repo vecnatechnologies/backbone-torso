@@ -5,6 +5,17 @@
         "version": "0.6.16"
     },
     "files": {
+        "modules/behaviors/DataBehavior.js": {
+            "name": "modules/behaviors/DataBehavior.js",
+            "modules": {
+                "Torso.behaviors": 1
+            },
+            "classes": {
+                "DataBehavior": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "modules/mixins/cacheMixin.js": {
             "name": "modules/mixins/cacheMixin.js",
             "modules": {
@@ -230,6 +241,61 @@
         }
     },
     "modules": {
+        "Torso.behaviors": {
+            "name": "Torso.behaviors",
+            "submodules": {},
+            "elements": {},
+            "classes": {
+                "DataBehavior": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "modules/behaviors/DataBehavior.js",
+            "line": 17,
+            "description": "This behavior implements simplified interaction with data sources (i.e. TorsoCollection).\nThis behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.\nThis behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.\n\nExample Configuration:\n  TorsoView.extend({\n    behaviors: {\n      demographics: {\n        behavior: TorsoDataBehavior,\n        cache: require('./demographicsCacheCollection'),\n        returnSingleResult: true,\n        id: { property: '_patientVecnaId' }\n      }\n    }\n  }",
+            "itemtype": "method",
+            "params": [
+                {
+                    "name": "cache",
+                    "description": "the torso collection that is acting as a cache used to create the private collections.",
+                    "type": "Torso.Collection"
+                },
+                {
+                    "name": "returnSingleResult",
+                    "description": "true - a single model result is expected, false - a collection result is expected.",
+                    "type": "Boolean",
+                    "optional": true,
+                    "optdefault": "false"
+                },
+                {
+                    "name": "alwaysFetch",
+                    "description": "true - if it should use fetch() instead of pull() on the private collection.\n                                     false if it should use pull() instead.\n                                     True will query the server more often, but will provide more up-to-date data.\n                                     False will only query the server if the model hasn't already been retrieved.",
+                    "type": "Boolean",
+                    "optional": true,
+                    "optdefault": "false"
+                },
+                {
+                    "name": "id",
+                    "description": "- alias for ids.  id or ids is required.",
+                    "type": "String|Number|String[]|Number[]|Object|Function",
+                    "optional": true,
+                    "optdefault": "ids"
+                },
+                {
+                    "name": "[ids=id]  - duck-typed property that identifies the ids to use. id or ids is required.\n  - {String|Number} - the id to use directly (equivalent to an array of a single id).\n  - {String[]|Number[]",
+                    "description": "} - the ids to use directly.\n  - {Object} - more complex configuration that identifies a model-like object that fires a change event and the\n               property on that object to use. The object needs to fire the change event for the given property\n               and have a .get('propertyName') method. Only one property can be identified as supplying the id\n               for this data model. If the identified object does not fire a change event then the id will never change.\n    - property {String} - the name of the property is the key and the object containing the property is the value.\n                          The value can either be an object that fires a change event for the given property name\n                          or a string identifying the object to use. Uses the view as the root to get the identified\n                          property (i.e. 'viewState.', 'model.', etc). Will get the property before the first '.' from\n                          the view and if it is an object will try to use a .get('propertyName') on it and set a 'change:'\n                          listener on it. If it is a string/number or array of string/number, then it will use that as the ids\n    - cell {Torso.Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change\n                          events and has a .get('propertyName') function. It isn't required to fire events -\n                          the change event is only required if it needs to refetch when the id property value changes.\n    Examples:\n      - { property: '_patientId' }\n      - { property: 'viewState.appointmentId' }\n      - { property: 'model.type' }\n      - { property: 'behaviors.demographics.appointments' }\n      - { property: 'id', context: userService }\n      - { property: 'username', context: function() { application.getCurrentUser() } }\n  - function(cache) - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)\n                      to track with the private collection. Cache is passed in as the first argument so that the behavior\n                      can be defined and the cache can be overridden later.\n                      'this' is the behavior (from which you can get the view if needed).\n                      What was criteria should use this instead:\n\n        function(cache) {\n          var thisBehaviorInstance = this;\n          var view = this.view;\n          var critera = { ... some criteria ... };\n          return cache.fetchIdsByCriteria(criteria);\n        }",
+                    "type": "String|Number|String[]|Number[]|Object|Function"
+                },
+                {
+                    "name": "updateEvents",
+                    "description": "- cause this behavior to re-calculate its ids and refetch them\n                                                          from the server if the given events are triggered\n                                                          (space separated if string, single item is equivalent to array of single item).\n    - 'view:eventName' - arbitrary event triggered on the view (eventName can be a change:propertyName event).\n    - 'model:eventName' - arbitrary even triggered on the view's model (eventName can be a change:propertyName event).\n    - 'this:eventName' - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).\n    - 'behaviorAlias:eventName' - arbitrary event triggered by another behavior on this view (eventName can be a change:propertyName event).\n    - { 'event': < object (or function returning an object) that the event is triggered on > } - arbitrary 'event' triggered on the supplied object.",
+                    "type": "String|String[]|Object|Object[]",
+                    "optional": true
+                }
+            ],
+            "author": "jyoung@vecna.com"
+        },
         "Torso": {
             "name": "Torso",
             "submodules": {},
@@ -275,6 +341,20 @@
         }
     },
     "classes": {
+        "DataBehavior": {
+            "name": "DataBehavior",
+            "shortname": "DataBehavior",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Torso.behaviors",
+            "namespace": "",
+            "file": "modules/behaviors/DataBehavior.js",
+            "line": 17,
+            "description": "This behavior implements simplified interaction with data sources (i.e. TorsoCollection).\nThis behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.\nThis behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.\n\nExample Configuration:\n  TorsoView.extend({\n    behaviors: {\n      demographics: {\n        behavior: TorsoDataBehavior,\n        cache: require('./demographicsCacheCollection'),\n        returnSingleResult: true,\n        id: { property: '_patientVecnaId' }\n      }\n    }\n  }"
+        },
         "Torso.Mixins.cacheMixin": {
             "name": "Torso.Mixins.cacheMixin",
             "shortname": "Torso.Mixins.cacheMixin",
@@ -566,7 +646,7 @@
             "module": "Torso",
             "namespace": "",
             "file": "modules/torso.js",
-            "line": 51,
+            "line": 54,
             "description": "File containing all dependencies that exports a single object with everything attached (same format as the global)."
         },
         "Torso.validation": {
@@ -586,6 +666,69 @@
     },
     "elements": {},
     "classitems": [
+        {
+            "file": "modules/behaviors/DataBehavior.js",
+            "line": 92,
+            "itemtype": "method",
+            "name": "constructor",
+            "override": "",
+            "params": [
+                {
+                    "name": "behaviorOptions",
+                    "description": "",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "cache",
+                            "description": "see class constructor docs.",
+                            "type": "Torso.Collection"
+                        },
+                        {
+                            "name": "returnSingleResult",
+                            "description": "see class constructor docs.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false"
+                        },
+                        {
+                            "name": "alwaysFetch",
+                            "description": "see class constructor docs.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false"
+                        },
+                        {
+                            "name": "id",
+                            "description": "see class constructor docs.",
+                            "type": "String|Number|String[]|Number[]|Object|Function",
+                            "optional": true,
+                            "optdefault": "behaviorOptions.ids"
+                        },
+                        {
+                            "name": "ids",
+                            "description": "see class constructor docs.",
+                            "type": "String|Number|String[]|Number[]|Object|Function",
+                            "optional": true,
+                            "optdefault": "behaviorOptions.id"
+                        },
+                        {
+                            "name": "updateEvents",
+                            "description": "see class constructor docs.",
+                            "type": "String|String[]|Object|Object[]",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "name": "viewOptions",
+                    "description": "options passed to View's initialize",
+                    "type": "Object",
+                    "optional": true
+                }
+            ],
+            "class": "DataBehavior",
+            "module": "Torso.behaviors"
+        },
         {
             "file": "modules/mixins/cacheMixin.js",
             "line": 28,
@@ -5055,6 +5198,10 @@
         }
     ],
     "warnings": [
+        {
+            "message": "unknown tag: override",
+            "line": " modules/behaviors/DataBehavior.js:92"
+        },
         {
             "message": "unknown tag: override",
             "line": " modules/Behavior.js:63"

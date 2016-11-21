@@ -6,6 +6,8 @@ describe('Global Module imports', function() {
       // e.g. ['Torso', 'Mixins', 'loading'] = window.Torso.Mixins.loading
       globals = [
         ['Torso'],
+        ['Torso', 'behaviors'],
+        ['Torso', 'behaviors', 'DataBehavior'],
         ['Torso', 'Behavior'],
         ['Torso', 'Cell'],
         ['Torso', 'Collection'],

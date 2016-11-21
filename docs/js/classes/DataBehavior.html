@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso.Mixins.loadingMixin - backbone-torso</title>
+    <title>DataBehavior - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -100,21 +100,34 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Torso.Mixins.loadingMixin Class</h1>
+<h1>DataBehavior Class</h1>
 <div class="box meta">
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_mixins_loadingMixin.js.html#l12"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:12</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l17"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:17</code></a>
         </div>
 
-            Module: <a href="../modules/Torso.html">Torso</a>
+            Module: <a href="../modules/Torso.behaviors.html">Torso.behaviors</a>
 
 </div>
 
 
 <div class="box intro">
-    <p>Loading logic.</p>
+    <p>This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
+This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
+This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.</p>
+<p>Example Configuration:
+TorsoView.extend({
+behaviors: {
+demographics: {
+behavior: TorsoDataBehavior,
+cache: require('./demographicsCacheCollection'),
+returnSingleResult: true,
+id: { property: '_patientVecnaId' }
+}
+}
+}</p>
 
 </div>
 
@@ -135,27 +148,7 @@
 
                     <ul class="index-list methods">
                             <li class="index-item method">
-                                <a href="#method___loadWrapper">__loadWrapper</a>
-
-                            </li>
-                            <li class="index-item method">
                                 <a href="#method_constructor">constructor</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_fetch">fetch</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_getLoadedOncePromise">getLoadedOncePromise</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_hasLoadedOnce">hasLoadedOnce</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_isLoading">isLoading</a>
 
                             </li>
                     </ul>
@@ -168,158 +161,20 @@
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
-<div id="method___loadWrapper" class="method item">
-    <h3 class="name"><code>__loadWrapper</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>fetchMethod</code>
-                </li>
-                <li class="arg">
-                        <code>options</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-        <span class="returns-inline">
-            <span class="type"></span>
-        </span>
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l69"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:69</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Base load function that will trigger a &quot;load-begin&quot; and a &quot;load-complete&quot; as
-the fetch happens. Use this method to wrap any method that returns a promise in loading events</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">fetchMethod</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-
-
-                    <div class="param-description">
-                        <ul>
-<li>the method to invoke a fetch</li>
-</ul>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">options</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
-
-
-                    <div class="param-description">
-                        <ul>
-<li>the object to hold the options needed by the fetchMethod</li>
-</ul>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                    <p>a promise when the fetch method has completed and the events have been triggered</p>
-
-            </div>
-        </div>
-
-
-</div>
 <div id="method_constructor" class="method item">
     <h3 class="name"><code>constructor</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>args</code>
+                        <code>behaviorOptions</code>
                 </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l23"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:23</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Adds the loading mixin</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">args</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
-
-
-                    <div class="param-description">
-                        <p>the arguments to the base constructor method</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_fetch" class="method item">
-    <h3 class="name"><code>fetch</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>options</code>
+                        <code class="optional">[viewOptions]</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
-        </span>
 
 
 
@@ -330,7 +185,7 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l59"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:59</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l92"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:92</code></a>
         </p>
 
 
@@ -338,8 +193,7 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     </div>
 
     <div class="description">
-        <p>Wraps the base fetch in a wrapper that manages loaded states</p>
-
+        
     </div>
 
         <div class="params">
@@ -347,14 +201,90 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">options</code>
+                        <code class="param-name">behaviorOptions</code>
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
 
                     <div class="param-description">
-                        <ul>
-<li>the object to hold the options needed by the base fetch method</li>
-</ul>
+                         
+                    </div>
+
+                        <ul class="params-list">
+                            <li class="param">
+                                    <code class="param-name">cache</code>
+                                    <span class="type">Torso.Collection</span>
+
+                                <div class="param-description">
+                                    <p>see class constructor docs.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[returnSingleResult=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see class constructor docs.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[alwaysFetch=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see class constructor docs.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[id=behaviorOptions.ids]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see class constructor docs.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[ids=behaviorOptions.id]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see class constructor docs.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[updateEvents]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see class constructor docs.</p>
+
+                                </div>
+
+                            </li>
+                        </ul>
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[viewOptions]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>options passed to View's initialize</p>
 
                     </div>
 
@@ -362,138 +292,6 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
             </ul>
         </div>
 
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
-                    <p>The loadWrapper promise</p>
-
-            </div>
-        </div>
-
-
-</div>
-<div id="method_getLoadedOncePromise" class="method item">
-    <h3 class="name"><code>getLoadedOncePromise</code></h3>
-
-        <span class="paren">()</span>
-
-        <span class="returns-inline">
-            <span class="type"></span>
-        </span>
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l51"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:51</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                    <p>a promise that will resolve when the model/collection has loaded for the first time</p>
-
-            </div>
-        </div>
-
-
-</div>
-<div id="method_hasLoadedOnce" class="method item">
-    <h3 class="name"><code>hasLoadedOnce</code></h3>
-
-        <span class="paren">()</span>
-
-        <span class="returns-inline">
-            <span class="type"></span>
-        </span>
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l35"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:35</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                    <p>true if this model/collection has ever loaded from a fetch call</p>
-
-            </div>
-        </div>
-
-
-</div>
-<div id="method_isLoading" class="method item">
-    <h3 class="name"><code>isLoading</code></h3>
-
-        <span class="paren">()</span>
-
-        <span class="returns-inline">
-            <span class="type"></span>
-        </span>
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l43"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:43</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                    <p>true if this model/collection is currently loading new values from the server</p>
-
-            </div>
-        </div>
 
 
 </div>
