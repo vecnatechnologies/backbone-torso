@@ -23,7 +23,7 @@
    */
   function normalizeIds(ids) {
     if (_.isArray(ids)) {
-      return ids;
+      return _.uniq(ids);
     } else if (_.isString(ids) || _.isNumber(ids)) {
       return [ids];
     }
@@ -152,34 +152,36 @@
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.privateCollection = this.__cache.createPrivateCollection(this.cid);
 
-      this.on('retrieve', this.retrieve);
-      this.on('pull', this.pull);
-      this.on('fetch', this.fetch);
-
       Behavior.apply(this, arguments);
-
-      this.trigger('retrieve');
     },
 
     /**
-     * Adds the
+     * @method postinitialize
+     * @override
+     */
+    postinitialize: function() {
+      this.retrieve();
+    },
+
+    /**
+     * Adds the toJSON of the data represented by this behavior to the context.
      * @method prepare
      * @override
      */
     prepare: function() {
       var behaviorContext = Behavior.prototype.prepare.apply(this);
-      _.extend(behaviorContext, this.privateCollection.toJSON());
+      _.extend(behaviorContext, this.toJSON());
       return behaviorContext;
     },
 
     /**
      * Get the full data object contents (either an array of model attributes or a single model attribute based on the
      * value of returnSingleResult) or the value of a specific property if a single result is expected.
-     * @method getData
-     * @param singleResultProperty {String} the property to get from the model (only valid if returnSingleResult is true).
+     * @method toJSON
+     * @param [singleResultProperty] {String} the property to get from the model (only valid if returnSingleResult is true).
      * @return {Object} containing the full contents of either the collection or model.
      */
-    getData: function(singleResultProperty) {
+    toJSON: function(singleResultProperty) {
       if (!this.__returnSingleResult) {
         return this.privateCollection.toJSON();
       }
@@ -251,8 +253,8 @@
         normalizedIds = normalizeIds(ids);
         if (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
-        } else if (!_.isUndefined(ids) && _.isFunction(ids.promise)) {
-          idsDeferred = ids;
+        } else if (!_.isUndefined(ids) && _.isFunction(ids.then)) {
+          idsDeferred = ids.then(normalizeIds);
         } else {
           idsDeferred.resolve([]);
         }
@@ -261,13 +263,14 @@
         if (_.isUndefined(this.__ids.context)) {
           context = this.view;
         } else if (_.isFunction(this.__ids.context)) {
-          context = this.__ids.context();
+          var contextFxn = _.bind(this.__ids.context, this);
+          context = contextFxn();
         } else if (_.isString(this.__ids.context)) {
           context = _.result(this, this.__ids.context);
         } else if (_.isObject(this.__ids.context)) {
           context = this.__ids.context;
         } else if (_.isFunction(this.__ids.context)) {
-          context = this.__ids.context();
+          context = this.__ids.context.bind(this)();
         } else {
           throw new Error('Data Behavior ids: Invalid context.  Not a string, object or function.');
         }
@@ -288,14 +291,17 @@
           }
         }
 
-        ids = context[property];
+
+        ids = context && context[property];
         normalizedIds = normalizeIds(ids);
-        if (_.isUndefined(normalizedIds) && _.isFunction(context.get)) {
+        if (context && _.isUndefined(normalizedIds) && _.isFunction(context.get)) {
           ids = context.get(property);
           normalizedIds = normalizeIds(ids);
         }
 
         idsDeferred.resolve(normalizedIds || []);
+      } else if (_.isObject(this.__ids)) {
+        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string.');
       } else {
         throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function.');
       }

@@ -2,6 +2,7 @@ var _ = require('underscore');
 var TorsoDataBehavior = require('./../../modules/behaviors/DataBehavior');
 var TorsoView = require('./../../modules/View');
 var TorsoCollection = require('./../../modules/Collection');
+var TorsoNestedModel = require('./../../modules/NestedModel');
 var Torso  = require('./../../modules/torso');
 
 var setupInjectionSite = require('./helpers/setupInjectionSite');
@@ -194,18 +195,20 @@ describe('A Torso Data Behavior', function() {
       expect(testPrivateCollectionView.testPrivateCollection).toBeDefined();
     });
 
-    it('can specify a single numeric value for id', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      delete defaultBehaviorConfigurationSingleNumericId.ids;
-      defaultBehaviorConfigurationSingleNumericId.id = 1;
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+    it('can specify a single numeric value for id:\n\
+id = 1\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.ids;
+      defaultBehaviorConfiguration.id = 1;
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([1]);
           done();
@@ -215,18 +218,20 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify a single string value for id', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      delete defaultBehaviorConfigurationSingleNumericId.ids;
-      defaultBehaviorConfigurationSingleNumericId.id = '1';
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+    it('can specify a single string value for id:\n\
+id = \'1\'\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.ids;
+      defaultBehaviorConfiguration.id = '1';
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual(['1']);
           done();
@@ -236,17 +241,19 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify an array of numeric values for ids', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = [1, 2];
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+    it('can specify an array of numeric values for ids:\n\
+ids = [1, 2]\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = [1, 2];
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([1, 2]);
           done();
@@ -256,17 +263,19 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify an array of string values for ids', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = ['1', '2'];
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+    it('can specify an array of string values for ids:\n\
+ids = [\'1\', \'2\']\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = ['1', '2'];
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual(['1', '2']);
           done();
@@ -276,19 +285,23 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify a function returning a single numeric value for ids', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+    it('can specify a function returning a single numeric value for ids:\n\
+ids = function() {\n\
+  return 1;\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
         return 1;
       };
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([1]);
           done();
@@ -298,19 +311,23 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify a function returning a single string value for ids', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+    it('can specify a function returning a single string value for ids:\n\
+ids = function() {\n\
+  return \'1\';\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
         return '1';
       };
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual(['1']);
           done();
@@ -320,19 +337,23 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify a function returning an array of numeric values for ids', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+    it('can specify a function returning an array of numeric values for ids:\n\
+ids = function() {\n\
+  return [1, 2];\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
         return [1, 2];
       };
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([1, 2]);
           done();
@@ -342,19 +363,23 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify a function returning an array of string values for ids', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+    it('can specify a function returning an array of string values for ids:\n\
+ids = function() {\n\
+  return [\'1\', \'2\'];\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
         return ['1', '2'];
       };
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual(['1', '2']);
           done();
@@ -364,7 +389,11 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify a function for ids that gets the cache as the first argument', function() {
+    it('can specify a function for ids that gets the cache as the first argument:\n\
+ids = function(cache) {\n\
+  ...\n\
+}\n\
+', function() {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
 
       var actualCacheArgument = null;
@@ -382,19 +411,23 @@ describe('A Torso Data Behavior', function() {
       expect(actualCacheArgument).toBe(dataBehavior.__cache);
     });
 
-    it('can specify a function for ids that returns a jquery deferred object resolving to the ids sync', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+    it('can specify a function for ids that returns a jquery deferred object resolving to the ids sync:\n\
+ids = function() {\n\
+  return $.Deferred().resolve([1, 2]).promise();\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
         return $.Deferred().resolve([1, 2]).promise();
       };
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([1, 2]);
           done();
@@ -404,25 +437,422 @@ describe('A Torso Data Behavior', function() {
         });
     });
 
-    it('can specify a function for ids that returns a jquery deferred object resolving to the ids async', function(done) {
-      var defaultBehaviorConfigurationSingleNumericId = getBasicBehaviorConfiguration();
-      defaultBehaviorConfigurationSingleNumericId.ids = function() {
+    it('can specify a function for ids that returns a jquery deferred object resolving to the ids async:\n\
+ids = function() {\n\
+  var deferred = $.Deferred();\n\
+  window.setTimeout(function() {\n\
+    deferred.resolve([1, 2]);\n\
+  }, 1);\n\
+  return deferred.promise();\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
         var deferred = $.Deferred();
         window.setTimeout(function() {
           deferred.resolve([1, 2]);
         }, 1);
         return deferred.promise();
       };
-      var ViewWithBehaviorSingleNumericId = TorsoView.extend({
+      var ViewWithBehavior = TorsoView.extend({
         behaviors: {
-          dataBehavior: defaultBehaviorConfigurationSingleNumericId
+          dataBehavior: defaultBehaviorConfiguration
         }
       });
-      var viewWithBehaviorSingleNumericId = new ViewWithBehaviorSingleNumericId();
-      var dataBehaviorSingleNumericId = viewWithBehaviorSingleNumericId.getBehavior('dataBehavior');
-      dataBehaviorSingleNumericId.__getIds()
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([1, 2]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids and requires a property field to be set on it:\n\
+ids = {}\n\
+', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {};
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      try {
+        new ViewWithBehavior();
+        fail('error expected');
+      } catch(error) {
+        // expected.
+      }
+    });
+
+    it('can reference a context that does not exist and will return an empty array of ids:\n\
+ids = {\n\
+  property: \'type\',\n\
+  context: function() {\n\
+    return undefined;\n\
+  }\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'type',
+        context: function() {
+          return undefined;
+        }
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can reference a property that does not exist and will return an empty array of ids:\n\
+ids = {\n\
+  property: \'type\',\n\
+  context: function() {\n\
+    return {\n\
+      test: 1\n\
+    };\n\
+  }\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'type',
+        context: function() {
+          return {
+            test: 1
+          };
+        }
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a property directly on the view:\n\
+ids = {\n\
+  property: \'_viewId\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: '_viewId'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        _viewId: 1,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a property directly on the viewState:\n\
+ids = {\n\
+  property: \'testId\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'testId'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        initialize: function() {
+          this.set('testId', '2');
+        },
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['2']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a property directly on the viewState:\n\
+ids = {\n\
+  property: \'viewState.testId2\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'viewState.testId2'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        initialize: function() {
+          this.set('testId2', ['3', '5']);
+        },
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['3', '5']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a property directly on the view.model:\n\
+ids = {\n\
+  property: \'model.dependentIds\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'model.dependentIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        initialize: function() {
+          this.model = new TorsoNestedModel({ dependentIds: ['a', 'b', 'c']})
+        },
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['a', 'b', 'c']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a property on another behavior:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior2._someIds\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'behaviors.dataBehavior2._someIds'
+      };
+      var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration,
+          dataBehavior2: defaultBehavior2Configuration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+      dataBehavior2._someIds = [100, 300, 252341, 643];
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([100, 300, 252341, 643]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference an attribute on another behavior:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior2.someOtherIds\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'behaviors.dataBehavior2.someOtherIds'
+      };
+      var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration,
+          dataBehavior2: defaultBehavior2Configuration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+      dataBehavior2.set('someOtherIds', [100, 'abd', 252341, 'blah']);
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([100, 'abd', 252341, 'blah']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a field of a context object:\n\
+var context = {\n\
+  dependencyIds: [\'blah\', \'blah\', \'blah\', \'blah\']\n\
+};\n\
+ids = {\n\
+  property: \'dependencyIds\',\n\
+  context: context\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var context = {
+        dependencyIds: ['blah', 'blah', 'blah', 'blah']
+      };
+      defaultBehaviorConfiguration.ids = {
+        property: 'dependencyIds',
+        context: context
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['blah']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference an attribute of a context object:\n\
+var contextModel = new TorsoNestedModel({ referenceId: \'test\' });\n\
+ids = {\n\
+  property: \'referenceId\',\n\
+  context: contextModel\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var contextModel = new TorsoNestedModel({ referenceId: 'test' });
+      defaultBehaviorConfiguration.ids = {
+        property: 'referenceId',
+        context: contextModel
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['test']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a field of a context object retrieved by a function:\n\
+ids = {\n\
+  property: \'reference2Id\',\n\
+  context: function() {\n\
+    return { reference2Id: \'test2\' }\n\
+  }\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'reference2Id',
+        context: function() {
+          return { reference2Id: 'test2' }
+        }
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['test2']);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify an object for ids that uses the property field to reference a field of a context object retrieved by a function where this is bound to the behavior:\n\
+ids = {\n\
+  property: \'type\',\n\
+  context: function() {\n\
+    return this.contextModel;\n\
+  }\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'type',
+        context: function() {
+          return this.contextModel;
+        }
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.contextModel = new TorsoNestedModel({ type: 'other' });
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual(['other']);
           done();
         }, function(error) {
           fail(error);
@@ -431,8 +861,3 @@ describe('A Torso Data Behavior', function() {
     });
   });
 });
-
-
-
-
-
