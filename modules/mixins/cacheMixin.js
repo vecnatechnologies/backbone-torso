@@ -132,16 +132,43 @@
            * Will force the cache to fetch any of this collection's tracked models that are not in the cache
            * while not fetching models that are already in the cache. Useful when you want the effeciency of
            * pulling models from the cache and don't need all the models to be up-to-date.
+           *
+           * If the ids being fetched are already being fetched by the cache, then they will not be re-fetched.
+           *
+           * The resulting promise is resolved when ALL items in the process of being fetched have completed.
+           * The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.
+           *
            * @method requesterMixin.pull
            * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
-           * @return {Promise} promise that will resolve when the fetch is complete
+           * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
+           *                   Will only resolve once all ids have attempted to be fetched from the server.
            */
           pull: function(options) {
             options = options || {};
-            //find ids that we don't have in cache
-            options.idsToFetch = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
-            options.idsToFetch = _.difference(options.idsToFetch, _.uniq(_.flatten(_.values(parentInstance.idsFetching))));
-            return this.fetch(options);
+
+            //find ids that we don't have in cache and aren't already in the process of being fetched.
+            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            var allExistingPromisesForIds = _.pick(parentInstance.idPromises, idsNotInCache);
+            var idsWithPromises = _.mapObject(allExistingPromisesForIds, _.isEmpty);
+
+            // Determine which ids are already being fetched and the associated promises for those ids.
+            options.idsToFetch = _.difference(idsNotInCache, _.uniq(_.flatten(_.keys(idsWithPromises))));
+            var thisFetchPromise = this.fetch(options);
+
+            // Return a promise that resolves when all ids are fetched (including pending ids).
+            var allPromisesToWaitFor = _.flatten(_.values(idsWithPromises));
+            allPromisesToWaitFor.push(thisFetchPromise);
+            var allUniquePromisesToWaitFor = _.uniq(allPromisesToWaitFor);
+            return $.when.apply($, allUniquePromisesToWaitFor)
+              // Make it look like the muliple promises was performed by a single request.
+              .then(function() {
+                // collects the parts of each ajax call into arrays: result = { [data1, data2, ...], [textStatus1, textStatus2, ...], [jqXHR1, jqXHR2, ...] };
+                var result = _.zip(arguments);
+                // Flatten the data so it looks like the result of a single request.
+                var resultData = result[0];
+                var flattenedResultData = _.flatten(resultData);
+                return flattenedResultData;
+              });
           },
 
           /**
@@ -347,8 +374,9 @@
         var fetchId = fetchIdentifier++;
         options = options || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
-        return this.__loadWrapper(function(options) {
-          var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+        var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+        var fetchComplete = false;
+        var fetchPromise = this.__loadWrapper(function(options) {
           var contentType = options.fetchContentType || collection.fetchContentType;
           var ajaxOpts = {
               type: collection.fetchHttpAction,
@@ -359,45 +387,69 @@
             ajaxOpts.contentType = contentType || 'application/json; charset=utf-8';
             ajaxOpts.data = JSON.stringify(requestedIds);
           }
-          if (!collection.idsFetching) {
-            collection.idsFetching = {};
-          }
-          collection.idsFetching[fetchId] = requestedIds;
-          return $.ajax(ajaxOpts).done(
-              // Success function
-              function(data) {
-                var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
-                    requesterLength, requesters, model,
-                    requestedIdsLength = requestedIds.length,
-                    setOptions = options.setOptions;
-                collection.set(collection.parse(data), setOptions);
-                // Set respective collection's models for requested ids only.
-                requesters = collection.getRequesters();
-                requesterLength = requesters.length;
-                // For each requester...
-                for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
-                  requesterIdsAsDict = collection.getRequesterIdsAsDictionary(requesters[requesterIdx]);
-                  models = [];
-                  // ... now let's iterate over the ids that were fetched ...
-                  for (i = 0; i < requestedIdsLength; i++) {
-                    //if the id that the requester cares about matches that model whose id was just fetched...
-                    if (requesterIdsAsDict[requestedIds[i]]) {
-                      model = collection.get(requestedIds[i]);
-                      // if the model was removed, no worries, the parent won't attempt to update the child on that one.
-                      if (model) {
-                        models.push(model);
-                      }
+          return $.ajax(ajaxOpts)
+            .done(function(data) {
+              var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
+                  requesterLength, requesters, model,
+                  requestedIdsLength = requestedIds.length,
+                  setOptions = options.setOptions;
+              collection.set(collection.parse(data), setOptions);
+              // Set respective collection's models for requested ids only.
+              requesters = collection.getRequesters();
+              requesterLength = requesters.length;
+              // For each requester...
+              for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
+                requesterIdsAsDict = collection.getRequesterIdsAsDictionary(requesters[requesterIdx]);
+                models = [];
+                // ... now let's iterate over the ids that were fetched ...
+                for (i = 0; i < requestedIdsLength; i++) {
+                  //if the id that the requester cares about matches that model whose id was just fetched...
+                  if (requesterIdsAsDict[requestedIds[i]]) {
+                    model = collection.get(requestedIds[i]);
+                    // if the model was removed, no worries, the parent won't attempt to update the child on that one.
+                    if (model) {
+                      models.push(model);
                     }
                   }
-                  privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
-                  // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
-                  privateCollection.set(models, {remove: false});
                 }
-              });
+                privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
+                // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
+                privateCollection.set(models, {remove: false});
+              }
+            });
         }, options)
-        .always(function() {
-          delete collection.idsFetching[fetchId];
-        });
+          .always(function() {
+            // This happens once the promise is resolved, and removes the pending promise for that id.
+
+            // Track that the fetch was completed so we don't add a dead promise (since this is what cleans up completed promises).
+            fetchComplete = true;
+
+            // Note that an id may have mulitple promises (if fetch was called multiple times and then a pull with the same id). 
+            // We want to wait for all of them to complete, this tracks them separately and removes the in-flight promises once they are done.
+            _.each(requestedIds, function(requestedId) {
+              if (collection.idPromises) {
+                var existingPromisesForId = collection.idPromises[requestedId];
+                collection.idPromises[requestedId] = _.without(existingPromisesForId, fetchPromise);
+              }
+            });
+          });
+
+        // Track the promises associated with each id so we know when that id has completed fetching.
+        // Multiple simultaneous pulls will generate multiple promises for a shared id.  
+        // Pulls will not generate new promises for the given ids (if there are ids being fetched
+        if (!fetchComplete) { // fixes the sync case (mainly during tests when mockjax is used).
+          _.each(requestedIds, function(requestedId) {
+            var existingPromises = collection.idPromises[requestedId];
+            if (!existingPromises) {
+              existingPromises = [];
+              collection.idPromises[requestedId] = existingPromises;
+            }
+
+            existingPromises.push(fetchPromise);
+          });
+        }
+
+        return fetchPromise;
       };
     };
 
@@ -422,6 +474,7 @@
           this.requestMap = {};
           this.collectionTrackedIds = [];
           this.knownPrivateCollections = {};
+          this.idPromises = {};
           var cacheDefaults = _.defaults(
             _.pick(options, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
             _.pick(this, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
