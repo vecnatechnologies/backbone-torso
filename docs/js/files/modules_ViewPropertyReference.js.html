@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>modules/history.js - backbone-torso</title>
+    <title>modules/ViewPropertyReference.js - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -101,30 +101,111 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: modules/history.js</h1>
+<h1 class="file-heading">File: modules/ViewPropertyReference.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;backbone&#x27;], factory);
+    define([&#x27;underscore&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;backbone&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
+    root.Torso.ViewPropertyReference = factory(root._);
   }
-}(this, function(Backbone) {
+}(this, function(_) {
   &#x27;use strict&#x27;;
 
   /**
-   * Backbone&#x27;s history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
+   * An object used to parse a property and context definition that references a property of a context object.
+   * Specifically for managing DataBehavior&#x27;s id(s) and events definitions.
+   * @module Torso
+   * @class  ViewPropertyReference
+   * @param options {Object}
+   *   @param options.rootObject {Object} the &#x27;this&#x27; to use when evaluating a context fxn.
+   *   @param options.view {Torso.View} the view to base the reference from.
+   *   @param options.reference {Object} the reference object that identifies how to access the context and the property.
+   *     @param options.reference.property {String} defines how to access the property from the context.
+   *     @param [options.reference.context=view] {Object|Function} defines how to retrieve the context.  If undefined the view is assumed to be the context.
+   * @author jyoung@vecna.com
    */
-  return Backbone.history;
+  var ViewPropertyReference = function(options) {
+    this.__rootObject = options.rootObject;
+    this.__view = options.view;
+    this.__reference = options.reference;
+  };
+
+  _.extend(ViewPropertyReference.prototype, {
+    /**
+     * Gets the value described by this view property reference.
+     * @method get
+     * @return {Object} the result of applying the property to the context.
+     */
+    get: function() {
+      var contextAndPropertyName = this.getContextAndPropertyName();
+      var context = contextAndPropertyName.context;
+      var propertyName = contextAndPropertyName.propertyName;
+      var value = context &amp;&amp; context[propertyName];
+
+      if (context &amp;&amp; _.isUndefined(value) &amp;&amp; _.isFunction(context.get)) {
+        value = context.get(propertyName);
+      }
+      return value;
+    },
+    /**
+     * Converts the definition into the actual context object and property to retrieve off of that context.
+     * @method getContextAndPropertyName
+     * @return {{propertyName, context: Object}} the name of the property and the actual object to use as the context.
+     */
+    getContextAndPropertyName: function() {
+      var context;
+      if (_.isUndefined(this.__reference.context)) {
+        context = this.__view;
+      } else if (_.isFunction(this.__reference.context)) {
+        var contextFxn = _.bind(this.__reference.context, this.__rootObject);
+        context = contextFxn();
+      } else if (_.isString(this.__reference.context)) {
+        context = _.result(this, this.__reference.context);
+      } else if (_.isObject(this.__reference.context)) {
+        context = this.__reference.context;
+      } else {
+        throw new Error(&#x27;Invalid context.  Not a string, object or function: &#x27; + JSON.stringify(this.__reference));
+      }
+
+      var property = this.__reference.property;
+
+      var propertyParts = property.split(&#x27;.&#x27;);
+      var isNestedProperty = propertyParts.length &gt; 1;
+      if (isNestedProperty) {
+        var rootPropertyName = propertyParts[0];
+        if (rootPropertyName === &#x27;behaviors&#x27; || rootPropertyName === &#x27;behavior&#x27;) {
+          var behaviorName = propertyParts[1];
+          context = this.__view.getBehavior(behaviorName);
+          property = propertyParts.slice(2).join(&#x27;.&#x27;);
+        } else if (!_.isUndefined(context[rootPropertyName])) {
+          context = context[rootPropertyName];
+          property = propertyParts.slice(1).join(&#x27;.&#x27;);
+        }
+      }
+
+      return {
+        propertyName: property,
+        context: context
+      };
+    }
+  });
+
+  /**
+   * @method isViewPropertyReference
+   * @param reference {Object} the reference configuration to test if it is a view property reference.
+   * @return {Boolean} true if the reference configuration is a view property reference, false otherwise.
+   */
+  ViewPropertyReference.isViewPropertyReference = function(reference) {
+    return _.isString(reference.property);
+  };
+
+  return ViewPropertyReference;
 }));
 
     </pre>

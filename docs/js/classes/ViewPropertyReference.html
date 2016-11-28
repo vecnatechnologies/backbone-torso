@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>modules/history.js - backbone-torso</title>
+    <title>ViewPropertyReference - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -101,33 +101,219 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: modules/history.js</h1>
+<h1>ViewPropertyReference Class</h1>
+<div class="box meta">
 
-<div class="file">
-    <pre class="code prettyprint linenums">
-(function(root, factory) {
-  if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;backbone&#x27;], factory);
-  } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;backbone&#x27;));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  &#x27;use strict&#x27;;
 
-  /**
-   * Backbone&#x27;s history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
+        <div class="foundat">
+            Defined in: <a href="../files/modules_ViewPropertyReference.js.html#l13"><code>modules&#x2F;ViewPropertyReference.js:13</code></a>
+        </div>
 
-    </pre>
+            Module: <a href="../modules/Torso.html">Torso</a>
+
+</div>
+
+
+<div class="box intro">
+    <p>An object used to parse a property and context definition that references a property of a context object.
+Specifically for managing DataBehavior's id(s) and events definitions.</p>
+
+</div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method">
+                                <a href="#method_get">get</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_getContextAndPropertyName">getContextAndPropertyName</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_isViewPropertyReference">isViewPropertyReference</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+
+
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method_get" class="method item">
+    <h3 class="name"><code>get</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_ViewPropertyReference.js.html#l33"><code>modules&#x2F;ViewPropertyReference.js:33</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Gets the value described by this view property reference.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
+                    <p>the result of applying the property to the context.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_getContextAndPropertyName" class="method item">
+    <h3 class="name"><code>getContextAndPropertyName</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">PropertyName, context: Object</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_ViewPropertyReference.js.html#l49"><code>modules&#x2F;ViewPropertyReference.js:49</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts the definition into the actual context object and property to retrieve off of that context.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">PropertyName, context: Object</span>:
+                    <p>} the name of the property and the actual object to use as the context.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_isViewPropertyReference" class="method item">
+    <h3 class="name"><code>isViewPropertyReference</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>reference</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_ViewPropertyReference.js.html#l92"><code>modules&#x2F;ViewPropertyReference.js:92</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">reference</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        <p>the reference configuration to test if it is a view property reference.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
+                    <p>true if the reference configuration is a view property reference, false otherwise.</p>
+
+            </div>
+        </div>
+
+
+</div>
+            </div>
+
+
+
+    </div>
 </div>
                     </div>
                 </div>

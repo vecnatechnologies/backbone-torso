@@ -52,11 +52,12 @@ commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
 commonJsImportTest('/modules/mixins/loadingMixin', ['jquery']);
 commonJsImportTest('/modules/mixins/cacheMixin', ['underscore', 'jquery']);
 commonJsImportTest('/modules/mixins/pollingMixin', []);
+commonJsImportTest('/modules/ViewPropertyReference', ['underscore']);
 commonJsImportTest('/modules/Behavior', ['underscore', 'backbone',
                                          '/modules/mixins/cellMixin', '/modules/Cell']);
 commonJsImportTest('/modules/behaviors/DataBehavior', ['underscore', 'jquery', 'backbone',
                                                        '/modules/mixins/cellMixin', '/modules/Cell',
-                                                       '/modules/Behavior',
+                                                       '/modules/ViewPropertyReference', '/modules/Behavior',
                                                        '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/Collection']);
 commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone',
                                          '/modules/mixins/pollingMixin', '/modules/NestedModel']);
@@ -95,4 +96,5 @@ commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.s
                                '/modules/history',
                                '/modules/NestedCell', '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/ServiceCell',
                                '/modules/View', '/modules/ListView', '/modules/FormView',
+                               '/modules/ViewPropertyReference',
                                '/modules/templateRenderer', '/modules/handlebarsUtils', '/modules/configure']);

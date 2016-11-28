@@ -61,6 +61,7 @@
                                 <li><a href="../classes/Torso.Utils.templateRenderer.html">Torso.Utils.templateRenderer</a></li>
                                 <li><a href="../classes/Torso.validation.html">Torso.validation</a></li>
                                 <li><a href="../classes/View.html">View</a></li>
+                                <li><a href="../classes/ViewPropertyReference.html">ViewPropertyReference</a></li>
                             </ul>
                 
                 
@@ -105,7 +106,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l32"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:32</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l33"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:33</code></a>
         </div>
 
             Module: <a href="../modules/Torso.behaviors.html">Torso.behaviors</a>
@@ -160,7 +161,7 @@ id: { property: '_patientVecnaId' }
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_getData">getData</a>
+                                <a href="#method_postinitialize">postinitialize</a>
 
                             </li>
                             <li class="index-item method">
@@ -173,6 +174,10 @@ id: { property: '_patientVecnaId' }
                             </li>
                             <li class="index-item method">
                                 <a href="#method_retrieve">retrieve</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_toJSON">toJSON</a>
 
                             </li>
                     </ul>
@@ -204,7 +209,7 @@ id: { property: '_patientVecnaId' }
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l237"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:237</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l240"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:240</code></a>
         </p>
 
 
@@ -253,7 +258,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l107"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:107</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l108"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:108</code></a>
         </p>
 
 
@@ -378,7 +383,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l212"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:212</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l215"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:215</code></a>
         </p>
 
 
@@ -394,20 +399,11 @@ or rejects with the error message.</p>
 
 
 </div>
-<div id="method_getData" class="method item">
-    <h3 class="name"><code>getData</code></h3>
+<div id="method_postinitialize" class="method item">
+    <h3 class="name"><code>postinitialize</code></h3>
 
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>singleResultProperty</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
-        </span>
 
 
 
@@ -418,7 +414,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l175"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:175</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l159"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:159</code></a>
         </p>
 
 
@@ -426,38 +422,10 @@ or rejects with the error message.</p>
     </div>
 
     <div class="description">
-        <p>Get the full data object contents (either an array of model attributes or a single model attribute based on the
-value of returnSingleResult) or the value of a specific property if a single result is expected.</p>
-
+        
     </div>
 
-        <div class="params">
-            <h4>Parameters:</h4>
 
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">singleResultProperty</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
-
-
-                    <div class="param-description">
-                        <p>the property to get from the model (only valid if returnSingleResult is true).</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
-                    <p>containing the full contents of either the collection or model.</p>
-
-            </div>
-        </div>
 
 
 </div>
@@ -476,7 +444,7 @@ value of returnSingleResult) or the value of a specific property if a single res
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l164"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:164</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l167"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:167</code></a>
         </p>
 
 
@@ -484,7 +452,7 @@ value of returnSingleResult) or the value of a specific property if a single res
     </div>
 
     <div class="description">
-        <p>Adds the</p>
+        <p>Adds the toJSON of the data represented by this behavior to the context.</p>
 
     </div>
 
@@ -507,7 +475,7 @@ value of returnSingleResult) or the value of a specific property if a single res
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l200"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:200</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l203"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:203</code></a>
         </p>
 
 
@@ -538,7 +506,7 @@ value of returnSingleResult) or the value of a specific property if a single res
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l224"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:224</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l227"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:227</code></a>
         </p>
 
 
@@ -552,6 +520,74 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
     </div>
 
 
+
+
+</div>
+<div id="method_toJSON" class="method item">
+    <h3 class="name"><code>toJSON</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code class="optional">[singleResultProperty]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l178"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:178</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Get the full data object contents (either an array of model attributes or a single model attribute based on the
+value of returnSingleResult) or the value of a specific property if a single result is expected.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name optional">[singleResultProperty]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>the property to get from the model (only valid if returnSingleResult is true).</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
+                    <p>containing the full contents of either the collection or model.</p>
+
+            </div>
+        </div>
 
 
 </div>

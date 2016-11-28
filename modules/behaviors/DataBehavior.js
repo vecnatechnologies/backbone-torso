@@ -1,18 +1,19 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', '../Behavior', '../Collection'], factory);
+    define(['underscore', 'jquery', '../Behavior', '../Collection', '../ViewPropertyReference'], factory);
   } else if (typeof exports === 'object') {
     var _ = require('underscore');
     var $ = require('jquery');
     var Behavior = require('../Behavior');
     var Collection = require('../Collection');
-    module.exports = factory(_, $, Behavior, Collection);
+    var ViewPropertyReference = require('../ViewPropertyReference');
+    module.exports = factory(_, $, Behavior, Collection, ViewPropertyReference);
   } else {
     root.Torso = root.Torso || {};
     root.Torso.behaviors = root.Torso.behaviors || {};
-    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection);
+    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection, root.Torso.ViewPropertyReference);
   }
-}(this, function(_, $, Behavior, Collection) {
+}(this, function(_, $, Behavior, Collection, ViewPropertyReference) {
   'use strict';
 
   /**
@@ -258,52 +259,19 @@
         } else {
           idsDeferred.resolve([]);
         }
-      } else if (_.isString(this.__ids.property)) {
-        var context;
-        if (_.isUndefined(this.__ids.context)) {
-          context = this.view;
-        } else if (_.isFunction(this.__ids.context)) {
-          var contextFxn = _.bind(this.__ids.context, this);
-          context = contextFxn();
-        } else if (_.isString(this.__ids.context)) {
-          context = _.result(this, this.__ids.context);
-        } else if (_.isObject(this.__ids.context)) {
-          context = this.__ids.context;
-        } else if (_.isFunction(this.__ids.context)) {
-          context = this.__ids.context.bind(this)();
-        } else {
-          throw new Error('Data Behavior ids: Invalid context.  Not a string, object or function.');
-        }
-
-        var property = this.__ids.property;
-
-        var propertyParts = property.split('.');
-        var isNestedProperty = propertyParts.length > 1;
-        if (isNestedProperty) {
-          var rootPropertyName = propertyParts[0];
-          if (rootPropertyName === 'behaviors' || rootPropertyName === 'behavior') {
-            var behaviorName = propertyParts[1];
-            context = this.view.getBehavior(behaviorName);
-            property = propertyParts.slice(2).join('.');
-          } else if (!_.isUndefined(context[rootPropertyName])) {
-            context = context[rootPropertyName];
-            property = propertyParts.slice(1).join('.');
-          }
-        }
-
-
-        ids = context && context[property];
+      } else if (ViewPropertyReference.isViewPropertyReference(this.__ids)) {
+        var viewPropertyReference = new ViewPropertyReference({
+          rootObject: this,
+          view: this.view,
+          reference: this.__ids
+        });
+        ids = viewPropertyReference.get();
         normalizedIds = normalizeIds(ids);
-        if (context && _.isUndefined(normalizedIds) && _.isFunction(context.get)) {
-          ids = context.get(property);
-          normalizedIds = normalizeIds(ids);
-        }
-
         idsDeferred.resolve(normalizedIds || []);
       } else if (_.isObject(this.__ids)) {
-        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string.');
+        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.__ids));
       } else {
-        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function.');
+        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.__ids));
       }
       return idsDeferred.promise();
     }

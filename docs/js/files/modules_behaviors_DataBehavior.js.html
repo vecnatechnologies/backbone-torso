@@ -61,6 +61,7 @@
                                 <li><a href="../classes/Torso.Utils.templateRenderer.html">Torso.Utils.templateRenderer</a></li>
                                 <li><a href="../classes/Torso.validation.html">Torso.validation</a></li>
                                 <li><a href="../classes/View.html">View</a></li>
+                                <li><a href="../classes/ViewPropertyReference.html">ViewPropertyReference</a></li>
                             </ul>
                 
                 
@@ -106,19 +107,20 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;, &#x27;../Behavior&#x27;, &#x27;../Collection&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;, &#x27;../Behavior&#x27;, &#x27;../Collection&#x27;, &#x27;../ViewPropertyReference&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
     var _ = require(&#x27;underscore&#x27;);
     var $ = require(&#x27;jquery&#x27;);
     var Behavior = require(&#x27;../Behavior&#x27;);
     var Collection = require(&#x27;../Collection&#x27;);
-    module.exports = factory(_, $, Behavior, Collection);
+    var ViewPropertyReference = require(&#x27;../ViewPropertyReference&#x27;);
+    module.exports = factory(_, $, Behavior, Collection, ViewPropertyReference);
   } else {
     root.Torso = root.Torso || {};
     root.Torso.behaviors = root.Torso.behaviors || {};
-    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection);
+    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection, root.Torso.ViewPropertyReference);
   }
-}(this, function(_, $, Behavior, Collection) {
+}(this, function(_, $, Behavior, Collection, ViewPropertyReference) {
   &#x27;use strict&#x27;;
 
   /**
@@ -129,7 +131,7 @@
    */
   function normalizeIds(ids) {
     if (_.isArray(ids)) {
-      return ids;
+      return _.uniq(ids);
     } else if (_.isString(ids) || _.isNumber(ids)) {
       return [ids];
     }
@@ -258,34 +260,36 @@
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.privateCollection = this.__cache.createPrivateCollection(this.cid);
 
-      this.on(&#x27;retrieve&#x27;, this.retrieve);
-      this.on(&#x27;pull&#x27;, this.pull);
-      this.on(&#x27;fetch&#x27;, this.fetch);
-
       Behavior.apply(this, arguments);
-
-      this.trigger(&#x27;retrieve&#x27;);
     },
 
     /**
-     * Adds the
+     * @method postinitialize
+     * @override
+     */
+    postinitialize: function() {
+      this.retrieve();
+    },
+
+    /**
+     * Adds the toJSON of the data represented by this behavior to the context.
      * @method prepare
      * @override
      */
     prepare: function() {
       var behaviorContext = Behavior.prototype.prepare.apply(this);
-      _.extend(behaviorContext, this.privateCollection.toJSON());
+      _.extend(behaviorContext, this.toJSON());
       return behaviorContext;
     },
 
     /**
      * Get the full data object contents (either an array of model attributes or a single model attribute based on the
      * value of returnSingleResult) or the value of a specific property if a single result is expected.
-     * @method getData
-     * @param singleResultProperty {String} the property to get from the model (only valid if returnSingleResult is true).
+     * @method toJSON
+     * @param [singleResultProperty] {String} the property to get from the model (only valid if returnSingleResult is true).
      * @return {Object} containing the full contents of either the collection or model.
      */
-    getData: function(singleResultProperty) {
+    toJSON: function(singleResultProperty) {
       if (!this.__returnSingleResult) {
         return this.privateCollection.toJSON();
       }
@@ -357,53 +361,24 @@
         normalizedIds = normalizeIds(ids);
         if (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
-        } else if (!_.isUndefined(ids) &amp;&amp; _.isFunction(ids.promise)) {
-          idsDeferred = ids;
+        } else if (!_.isUndefined(ids) &amp;&amp; _.isFunction(ids.then)) {
+          idsDeferred = ids.then(normalizeIds);
         } else {
           idsDeferred.resolve([]);
         }
-      } else if (_.isString(this.__ids.property)) {
-        var context;
-        if (_.isUndefined(this.__ids.context)) {
-          context = this.view;
-        } else if (_.isFunction(this.__ids.context)) {
-          context = this.__ids.context();
-        } else if (_.isString(this.__ids.context)) {
-          context = _.result(this, this.__ids.context);
-        } else if (_.isObject(this.__ids.context)) {
-          context = this.__ids.context;
-        } else if (_.isFunction(this.__ids.context)) {
-          context = this.__ids.context();
-        } else {
-          throw new Error(&#x27;Data Behavior ids: Invalid context.  Not a string, object or function.&#x27;);
-        }
-
-        var property = this.__ids.property;
-
-        var propertyParts = property.split(&#x27;.&#x27;);
-        var isNestedProperty = propertyParts.length &gt; 1;
-        if (isNestedProperty) {
-          var rootPropertyName = propertyParts[0];
-          if (rootPropertyName === &#x27;behaviors&#x27; || rootPropertyName === &#x27;behavior&#x27;) {
-            var behaviorName = propertyParts[1];
-            context = this.view.getBehavior(behaviorName);
-            property = propertyParts.slice(2).join(&#x27;.&#x27;);
-          } else if (!_.isUndefined(context[rootPropertyName])) {
-            context = context[rootPropertyName];
-            property = propertyParts.slice(1).join(&#x27;.&#x27;);
-          }
-        }
-
-        ids = context[property];
+      } else if (ViewPropertyReference.isViewPropertyReference(this.__ids)) {
+        var viewPropertyReference = new ViewPropertyReference({
+          rootObject: this,
+          view: this.view,
+          reference: this.__ids
+        });
+        ids = viewPropertyReference.get();
         normalizedIds = normalizeIds(ids);
-        if (_.isUndefined(normalizedIds) &amp;&amp; _.isFunction(context.get)) {
-          ids = context.get(property);
-          normalizedIds = normalizeIds(ids);
-        }
-
         idsDeferred.resolve(normalizedIds || []);
+      } else if (_.isObject(this.__ids)) {
+        throw new Error(&#x27;Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: &#x27; + JSON.stringify(this.__ids));
       } else {
-        throw new Error(&#x27;Data Behavior ids invalid definition.  Not a string, number, object, array or function.&#x27;);
+        throw new Error(&#x27;Data Behavior ids invalid definition.  Not a string, number, object, array or function: &#x27; + JSON.stringify(this.__ids));
       }
       return idsDeferred.promise();
     }

@@ -12,6 +12,7 @@
             './Router',
             './history',
             './View', './ListView', './FormView',
+            './ViewPropertyReference',
             './templateRenderer',
             './handlebarsUtils',
             './configure',
@@ -32,6 +33,7 @@
                              require('./Router'),
                              require('./history'),
                              require('./View'), require('./ListView'), require('./FormView'),
+                             require('./ViewPropertyReference'),
                              require('./templateRenderer'), require('./handlebarsUtils'));
   } else {
     root.Torso = root.Torso || {};
@@ -48,6 +50,7 @@
                  Router,
                  history,
                  View, ListView, FormView,
+                 ViewPropertyReference,
                  templateRenderer,
                  handlebarsUtils) {
 
@@ -88,6 +91,7 @@
     validation: validation,
     View: View,
     ListView: ListView,
-    FormView: FormView
+    FormView: FormView,
+    ViewPropertyReference: ViewPropertyReference
   };
 }));

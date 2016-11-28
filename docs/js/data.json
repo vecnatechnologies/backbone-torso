@@ -177,6 +177,15 @@
             "fors": {},
             "namespaces": {}
         },
+        "modules/ViewPropertyReference.js": {
+            "name": "modules/ViewPropertyReference.js",
+            "modules": {},
+            "classes": {
+                "ViewPropertyReference": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "modules/handlebarsUtils.js": {
             "name": "modules/handlebarsUtils.js",
             "modules": {},
@@ -252,7 +261,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 32,
+            "line": 33,
             "description": "This behavior implements simplified interaction with data sources (i.e. TorsoCollection).\nThis behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.\nThis behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.\n\nExample Configuration:\n  TorsoView.extend({\n    behaviors: {\n      demographics: {\n        behavior: TorsoDataBehavior,\n        cache: require('./demographicsCacheCollection'),\n        returnSingleResult: true,\n        id: { property: '_patientVecnaId' }\n      }\n    }\n  }",
             "itemtype": "method",
             "params": [
@@ -317,6 +326,7 @@
                 "Router": 1,
                 "ServiceCell": 1,
                 "View": 1,
+                "ViewPropertyReference": 1,
                 "Torso.Utils.handlebarsUtils": 1,
                 "history": 1,
                 "Torso.Utils.stickitUtils": 1,
@@ -337,6 +347,44 @@
             "author": "ariel.wexler@vecna.com, kent.willis@vecna.com",
             "itemtype": "method",
             "is_constructor": 1,
+            "params": [
+                {
+                    "name": "options",
+                    "description": "",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "rootObject",
+                            "description": "the 'this' to use when evaluating a context fxn.",
+                            "type": "Object"
+                        },
+                        {
+                            "name": "view",
+                            "description": "the view to base the reference from.",
+                            "type": "Torso.View"
+                        },
+                        {
+                            "name": "reference",
+                            "description": "the reference object that identifies how to access the context and the property.",
+                            "type": "Object",
+                            "props": [
+                                {
+                                    "name": "property",
+                                    "description": "defines how to access the property from the context.",
+                                    "type": "String"
+                                },
+                                {
+                                    "name": "context",
+                                    "description": "defines how to retrieve the context.  If undefined the view is assumed to be the context.",
+                                    "type": "Object|Function",
+                                    "optional": true,
+                                    "optdefault": "view"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
             "static": 1
         }
     },
@@ -352,7 +400,7 @@
             "module": "Torso.behaviors",
             "namespace": "",
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 32,
+            "line": 33,
             "description": "This behavior implements simplified interaction with data sources (i.e. TorsoCollection).\nThis behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.\nThis behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.\n\nExample Configuration:\n  TorsoView.extend({\n    behaviors: {\n      demographics: {\n        behavior: TorsoDataBehavior,\n        cache: require('./demographicsCacheCollection'),\n        returnSingleResult: true,\n        id: { property: '_patientVecnaId' }\n      }\n    }\n  }"
         },
         "Torso.Mixins.cacheMixin": {
@@ -579,6 +627,20 @@
             "line": 38,
             "description": "Generic View that deals with:\n- Creation of private collections\n- Lifecycle of a view"
         },
+        "ViewPropertyReference": {
+            "name": "ViewPropertyReference",
+            "shortname": "ViewPropertyReference",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Torso",
+            "namespace": "",
+            "file": "modules/ViewPropertyReference.js",
+            "line": 13,
+            "description": "An object used to parse a property and context definition that references a property of a context object.\nSpecifically for managing DataBehavior's id(s) and events definitions."
+        },
         "Torso.Utils.handlebarsUtils": {
             "name": "Torso.Utils.handlebarsUtils",
             "shortname": "Torso.Utils.handlebarsUtils",
@@ -646,7 +708,7 @@
             "module": "Torso",
             "namespace": "",
             "file": "modules/torso.js",
-            "line": 54,
+            "line": 57,
             "description": "File containing all dependencies that exports a single object with everything attached (same format as the global)."
         },
         "Torso.validation": {
@@ -668,7 +730,7 @@
     "classitems": [
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 18,
+            "line": 19,
             "description": "Converts string or number values into an array with a single string or number item.\nIf the input is not a string, number or array then undefined is returned.",
             "params": [
                 {
@@ -685,7 +747,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 107,
+            "line": 108,
             "itemtype": "method",
             "name": "constructor",
             "override": "",
@@ -748,8 +810,17 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 164,
-            "description": "Adds the",
+            "line": 159,
+            "itemtype": "method",
+            "name": "postinitialize",
+            "override": "",
+            "class": "DataBehavior",
+            "module": "Torso.behaviors"
+        },
+        {
+            "file": "modules/behaviors/DataBehavior.js",
+            "line": 167,
+            "description": "Adds the toJSON of the data represented by this behavior to the context.",
             "itemtype": "method",
             "name": "prepare",
             "override": "",
@@ -758,15 +829,16 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 175,
+            "line": 178,
             "description": "Get the full data object contents (either an array of model attributes or a single model attribute based on the\nvalue of returnSingleResult) or the value of a specific property if a single result is expected.",
             "itemtype": "method",
-            "name": "getData",
+            "name": "toJSON",
             "params": [
                 {
                     "name": "singleResultProperty",
                     "description": "the property to get from the model (only valid if returnSingleResult is true).",
-                    "type": "String"
+                    "type": "String",
+                    "optional": true
                 }
             ],
             "return": {
@@ -778,7 +850,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 200,
+            "line": 203,
             "description": "Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.",
             "itemtype": "method",
             "name": "pull",
@@ -787,7 +859,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 212,
+            "line": 215,
             "description": "Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.",
             "itemtype": "method",
             "name": "fetch",
@@ -796,7 +868,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 224,
+            "line": 227,
             "description": "Retrieves the ids for this data object and passes them off to the private collection to track and then does a\npull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).",
             "itemtype": "method",
             "name": "retrieve",
@@ -805,7 +877,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 237,
+            "line": 240,
             "itemtype": "method",
             "name": "__getIds",
             "return": {
@@ -4875,6 +4947,51 @@
             "module": "Torso"
         },
         {
+            "file": "modules/ViewPropertyReference.js",
+            "line": 33,
+            "description": "Gets the value described by this view property reference.",
+            "itemtype": "method",
+            "name": "get",
+            "return": {
+                "description": "the result of applying the property to the context.",
+                "type": "Object"
+            },
+            "class": "ViewPropertyReference",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/ViewPropertyReference.js",
+            "line": 49,
+            "description": "Converts the definition into the actual context object and property to retrieve off of that context.",
+            "itemtype": "method",
+            "name": "getContextAndPropertyName",
+            "return": {
+                "description": "} the name of the property and the actual object to use as the context.",
+                "type": "PropertyName, context: Object"
+            },
+            "class": "ViewPropertyReference",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/ViewPropertyReference.js",
+            "line": 92,
+            "itemtype": "method",
+            "name": "isViewPropertyReference",
+            "params": [
+                {
+                    "name": "reference",
+                    "description": "the reference configuration to test if it is a view property reference.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "true if the reference configuration is a view property reference, false otherwise.",
+                "type": "Boolean"
+            },
+            "class": "ViewPropertyReference",
+            "module": "Torso"
+        },
+        {
             "file": "modules/handlebarsUtils.js",
             "line": 28,
             "description": "Usage: {{labelFor 'fieldName' value=\"suffix\"}}\nGenerates: for=\"field-name-suffix\"",
@@ -5288,11 +5405,15 @@
     "warnings": [
         {
             "message": "unknown tag: override",
-            "line": " modules/behaviors/DataBehavior.js:107"
+            "line": " modules/behaviors/DataBehavior.js:108"
         },
         {
             "message": "unknown tag: override",
-            "line": " modules/behaviors/DataBehavior.js:164"
+            "line": " modules/behaviors/DataBehavior.js:159"
+        },
+        {
+            "message": "unknown tag: override",
+            "line": " modules/behaviors/DataBehavior.js:167"
         },
         {
             "message": "unknown tag: override",
@@ -5304,7 +5425,7 @@
         },
         {
             "message": "Missing item type\nConverts string or number values into an array with a single string or number item.\nIf the input is not a string, number or array then undefined is returned.",
-            "line": " modules/behaviors/DataBehavior.js:18"
+            "line": " modules/behaviors/DataBehavior.js:19"
         },
         {
             "message": "Missing item type\nViewStateCell is a NestedCell that holds view state data and can trigger\nchange events. These changes events will propogate up and trigger on the view\nas well.",

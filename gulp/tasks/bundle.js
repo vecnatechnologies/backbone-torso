@@ -27,7 +27,7 @@
       'loadingMixin': 'mixins/'
     };
     var dependencies = {
-      'Behavior'     : ['Cell'],
+      'Behavior'     : ['Cell', 'ViewPropertyReference'],
       'DataBehavior' : ['Behavior', 'Collection'],
       'Cell'         : ['cellMixin'],
       'Collection'   : ['pollingMixin', 'cacheMixin', 'loadingMixin'],
