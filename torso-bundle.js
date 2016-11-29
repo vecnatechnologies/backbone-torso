@@ -816,8 +816,7 @@
 
             //find ids that we don't have in cache and aren't already in the process of being fetched.
             var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
-            var allExistingPromisesForIds = _.pick(parentInstance.idPromises, idsNotInCache);
-            var idsWithPromises = _.mapObject(allExistingPromisesForIds, _.isEmpty);
+            var idsWithPromises = _.pick(parentInstance.idPromises, idsNotInCache);
 
             // Determine which ids are already being fetched and the associated promises for those ids.
             options.idsToFetch = _.difference(idsNotInCache, _.uniq(_.flatten(_.keys(idsWithPromises))));
@@ -1097,7 +1096,12 @@
             _.each(requestedIds, function(requestedId) {
               if (collection.idPromises) {
                 var existingPromisesForId = collection.idPromises[requestedId];
-                collection.idPromises[requestedId] = _.without(existingPromisesForId, fetchPromise);
+                var remainingPromisesForId = _.without(existingPromisesForId, fetchPromise);
+                if (_.isEmpty(remainingPromisesForId)) {
+                  delete collection.idPromises[requestedId];
+                } else {
+                  collection.idPromises[requestedId] = remainingPromisesForId;
+                }
               }
             });
           });
