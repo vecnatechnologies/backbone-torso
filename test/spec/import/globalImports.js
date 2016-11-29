@@ -30,7 +30,6 @@ describe('Global Module imports', function() {
         ['Torso', 'Utils', 'handlebarsUtils'],
         ['Torso', 'validation'],
         ['Torso', 'View'],
-        ['Torso', 'ViewPropertyReference'],
         ['Torso', 'ListView'],
         ['Torso', 'FormView']
       ];

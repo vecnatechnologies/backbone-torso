@@ -61,7 +61,6 @@
                                 <li><a href="../classes/Torso.Utils.templateRenderer.html">Torso.Utils.templateRenderer</a></li>
                                 <li><a href="../classes/Torso.validation.html">Torso.validation</a></li>
                                 <li><a href="../classes/View.html">View</a></li>
-                                <li><a href="../classes/ViewPropertyReference.html">ViewPropertyReference</a></li>
                             </ul>
                 
                 
@@ -119,7 +118,6 @@
             &#x27;./Router&#x27;,
             &#x27;./history&#x27;,
             &#x27;./View&#x27;, &#x27;./ListView&#x27;, &#x27;./FormView&#x27;,
-            &#x27;./ViewPropertyReference&#x27;,
             &#x27;./templateRenderer&#x27;,
             &#x27;./handlebarsUtils&#x27;,
             &#x27;./configure&#x27;,
@@ -140,7 +138,6 @@
                              require(&#x27;./Router&#x27;),
                              require(&#x27;./history&#x27;),
                              require(&#x27;./View&#x27;), require(&#x27;./ListView&#x27;), require(&#x27;./FormView&#x27;),
-                             require(&#x27;./ViewPropertyReference&#x27;),
                              require(&#x27;./templateRenderer&#x27;), require(&#x27;./handlebarsUtils&#x27;));
   } else {
     root.Torso = root.Torso || {};
@@ -157,7 +154,6 @@
                  Router,
                  history,
                  View, ListView, FormView,
-                 ViewPropertyReference,
                  templateRenderer,
                  handlebarsUtils) {
 
@@ -198,8 +194,7 @@
     validation: validation,
     View: View,
     ListView: ListView,
-    FormView: FormView,
-    ViewPropertyReference: ViewPropertyReference
+    FormView: FormView
   };
 }));
 

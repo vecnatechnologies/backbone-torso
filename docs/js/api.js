@@ -23,7 +23,6 @@ YUI.add("yuidoc-meta", function(Y) {
         "Torso.Utils.templateRenderer",
         "Torso.validation",
         "View",
-        "ViewPropertyReference",
         "history"
     ],
     "modules": [
