@@ -111,12 +111,13 @@
      *   @param behaviorOptions.cache {Torso.Collection} see class constructor docs.
      *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see class constructor docs.
      *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see class constructor docs.
-     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|Object|Function} see class constructor docs.
-     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|Object|Function} see class constructor docs.
+     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see class constructor docs.
+     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see class constructor docs.
      *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see class constructor docs.
      * @param [viewOptions] {Object} options passed to View's initialize
      */
     constructor: function(behaviorOptions, viewOptions) {
+      _.bindAll(this, '__fetchSuccess', '__fetchFailed');
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
         returnSingleResult: false,
@@ -142,9 +143,7 @@
         throw new Error('Torso Data Behavior constructed without a way to identify the ids for this data.  Please define either id or ids.');
       }
 
-      if (!_.isUndefined(this.__ids.property) && !_.isString(this.__ids.property)) {
-        throw new Error('Torso Data Behavior uses an object to define the ids to use, but it does not have a string field name property.  Id object: ' + JSON.stringify(this.__ids));
-      }
+      this.__validateIds();
 
       this.__returnSingleResult = behaviorOptions.returnSingleResult;
       this.__alwaysFetch = behaviorOptions.alwaysFetch;
@@ -153,14 +152,11 @@
       this.privateCollection = this.__cache.createPrivateCollection(this.cid);
 
       Behavior.apply(this, arguments);
-    },
 
-    /**
-     * @method postinitialize
-     * @override
-     */
-    postinitialize: function() {
-      this.retrieve();
+      this.on('change:context', this.listenToIdsPropertyChangeEvent);
+      this.on('change:context', this.retrieve);
+      this.listenTo(this.view, 'initialize:complete', this.listenToIdsPropertyChangeEvent);
+      this.listenTo(this.view, 'initialize:complete', this.retrieve);
     },
 
     /**
@@ -202,31 +198,36 @@
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
      * @method pull
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     pull: function() {
       var thisDataBehavior = this;
-      this.__getIds()
+      return this.__getIds()
         .then(function(ids) {
           return thisDataBehavior.privateCollection.trackAndPull(ids);
-        });
+        })
+        .then(this.__fetchSuccess, this.__fetchFailed);
     },
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
      * @method fetch
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     fetch: function() {
       var thisDataBehavior = this;
-      this.__getIds()
+      return this.__getIds()
         .then(function(ids) {
           return thisDataBehavior.privateCollection.trackAndFetch(ids);
-        });
+        })
+        .then(this.__fetchSuccess, this.__fetchFailed);
     },
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
      * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
      * @method retrieve
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     retrieve: function() {
       if (this.__alwaysFetch) {
@@ -237,12 +238,63 @@
     },
 
     /**
+     * Listens for the change event on the ids property and, if triggered, re-fetches the data based on the new ids.
+     * @method listenToIdsPropertyChangeEvent
+     */
+    listenToIdsPropertyChangeEvent: function() {
+      if (!_.isUndefined(this.__ids.property)) {
+        this.stopListeningToIdsPropertyChangeEvent();
+        var idsPropertyNameAndContext = this.__parseIdsPropertyNameAndContext();
+        var idsContext = idsPropertyNameAndContext.idsContext;
+        var canListenToEvents = idsContext && _.isFunction(idsContext.on);
+        if (canListenToEvents) {
+          this.__currentContextWithListener = idsContext;
+          this.__currentContextEventName = 'change:' + idsPropertyNameAndContext.idsPropertyName;
+          this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+        }
+      }
+    },
+
+    /**
+     * Removes the listener added by listenToIdsPropertyChangeEvent().
+     * @method stopListeningToIdsPropertyChangeEvent
+     */
+    stopListeningToIdsPropertyChangeEvent: function() {
+      if (this.__currentContextWithListener) {
+        this.stopListening(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+        delete this.__currentContextWithListener;
+        delete this.__currentContextEventName;
+      }
+    },
+
+    /**
+     * Validates that the __ids property is valid and if not throws an error describing why its not valid.
+     * @method __validateIds
+     * @private
+     */
+    __validateIds: function() {
+      var idsIsArray = _.isArray(this.__ids);
+      var idsIsSingleId = _.isString(this.__ids) || _.isNumber(this.__ids);
+      var idsIsFunction = _.isFunction(this.__ids);
+      var idsIsObjectWithStringProperty = _.isString(this.__ids.property);
+      var idsIsObject = _.isObject(this.__ids);
+      var idsIsValid = idsIsArray || idsIsSingleId || idsIsFunction || idsIsObjectWithStringProperty;
+      if (!idsIsValid && idsIsObject) {
+        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.__ids));
+      } else if (!idsIsValid) {
+        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.__ids));
+      }
+    },
+
+    /**
      * @method __getIds
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the ids to track in the private collection
      *                              or rejects with the error message.
      * @private
      */
     __getIds: function() {
+      this.__validateIds(); // validate ids enforces a fast-fail that guarantees that one of the if statements below will work.
+
       var idsDeferred = $.Deferred();
       var ids = this.__ids;
       var normalizedIds = normalizeIds(ids);
@@ -258,66 +310,84 @@
         } else {
           idsDeferred.resolve([]);
         }
-      } else if (_.isString(this.__ids.property)) {
-        var contextAndPropertyName = this.__getContextAndPropertyName();
-        var context = contextAndPropertyName.context;
-        var propertyName = contextAndPropertyName.propertyName;
-        ids = context && context[propertyName];
+      } else if (!_.isUndefined(this.__ids.property)) {
+        var parsedContextDefinition = this.__parseIdsPropertyNameAndContext();
+        var propertyName = parsedContextDefinition.idsPropertyName;
+        var context = parsedContextDefinition.idsContext;
 
-        if (context && _.isUndefined(ids) && _.isFunction(context.get)) {
+        ids = context && context[propertyName];
+        var propertyOnContextIsUndefined = context && _.isUndefined(ids);
+        var contextHasGetMethod = context && _.isFunction(context.get);
+        if (propertyOnContextIsUndefined && contextHasGetMethod) {
           ids = context.get(propertyName);
         }
         normalizedIds = normalizeIds(ids);
+
         idsDeferred.resolve(normalizedIds || []);
-      } else if (_.isObject(this.__ids)) {
-        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.__ids));
-      } else {
-        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.__ids));
       }
       return idsDeferred.promise();
     },
 
     /**
      * Converts the definition into the actual context object and property name to retrieve off of that context.
-     * @method __getContextAndPropertyName
-     * @return {{propertyName: String, context: Object}} the name of the property and the actual object to use as the context.
+     * @method __parseIdsPropertyNameAndContext
+     * @return {{idsPropertyName: String, context: Object}} the name of the ids property and the actual object to use as the context.
      * @private
      */
-     __getContextAndPropertyName: function() {
-        var context;
-        if (_.isUndefined(this.__ids.context)) {
-          context = this.view;
-        } else if (_.isFunction(this.__ids.context)) {
-          var contextFxn = _.bind(this.__ids.context, this);
-          context = contextFxn();
-        } else if (_.isString(this.__ids.context)) {
-          context = _.result(this, this.__ids.context);
-        } else if (_.isObject(this.__ids.context)) {
-          context = this.__ids.context;
-        } else {
-          throw new Error('Invalid context.  Not a string, object or function: ' + JSON.stringify(this.__ids));
+    __parseIdsPropertyNameAndContext: function() {
+      var context = this.__parseIdsContext();
+
+      var propertyName = this.__ids.property;
+
+      var propertyParts = propertyName.split('.');
+      var isNestedProperty = propertyParts.length > 1;
+      if (isNestedProperty) {
+        var rootPropertyName = propertyParts[0];
+        if (rootPropertyName === 'behaviors' || rootPropertyName === 'behavior') {
+          var behaviorName = propertyParts[1];
+          context = this.view.getBehavior(behaviorName);
+          propertyName = propertyParts.slice(2).join('.');
+        } else if (!_.isUndefined(context[rootPropertyName])) {
+          context = context[rootPropertyName];
+          propertyName = propertyParts.slice(1).join('.');
         }
-
-        var property = this.__ids.property;
-
-        var propertyParts = property.split('.');
-        var isNestedProperty = propertyParts.length > 1;
-        if (isNestedProperty) {
-          var rootPropertyName = propertyParts[0];
-          if (rootPropertyName === 'behaviors' || rootPropertyName === 'behavior') {
-            var behaviorName = propertyParts[1];
-            context = this.view.getBehavior(behaviorName);
-            property = propertyParts.slice(2).join('.');
-          } else if (!_.isUndefined(context[rootPropertyName])) {
-            context = context[rootPropertyName];
-            property = propertyParts.slice(1).join('.');
-          }
-        }
-
-        return {
-          propertyName: property,
-          context: context
-        };
       }
+
+      return {
+        idsPropertyName: propertyName,
+        idsContext: context
+      };
+    },
+
+    /**
+     * Parses the context property of __ids.
+     * @return {Object} the context object to apply the properties value to (may not be the final context depending on the property definition).
+     * @private
+     */
+    __parseIdsContext: function() {
+      var contextDefinition = this.__ids.context;
+      var context;
+      if (_.isUndefined(contextDefinition)) {
+        context = this.view;
+      } else if (_.isFunction(contextDefinition)) {
+        var contextFxn = _.bind(contextDefinition, this);
+        context = contextFxn();
+      } else if (_.isString(contextDefinition)) {
+        context = _.result(this, contextDefinition);
+      } else if (_.isObject(contextDefinition)) {
+        context = contextDefinition;
+      } else {
+        throw new Error('Invalid context.  Not a string, object or function: ' + JSON.stringify(this.__ids));
+      }
+      return context;
+    },
+
+    __fetchSuccess: function() {
+      this.trigger('fetched', { status: 'success' })
+    },
+
+    __fetchFailed: function() {
+      this.trigger('fetched', { status: 'failed' })
+    }
   });
 }));

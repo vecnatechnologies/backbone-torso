@@ -3,6 +3,7 @@ var TorsoDataBehavior = require('./../../modules/behaviors/DataBehavior');
 var TorsoView = require('./../../modules/View');
 var TorsoCollection = require('./../../modules/Collection');
 var TorsoNestedModel = require('./../../modules/NestedModel');
+var TorsoEvents = require('./../../modules/Events');
 var Torso  = require('./../../modules/torso');
 
 var setupInjectionSite = require('./helpers/setupInjectionSite');
@@ -857,6 +858,143 @@ ids = {\n\
         }, function(error) {
           fail(error);
           done();
+        });
+    });
+
+    it('has a toJSON() method that will return the contents of the fetched models', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var contextModel = new TorsoNestedModel({ referenceId: 'initialValue' });
+      defaultBehaviorConfiguration.ids = {
+        property: 'referenceId',
+        context: contextModel
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialValue', count: 0 }]);
+          done();
+        });
+    });
+
+    it('will re-fetch the ids and data when the ids context triggers a change event for the ids property', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var contextModel = TorsoEvents; // simplest object that triggers events.
+      contextModel.referenceId = 'initialId';
+      defaultBehaviorConfiguration.ids = {
+        property: 'referenceId',
+        context: contextModel
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          contextModel.referenceId = 'newId';
+          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          dataBehavior.on('fetched', function() {
+            expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+            done();
+          });
+          contextModel.trigger('change:referenceId');
+        });
+    });
+
+    it('will re-fetch the ids and data when the change:context event is triggered on the behavior', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var initialContextModel = TorsoEvents;
+      var contextContainer = TorsoEvents;
+      contextContainer.context = initialContextModel;
+      initialContextModel.id = 'initialId';
+      defaultBehaviorConfiguration.ids = {
+        property: 'id',
+        context: function() {
+          return contextContainer.context;
+        }
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          initialContextModel.id = 'newId';
+          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          dataBehavior.once('fetched', function() {
+            expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+
+            var newContextModel = TorsoEvents;
+            newContextModel.id = 'anotherId';
+            contextContainer.context = newContextModel;
+            dataBehavior.trigger('change:context');
+
+            dataBehavior.once('fetched', function() {
+              expect(dataBehavior.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
+              done();
+            });
+          });
+          initialContextModel.trigger('change:id');
+        });
+    });
+
+    it('will re-bind the change event on the id object when the change:context event is triggered on the behavior', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var initialContextModel = TorsoEvents;
+      var contextContainer = TorsoEvents;
+      contextContainer.context = initialContextModel;
+      initialContextModel.id = 'initialId';
+      defaultBehaviorConfiguration.ids = {
+        property: 'id',
+        context: function() {
+          return contextContainer.context;
+        }
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          initialContextModel.id = 'newId';
+          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          dataBehavior.once('fetched', function() {
+            expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+
+            var newContextModel = TorsoEvents;
+            newContextModel.id = 'anotherId';
+            contextContainer.context = newContextModel;
+            dataBehavior.trigger('change:context');
+
+            dataBehavior.once('fetched', function() {
+              expect(dataBehavior.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
+
+              newContextModel.id = 'yetAnotherId';
+              newContextModel.trigger('change:id');
+              dataBehavior.once('fetched', function() {
+                expect(dataBehavior.toJSON()).toEqual([{ id: 'yetAnotherId', count: 0 }]);
+                done();
+              });
+            });
+          });
+          initialContextModel.trigger('change:id');
         });
     });
   });
