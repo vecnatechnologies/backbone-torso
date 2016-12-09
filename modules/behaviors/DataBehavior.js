@@ -156,9 +156,9 @@
       if (_.isArray(behaviorOptions.updateEvents)) {
         this.__updateEvents = behaviorOptions.updateEvents;
       } else if (_.isObject(behaviorOptions.updateEvents) || _.isString(behaviorOptions.updateEvents)) {
-        this.__updateEvents = [behaviorOptions.updateEvents]
+        this.__updateEvents = [behaviorOptions.updateEvents];
       } else if (!_.isUndefined(behaviorOptions.updateEvents)) {
-        throw new Error('Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: ', behaviorOptions.updateEvents)
+        throw new Error('Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: ', behaviorOptions.updateEvents);
       }
       this.__updateEvents = _.compact(this.__updateEvents);
       _.each(this.__updateEvents, this.__validUpdateEvent);
@@ -540,7 +540,7 @@
      * @private
      */
     __fetchSuccess: function() {
-      this.trigger('fetched', { status: 'success' })
+      this.trigger('fetched', { status: 'success' });
     },
 
     /**
@@ -549,7 +549,7 @@
      * @private
      */
     __fetchFailed: function() {
-      this.trigger('fetched', { status: 'failed' })
+      this.trigger('fetched', { status: 'failed' });
     },
 
     /**

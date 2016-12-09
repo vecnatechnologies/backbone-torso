@@ -105,7 +105,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l32"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:32</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l34"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:34</code></a>
         </div>
 
             Module: <a href="../modules/Torso.behaviors.html">Torso.behaviors</a>
@@ -148,11 +148,43 @@ id: { property: '_patientVecnaId' }
 
                     <ul class="index-list methods">
                             <li class="index-item method private">
-                                <a href="#method___getContextAndPropertyName">__getContextAndPropertyName</a>
+                                <a href="#method___fetchFailed">__fetchFailed</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___fetchSuccess">__fetchSuccess</a>
 
                             </li>
                             <li class="index-item method private">
                                 <a href="#method___getIds">__getIds</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___parseIdsPropertyNameAndContext">__parseIdsPropertyNameAndContext</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___validateIds">__validateIds</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___validateIds">__validateIds</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__activate">_activate</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__deactivate">_deactivate</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__delegateUpdateEvents">_delegateUpdateEvents</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__undelegateEvents">_undelegateEvents</a>
 
                             </li>
                             <li class="index-item method">
@@ -164,7 +196,7 @@ id: { property: '_patientVecnaId' }
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_postinitialize">postinitialize</a>
+                                <a href="#method_listenToIdsPropertyChangeEvent">listenToIdsPropertyChangeEvent</a>
 
                             </li>
                             <li class="index-item method">
@@ -177,6 +209,10 @@ id: { property: '_patientVecnaId' }
                             </li>
                             <li class="index-item method">
                                 <a href="#method_retrieve">retrieve</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_stopListeningToIdsPropertyChangeEvent">stopListeningToIdsPropertyChangeEvent</a>
 
                             </li>
                             <li class="index-item method">
@@ -193,14 +229,11 @@ id: { property: '_patientVecnaId' }
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
-<div id="method___getContextAndPropertyName" class="method item private">
-    <h3 class="name"><code>__getContextAndPropertyName</code></h3>
+<div id="method___fetchFailed" class="method item private">
+    <h3 class="name"><code>__fetchFailed</code></h3>
 
         <span class="paren">()</span>
 
-        <span class="returns-inline">
-            <span class="type">PropertyName: String, context: Object</span>
-        </span>
 
 
         <span class="flag private">private</span>
@@ -212,7 +245,7 @@ id: { property: '_patientVecnaId' }
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l280"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:280</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l546"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:546</code></a>
         </p>
 
 
@@ -220,20 +253,43 @@ id: { property: '_patientVecnaId' }
     </div>
 
     <div class="description">
-        <p>Converts the definition into the actual context object and property name to retrieve off of that context.</p>
+        <p>Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.</p>
 
     </div>
 
 
-        <div class="returns">
-            <h4>Returns:</h4>
 
-            <div class="returns-description">
-                        <span class="type">PropertyName: String, context: Object</span>:
-                    <p>} the name of the property and the actual object to use as the context.</p>
 
-            </div>
-        </div>
+</div>
+<div id="method___fetchSuccess" class="method item private">
+    <h3 class="name"><code>__fetchSuccess</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l537"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:537</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.</p>
+
+    </div>
+
+
 
 
 </div>
@@ -256,7 +312,7 @@ id: { property: '_patientVecnaId' }
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l239"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:239</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l434"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:434</code></a>
         </p>
 
 
@@ -278,6 +334,242 @@ or rejects with the error message.</p>
 
             </div>
         </div>
+
+
+</div>
+<div id="method___parseIdsPropertyNameAndContext" class="method item private">
+    <h3 class="name"><code>__parseIdsPropertyNameAndContext</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">IdsPropertyName: String, context: Object, isBehavior: Boolean</span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l480"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:480</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts the definition into the actual context object and property name to retrieve off of that context.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">IdsPropertyName: String, context: Object, isBehavior: Boolean</span>:
+                    <p>} the name of the ids property and the actual object to use as the context.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method___validateIds" class="method item private">
+    <h3 class="name"><code>__validateIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l421"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:421</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___validateIds" class="method item private">
+    <h3 class="name"><code>__validateIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l402"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:402</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the __ids property is valid and if not throws an error describing why its not valid.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__activate" class="method item private">
+    <h3 class="name"><code>_activate</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l555"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:555</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds listeners when the view is activated.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__deactivate" class="method item private">
+    <h3 class="name"><code>_deactivate</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l565"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:565</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Stops listening when the view is deactivated.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__delegateUpdateEvents" class="method item private">
+    <h3 class="name"><code>_delegateUpdateEvents</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l301"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:301</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Removes existing listeners and adds new ones for all of the updateEvents configured.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__undelegateEvents" class="method item private">
+    <h3 class="name"><code>_undelegateEvents</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l314"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:314</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Removes existing event listeners.</p>
+
+    </div>
+
+
 
 
 </div>
@@ -305,7 +597,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l107"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:107</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l112"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:112</code></a>
         </p>
 
 
@@ -364,22 +656,22 @@ or rejects with the error message.</p>
                             </li>
                             <li class="param">
                                     <code class="param-name optional">[id=behaviorOptions.ids]</code>
-                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, context: Object</span>
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>see class constructor docs.</p>
+                                    <p>|Function} see class constructor docs.</p>
 
                                 </div>
 
                             </li>
                             <li class="param">
                                     <code class="param-name optional">[ids=behaviorOptions.id]</code>
-                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, context: Object</span>
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>see class constructor docs.</p>
+                                    <p>|Function} see class constructor docs.</p>
 
                                 </div>
 
@@ -420,6 +712,9 @@ or rejects with the error message.</p>
 
         <span class="paren">()</span>
 
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
 
 
 
@@ -430,7 +725,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l214"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:214</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l232"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:232</code></a>
         </p>
 
 
@@ -443,11 +738,20 @@ or rejects with the error message.</p>
     </div>
 
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the retrieved models.</p>
+
+            </div>
+        </div>
 
 
 </div>
-<div id="method_postinitialize" class="method item">
-    <h3 class="name"><code>postinitialize</code></h3>
+<div id="method_listenToIdsPropertyChangeEvent" class="method item">
+    <h3 class="name"><code>listenToIdsPropertyChangeEvent</code></h3>
 
         <span class="paren">()</span>
 
@@ -461,7 +765,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l158"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:158</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l260"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:260</code></a>
         </p>
 
 
@@ -469,7 +773,8 @@ or rejects with the error message.</p>
     </div>
 
     <div class="description">
-        
+        <p>Listens for the change event on the ids property and, if triggered, re-fetches the data based on the new ids.</p>
+
     </div>
 
 
@@ -491,7 +796,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l166"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:166</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l178"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:178</code></a>
         </p>
 
 
@@ -512,6 +817,9 @@ or rejects with the error message.</p>
 
         <span class="paren">()</span>
 
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
 
 
 
@@ -522,7 +830,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l202"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:202</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l218"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:218</code></a>
         </p>
 
 
@@ -535,11 +843,64 @@ or rejects with the error message.</p>
     </div>
 
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the retrieved models.</p>
+
+            </div>
+        </div>
 
 
 </div>
 <div id="method_retrieve" class="method item">
     <h3 class="name"><code>retrieve</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l246"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:246</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Retrieves the ids for this data object and passes them off to the private collection to track and then does a
+pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the retrieved models.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_stopListeningToIdsPropertyChangeEvent" class="method item">
+    <h3 class="name"><code>stopListeningToIdsPropertyChangeEvent</code></h3>
 
         <span class="paren">()</span>
 
@@ -553,7 +914,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l226"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:226</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l284"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:284</code></a>
         </p>
 
 
@@ -561,8 +922,7 @@ or rejects with the error message.</p>
     </div>
 
     <div class="description">
-        <p>Retrieves the ids for this data object and passes them off to the private collection to track and then does a
-pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).</p>
+        <p>Removes the listener added by listenToIdsPropertyChangeEvent().</p>
 
     </div>
 
@@ -594,7 +954,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l177"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:177</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l189"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:189</code></a>
         </p>
 
 
