@@ -1023,8 +1023,8 @@ ids = {\n\
 
     it('and depends on another behavior will re-fetch data when the ids on the root behavior change:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
-}\n\
+  property: \'behaviors.dataBehavior.otherIds\'\n\
+}\n\\n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
       $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
@@ -1063,8 +1063,12 @@ ids = {\n\
 
     it('will handle a collection of models each with an array of ids:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'behaviors.dataBehavior.otherIds\'\n\
 }\n\
+\n\
+dataBehavior gets multiple objects with this structure: { id: 10, otherIds: [1, 2, 3] ... }.\n\
+dataBehavior2 will pull the unique collection of ids collected from all of the otherIds in dataBehavior\'s objects.\n\
+\n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
       $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
@@ -1111,14 +1115,24 @@ defaultBehaviorConfiguration.returnSingleResult = true;\n\
 defaultBehaviorConfiguration.ids = {\n\
   property: \'viewState.idFromView\'\n\
 };\n\
+\n\
 var defaultBehavior2Configuration = getBasicBehaviorConfiguration();\n\
 defaultBehavior2Configuration.ids = {\n\
   property: \'behaviors.dataBehavior.otherIds\'\n\
 };\n\
+\n\
 var defaultBehavior3Configuration = getBasicBehaviorConfiguration();\n\
 defaultBehavior3Configuration.ids = {\n\
   property: \'behaviors.dataBehavior2.otherOtherIds\'\n\
 };\n\
+\n\
+var ViewWithBehavior = TorsoView.extend({\n\
+  behaviors: {\n\
+    dataBehavior: defaultBehaviorConfiguration,\n\
+      dataBehavior2: defaultBehavior2Configuration,\n\
+      dataBehavior3: defaultBehavior3Configuration\n\
+  }\n\
+});\n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
       $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
@@ -1188,8 +1202,12 @@ defaultBehavior3Configuration.ids = {\n\
 
     it('will re-fetch when the id property on another data behavior changes to a non-empty value:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'behaviors.dataBehavior.otherIds\'\n\
 }\n\
+\n\
+Manually force a change in the one model\'s value:\n\
+dataBehavior.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n\
+\n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
       $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
@@ -1236,8 +1254,12 @@ ids = {\n\
 
     it('will re-fetch when the id property on another data behavior changes to an empty value:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'behaviors.dataBehavior.otherIds\'\n\
 }\n\
+\n\
+Manually force a change in the one model\'s value:\n\
+dataBehavior.privateCollection.models[0].unset(\'otherIds\');\n\
+\n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
       $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
@@ -1283,8 +1305,12 @@ ids = {\n\
 
   it('will re-fetch the id and data when an arbitrary event on the behavior is fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = \'this:some:random:event\'\n\
+\n\
+dataBehavior.trigger(\'some:random:event\');\n\
+\n\
 ', function(done) {
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
@@ -1316,8 +1342,12 @@ ids = {\n\
 
   it('will re-fetch the id and data when an arbitrary event on the view is fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = \'view:view-event\'\n\
+\n\
+viewWithBehavior.trigger(\'view-event\');\n\
+\n\
 ', function(done) {
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
@@ -1349,8 +1379,12 @@ ids = {\n\
 
   it('will re-fetch the id and data when an arbitrary event on the view\'s viewState is fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = \'viewState:viewState-event\'\n\
+\n\
+viewWithBehavior.viewState.trigger(\'viewState-event\');\n\
+\n\
 ', function(done) {
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
@@ -1382,8 +1416,12 @@ ids = {\n\
 
   it('will re-fetch the id and data when an arbitrary event on the view\'s model is fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = \'model:model-event\'\n\
+\n\
+viewWithBehavior.model.trigger(\'model-event\');\n\
+\n\
 ', function(done) {
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
@@ -1418,8 +1456,12 @@ ids = {\n\
 
   it('will re-fetch the id and data when an arbitrary event on another behavior defined on this view is fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = \'dataBehavior2:otherBehavior-event\'\n\
+\n\
+dataBehavior2.trigger(\'otherBehavior-event\');\n\
+\n\
 ', function(done) {
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
@@ -1454,8 +1496,12 @@ ids = {\n\
 
   it('will re-fetch the id and data when an arbitrary event on an arbitrary context is fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = { arbitraryContextEvent: context }\n\
+\n\
+context.trigger(\'arbitraryContextEvent\');\n\
+\n\
 ', function(done) {
     var context = new TorsoNestedModel();
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
@@ -1488,8 +1534,16 @@ ids = {\n\
 
   it('will re-fetch the id and data when a arbitrary events on an arbitrary contexts are fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = {\n\
+  arbitraryContextEvent: context1,\n\
+    \'other-arbitrary-context-event\': context2\n\
+}\n\
+\n\
+context1.trigger(\'arbitraryContextEvent\');\n\
+context2.trigger(\'other-arbitrary-context-event\');\n\
+\n\
 ', function(done) {
     var context1 = new TorsoNestedModel();
     var context2 = new TorsoNestedModel();
@@ -1526,8 +1580,28 @@ ids = {\n\
 
   it('will re-fetch the id and data when multiple events are fired:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.id\'\n\
+  property: \'_idFromView\'\n\
 }\n\
+updateEvents = [\n\
+  \'this:this-event\',\n\
+  \'view:view-event\',\n\
+  \'viewState:viewState-event\',\n\
+  \'model:model-event\',\n\
+  \'dataBehavior2:otherBehavior-event\',\n\
+  {\n\
+    arbitraryContextEvent: context1,\n\
+    \'other-arbitrary-context-event\': context2\n\
+  }\n\
+];\n\
+\n\
+context1.trigger(\'arbitraryContextEvent\');\n\
+context2.trigger(\'other-arbitrary-context-event\');\n\
+dataBehavior2.trigger(\'otherBehavior-event\');\n\
+viewWithBehavior.model.trigger(\'model-event\');\n\
+viewWithBehavior.viewState.trigger(\'viewState-event\');\n\
+viewWithBehavior.trigger(\'view-event\');\n\
+dataBehavior.trigger(\'this-event\');\n\
+\n\
 ', function(done) {
     var context1 = new TorsoNestedModel();
     var context2 = new TorsoNestedModel();
