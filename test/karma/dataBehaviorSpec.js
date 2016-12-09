@@ -3,7 +3,6 @@ var TorsoDataBehavior = require('./../../modules/behaviors/DataBehavior');
 var TorsoView = require('./../../modules/View');
 var TorsoCollection = require('./../../modules/Collection');
 var TorsoNestedModel = require('./../../modules/NestedModel');
-var TorsoEvents = require('./../../modules/Events');
 var Torso  = require('./../../modules/torso');
 
 var setupInjectionSite = require('./helpers/setupInjectionSite');
@@ -908,7 +907,7 @@ ids = {\n\
 
     it('will re-fetch the ids and data when the ids context triggers a change event for the ids property', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      var contextModel = TorsoEvents; // simplest object that triggers events.
+      var contextModel = new TorsoNestedModel();
       contextModel.referenceId = 'initialId';
       defaultBehaviorConfiguration.ids = {
         property: 'referenceId',
@@ -936,8 +935,8 @@ ids = {\n\
 
     it('will re-fetch the ids and data when the change:context event is triggered on the behavior', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      var initialContextModel = TorsoEvents;
-      var contextContainer = TorsoEvents;
+      var initialContextModel = new TorsoNestedModel();
+      var contextContainer = new TorsoNestedModel();
       contextContainer.context = initialContextModel;
       initialContextModel.id = 'initialId';
       defaultBehaviorConfiguration.ids = {
@@ -961,7 +960,7 @@ ids = {\n\
           dataBehavior.once('fetched', function() {
             expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
 
-            var newContextModel = TorsoEvents;
+            var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
             contextContainer.context = newContextModel;
             dataBehavior.trigger('change:context');
@@ -977,8 +976,8 @@ ids = {\n\
 
     it('will re-bind the change event on the id object when the change:context event is triggered on the behavior', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      var initialContextModel = TorsoEvents;
-      var contextContainer = TorsoEvents;
+      var initialContextModel = new TorsoNestedModel();
+      var contextContainer = new TorsoNestedModel();
       contextContainer.context = initialContextModel;
       initialContextModel.id = 'initialId';
       defaultBehaviorConfiguration.ids = {
@@ -1002,7 +1001,7 @@ ids = {\n\
           dataBehavior.once('fetched', function() {
             expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
 
-            var newContextModel = TorsoEvents;
+            var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
             contextContainer.context = newContextModel;
             dataBehavior.trigger('change:context');
@@ -1280,5 +1279,329 @@ ids = {\n\
       });
       viewWithBehavior.set('idFromView', 10);
     });
+  });
+
+  it('will re-fetch the id and data when an arbitrary event on the behavior is fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = 'this:some:random:event';
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        done();
+      });
+      viewWithBehavior._idFromView = 100;
+      dataBehavior.trigger('some:random:event');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    dataBehavior.trigger('some:random:event');
+  });
+
+  it('will re-fetch the id and data when an arbitrary event on the view is fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = 'view:view-event';
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        done();
+      });
+      viewWithBehavior._idFromView = 100;
+      viewWithBehavior.trigger('view-event');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    viewWithBehavior.trigger('view-event');
+  });
+
+  it('will re-fetch the id and data when an arbitrary event on the view\'s viewState is fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = 'viewState:viewState-event';
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        done();
+      });
+      viewWithBehavior._idFromView = 100;
+      viewWithBehavior.viewState.trigger('viewState-event');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    viewWithBehavior.viewState.trigger('viewState-event');
+  });
+
+  it('will re-fetch the id and data when an arbitrary event on the view\'s model is fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = 'model:model-event';
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewModel = new TorsoNestedModel({ anIdProperty: false});
+    var viewWithBehavior = new ViewWithBehavior({
+      model: viewModel
+    });
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        done();
+      });
+      viewWithBehavior._idFromView = 100;
+      viewWithBehavior.model.trigger('model-event');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    viewWithBehavior.model.trigger('model-event');
+  });
+
+  it('will re-fetch the id and data when an arbitrary event on another behavior defined on this view is fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = 'dataBehavior2:otherBehavior-event';
+    var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration,
+        dataBehavior2: defaultBehavior2Configuration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        done();
+      });
+      viewWithBehavior._idFromView = 100;
+      dataBehavior2.trigger('otherBehavior-event');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    dataBehavior2.trigger('otherBehavior-event');
+  });
+
+  it('will re-fetch the id and data when an arbitrary event on an arbitrary context is fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var context = new TorsoNestedModel();
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = { arbitraryContextEvent: context };
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        done();
+      });
+      viewWithBehavior._idFromView = 100;
+      context.trigger('arbitraryContextEvent');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    context.trigger('arbitraryContextEvent');
+  });
+
+  it('will re-fetch the id and data when a arbitrary events on an arbitrary contexts are fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var context1 = new TorsoNestedModel();
+    var context2 = new TorsoNestedModel();
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = {
+      arbitraryContextEvent: context1,
+      'other-arbitrary-context-event': context2
+    };
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        done();
+      });
+      viewWithBehavior._idFromView = 100;
+      context2.trigger('other-arbitrary-context-event');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    context1.trigger('arbitraryContextEvent');
+  });
+
+  it('will re-fetch the id and data when multiple events are fired:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+    var context1 = new TorsoNestedModel();
+    var context2 = new TorsoNestedModel();
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.returnSingleResult = true;
+    defaultBehaviorConfiguration.ids = {
+      property: '_idFromView'
+    };
+    defaultBehaviorConfiguration.updateEvents = [
+      'this:this-event',
+      'view:view-event',
+      'viewState:viewState-event',
+      'model:model-event',
+      'dataBehavior2:otherBehavior-event',
+      {
+        arbitraryContextEvent: context1,
+        'other-arbitrary-context-event': context2
+      }
+    ];
+    var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration,
+        dataBehavior2: defaultBehavior2Configuration
+      }
+    });
+    var viewModel = new TorsoNestedModel({ anIdProperty: false});
+    var viewWithBehavior = new ViewWithBehavior({
+      model: viewModel
+    });
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+    dataBehavior.once('fetched', function() {
+      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+
+        dataBehavior.once('fetched', function() {
+          expect(dataBehavior.toJSON()).toEqual({ id: 1000, count: 0 });
+
+          dataBehavior.once('fetched', function() {
+            expect(dataBehavior.toJSON()).toEqual({ id: 10000, count: 0 });
+
+            dataBehavior.once('fetched', function() {
+              expect(dataBehavior.toJSON()).toEqual({ id: 100000, count: 0 });
+
+              dataBehavior.once('fetched', function() {
+                expect(dataBehavior.toJSON()).toEqual({ id: 1000000, count: 0 });
+
+                dataBehavior.once('fetched', function() {
+                  expect(dataBehavior.toJSON()).toEqual({ id: 10000000, count: 0 });
+                  done();
+                });
+                viewWithBehavior._idFromView = 10000000;
+                dataBehavior.trigger('this-event');
+              });
+              viewWithBehavior._idFromView = 1000000;
+              viewWithBehavior.trigger('view-event');
+            });
+            viewWithBehavior._idFromView = 100000;
+            viewWithBehavior.viewState.trigger('viewState-event');
+          });
+          viewWithBehavior._idFromView = 10000;
+          viewWithBehavior.model.trigger('model-event');
+        });
+        viewWithBehavior._idFromView = 1000;
+        dataBehavior2.trigger('otherBehavior-event');
+      });
+      viewWithBehavior._idFromView = 100;
+      context2.trigger('other-arbitrary-context-event');
+    });
+
+    viewWithBehavior._idFromView = 10;
+    context1.trigger('arbitraryContextEvent');
   });
 });

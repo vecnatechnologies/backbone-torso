@@ -98,6 +98,7 @@
    *                                                           from the server if the given events are triggered
    *                                                           (space separated if string, single item is equivalent to array of single item).
    *     - 'view:eventName' - arbitrary event triggered on the view (eventName can be a change:propertyName event).
+   *     - 'viewState:eventName' - arbitrary event triggered on the viewState (eventName can be a change:propertyName event).
    *     - 'model:eventName' - arbitrary even triggered on the view's model (eventName can be a change:propertyName event).
    *     - 'this:eventName' - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).
    *     - 'behaviorAlias:eventName' - arbitrary event triggered by another behavior on this view (eventName can be a change:propertyName event).
@@ -150,6 +151,16 @@
       this.__returnSingleResult = behaviorOptions.returnSingleResult;
       this.__alwaysFetch = behaviorOptions.alwaysFetch;
 
+      if (_.isArray(behaviorOptions.updateEvents)) {
+        this.__updateEvents = behaviorOptions.updateEvents;
+      } else if (_.isObject(behaviorOptions.updateEvents) || _.isString(behaviorOptions.updateEvents)) {
+        this.__updateEvents = [behaviorOptions.updateEvents]
+      } else if (!_.isUndefined(behaviorOptions.updateEvents)) {
+        throw new Error('Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: ', behaviorOptions.updateEvents)
+      }
+      this.__updateEvents = _.compact(this.__updateEvents);
+      _.each(this.__updateEvents, this.__validUpdateEvent);
+
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.privateCollection = this.__cache.createPrivateCollection(this.cid);
 
@@ -158,6 +169,7 @@
       this.on('change:context', this.listenToIdsPropertyChangeEvent);
       this.on('change:context', this.retrieve);
       this.listenTo(this.view, 'initialize:complete', this.listenToIdsPropertyChangeEvent);
+      this.listenTo(this.view, 'initialize:complete', this._delegateUpdateEvents);
       this.listenTo(this.view, 'initialize:complete', this.retrieve);
     },
 
@@ -285,6 +297,77 @@
     },
 
     /**
+     * Removes existing listeners and adds new ones for all of the updateEvents configured.
+     * @method _delegateUpdateEvents
+     * @private
+     */
+    _delegateUpdateEvents: function() {
+      this._undelegateUpdateEvents();
+      var updateEvents = this.__parseUpdateEvents();
+      _.each(updateEvents, function(parsedUpdateEvent) {
+        this.listenTo(parsedUpdateEvent.context, parsedUpdateEvent.eventName, this.retrieve);
+      }, this);
+    },
+
+    _undelegateUpdateEvents: function() {
+      var updateEvents = this.__parseUpdateEvents();
+      _.each(updateEvents, function(parsedUpdateEvent) {
+        this.stopListening(parsedUpdateEvent.context, parsedUpdateEvent.eventName, this.retrieve);
+      }, this);
+    },
+
+    __parseUpdateEvents: function() {
+      var updateEvents = _.flatten(_.map(this.__updateEvents, this.__parseUpdateEvent, this));
+      return _.compact(updateEvents);
+    },
+
+    __parseUpdateEvent: function(updateEventConfiguration) {
+      if (_.isUndefined(updateEventConfiguration)) {
+        return undefined;
+      }
+      var parsedUpdateEvents = [];
+      if (_.isString(updateEventConfiguration)) {
+        var updateEvent = this.__parseStringUpdateEvent(updateEventConfiguration);
+        if (!_.isUndefined(updateEvent)) {
+          parsedUpdateEvents.push(updateEvent);
+        }
+      }
+      if (_.isObject(updateEventConfiguration)) {
+        parsedUpdateEvents = _.map(updateEventConfiguration, function(context, eventName) {
+          return {
+            context: context,
+            eventName: eventName
+          };
+        });
+      }
+      return parsedUpdateEvents;
+    },
+
+    __parseStringUpdateEvent: function(updateEventConfiguration) {
+      var contextString = updateEventConfiguration.split(':', 1)[0];
+      var context;
+      if (contextString === 'this') {
+        context = this;
+      } else if (contextString === 'view') {
+        context = this.view;
+      } else if (contextString === 'viewState') {
+        context = this.view.viewState;
+      } else if (contextString === 'model') {
+        context = this.view.model;
+      } else {
+        // assume its a behavior alias.
+        context = this.view.getBehavior(contextString);
+      }
+      if (!_.isUndefined(context)) {
+        var eventName = updateEventConfiguration.replace(contextString + ':', '');
+        return {
+          eventName: eventName,
+          context: context
+        };
+      }
+    },
+
+    /**
      * Validates that the __ids property is valid and if not throws an error describing why its not valid.
      * @method __validateIds
      * @private
@@ -300,6 +383,19 @@
         throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.__ids));
       } else if (!idsIsValid) {
         throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.__ids));
+      }
+    },
+
+    /**
+     * Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.
+     * @method __validateIds
+     * @private
+     */
+    __validUpdateEvent: function(updateEventConfiguration) {
+      var validStringConfig = _.isString(updateEventConfiguration);
+      var validObjectConfig = _.isObject(updateEventConfiguration) && _.keys(updateEventConfiguration).length > 0;
+      if (!validStringConfig && !validObjectConfig) {
+        throw new Error('Not a valid updateEvent configuration.  Update events need to either be strings or objects with a single property: ' + JSON.stringify(updateEventConfiguration));
       }
     },
 
@@ -412,6 +508,16 @@
 
     __fetchFailed: function() {
       this.trigger('fetched', { status: 'failed' })
+    },
+
+    _activate: function() {
+      this.listenToIdsPropertyChangeEvent();
+      this._delegateUpdateEvents();
+    },
+
+    _deactivate: function() {
+      this.stopListeningToIdsPropertyChangeEvent();
+      this._undelegateUpdateEvents();
     }
   });
 
