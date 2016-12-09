@@ -9,8 +9,29 @@ var Torso  = require('./../../modules/torso');
 var setupInjectionSite = require('./helpers/setupInjectionSite');
 
 var TorsoTestCacheCollection = TorsoCollection.extend({
-  url: '/myModel'
+  url: '/myModel',
+  fetchHttpAction: 'POST'
 });
+
+var MOCKJAX_ROUTE_WITH_OTHER_IDS = {
+  url: '/myModel/ids',
+  type: 'POST',
+  dataType: 'json',
+  responseTime: 100,
+  response: function(settings) {
+    var models = [],
+      data = _.isString(settings.data) ? JSON.parse(settings.data) : settings.data;
+    for (var i = 0; i < data.length; i++) {
+      models.push({
+        id: data[i],
+        count: i,
+        otherIds: [i + 1, i + 2, i + 3],
+        otherOtherIds: ['a' + i, 'b' + i, 'c' + i, 'd' + i, 'e' + i, 'f' + i]
+      });
+    }
+    this.responseText = models;
+  }
+};
 
 function getBasicBehaviorConfiguration() {
   return {
@@ -702,14 +723,14 @@ ids = {\n\
         });
     });
 
-    it('can specify an object for ids that uses the property field to reference an attribute on another behavior:\n\
+    it('can specify an object for ids that uses the property field to reference a data property on another behavior:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior2.someOtherIds\'\n\
+  property: \'behaviors.dataBehavior2.someOtherId\'\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
-        property: 'behaviors.dataBehavior2.someOtherIds'
+        property: 'behaviors.dataBehavior2.someOtherId'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       var ViewWithBehavior = TorsoView.extend({
@@ -721,7 +742,10 @@ ids = {\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-      dataBehavior2.set('someOtherIds', [100, 'abd', 252341, 'blah']);
+      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 100 }));
+      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 'abd' }));
+      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 252341 }));
+      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 'blah' }));
       dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([100, 'abd', 252341, 'blah']);
@@ -996,6 +1020,265 @@ ids = {\n\
           });
           initialContextModel.trigger('change:id');
         });
+    });
+
+    it('and depends on another behavior will re-fetch data when the ids on the root behavior change:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+      $.mockjax.clear(this.routes['/myModel/ids|post']);
+      $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
+
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.returnSingleResult = true;
+      defaultBehaviorConfiguration.ids = {
+        property: 'viewState.idFromView'
+      };
+      var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+      defaultBehavior2Configuration.ids = {
+        property: 'behaviors.dataBehavior.otherIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration,
+          dataBehavior2: defaultBehavior2Configuration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+      });
+
+      var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+      dataBehavior2.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+                                                { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+                                                { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+        done();
+      });
+      viewWithBehavior.set('idFromView', 10);
+    });
+
+    it('will handle a collection of models each with an array of ids:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+      $.mockjax.clear(this.routes['/myModel/ids|post']);
+      $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
+
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'viewState.idFromView'
+      };
+      var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+      defaultBehavior2Configuration.ids = {
+        property: 'behaviors.dataBehavior.otherIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration,
+          dataBehavior2: defaultBehavior2Configuration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+                                               { id: 20, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+                                               { id: 30, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+      });
+
+      var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+      dataBehavior2.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+                                               { id: 20, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+                                               { id: 30, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+                                                { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+                                                { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] },
+                                                { id: 4, count: 3, otherIds: [4, 5, 6], otherOtherIds: ['a3', 'b3', 'c3', 'd3', 'e3', 'f3'] },
+                                                { id: 5, count: 4, otherIds: [5, 6, 7], otherOtherIds: ['a4', 'b4', 'c4', 'd4', 'e4', 'f4'] }]);
+        done();
+      });
+      viewWithBehavior.set('idFromView', [10, 20, 30]);
+    });
+
+    it('will handle a chain of behaviors:\n\
+defaultBehaviorConfiguration.returnSingleResult = true;\n\
+defaultBehaviorConfiguration.ids = {\n\
+  property: \'viewState.idFromView\'\n\
+};\n\
+var defaultBehavior2Configuration = getBasicBehaviorConfiguration();\n\
+defaultBehavior2Configuration.ids = {\n\
+  property: \'behaviors.dataBehavior.otherIds\'\n\
+};\n\
+var defaultBehavior3Configuration = getBasicBehaviorConfiguration();\n\
+defaultBehavior3Configuration.ids = {\n\
+  property: \'behaviors.dataBehavior2.otherOtherIds\'\n\
+};\n\
+', function(done) {
+      $.mockjax.clear(this.routes['/myModel/ids|post']);
+      $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
+
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.returnSingleResult = true;
+      defaultBehaviorConfiguration.ids = {
+        property: 'viewState.idFromView'
+      };
+      var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+      defaultBehavior2Configuration.ids = {
+        property: 'behaviors.dataBehavior.otherIds'
+      };
+      var defaultBehavior3Configuration = getBasicBehaviorConfiguration();
+      defaultBehavior3Configuration.ids = {
+        property: 'behaviors.dataBehavior2.otherOtherIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration,
+          dataBehavior2: defaultBehavior2Configuration,
+          dataBehavior3: defaultBehavior3Configuration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+      });
+
+      var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+      dataBehavior2.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+                                                { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+                                                { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+      });
+
+      var dataBehavior3 = viewWithBehavior.getBehavior('dataBehavior3');
+      dataBehavior3.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+                                                { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+                                                { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+        expect(dataBehavior3.toJSON()).toEqual([{ id: 'a0', count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+                                                { id: 'b0', count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+                                                { id: 'c0', count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] },
+                                                { id: 'd0', count: 3, otherIds: [4, 5, 6], otherOtherIds: ['a3', 'b3', 'c3', 'd3', 'e3', 'f3'] },
+                                                { id: 'e0', count: 4, otherIds: [5, 6, 7], otherOtherIds: ['a4', 'b4', 'c4', 'd4', 'e4', 'f4'] },
+                                                { id: 'f0', count: 5, otherIds: [6, 7, 8], otherOtherIds: ['a5', 'b5', 'c5', 'd5', 'e5', 'f5'] },
+                                                { id: 'a1', count: 6, otherIds: [7, 8, 9], otherOtherIds: ['a6', 'b6', 'c6', 'd6', 'e6', 'f6'] },
+                                                { id: 'b1', count: 7, otherIds: [8, 9, 10], otherOtherIds: ['a7', 'b7', 'c7', 'd7', 'e7', 'f7'] },
+                                                { id: 'c1', count: 8, otherIds: [9, 10, 11], otherOtherIds: ['a8', 'b8', 'c8', 'd8', 'e8', 'f8'] },
+                                                { id: 'd1', count: 9, otherIds: [10, 11, 12], otherOtherIds: ['a9', 'b9', 'c9', 'd9', 'e9', 'f9'] },
+                                                { id: 'e1', count: 10, otherIds: [11, 12, 13], otherOtherIds: ['a10', 'b10', 'c10', 'd10', 'e10', 'f10'] },
+                                                { id: 'f1', count: 11, otherIds: [12, 13, 14], otherOtherIds: ['a11', 'b11', 'c11', 'd11', 'e11', 'f11'] },
+                                                { id: 'a2', count: 12, otherIds: [13, 14, 15], otherOtherIds: ['a12', 'b12', 'c12', 'd12', 'e12', 'f12'] },
+                                                { id: 'b2', count: 13, otherIds: [14, 15, 16], otherOtherIds: ['a13', 'b13', 'c13', 'd13', 'e13', 'f13'] },
+                                                { id: 'c2', count: 14, otherIds: [15, 16, 17], otherOtherIds: ['a14', 'b14', 'c14', 'd14', 'e14', 'f14'] },
+                                                { id: 'd2', count: 15, otherIds: [16, 17, 18], otherOtherIds: ['a15', 'b15', 'c15', 'd15', 'e15', 'f15'] },
+                                                { id: 'e2', count: 16, otherIds: [17, 18, 19], otherOtherIds: ['a16', 'b16', 'c16', 'd16', 'e16', 'f16'] },
+                                                { id: 'f2', count: 17, otherIds: [18, 19, 20], otherOtherIds: ['a17', 'b17', 'c17', 'd17', 'e17', 'f17'] }]);
+        done();
+      });
+      viewWithBehavior.set('idFromView', 10);
+    });
+
+    it('will re-fetch when the id property on another data behavior changes to a non-empty value:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+      $.mockjax.clear(this.routes['/myModel/ids|post']);
+      $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
+
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.returnSingleResult = true;
+      defaultBehaviorConfiguration.ids = {
+        property: 'viewState.idFromView'
+      };
+      var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+      defaultBehavior2Configuration.ids = {
+        property: 'behaviors.dataBehavior.otherIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration,
+          dataBehavior2: defaultBehavior2Configuration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+      });
+
+      var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+      dataBehavior2.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+          { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+          { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+
+        dataBehavior2.once('fetched', function() {
+          expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [20, 30, 40], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+          expect(dataBehavior2.toJSON()).toEqual([{ id: 20, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+            { id: 30, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+            { id: 40, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+          done();
+        });
+        dataBehavior.privateCollection.models[0].set('otherIds', [20, 30, 40]);
+      });
+      viewWithBehavior.set('idFromView', 10);
+    });
+
+    it('will re-fetch when the id property on another data behavior changes to an empty value:\n\
+ids = {\n\
+  property: \'behaviors.dataBehavior.id\'\n\
+}\n\
+', function(done) {
+      $.mockjax.clear(this.routes['/myModel/ids|post']);
+      $.mockjax(MOCKJAX_ROUTE_WITH_OTHER_IDS);
+
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.returnSingleResult = true;
+      defaultBehaviorConfiguration.ids = {
+        property: 'viewState.idFromView'
+      };
+      var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
+      defaultBehavior2Configuration.ids = {
+        property: 'behaviors.dataBehavior.otherIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration,
+          dataBehavior2: defaultBehavior2Configuration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+      });
+
+      var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
+      dataBehavior2.once('fetched', function() {
+        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+          { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
+          { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
+
+        dataBehavior2.once('fetched', function() {
+          expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+          expect(dataBehavior2.toJSON()).toEqual([]);
+          done();
+        });
+        dataBehavior.privateCollection.models[0].unset('otherIds');
+      });
+      viewWithBehavior.set('idFromView', 10);
     });
   });
 });

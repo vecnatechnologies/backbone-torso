@@ -23,6 +23,8 @@
    */
   function normalizeIds(ids) {
     if (_.isArray(ids)) {
+      // remove any nesting of arrays.
+      ids = _.flatten(ids);
       return _.uniq(ids);
     } else if (_.isString(ids) || _.isNumber(ids)) {
       return [ids];
@@ -102,7 +104,7 @@
    *     - { 'event': < object (or function returning an object) that the event is triggered on > } - arbitrary 'event' triggered on the supplied object.
    * @author  jyoung@vecna.com
    */
-  return Behavior.extend({
+  var DataBehavior = Behavior.extend({
 
     /**
      * @method constructor
@@ -179,7 +181,11 @@
      */
     toJSON: function(singleResultProperty) {
       if (!this.__returnSingleResult) {
-        return this.privateCollection.toJSON();
+        if (_.isString(singleResultProperty)) {
+          return this.privateCollection.pluck(singleResultProperty);
+        } else {
+          return this.privateCollection.toJSON();
+        }
       }
 
       if (this.privateCollection.length === 0) {
@@ -250,7 +256,13 @@
         if (canListenToEvents) {
           this.__currentContextWithListener = idsContext;
           this.__currentContextEventName = 'change:' + idsPropertyNameAndContext.idsPropertyName;
-          this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+          this.__dependsOnBehavior = idsPropertyNameAndContext.isBehavior;
+          if (this.__dependsOnBehavior) {
+            this.listenTo(this.__currentContextWithListener, 'fetched', this.retrieve);
+            this.listenTo(this.__currentContextWithListener.privateCollection, this.__currentContextEventName, this.retrieve);
+          } else {
+            this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+          }
         }
       }
     },
@@ -261,7 +273,12 @@
      */
     stopListeningToIdsPropertyChangeEvent: function() {
       if (this.__currentContextWithListener) {
-        this.stopListening(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+        if (this.__dependsOnBehavior) {
+          this.stopListening(this.__currentContextWithListener, 'fetched', this.retrieve);
+          this.stopListening(this.__currentContextWithListener.privateCollection, this.__currentContextEventName, this.retrieve);
+        } else {
+          this.stopListening(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+        }
         delete this.__currentContextWithListener;
         delete this.__currentContextEventName;
       }
@@ -318,7 +335,11 @@
         ids = context && context[propertyName];
         var propertyOnContextIsUndefined = context && _.isUndefined(ids);
         var contextHasGetMethod = context && _.isFunction(context.get);
-        if (propertyOnContextIsUndefined && contextHasGetMethod) {
+        var contextHasToJSONMethod = context && _.isFunction(context.toJSON);
+
+        if (propertyOnContextIsUndefined && parsedContextDefinition.isBehavior && contextHasToJSONMethod) {
+          ids = context.toJSON(propertyName);
+        } else if (propertyOnContextIsUndefined && contextHasGetMethod) {
           ids = context.get(propertyName);
         }
         normalizedIds = normalizeIds(ids);
@@ -331,7 +352,7 @@
     /**
      * Converts the definition into the actual context object and property name to retrieve off of that context.
      * @method __parseIdsPropertyNameAndContext
-     * @return {{idsPropertyName: String, context: Object}} the name of the ids property and the actual object to use as the context.
+     * @return {{idsPropertyName: String, context: Object, isBehavior: Boolean}} the name of the ids property and the actual object to use as the context.
      * @private
      */
     __parseIdsPropertyNameAndContext: function() {
@@ -339,6 +360,7 @@
 
       var propertyName = this.__ids.property;
 
+      var isBehavior = false;
       var propertyParts = propertyName.split('.');
       var isNestedProperty = propertyParts.length > 1;
       if (isNestedProperty) {
@@ -347,6 +369,7 @@
           var behaviorName = propertyParts[1];
           context = this.view.getBehavior(behaviorName);
           propertyName = propertyParts.slice(2).join('.');
+          isBehavior = true;
         } else if (!_.isUndefined(context[rootPropertyName])) {
           context = context[rootPropertyName];
           propertyName = propertyParts.slice(1).join('.');
@@ -355,7 +378,8 @@
 
       return {
         idsPropertyName: propertyName,
-        idsContext: context
+        idsContext: context,
+        isBehavior: isBehavior
       };
     },
 
@@ -390,4 +414,6 @@
       this.trigger('fetched', { status: 'failed' })
     }
   });
+
+  return DataBehavior;
 }));
