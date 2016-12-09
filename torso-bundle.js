@@ -3844,7 +3844,7 @@
      */
     constructor: function(attributes, options) {
       options = options || {};
-      this.__cache = {};
+      this.cache = {};
       this.__currentUpdateEvents = [];
       this.__currentMappings = {};
       this.__currentObjectModels = {};
@@ -4243,7 +4243,7 @@
         currentHashValues[model.cid] = this.__generateHashValue(model);
       }
       hashValue = currentHashValues[model.cid];
-      var isStaleModel = this.__cache[model.cid] !== hashValue;
+      var isStaleModel = this.cache[model.cid] !== hashValue;
       if (staleModels) {
         if (isStaleModel) {
           staleModels[model.cid] = model;
@@ -4551,21 +4551,21 @@
     /**
      * Updates the form model's snapshot of the model's attributes to use later
      * @param model {Backbone.Model instance} the object model
-     * @param [cache=this.__cache] {Object} if passed an object (can be empty), this method will fill
-     *   this cache object instead of this form model's __cache field
+     * @param [cache=this.cache] {Object} if passed an object (can be empty), this method will fill
+     *   this cache object instead of this form model's cache field
      * @private
      * @method __updateCache
      */
     __updateCache: function(model) {
       if (!model) {
-        this.__cache = {};
+        this.cache = {};
         _.each(this.getTrackedModels(), function(model) {
           if (model) {
             this.__updateCache(model);
           }
         }, this);
       } else {
-        this.__cache[model.cid] = this.__generateHashValue(model);
+        this.cache[model.cid] = this.__generateHashValue(model);
       }
     },
 
@@ -5685,43 +5685,14 @@
         returnSingleResult: false,
         alwaysFetch: false
       });
+      _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
 
-      if (!behaviorOptions.cache) {
-        throw new Error('Torso Data Behavior constructed without a cache');
-      }
-      if (!(behaviorOptions.cache instanceof Collection)) {
-        throw new Error('Torso Data Behavior\'s cache is not of type Torso.Collection');
-      }
-      this.__cache = behaviorOptions.cache;
-
-      if (!_.isUndefined(behaviorOptions.ids) && !_.isUndefined(behaviorOptions.id)) {
-        throw new Error('Torso Data Behavior constructed with both id and ids.  Please define only one.');
-      }
-      if (!_.isUndefined(behaviorOptions.id)) {
-        this.__ids = behaviorOptions.id;
-      } else if (!_.isUndefined(behaviorOptions.ids)) {
-        this.__ids = behaviorOptions.ids;
-      } else {
-        throw new Error('Torso Data Behavior constructed without a way to identify the ids for this data.  Please define either id or ids.');
-      }
-
-      this.__validateIds();
-
-      this.__returnSingleResult = behaviorOptions.returnSingleResult;
-      this.__alwaysFetch = behaviorOptions.alwaysFetch;
-
-      if (_.isArray(behaviorOptions.updateEvents)) {
-        this.__updateEvents = behaviorOptions.updateEvents;
-      } else if (_.isObject(behaviorOptions.updateEvents) || _.isString(behaviorOptions.updateEvents)) {
-        this.__updateEvents = [behaviorOptions.updateEvents];
-      } else if (!_.isUndefined(behaviorOptions.updateEvents)) {
-        throw new Error('Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: ', behaviorOptions.updateEvents);
-      }
-      this.__updateEvents = _.compact(this.__updateEvents);
-      _.each(this.__updateEvents, this.__validUpdateEvent);
+      this.__normalizeAndValidateCache();
+      this.__normalizeAndValidateIds();
+      this.__normalizeAndValidateUpdateEvents();
 
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
-      this.privateCollection = this.__cache.createPrivateCollection(this.cid);
+      this.privateCollection = this.cache.createPrivateCollection(this.cid);
 
       Behavior.apply(this, arguments);
 
@@ -5751,7 +5722,7 @@
      * @return {Object} containing the full contents of either the collection or model.
      */
     toJSON: function(singleResultProperty) {
-      if (!this.__returnSingleResult) {
+      if (!this.returnSingleResult) {
         if (_.isString(singleResultProperty)) {
           return this.privateCollection.pluck(singleResultProperty);
         } else {
@@ -5807,7 +5778,7 @@
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     retrieve: function() {
-      if (this.__alwaysFetch) {
+      if (this.alwaysFetch) {
         return this.fetch();
       } else {
         return this.pull();
@@ -5819,7 +5790,7 @@
      * @method listenToIdsPropertyChangeEvent
      */
     listenToIdsPropertyChangeEvent: function() {
-      if (!_.isUndefined(this.__ids.property)) {
+      if (!_.isUndefined(this.ids.property)) {
         this.stopListeningToIdsPropertyChangeEvent();
         var idsPropertyNameAndContext = this.__parseIdsPropertyNameAndContext();
         var idsContext = idsPropertyNameAndContext.idsContext;
@@ -5881,12 +5852,13 @@
     },
 
     /**
-     * Parses this.__updateEvents configuration.
+     * Parses this.updateEvents configuration.
      * @return {[{ eventName: String, context: Object }]} an array of objects with the event name and context included.
      * @private
      */
     __parseUpdateEvents: function() {
-      var updateEvents = _.flatten(_.map(this.__updateEvents, this.__parseUpdateEvent, this));
+      this.__normalizeAndValidateUpdateEvents();
+      var updateEvents = _.flatten(_.map(this.updateEvents, this.__parseUpdateEvent, this));
       return _.compact(updateEvents);
     },
 
@@ -5957,27 +5929,86 @@
     },
 
     /**
-     * Validates that the __ids property is valid and if not throws an error describing why its not valid.
-     * @method __validateIds
+     * Validates that the cache property is valid and if not throws an error describing why its not valid.
+     * @method __normalizeAndValidateCache
      * @private
      */
-    __validateIds: function() {
-      var idsIsArray = _.isArray(this.__ids);
-      var idsIsSingleId = _.isString(this.__ids) || _.isNumber(this.__ids);
-      var idsIsFunction = _.isFunction(this.__ids);
-      var idsIsObjectWithStringProperty = _.isString(this.__ids.property);
-      var idsIsObject = _.isObject(this.__ids);
-      var idsIsValid = idsIsArray || idsIsSingleId || idsIsFunction || idsIsObjectWithStringProperty;
-      if (!idsIsValid && idsIsObject) {
-        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.__ids));
-      } else if (!idsIsValid) {
-        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.__ids));
+    __normalizeAndValidateCache: function() {
+      if (!this.cache) {
+        throw new Error('Torso Data Behavior constructed without a cache');
+      }
+      if (!(this.cache instanceof Collection)) {
+        throw new Error('Torso Data Behavior\'s cache is not of type Torso.Collection');
       }
     },
 
     /**
+     * Validates that the ids property is valid and if not throws an error describing why its not valid.
+     * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
+     * This is done as part of validation because we first validate that both are not set.
+     * @method __normalizeAndValidateIds
+     * @private
+     */
+    __normalizeAndValidateIds: function() {
+      if (!_.isUndefined(this.ids) && !_.isUndefined(this.id)) {
+        throw new Error('Torso Data Behavior constructed with both id and ids.  Please define only one.');
+      }
+      this.ids = this.id || this.ids;
+      this.__validateIds();
+    },
+
+    /**
+     * Validates that the ids property is valid and if not throws an error describing why its not valid.
+     * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
+     * This is done as part of validation because we first validate that both are not set.
+     * @method __normalizeAndValidateIds
+     * @private
+     */
+    __validateIds: function() {
+      if (_.isUndefined(this.ids)) {
+        throw new Error('Torso Data Behavior constructed without a way to identify the ids for this data.  Please define either id, ids.');
+      }
+
+      var idsIsArray = _.isArray(this.ids);
+      var idsIsSingleId = _.isString(this.ids) || _.isNumber(this.ids);
+      var idsIsFunction = _.isFunction(this.ids);
+      var idsIsObjectWithStringProperty = _.isString(this.ids.property);
+      var idsIsObject = _.isObject(this.ids);
+      var idsIsValid = idsIsArray || idsIsSingleId || idsIsFunction || idsIsObjectWithStringProperty;
+      if (!idsIsValid && idsIsObject) {
+        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.ids));
+      } else if (!idsIsValid) {
+        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.ids));
+      }
+    },
+
+    /**
+     * Validates that the updateEvents property is valid and if not throws an error describing why its not valid.
+     * @method __normalizeAndValidateUpdateEvents
+     * @private
+     */
+    __normalizeAndValidateUpdateEvents: function() {
+      var updateEventsIsArray = _.isArray(this.updateEvents);
+      var updateEventsIsSingleValue = !updateEventsIsArray && (_.isObject(this.updateEvents) || _.isString(this.updateEvents));
+      var updateEventsIsUndefined = _.isUndefined(this.updateEvents);
+      var updateEventsIsValidType = updateEventsIsArray || updateEventsIsSingleValue || updateEventsIsUndefined;
+
+      if (updateEventsIsSingleValue) {
+        this.updateEvents = [this.updateEvents];
+      }
+
+      if (!updateEventsIsValidType) {
+        throw new Error('Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: ', this.updateEvents);
+      }
+
+      // Remove any random falsey values (mostly to get rid of undefined events).
+      this.updateEvents = _.compact(this.updateEvents);
+      _.each(this.updateEvents, this.__validUpdateEvent);
+    },
+
+    /**
      * Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.
-     * @method __validateIds
+     * @method __normalizeAndValidateIds
      * @private
      */
     __validUpdateEvent: function(updateEventConfiguration) {
@@ -5998,12 +6029,12 @@
       this.__validateIds(); // validate ids enforces a fast-fail that guarantees that one of the if statements below will work.
 
       var idsDeferred = $.Deferred();
-      var ids = this.__ids;
+      var ids = this.ids;
       var normalizedIds = normalizeIds(ids);
       if (!_.isUndefined(normalizedIds)) {
         idsDeferred.resolve(normalizedIds);
-      } else if (_.isFunction(this.__ids)) {
-        ids = this.__ids(this.__cache);
+      } else if (_.isFunction(this.ids)) {
+        ids = this.ids(this.cache);
         normalizedIds = normalizeIds(ids);
         if (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
@@ -6012,7 +6043,7 @@
         } else {
           idsDeferred.resolve([]);
         }
-      } else if (!_.isUndefined(this.__ids.property)) {
+      } else if (!_.isUndefined(this.ids.property)) {
         var parsedContextDefinition = this.__parseIdsPropertyNameAndContext();
         var propertyName = parsedContextDefinition.idsPropertyName;
         var context = parsedContextDefinition.idsContext;
@@ -6043,7 +6074,7 @@
     __parseIdsPropertyNameAndContext: function() {
       var context = this.__parseIdsContext();
 
-      var propertyName = this.__ids.property;
+      var propertyName = this.ids.property;
 
       var isBehavior = false;
       var propertyParts = propertyName.split('.');
@@ -6069,12 +6100,12 @@
     },
 
     /**
-     * Parses the context property of __ids.
+     * Parses the context property of ids.
      * @return {Object} the context object to apply the properties value to (may not be the final context depending on the property definition).
      * @private
      */
     __parseIdsContext: function() {
-      var contextDefinition = this.__ids.context;
+      var contextDefinition = this.ids.context;
       var context;
       if (_.isUndefined(contextDefinition)) {
         context = this.view;
@@ -6086,7 +6117,7 @@
       } else if (_.isObject(contextDefinition)) {
         context = contextDefinition;
       } else {
-        throw new Error('Invalid context.  Not a string, object or function: ' + JSON.stringify(this.__ids));
+        throw new Error('Invalid context.  Not a string, object or function: ' + JSON.stringify(this.ids));
       }
       return context;
     },

@@ -126,7 +126,7 @@ describe('A Torso Data Behavior', function() {
         }
       });
       var viewWithDataBehaviorReturnSingleResultUndefined = new ViewWithDataBehaviorReturnSingleResultUndefined();
-      expect(viewWithDataBehaviorReturnSingleResultUndefined.getBehavior('dataBehavior').__returnSingleResult).toBe(false);
+      expect(viewWithDataBehaviorReturnSingleResultUndefined.getBehavior('dataBehavior').returnSingleResult).toBe(false);
     });
 
     it('can set returnSingleResult to false', function() {
@@ -138,7 +138,7 @@ describe('A Torso Data Behavior', function() {
         }
       });
       var viewWithDataBehaviorReturnSingleResultFalse = new ViewWithDataBehaviorReturnSingleResultFalse();
-      expect(viewWithDataBehaviorReturnSingleResultFalse.getBehavior('dataBehavior').__returnSingleResult).toBe(false);
+      expect(viewWithDataBehaviorReturnSingleResultFalse.getBehavior('dataBehavior').returnSingleResult).toBe(false);
     });
 
     it('can set returnSingleResult to true', function() {
@@ -150,7 +150,7 @@ describe('A Torso Data Behavior', function() {
         }
       });
       var viewWithDataBehaviorReturnSingleResultTrue = new ViewWithDataBehaviorReturnSingleResultTrue();
-      expect(viewWithDataBehaviorReturnSingleResultTrue.getBehavior('dataBehavior').__returnSingleResult).toBe(true);
+      expect(viewWithDataBehaviorReturnSingleResultTrue.getBehavior('dataBehavior').returnSingleResult).toBe(true);
     });
 
     it('defaults alwaysFetch to false', function() {
@@ -162,7 +162,7 @@ describe('A Torso Data Behavior', function() {
         }
       });
       var viewWithDataBehaviorAlwaysFetchUndefined = new ViewWithDataBehaviorAlwaysFetchUndefined();
-      expect(viewWithDataBehaviorAlwaysFetchUndefined.getBehavior('dataBehavior').__alwaysFetch).toBe(false);
+      expect(viewWithDataBehaviorAlwaysFetchUndefined.getBehavior('dataBehavior').alwaysFetch).toBe(false);
     });
 
     it('can set alwaysFetch to false', function() {
@@ -174,7 +174,7 @@ describe('A Torso Data Behavior', function() {
         }
       });
       var viewWithDataBehaviorAlwaysFetchFalse = new ViewWithDataBehaviorAlwaysFetchFalse();
-      expect(viewWithDataBehaviorAlwaysFetchFalse.getBehavior('dataBehavior').__alwaysFetch).toBe(false);
+      expect(viewWithDataBehaviorAlwaysFetchFalse.getBehavior('dataBehavior').alwaysFetch).toBe(false);
     });
 
     it('can set alwaysFetch to true', function() {
@@ -186,7 +186,7 @@ describe('A Torso Data Behavior', function() {
         }
       });
       var viewWithDataBehaviorAlwaysFetchTrue = new ViewWithDataBehaviorAlwaysFetchTrue();
-      expect(viewWithDataBehaviorAlwaysFetchTrue.getBehavior('dataBehavior').__alwaysFetch).toBe(true);
+      expect(viewWithDataBehaviorAlwaysFetchTrue.getBehavior('dataBehavior').alwaysFetch).toBe(true);
     });
 
     it('creates a private collection available in the initialize of the behavior', function() {
@@ -429,7 +429,7 @@ ids = function(cache) {\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.__getIds();
-      expect(actualCacheArgument).toBe(dataBehavior.__cache);
+      expect(actualCacheArgument).toBe(dataBehavior.cache);
     });
 
     it('can specify a function for ids that returns a jquery deferred object resolving to the ids sync:\n\

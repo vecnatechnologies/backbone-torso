@@ -278,7 +278,7 @@ module.exports = new (Torso.Router.extend({
       NestedModel.apply(this, arguments);
       options = options || {};
       this.__computed = [];
-      this.__cache = {};
+      this.cache = {};
       this.__currentUpdateEvents = [];
       this.__modelConfigs = [];
       this.__initMappings(options);
@@ -494,7 +494,7 @@ module.exports = new (Torso.Router.extend({
         currentHashValues[model.cid] = this.__generateHashValue(model);
       }
       hashValue = currentHashValues[model.cid];
-      var isStaleModel = this.__cache[model.cid] !== hashValue;
+      var isStaleModel = this.cache[model.cid] !== hashValue;
       if (staleModels) {
         if (isStaleModel) {
           staleModels[model.cid] = model;
@@ -659,13 +659,13 @@ module.exports = new (Torso.Router.extend({
     /**
      * Updates the form model's snapshot of the model's attributes to use later
      * @param model {Backbone.Model} the object model
-     * @param [cache=this.__cache] {Object} if passed an object (can be empty), this method will fill
-     *   this cache object instead of this form model's __cache field
+     * @param [cache=this.cache] {Object} if passed an object (can be empty), this method will fill
+     *   this cache object instead of this form model's cache field
      * @private
      * @method __updateCache
      */
     __updateCache: function(model) {
-      this.__cache[model.cid] = this.__generateHashValue(model);
+      this.cache[model.cid] = this.__generateHashValue(model);
     },
 
     /**
@@ -18749,7 +18749,7 @@ return jQuery;
     }
     // Assume equality for cyclic structures. The algorithm for detecting cyclic
     // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
-    
+
     // Initializing stack of traversed objects.
     // It's done here since we only need them for objects and arrays comparison.
     aStack = aStack || [];
@@ -18913,7 +18913,7 @@ return jQuery;
     };
   };
 
-  // Returns a predicate for checking whether an object has a given set of 
+  // Returns a predicate for checking whether an object has a given set of
   // `key:value` pairs.
   _.matcher = _.matches = function(attrs) {
     attrs = _.extendOwn({}, attrs);
@@ -19140,7 +19140,7 @@ return jQuery;
   // Provide unwrapping proxy for some methods used in engine operations
   // such as arithmetic and JSON stringification.
   _.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
-  
+
   _.prototype.toString = function() {
     return '' + this._wrapped;
   };
@@ -19360,7 +19360,7 @@ function registerDefaultHelpers(instance) {
           if(context.hasOwnProperty(key)) {
             // We're running the iterations one step out of sync so we can detect
             // the last iteration without have to scan the object twice and create
-            // an itermediate keys array. 
+            // an itermediate keys array.
             if (priorKey) {
               execIteration(priorKey, i-1);
             }

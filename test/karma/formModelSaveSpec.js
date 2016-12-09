@@ -78,7 +78,7 @@ describe('A Form Model saving', function() {
         }
       });
     expect(testFormModel.get('foo')).toBe(123);
-    expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":123}');
+    expect(testFormModel.cache[testModel.cid]).toBe('{"foo":123}');
     testModel.set('foo', 555);
     try {
       testFormModel.save({force: false});
@@ -416,10 +416,10 @@ describe('A Form Model saving', function() {
         }
       });
     expect(testFormModel.get('foo')).toBe(123);
-    expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":123}');
+    expect(testFormModel.cache[testModel.cid]).toBe('{"foo":123}');
     testFormModel.startUpdating();
     testModel.set('foo', 555);
-    expect(testFormModel.__cache[testModel.cid]).toBe('{"foo":555}');
+    expect(testFormModel.cache[testModel.cid]).toBe('{"foo":555}');
     testFormModel.stopUpdating();
   });
 
@@ -438,10 +438,10 @@ describe('A Form Model saving', function() {
       }
     });
     expect(combinedFormModel.get('baz')).toBe('test');
-    expect(combinedFormModel.__cache[testModel.cid]).toBe('{"bar":"test"}');
+    expect(combinedFormModel.cache[testModel.cid]).toBe('{"bar":"test"}');
     combinedFormModel.startUpdating();
     testModel.set('bar', 'new value');
-    expect(combinedFormModel.__cache[testModel.cid]).toBe('{"bar":"new value"}');
+    expect(combinedFormModel.cache[testModel.cid]).toBe('{"bar":"new value"}');
     combinedFormModel.stopUpdating();
   });
 });
