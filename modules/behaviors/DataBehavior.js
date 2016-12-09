@@ -70,8 +70,10 @@
    *                           Uses the view or the context as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
    *                           Will get the property before the first '.' from the view and if it is an object will try to use a
    *                           .get('propertyName') on it and set a 'change:' listener on it.
-   *                           If it is a string/number or array of string/number, then it will use that as the ids
-   *     - cell {Torso.Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+   *                           If it is a string/number or array of string/number, then it will use that as the ids.
+   *                           Triggering a 'change:context' event on the behavior will cause it to stop listing to the
+   *                           old context and start listening to the new one defined by this property.
+   *     - context {Torso.Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
    *                           events and has a .get('propertyName') function. It isn't required to fire events -
    *                           the change event is only required if it needs to refetch when the id property value changes.
    *     Examples:
@@ -102,7 +104,7 @@
    *     - 'model:eventName' - arbitrary even triggered on the view's model (eventName can be a change:propertyName event).
    *     - 'this:eventName' - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).
    *     - 'behaviorAlias:eventName' - arbitrary event triggered by another behavior on this view (eventName can be a change:propertyName event).
-   *     - { 'event': < object (or function returning an object) that the event is triggered on > } - arbitrary 'event' triggered on the supplied object.
+   *     - { '<eventName>': < object (or function returning an object) that the event is triggered on > } - arbitrary ('<eventName>') triggered on the supplied object.
    * @author  jyoung@vecna.com
    */
   var DataBehavior = Behavior.extend({
@@ -309,6 +311,11 @@
       }, this);
     },
 
+    /**
+     * Removes existing event listeners.
+     * @method _undelegateEvents
+     * @private
+     */
     _undelegateUpdateEvents: function() {
       var updateEvents = this.__parseUpdateEvents();
       _.each(updateEvents, function(parsedUpdateEvent) {
@@ -316,11 +323,24 @@
       }, this);
     },
 
+    /**
+     * Parses this.__updateEvents configuration.
+     * @return {[{ eventName: String, context: Object }]} an array of objects with the event name and context included.
+     * @private
+     */
     __parseUpdateEvents: function() {
       var updateEvents = _.flatten(_.map(this.__updateEvents, this.__parseUpdateEvent, this));
       return _.compact(updateEvents);
     },
 
+    /**
+     * Parses an individual event configuration.
+     * Note: events defined using objects can have more than one event defined w/in the object.
+     * @param updateEventConfiguration {String | Object} the configuration for an individual event configuration.
+     * @return {[{ eventName: String, context: Object }] | undefined} an array of objects with the event name and context included.
+     *                                                                If the event could not be parsed, undefined is returned.
+     * @private
+     */
     __parseUpdateEvent: function(updateEventConfiguration) {
       if (_.isUndefined(updateEventConfiguration)) {
         return undefined;
@@ -343,6 +363,18 @@
       return parsedUpdateEvents;
     },
 
+    /**
+     * Parse a string type update event.
+     * Context Key (first part of the string up to the first ':') can be one of the following:
+     *   this (maps to the behavior),
+     *   view (maps to the behavior's view),
+     *   viewState (maps to the behavior's view's viewState),
+     *   model (maps to the behavior's view's model),
+     *   <*> any others are assumed to be the names of behaviors on this behavior's view.
+     * @param updateEventConfiguration {String} a string representation of the event.
+     * @return {{eventName: String, context: Backbone.Events}} the parsed configuration with the event name and context object.
+     * @private
+     */
     __parseStringUpdateEvent: function(updateEventConfiguration) {
       var contextString = updateEventConfiguration.split(':', 1)[0];
       var context;
@@ -502,19 +534,39 @@
       return context;
     },
 
+    /**
+     * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
+     * @method __fetchSuccess
+     * @private
+     */
     __fetchSuccess: function() {
       this.trigger('fetched', { status: 'success' })
     },
 
+    /**
+     * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
+     * @method __fetchFailed
+     * @private
+     */
     __fetchFailed: function() {
       this.trigger('fetched', { status: 'failed' })
     },
 
+    /**
+     * Adds listeners when the view is activated.
+     * @method _activate
+     * @private
+     */
     _activate: function() {
       this.listenToIdsPropertyChangeEvent();
       this._delegateUpdateEvents();
     },
 
+    /**
+     * Stops listening when the view is deactivated.
+     * @method _deactivate
+     * @private
+     */
     _deactivate: function() {
       this.stopListeningToIdsPropertyChangeEvent();
       this._undelegateUpdateEvents();
