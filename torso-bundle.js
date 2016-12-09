@@ -1316,29 +1316,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/cellMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Cell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
-  }
-}(this, function(_, Backbone, cellMixin) {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @class  Cell
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var Cell = Backbone.Model.extend({});
-  _.extend(Cell.prototype, cellMixin);
-
-  return Cell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/cacheMixin', './mixins/loadingMixin'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/cacheMixin'), require('./mixins/loadingMixin'));
@@ -1390,27 +1367,25 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
+    define(['underscore', 'backbone', './mixins/cellMixin'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+    root.Torso.Cell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
   }
-}(this, function(_, Backbone, pollingMixin) {
+}(this, function(_, Backbone, cellMixin) {
   'use strict';
-
   /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @class  Cell
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
+  var Cell = Backbone.Model.extend({});
+  _.extend(Cell.prototype, cellMixin);
 
-  return Model;
+  return Cell;
 }));
 
 (function(root, factory) {
@@ -1437,6 +1412,31 @@
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
 }));
 
 (function(root, factory) {
