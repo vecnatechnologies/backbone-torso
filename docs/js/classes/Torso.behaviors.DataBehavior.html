@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>DataBehavior - backbone-torso</title>
+    <title>Torso.behaviors.DataBehavior - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -41,7 +41,6 @@
                                 <li><a href="../classes/Behavior.html">Behavior</a></li>
                                 <li><a href="../classes/Cell.html">Cell</a></li>
                                 <li><a href="../classes/Collection.html">Collection</a></li>
-                                <li><a href="../classes/DataBehavior.html">DataBehavior</a></li>
                                 <li><a href="../classes/Events.html">Events</a></li>
                                 <li><a href="../classes/FormModel.html">FormModel</a></li>
                                 <li><a href="../classes/FormView.html">FormView</a></li>
@@ -52,6 +51,7 @@
                                 <li><a href="../classes/Router.html">Router</a></li>
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
+                                <li><a href="../classes/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
@@ -100,12 +100,12 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>DataBehavior Class</h1>
+<h1>Torso.behaviors.DataBehavior Class</h1>
 <div class="box meta">
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l34"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:34</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l44"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:44</code></a>
         </div>
 
             Module: <a href="../modules/Torso.behaviors.html">Torso.behaviors</a>
@@ -117,17 +117,169 @@
     <p>This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
 This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
 This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.</p>
-<p>Example Configuration:
-TorsoView.extend({
-behaviors: {
-demographics: {
-behavior: TorsoDataBehavior,
-cache: require('./demographicsCacheCollection'),
-returnSingleResult: true,
-id: { property: '_patientVecnaId' }
+<p>Example Configuration on the view:</p>
+<pre class="code prettyprint"><code>TorsoView.extend({
+  behaviors: {
+    demographics: {
+      behavior: TorsoDataBehavior,
+      cache: require('./demographicsCacheCollection'),
+      returnSingleResult: true,
+      id: { property: '_patientVecnaId' }
+    }
+  }
 }
+</code></pre>
+<p>Any options for this behavior can also be configured directly on it using the same extension mechanism as other
+Backbone or Torso objects.</p>
+<p>Example configuration by extension:</p>
+<pre class="code prettyprint"><code>var AppointmentDataBehavior = DataBehavior.extend({
+  cache: require('./appointmentCacheCollection'),
+  id: { property: '_appointmentExternalId' },
+  returnSingleResult: true,
+  alwaysFetch: true
+});
+</code></pre>
+<p>Ways to cause this data behavior to refresh the data.  Ids are retrieved from the idsContainer whenever a refresh of data is requested.</p>
+<ul>
+<li><strong>view.getBehavior('thisBehaviorAlias').pull()</strong> - Any ids that are already in the cache are added immediately.
+Any that are not already in the cache are fetched as a single batch of ids.</li>
+<li><strong>view.getBehavior('thisBehaviorAlias').fetch()</strong> - Regardless of the cache state all ids identified by this behavior are fetched from the server.</li>
+<li><strong>view.getBehavior('thisBehaviorAlias').retrieve()</strong> - Will either fetch or pull based on the current value of 'alwaysFetch'.
+Defaults to pull (if alwaysFetch is not explicitly set).</li>
+<li><strong>view.getBehavior('thisBehaviorAlias').trigger('ids-container-updated')</strong> - this is a way to indicate that the id container changed
+which means the id listeners should be rebound and data should be refreshed.</li>
+<li><strong>idsContainer.trigger('change:<idPropertyName>')</strong> - This is the change event that is already emitted by Cell-like objects when their properties change.</li>
+<li><strong>idsContainer.trigger('fetched:ids')</strong> - This indicates that the ids have been fetched for the first time (when a change event may not be fired) and is used
+mainly to chain data behaviors together (this event is also emitted by this behavior whenever a fetch or pull completes).</li>
+</ul>
+<p>Ways to get properties from the data in this behavior:</p>
+<ul>
+<li><strong>view.getBehavior('thisBehaviorAlias').toJSON()</strong> - Either array of data if returnSingleResult is false (default),
+Or the object data directly if returnSingleResult is true.</li>
+<li><strong>view.getBehavior('thisBehaviorAlias').toJSON('some.data.property')</strong> - returns just that property of the result or undefined if it hasn't been fetched or doesn't exist.
+If returnSingleResult is false then an array of values for that object is returned
+This is equivalent to _.pluck(view.getBehavior('thisBehaviorAlias').toJSON(), 'some.data.property').</li>
+</ul>
+<p>The context generated by <code>view.prepare()</code> will contain all of the data associated with this view namespaced by the behavior's alias on the view.
+This the same data as returned by <code>view.getBehavior('thisBehaviorAlias').toJSON()</code>.</p>
+<pre class="code prettyprint"><code>View.extend({
+  behaviors: {
+    thisBehaviorAlias: {
+      behavior: ThisBehaviorClass
+    }
+  }
+});
+</code></pre>
+<p>result from prepare:</p>
+<pre class="code prettyprint"><code>{
+  ...,
+  thisBehaviorAlias: &lt;result of view.getBehavior('thisBehaviorAlias').toJSON()&gt;
 }
-}</p>
+</code></pre>
+<p>Some Example Configurations:</p>
+<p><strong>Static id</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
+<pre class="code prettyprint"><code>View.extend({
+   behaviors: {
+     article: {
+       behavior: require('torso/modules/behaviors/DataBehavior'),
+       cache: require('app/article/articleCacheCollection'),
+       returnSingleResult: true,
+       id: 1234
+     }
+   }
+ });
+</code></pre>
+<p>value used for id: <code>1234</code></p>
+<p>context for template:</p>
+<pre class="code prettyprint"><code>{
+  ...,
+  article: {
+    id: 1234,
+    title: 'A really cool thing',
+    text: 'So I was walking down the street one day...'
+  }
+}
+</code></pre>
+<p><strong>Static ids</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
+<pre class="code prettyprint"><code>View.extend({
+  behaviors: {
+    posts: {
+      behavior: require('torso/modules/behaviors/DataBehavior'),
+      cache: require('app/article/postCacheCollection'),
+      ids: [ 'yesterday-by-the-river', 'tomorrow-by-the-sea' ]
+    }
+  }
+});
+</code></pre>
+<p>value used for ids: <code>[ 'yesterday-by-the-river', 'tomorrow-by-the-sea' ]</code></p>
+<p>context for template:</p>
+<pre class="code prettyprint"><code> {
+   ...,
+   posts: [{
+     id: 'yesterday-by-the-river',
+     title: 'Yesterday by the River',
+     author: 'John Smith',
+     content: 'While I was walking by the river...'
+   },{
+     id: 'tomorrow-by-the-sea',
+     title: 'Tomorrow by the Sea',
+     author: 'Mary Smith',
+     content: 'I will walk on the beach tomorrow...'
+   }]
+ }
+</code></pre>
+<p><strong>Static id property on view</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
+<pre class="code prettyprint"><code>View.extend({
+   behaviors: {
+     article: {
+       behavior: require('torso/modules/behaviors/DataBehavior'),
+       cache: require('app/article/articleCacheCollection'),
+       returnSingleResult: true,
+       id: { property: '_articleId' }
+     }
+   }
+ });
+</code></pre>
+<p>value used for id: <code>view._articleId</code></p>
+<p>context for template:</p>
+<pre class="code prettyprint"><code>{
+  ...,
+  article: {
+    id: 12,
+    title: 'A really cool thing',
+    text: 'So I was walking down the street one day...'
+  }
+}
+</code></pre>
+<p><strong>Static ids property on view</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
+<pre class="code prettyprint"><code>View.extend({
+  behaviors: {
+    posts: {
+      behavior: require('torso/modules/behaviors/DataBehavior'),
+      cache: require('app/article/postCacheCollection'),
+      ids: { property: '_postIds' }
+    }
+  }
+});
+</code></pre>
+<p>value used for ids: <code>view._postIds</code></p>
+<p>context for template:</p>
+<pre class="code prettyprint"><code> {
+   ...,
+   posts: [{
+     id: 'yesterday-by-the-river',
+     title: 'Yesterday by the River',
+     author: 'John Smith',
+     content: 'While I was walking by the river...'
+   },{
+     id: 'tomorrow-by-the-sea',
+     title: 'Tomorrow by the Sea',
+     author: 'Mary Smith',
+     content: 'I will walk on the beach tomorrow...'
+   }]
+ }
+</code></pre>
+<p>__</p>
 
 </div>
 
@@ -137,6 +289,7 @@ id: { property: '_patientVecnaId' }
         <li class="api-class-tab index"><a href="#index">Index</a></li>
 
             <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+            <li class="api-class-tab properties"><a href="#properties">Properties</a></li>
     </ul>
 
     <div>
@@ -234,6 +387,28 @@ id: { property: '_patientVecnaId' }
                     </ul>
                 </div>
 
+                <div class="index-section properties">
+                    <h3>Properties</h3>
+
+                    <ul class="index-list properties">
+                            <li class="index-item property">
+                                <a href="#property_alwaysFetch">alwaysFetch</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_cache">cache</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_ids">ids</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_returnSingleResult">returnSingleResult</a>
+
+                            </li>
+                    </ul>
+                </div>
 
 
         </div>
@@ -257,7 +432,7 @@ id: { property: '_patientVecnaId' }
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l570"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:570</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l817"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:817</code></a>
         </p>
 
 
@@ -289,7 +464,7 @@ id: { property: '_patientVecnaId' }
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l560"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:560</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l807"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:807</code></a>
         </p>
 
 
@@ -324,7 +499,7 @@ id: { property: '_patientVecnaId' }
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l457"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:457</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l704"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:704</code></a>
         </p>
 
 
@@ -365,7 +540,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l444"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:444</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l691"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:691</code></a>
         </p>
 
 
@@ -397,7 +572,7 @@ or rejects with the error message.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l395"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:395</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l642"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:642</code></a>
         </p>
 
 
@@ -431,7 +606,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l380"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:380</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l627"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:627</code></a>
         </p>
 
 
@@ -465,7 +640,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l420"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:420</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l667"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:667</code></a>
         </p>
 
 
@@ -500,7 +675,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l503"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:503</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l750"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:750</code></a>
         </p>
 
 
@@ -541,7 +716,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l366"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:366</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l613"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:613</code></a>
         </p>
 
 
@@ -573,7 +748,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l580"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:580</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l827"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:827</code></a>
         </p>
 
 
@@ -605,7 +780,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l590"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:590</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l837"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:837</code></a>
         </p>
 
 
@@ -637,7 +812,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l264"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:264</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l511"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:511</code></a>
         </p>
 
 
@@ -669,7 +844,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l277"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:277</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l524"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:524</code></a>
         </p>
 
 
@@ -694,6 +869,14 @@ This is done as part of validation because we first validate that both are not s
                         <code>behaviorOptions</code>
                 </li>
                 <li class="arg">
+                        <code>[behaviorOptions.ids=behaviorOptions.id]  - duck-typed property that identifies the ids to use. id or ids is required.
+  - {String|Number} - the id to use directly (equivalent to an array of a single id).
+  - {String[]|Number[]</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[updateEvents]</code>
+                </li>
+                <li class="arg">
                         <code class="optional">[viewOptions]</code>
                 </li>
             </ul><span class="paren">)</span>
@@ -709,7 +892,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l112"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:112</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l308"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:308</code></a>
         </p>
 
 
@@ -735,11 +918,24 @@ This is done as part of validation because we first validate that both are not s
 
                         <ul class="params-list">
                             <li class="param">
-                                    <code class="param-name">cache</code>
-                                    <span class="type">Torso.Collection</span>
+                                    <code class="param-name optional">[id=behaviorOptions.ids]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>see class constructor docs.</p>
+                                    <ul>
+<li>alias for ids.  id or ids is required.</li>
+</ul>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name">cache</code>
+                                    <span class="type"><a href="../classes/Collection.html" class="crosslink">Collection</a></span>
+
+                                <div class="param-description">
+                                    <p>see cache property.</p>
 
                                 </div>
 
@@ -750,7 +946,7 @@ This is done as part of validation because we first validate that both are not s
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>see class constructor docs.</p>
+                                    <p>see returnSingleResult property.</p>
 
                                 </div>
 
@@ -761,7 +957,7 @@ This is done as part of validation because we first validate that both are not s
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>see class constructor docs.</p>
+                                    <p>see alwaysFetch property.</p>
 
                                 </div>
 
@@ -772,7 +968,7 @@ This is done as part of validation because we first validate that both are not s
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>|Function} see class constructor docs.</p>
+                                    <p>|Function} see id property.</p>
 
                                 </div>
 
@@ -783,7 +979,7 @@ This is done as part of validation because we first validate that both are not s
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>|Function} see class constructor docs.</p>
+                                    <p>|Function} see ids property.</p>
 
                                 </div>
 
@@ -794,12 +990,98 @@ This is done as part of validation because we first validate that both are not s
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>see class constructor docs.</p>
+                                    <p>see updateEvents property.</p>
 
                                 </div>
 
                             </li>
                         </ul>
+                </li>
+                <li class="param">
+                        <code class="param-name">[behaviorOptions.ids=behaviorOptions.id]  - duck-typed property that identifies the ids to use. id or ids is required.
+  - {String|Number} - the id to use directly (equivalent to an array of a single id).
+  - {String[]|Number[]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+
+                    <div class="param-description">
+                        <p>} - the ids to use directly.</p>
+<ul>
+<li>
+<p>{Object} - more complex configuration that identifies a model-like object that fires a change event and the
+property on that object to use. The object can fire the change event for the given property
+and have a .get('propertyName') method, or it can define the property directly on the context.
+Only one property can be identified as supplying the id for this data model.
+If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
+The context can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
+have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
+data behavior that the property has been modified.</p>
+<ul>
+<li>property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+context is defined. The context is the object that fires a change event for the given property name.
+Uses the view or the context as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
+Will get the property before the first '.' from the view and if it is an object will try to use a
+.get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.
+If it is a string/number or array of string/number, then it will use that as the ids.
+Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
+old context and start listening to the new one defined by this property.</li>
+<li>context {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+events and has a .get('propertyName') function. It isn't required to fire events -
+the change event is only required if it needs to re-fetch when the id property value changes.
+Examples:
+<ul>
+<li>{ property: '_patientId' }</li>
+<li>{ property: 'viewState.appointmentId' }</li>
+<li>{ property: 'model.type' }</li>
+<li>{ property: 'behaviors.demographics.appointments' }</li>
+<li>{ property: 'id', context: userService }</li>
+<li>{ property: 'username', context: function() { application.getCurrentUser() } }</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>function(cache) - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
+to track with the private collection. Cache is passed in as the first argument so that the behavior
+can be defined and the cache can be overridden later.
+'this' is the behavior (from which you can get the view if needed).
+What was criteria should use this instead:</p>
+<pre><code>function(cache) {
+  var thisBehaviorInstance = this;
+  var view = this.view;
+  var criteria = { ... some criteria ... };
+  return cache.fetchIdsByCriteria(criteria);
+}</code></pre>
+</li>
+</ul>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[updateEvents]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <ul>
+<li>cause this behavior to re-calculate its ids and refetch them
+from the server if the given events are triggered
+(space separated if string, single item is equivalent to array of single item).
+<ul>
+<li>'view:eventName' - arbitrary event triggered on the view (eventName can be a change:propertyName event).</li>
+<li>'viewState:eventName' - arbitrary event triggered on the viewState (eventName can be a change:propertyName event).</li>
+<li>'model:eventName' - arbitrary even triggered on the view's model (eventName can be a change:propertyName event).</li>
+<li>'this:eventName' - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).</li>
+<li>'behaviorAlias:eventName' - arbitrary event triggered by another behavior on this view (eventName can be a change:propertyName event).</li>
+<li>{ '<eventName>': &lt; object (or function returning an object) that the event is triggered on &gt; } - arbitrary ('<eventName>') triggered on the supplied object.</li>
+</ul>
+</li>
+</ul>
+
+                    </div>
+
                 </li>
                 <li class="param">
                         <code class="param-name optional">[viewOptions]</code>
@@ -837,7 +1119,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l204"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:204</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l425"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:425</code></a>
         </p>
 
 
@@ -877,7 +1159,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l232"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:232</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l479"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:479</code></a>
         </p>
 
 
@@ -908,7 +1190,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l150"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:150</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l468"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:468</code></a>
         </p>
 
 
@@ -942,7 +1224,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l190"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:190</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l411"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:411</code></a>
         </p>
 
 
@@ -985,7 +1267,7 @@ This is done as part of validation because we first validate that both are not s
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l218"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:218</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l397"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:397</code></a>
         </p>
 
 
@@ -1026,7 +1308,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l251"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:251</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l498"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:498</code></a>
         </p>
 
 
@@ -1066,7 +1348,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l161"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:161</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l439"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:439</code></a>
         </p>
 
 
@@ -1112,6 +1394,174 @@ value of returnSingleResult) or the value of a specific property if a single res
 </div>
             </div>
 
+            <div id="properties" class="api-class-tabpanel">
+                <h2 class="off-left">Properties</h2>
+
+<div id="property_alwaysFetch" class="property item">
+    <h3 class="name"><code>alwaysFetch</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l250"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:250</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Determines whether <code>pull()</code> or <code>fetch()</code> is called when using <code>retrieve()</code>.
+true - Use fetch() by default on the private collection.
+false (default) - Use pull() by default on the private collection.
+True will query the server more often, but will provide more up-to-date data.
+False will only query the server if the model hasn't already been retrieved.
+This property will be ignored if <code>fetch()</code> or <code>pull()</code> is called directly.</p>
+
+    </div>
+
+        <p><strong>Default:</strong> false</p>
+
+
+</div>
+<div id="property_cache" class="property item">
+    <h3 class="name"><code>cache</code></h3>
+    <span class="type"><a href="../classes/Collection.html" class="crosslink">Collection</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l234"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:234</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The torso collection that is acting as a cache used to create the private collections.
+This property/option is required.  Instantiation will fail if it is not set.</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_ids" class="property item">
+    <h3 class="name"><code>ids</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l262"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:262</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).</p>
+<ul>
+<li>
+<p>{String|Number} - the id to use directly (equivalent to an array of a single id).</p>
+</li>
+<li>
+<p>{String[]|Number[]} - the ids to use directly.</p>
+</li>
+<li>
+<p>{Object} - more complex configuration that identifies a model-like object that fires a change event and the
+property on that object to use. The object can fire the change event for the given property
+and have a .get('propertyName') method, or it can define the property directly on the context.
+Only one property can be identified as supplying the id for this data model.
+If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
+The context can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
+have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
+data behavior that the property has been modified.</p>
+<ul>
+<li>property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+context is defined. The context is the object that fires a change event for the given property name.
+Uses the view or the context as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
+Will get the property before the first '.' from the view and if it is an object will try to use a
+.get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.
+If it is a string/number or array of string/number, then it will use that as the ids.
+Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
+old context and start listening to the new one defined by this property.</li>
+<li>context {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+events and has a .get('propertyName') function. It isn't required to fire events -
+the change event is only required if it needs to re-fetch when the id property value changes.
+Examples:
+<ul>
+<li>{ property: '_patientId' }</li>
+<li>{ property: 'viewState.appointmentId' }</li>
+<li>{ property: 'model.type' }</li>
+<li>{ property: 'behaviors.demographics.appointments' }</li>
+<li>{ property: 'id', context: userService }</li>
+<li>{ property: 'username', context: function() { application.getCurrentUser() } }</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>{Function(cache)} - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
+to track with the private collection. Cache is passed in as the first argument so that the behavior
+can be defined and the cache can be overridden later.
+'this' is the behavior (from which you can get the view if needed).
+What was criteria should use this instead:</p>
+<pre class="code prettyprint"><code>function(cache) {
+  var thisBehaviorInstance = this;
+  var view = this.view;
+  var criteria = { ... some criteria ... };
+  return cache.fetchIdsByCriteria(criteria);
+}</code></pre>
+</li>
+</ul>
+
+    </div>
+
+
+
+</div>
+<div id="property_returnSingleResult" class="property item">
+    <h3 class="name"><code>returnSingleResult</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l241"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:241</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Determines the result of <code>view.getBehavior('thisBehaviorAlias').toJSON()</code>.
+true - a single model result is returned.
+false (default) - an array of model results are returned.</p>
+
+    </div>
+
+        <p><strong>Default:</strong> false</p>
+
+
+</div>
+            </div>
 
 
     </div>

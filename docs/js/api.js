@@ -4,7 +4,6 @@ YUI.add("yuidoc-meta", function(Y) {
         "Behavior",
         "Cell",
         "Collection",
-        "DataBehavior",
         "Events",
         "FormModel",
         "FormView",
@@ -21,6 +20,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Torso.Utils.handlebarsUtils",
         "Torso.Utils.stickitUtils",
         "Torso.Utils.templateRenderer",
+        "Torso.behaviors.DataBehavior",
         "Torso.validation",
         "View",
         "history"
@@ -38,7 +38,7 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "Torso.behaviors",
             "name": "Torso.behaviors",
-            "description": "This behavior implements simplified interaction with data sources (i.e. TorsoCollection).\nThis behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.\nThis behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.\n\nExample Configuration:\n  TorsoView.extend({\n    behaviors: {\n      demographics: {\n        behavior: TorsoDataBehavior,\n        cache: require('./demographicsCacheCollection'),\n        returnSingleResult: true,\n        id: { property: '_patientVecnaId' }\n      }\n    }\n  }"
+            "description": "Behaviors defined in Torso."
         }
     ],
     "elements": []

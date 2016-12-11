@@ -41,7 +41,6 @@
                                 <li><a href="../classes/Behavior.html">Behavior</a></li>
                                 <li><a href="../classes/Cell.html">Cell</a></li>
                                 <li><a href="../classes/Collection.html">Collection</a></li>
-                                <li><a href="../classes/DataBehavior.html">DataBehavior</a></li>
                                 <li><a href="../classes/Events.html">Events</a></li>
                                 <li><a href="../classes/FormModel.html">FormModel</a></li>
                                 <li><a href="../classes/FormView.html">FormView</a></li>
@@ -52,6 +51,7 @@
                                 <li><a href="../classes/Router.html">Router</a></li>
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
+                                <li><a href="../classes/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
@@ -124,114 +124,361 @@
   /**
    * Converts string or number values into an array with a single string or number item.
    * If the input is not a string, number or array then undefined is returned.
+   * This is a private helper method used internally by this behavior and is not exposed in any way.
    * @param ids {String|Number|String[]|Number[]} the ids to convert.
    * @return {String[]|Number[]} an array of strings or numbers.
+   * @private
    */
   function normalizeIds(ids) {
     if (_.isArray(ids)) {
-      // remove any nesting of arrays.
+      // remove any nesting of arrays - it is assumed that the resulting ids will be simple string or number values.
       ids = _.flatten(ids);
+      // remove any duplicate ids.
       return _.uniq(ids);
     } else if (_.isString(ids) || _.isNumber(ids)) {
+      // individual id - convert to array for consistency.
       return [ids];
     }
   }
+
+  /**
+   * Behaviors defined in Torso.
+   * @module Torso.behaviors
+   * @namespace Torso.behaviors
+   */
 
   /**
    * This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
    * This behavior manages re-rendering when data changes and automatically adding the returned data to the view&#x27;s context.
    * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
    *
-   * Example Configuration:
-   *   TorsoView.extend({
-   *     behaviors: {
-   *       demographics: {
-   *         behavior: TorsoDataBehavior,
-   *         cache: require(&#x27;./demographicsCacheCollection&#x27;),
-   *         returnSingleResult: true,
-   *         id: { property: &#x27;_patientVecnaId&#x27; }
+   * Example Configuration on the view:
+   *
+   *     TorsoView.extend({
+   *       behaviors: {
+   *         demographics: {
+   *           behavior: TorsoDataBehavior,
+   *           cache: require(&#x27;./demographicsCacheCollection&#x27;),
+   *           returnSingleResult: true,
+   *           id: { property: &#x27;_patientVecnaId&#x27; }
+   *         }
    *       }
    *     }
-   *   }
    *
-   * @module Torso.behaviors
+   * Any options for this behavior can also be configured directly on it using the same extension mechanism as other
+   * Backbone or Torso objects.
+   *
+   * Example configuration by extension:
+   *
+   *     var AppointmentDataBehavior = DataBehavior.extend({
+   *       cache: require(&#x27;./appointmentCacheCollection&#x27;),
+   *       id: { property: &#x27;_appointmentExternalId&#x27; },
+   *       returnSingleResult: true,
+   *       alwaysFetch: true
+   *     });
+   *
+   * Ways to cause this data behavior to refresh the data.  Ids are retrieved from the idsContainer whenever a refresh of data is requested.
+   *  * __view.getBehavior(&#x27;thisBehaviorAlias&#x27;).pull()__ - Any ids that are already in the cache are added immediately.
+   *                                                       Any that are not already in the cache are fetched as a single batch of ids.
+   *  * __view.getBehavior(&#x27;thisBehaviorAlias&#x27;).fetch()__ - Regardless of the cache state all ids identified by this behavior are fetched from the server.
+   *  * __view.getBehavior(&#x27;thisBehaviorAlias&#x27;).retrieve()__ - Will either fetch or pull based on the current value of &#x27;alwaysFetch&#x27;.
+   *                                                           Defaults to pull (if alwaysFetch is not explicitly set).
+   *  * __view.getBehavior(&#x27;thisBehaviorAlias&#x27;).trigger(&#x27;ids-container-updated&#x27;)__ - this is a way to indicate that the id container changed
+   *                                                                                 which means the id listeners should be rebound and data should be refreshed.
+   *  * __idsContainer.trigger(&#x27;change:&lt;idPropertyName&gt;&#x27;)__ - This is the change event that is already emitted by Cell-like objects when their properties change.
+   *  * __idsContainer.trigger(&#x27;fetched:ids&#x27;)__ - This indicates that the ids have been fetched for the first time (when a change event may not be fired) and is used
+   *                                              mainly to chain data behaviors together (this event is also emitted by this behavior whenever a fetch or pull completes).
+   *
+   * Ways to get properties from the data in this behavior:
+   *  * __view.getBehavior(&#x27;thisBehaviorAlias&#x27;).toJSON()__ - Either array of data if returnSingleResult is false (default),
+   *                                                        Or the object data directly if returnSingleResult is true.
+   *  * __view.getBehavior(&#x27;thisBehaviorAlias&#x27;).toJSON(&#x27;some.data.property&#x27;)__ - returns just that property of the result or undefined if it hasn&#x27;t been fetched or doesn&#x27;t exist.
+   *                                                                             If returnSingleResult is false then an array of values for that object is returned
+   *                                                                             This is equivalent to _.pluck(view.getBehavior(&#x27;thisBehaviorAlias&#x27;).toJSON(), &#x27;some.data.property&#x27;).
+   *
+   *   The context generated by &#x60;view.prepare()&#x60; will contain all of the data associated with this view namespaced by the behavior&#x27;s alias on the view.
+   *   This the same data as returned by &#x60;view.getBehavior(&#x27;thisBehaviorAlias&#x27;).toJSON()&#x60;.
+   *
+   *     View.extend({
+   *       behaviors: {
+   *         thisBehaviorAlias: {
+   *           behavior: ThisBehaviorClass
+   *         }
+   *       }
+   *     });
+   *
+   *   result from prepare:
+   *
+   *     {
+   *       ...,
+   *       thisBehaviorAlias: &lt;result of view.getBehavior(&#x27;thisBehaviorAlias&#x27;).toJSON()&gt;
+   *     }
+   *
+   * Some Example Configurations:
+   *
+   * __Static id__ (can be a single String or Number or an array of Strings or Numbers):
+   *
+   *     View.extend({
+   *        behaviors: {
+   *          article: {
+   *            behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
+   *            cache: require(&#x27;app/article/articleCacheCollection&#x27;),
+   *            returnSingleResult: true,
+   *            id: 1234
+   *          }
+   *        }
+   *      });
+   *
+   *    value used for id: &#x60;1234&#x60;
+   *
+   *    context for template:
+   *
+   *     {
+   *       ...,
+   *       article: {
+   *         id: 1234,
+   *         title: &#x27;A really cool thing&#x27;,
+   *         text: &#x27;So I was walking down the street one day...&#x27;
+   *       }
+   *     }
+   *
+   * __Static ids__ (can be a single String or Number or an array of Strings or Numbers):
+   *
+   *     View.extend({
+   *       behaviors: {
+   *         posts: {
+   *           behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
+   *           cache: require(&#x27;app/article/postCacheCollection&#x27;),
+   *           ids: [ &#x27;yesterday-by-the-river&#x27;, &#x27;tomorrow-by-the-sea&#x27; ]
+   *         }
+   *       }
+   *     });
+   *
+   *    value used for ids: &#x60;[ &#x27;yesterday-by-the-river&#x27;, &#x27;tomorrow-by-the-sea&#x27; ]&#x60;
+   *
+   *    context for template:
+   *
+   *      {
+   *        ...,
+   *        posts: [{
+   *          id: &#x27;yesterday-by-the-river&#x27;,
+   *          title: &#x27;Yesterday by the River&#x27;,
+   *          author: &#x27;John Smith&#x27;,
+   *          content: &#x27;While I was walking by the river...&#x27;
+   *        },{
+   *          id: &#x27;tomorrow-by-the-sea&#x27;,
+   *          title: &#x27;Tomorrow by the Sea&#x27;,
+   *          author: &#x27;Mary Smith&#x27;,
+   *          content: &#x27;I will walk on the beach tomorrow...&#x27;
+   *        }]
+   *      }
+   *
+   * __Static id property on view__ (can be a single String or Number or an array of Strings or Numbers):
+   *
+   *     View.extend({
+   *        behaviors: {
+   *          article: {
+   *            behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
+   *            cache: require(&#x27;app/article/articleCacheCollection&#x27;),
+   *            returnSingleResult: true,
+   *            id: { property: &#x27;_articleId&#x27; }
+   *          }
+   *        }
+   *      });
+   *
+   *    value used for id: &#x60;view._articleId&#x60;
+   *
+   *    context for template:
+   *
+   *     {
+   *       ...,
+   *       article: {
+   *         id: 12,
+   *         title: &#x27;A really cool thing&#x27;,
+   *         text: &#x27;So I was walking down the street one day...&#x27;
+   *       }
+   *     }
+   *
+   * __Static ids property on view__ (can be a single String or Number or an array of Strings or Numbers):
+   *
+   *     View.extend({
+   *       behaviors: {
+   *         posts: {
+   *           behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
+   *           cache: require(&#x27;app/article/postCacheCollection&#x27;),
+   *           ids: { property: &#x27;_postIds&#x27; }
+   *         }
+   *       }
+   *     });
+   *
+   *    value used for ids: &#x60;view._postIds&#x60;
+   *
+   *    context for template:
+   *
+   *      {
+   *        ...,
+   *        posts: [{
+   *          id: &#x27;yesterday-by-the-river&#x27;,
+   *          title: &#x27;Yesterday by the River&#x27;,
+   *          author: &#x27;John Smith&#x27;,
+   *          content: &#x27;While I was walking by the river...&#x27;
+   *        },{
+   *          id: &#x27;tomorrow-by-the-sea&#x27;,
+   *          title: &#x27;Tomorrow by the Sea&#x27;,
+   *          author: &#x27;Mary Smith&#x27;,
+   *          content: &#x27;I will walk on the beach tomorrow...&#x27;
+   *        }]
+   *      }
+   *
+   * __
+   *
    * @class DataBehavior
    * @method constructor
-   * @param cache {Torso.Collection} the torso collection that is acting as a cache used to create the private collections.
-   * @param [returnSingleResult=false] {Boolean} true - a single model result is expected, false - a collection result is expected.
-   * @param [alwaysFetch=false] {Boolean} true - if it should use fetch() instead of pull() on the private collection.
-   *                                      false if it should use pull() instead.
-   *                                      True will query the server more often, but will provide more up-to-date data.
-   *                                      False will only query the server if the model hasn&#x27;t already been retrieved.
-   * @param [id=ids] {String|Number|String[]|Number[]|Object|Function} - alias for ids.  id or ids is required.
-   * @param [ids=id] {String|Number|String[]|Number[]|Object|Function} - duck-typed property that identifies the ids to use. id or ids is required.
-   *   - {String|Number} - the id to use directly (equivalent to an array of a single id).
-   *   - {String[]|Number[]} - the ids to use directly.
-   *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
-   *                property on that object to use. The object needs to fire the change event for the given property
-   *                and have a .get(&#x27;propertyName&#x27;) method. Only one property can be identified as supplying the id
-   *                for this data model. If the identified object does not fire a change event then the id will never change.
-   *     - property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
-   *                           context is defined. The context is the object that fires a change event for the given property name.
-   *                           Uses the view or the context as the root to get the identified property (i.e. &#x27;viewState.&#x27;, &#x27;model.&#x27;, etc).
-   *                           Will get the property before the first &#x27;.&#x27; from the view and if it is an object will try to use a
-   *                           .get(&#x27;propertyName&#x27;) on it and set a &#x27;change:&#x27; listener on it.
-   *                           If it is a string/number or array of string/number, then it will use that as the ids.
-   *                           Triggering a &#x27;change:context&#x27; event on the behavior will cause it to stop listing to the
-   *                           old context and start listening to the new one defined by this property.
-   *     - context {Torso.Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
-   *                           events and has a .get(&#x27;propertyName&#x27;) function. It isn&#x27;t required to fire events -
-   *                           the change event is only required if it needs to refetch when the id property value changes.
-   *     Examples:
-   *       - { property: &#x27;_patientId&#x27; }
-   *       - { property: &#x27;viewState.appointmentId&#x27; }
-   *       - { property: &#x27;model.type&#x27; }
-   *       - { property: &#x27;behaviors.demographics.appointments&#x27; }
-   *       - { property: &#x27;id&#x27;, context: userService }
-   *       - { property: &#x27;username&#x27;, context: function() { application.getCurrentUser() } }
-   *   - function(cache) - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
-   *                       to track with the private collection. Cache is passed in as the first argument so that the behavior
-   *                       can be defined and the cache can be overridden later.
-   *                       &#x27;this&#x27; is the behavior (from which you can get the view if needed).
-   *                       What was criteria should use this instead:
-   *
-   *         function(cache) {
-   *           var thisBehaviorInstance = this;
-   *           var view = this.view;
-   *           var critera = { ... some criteria ... };
-   *           return cache.fetchIdsByCriteria(criteria);
-   *         }
-   *
-   * @param [updateEvents] {String|String[]|Object|Object[]} - cause this behavior to re-calculate its ids and refetch them
-   *                                                           from the server if the given events are triggered
-   *                                                           (space separated if string, single item is equivalent to array of single item).
-   *     - &#x27;view:eventName&#x27; - arbitrary event triggered on the view (eventName can be a change:propertyName event).
-   *     - &#x27;viewState:eventName&#x27; - arbitrary event triggered on the viewState (eventName can be a change:propertyName event).
-   *     - &#x27;model:eventName&#x27; - arbitrary even triggered on the view&#x27;s model (eventName can be a change:propertyName event).
-   *     - &#x27;this:eventName&#x27; - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).
-   *     - &#x27;behaviorAlias:eventName&#x27; - arbitrary event triggered by another behavior on this view (eventName can be a change:propertyName event).
-   *     - { &#x27;&lt;eventName&gt;&#x27;: &lt; object (or function returning an object) that the event is triggered on &gt; } - arbitrary (&#x27;&lt;eventName&gt;&#x27;) triggered on the supplied object.
    * @author  jyoung@vecna.com
    */
   var DataBehavior = Behavior.extend({
+    /**
+     * The torso collection that is acting as a cache used to create the private collections.
+     * This property/option is required.  Instantiation will fail if it is not set.
+     * @property cache {Collection}
+     */
+    cache: undefined,
+
+    /**
+     * Determines the result of &#x60;view.getBehavior(&#x27;thisBehaviorAlias&#x27;).toJSON()&#x60;.
+     * true - a single model result is returned.
+     * false (default) - an array of model results are returned.
+     * @property returnSingleResult {Boolean}
+     * @default false
+     */
+    returnSingleResult: false,
+
+    /**
+     * Determines whether &#x60;pull()&#x60; or &#x60;fetch()&#x60; is called when using &#x60;retrieve()&#x60;.
+     * true - Use fetch() by default on the private collection.
+     * false (default) - Use pull() by default on the private collection.
+     * True will query the server more often, but will provide more up-to-date data.
+     * False will only query the server if the model hasn&#x27;t already been retrieved.
+     * This property will be ignored if &#x60;fetch()&#x60; or &#x60;pull()&#x60; is called directly.
+     * @property alwaysFetch {Boolean}
+     * @default false
+     */
+    alwaysFetch: false,
+
+    /**
+     * Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).
+     *   - {String|Number} - the id to use directly (equivalent to an array of a single id).
+     *   - {String[]|Number[]} - the ids to use directly.
+     *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
+     *                property on that object to use. The object can fire the change event for the given property
+     *                and have a .get(&#x27;propertyName&#x27;) method, or it can define the property directly on the context.
+     *                Only one property can be identified as supplying the id for this data model.
+     *                If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
+     *                The context can also fire a &#x27;fetched:ids&#x27; event on itself to signal to this data behavior that the ids
+     *                have been fetched for the first time.  Then a &#x27;change:&lt;propertyName&gt;&#x27; event can be used to notify this
+     *                data behavior that the property has been modified.
+     *     - property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+     *                           context is defined. The context is the object that fires a change event for the given property name.
+     *                           Uses the view or the context as the root to get the identified property (i.e. &#x27;viewState.&#x27;, &#x27;model.&#x27;, etc).
+     *                           Will get the property before the first &#x27;.&#x27; from the view and if it is an object will try to use a
+     *                           .get(&#x27;&lt;propertyName&gt;&#x27;) on it and set a &#x27;change:&lt;propertyName&gt;&#x27; listener on it.
+     *                           If it is a string/number or array of string/number, then it will use that as the ids.
+     *                           Triggering a &#x27;id-container-updated&#x27; event on the behavior will cause it to stop listing to the
+     *                           old context and start listening to the new one defined by this property.
+     *     - context {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+     *                           events and has a .get(&#x27;propertyName&#x27;) function. It isn&#x27;t required to fire events -
+     *                           the change event is only required if it needs to re-fetch when the id property value changes.
+     *     Examples:
+     *       - { property: &#x27;_patientId&#x27; }
+     *       - { property: &#x27;viewState.appointmentId&#x27; }
+     *       - { property: &#x27;model.type&#x27; }
+     *       - { property: &#x27;behaviors.demographics.appointments&#x27; }
+     *       - { property: &#x27;id&#x27;, context: userService }
+     *       - { property: &#x27;username&#x27;, context: function() { application.getCurrentUser() } }
+     *   - {Function(cache)} - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
+     *                         to track with the private collection. Cache is passed in as the first argument so that the behavior
+     *                         can be defined and the cache can be overridden later.
+     *                         &#x27;this&#x27; is the behavior (from which you can get the view if needed).
+     *                         What was criteria should use this instead:
+     *
+     *         function(cache) {
+     *           var thisBehaviorInstance = this;
+     *           var view = this.view;
+     *           var criteria = { ... some criteria ... };
+     *           return cache.fetchIdsByCriteria(criteria);
+     *         }
+     * @property ids {String|Number|String[]|Number[]|Object|Function}
+     */
+    ids: undefined,
 
     /**
      * @method constructor
      * @override
      * @param behaviorOptions {Object}
-     *   @param behaviorOptions.cache {Torso.Collection} see class constructor docs.
-     *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see class constructor docs.
-     *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see class constructor docs.
-     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see class constructor docs.
-     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see class constructor docs.
-     *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see class constructor docs.
+     * @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|Object|Function} - alias for ids.  id or ids is required.
+     * @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|Object|Function} - duck-typed property that identifies the ids to use. id or ids is required.
+     *   - {String|Number} - the id to use directly (equivalent to an array of a single id).
+     *   - {String[]|Number[]} - the ids to use directly.
+     *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
+     *                property on that object to use. The object can fire the change event for the given property
+     *                and have a .get(&#x27;propertyName&#x27;) method, or it can define the property directly on the context.
+     *                Only one property can be identified as supplying the id for this data model.
+     *                If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
+     *                The context can also fire a &#x27;fetched:ids&#x27; event on itself to signal to this data behavior that the ids
+     *                have been fetched for the first time.  Then a &#x27;change:&lt;propertyName&gt;&#x27; event can be used to notify this
+     *                data behavior that the property has been modified.
+     *     - property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+     *                           context is defined. The context is the object that fires a change event for the given property name.
+     *                           Uses the view or the context as the root to get the identified property (i.e. &#x27;viewState.&#x27;, &#x27;model.&#x27;, etc).
+     *                           Will get the property before the first &#x27;.&#x27; from the view and if it is an object will try to use a
+     *                           .get(&#x27;&lt;propertyName&gt;&#x27;) on it and set a &#x27;change:&lt;propertyName&gt;&#x27; listener on it.
+     *                           If it is a string/number or array of string/number, then it will use that as the ids.
+     *                           Triggering a &#x27;id-container-updated&#x27; event on the behavior will cause it to stop listing to the
+     *                           old context and start listening to the new one defined by this property.
+     *     - context {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+     *                           events and has a .get(&#x27;propertyName&#x27;) function. It isn&#x27;t required to fire events -
+     *                           the change event is only required if it needs to re-fetch when the id property value changes.
+     *     Examples:
+     *       - { property: &#x27;_patientId&#x27; }
+     *       - { property: &#x27;viewState.appointmentId&#x27; }
+     *       - { property: &#x27;model.type&#x27; }
+     *       - { property: &#x27;behaviors.demographics.appointments&#x27; }
+     *       - { property: &#x27;id&#x27;, context: userService }
+     *       - { property: &#x27;username&#x27;, context: function() { application.getCurrentUser() } }
+     *   - function(cache) - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
+     *                       to track with the private collection. Cache is passed in as the first argument so that the behavior
+     *                       can be defined and the cache can be overridden later.
+     *                       &#x27;this&#x27; is the behavior (from which you can get the view if needed).
+     *                       What was criteria should use this instead:
+     *
+     *         function(cache) {
+     *           var thisBehaviorInstance = this;
+     *           var view = this.view;
+     *           var criteria = { ... some criteria ... };
+     *           return cache.fetchIdsByCriteria(criteria);
+     *         }
+     *
+     * @param [updateEvents] {String|String[]|Object|Object[]} - cause this behavior to re-calculate its ids and refetch them
+     *                                                           from the server if the given events are triggered
+     *                                                           (space separated if string, single item is equivalent to array of single item).
+     *     - &#x27;view:eventName&#x27; - arbitrary event triggered on the view (eventName can be a change:propertyName event).
+     *     - &#x27;viewState:eventName&#x27; - arbitrary event triggered on the viewState (eventName can be a change:propertyName event).
+     *     - &#x27;model:eventName&#x27; - arbitrary even triggered on the view&#x27;s model (eventName can be a change:propertyName event).
+     *     - &#x27;this:eventName&#x27; - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).
+     *     - &#x27;behaviorAlias:eventName&#x27; - arbitrary event triggered by another behavior on this view (eventName can be a change:propertyName event).
+     *     - { &#x27;&lt;eventName&gt;&#x27;: &lt; object (or function returning an object) that the event is triggered on &gt; } - arbitrary (&#x27;&lt;eventName&gt;&#x27;) triggered on the supplied object.
+     *   @param behaviorOptions.cache {Collection} see cache property.
+     *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
+     *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see alwaysFetch property.
+     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see id property.
+     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see ids property.
+     *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see updateEvents property.
      * @param [viewOptions] {Object} options passed to View&#x27;s initialize
      */
     constructor: function(behaviorOptions, viewOptions) {
       _.bindAll(this, &#x27;__fetchSuccess&#x27;, &#x27;__fetchFailed&#x27;);
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
-        returnSingleResult: false,
         alwaysFetch: false
       });
       _.extend(this, _.pick(behaviorOptions, &#x27;cache&#x27;, &#x27;id&#x27;, &#x27;ids&#x27;, &#x27;returnSingleResult&#x27;, &#x27;alwaysFetch&#x27;, &#x27;updateEvents&#x27;));
@@ -246,50 +493,24 @@
 
       Behavior.apply(this, arguments);
 
-      this.on(&#x27;change:context&#x27;, this.listenToIdsPropertyChangeEvent);
-      this.on(&#x27;change:context&#x27;, this.retrieve);
+      this.on(&#x27;id-container-updated&#x27;, this.listenToIdsPropertyChangeEvent);
+      this.on(&#x27;id-container-updated&#x27;, this.retrieve);
       this.listenTo(this.view, &#x27;initialize:complete&#x27;, this.listenToIdsPropertyChangeEvent);
       this.listenTo(this.view, &#x27;initialize:complete&#x27;, this._delegateUpdateEvents);
       this.listenTo(this.view, &#x27;initialize:complete&#x27;, this.retrieve);
     },
 
     /**
-     * Adds the toJSON of the data represented by this behavior to the context.
-     * @method prepare
-     * @override
+     * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
+     * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
+     * @method retrieve
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
-    prepare: function() {
-      var behaviorContext = Behavior.prototype.prepare.apply(this);
-      _.extend(behaviorContext, this.toJSON());
-      return behaviorContext;
-    },
-
-    /**
-     * Get the full data object contents (either an array of model attributes or a single model attribute based on the
-     * value of returnSingleResult) or the value of a specific property if a single result is expected.
-     * @method toJSON
-     * @param [singleResultProperty] {String} the property to get from the model (only valid if returnSingleResult is true).
-     * @return {Object} containing the full contents of either the collection or model.
-     */
-    toJSON: function(singleResultProperty) {
-      if (!this.returnSingleResult) {
-        if (_.isString(singleResultProperty)) {
-          return this.privateCollection.pluck(singleResultProperty);
-        } else {
-          return this.privateCollection.toJSON();
-        }
-      }
-
-      if (this.privateCollection.length === 0) {
-        return undefined;
-      } else if (this.privateCollection.length === 1) {
-        var singleResultModel = this.privateCollection.at(0);
-        if (_.isString(singleResultProperty)) {
-          return singleResultModel.get(singleResultProperty);
-        }
-        return singleResultModel.toJSON();
+    retrieve: function() {
+      if (this.alwaysFetch) {
+        return this.fetch();
       } else {
-        throw new Error(&#x27;Multiple results found, but single result expected: &#x27; + JSON.stringify(this.privateCollection.toJSON()));
+        return this.pull();
       }
     },
 
@@ -322,17 +543,43 @@
     },
 
     /**
-     * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
-     * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
-     * @method retrieve
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     * Get the full data object contents (either an array of model attributes or a single model attribute based on the
+     * value of returnSingleResult) or the value of a specific property if a single result is expected.
+     * @method toJSON
+     * @param [singleResultProperty] {String} the property to get from the model (only valid if returnSingleResult is true).
+     * @return {Object} containing the full contents of either the collection or model.
      */
-    retrieve: function() {
-      if (this.alwaysFetch) {
-        return this.fetch();
-      } else {
-        return this.pull();
+    toJSON: function(singleResultProperty) {
+      if (!this.returnSingleResult) {
+        if (_.isString(singleResultProperty)) {
+          return this.privateCollection.pluck(singleResultProperty);
+        } else {
+          return this.privateCollection.toJSON();
+        }
       }
+
+      if (this.privateCollection.length === 0) {
+        return undefined;
+      } else if (this.privateCollection.length === 1) {
+        var singleResultModel = this.privateCollection.at(0);
+        if (_.isString(singleResultProperty)) {
+          return singleResultModel.get(singleResultProperty);
+        }
+        return singleResultModel.toJSON();
+      } else {
+        throw new Error(&#x27;Multiple results found, but single result expected: &#x27; + JSON.stringify(this.privateCollection.toJSON()));
+      }
+    },
+
+    /**
+     * Adds the toJSON of the data represented by this behavior to the context.
+     * @method prepare
+     * @override
+     */
+    prepare: function() {
+      var behaviorContext = Behavior.prototype.prepare.apply(this);
+      _.extend(behaviorContext, this.toJSON());
+      return behaviorContext;
     },
 
     /**

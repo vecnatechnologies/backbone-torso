@@ -933,7 +933,7 @@ ids = {\n\
         });
     });
 
-    it('will re-fetch the ids and data when the change:context event is triggered on the behavior', function(done) {
+    it('will re-fetch the ids and data when the id-container-updated event is triggered on the behavior', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       var initialContextModel = new TorsoNestedModel();
       var contextContainer = new TorsoNestedModel();
@@ -963,7 +963,7 @@ ids = {\n\
             var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
             contextContainer.context = newContextModel;
-            dataBehavior.trigger('change:context');
+            dataBehavior.trigger('id-container-updated');
 
             dataBehavior.once('fetched', function() {
               expect(dataBehavior.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
@@ -974,7 +974,7 @@ ids = {\n\
         });
     });
 
-    it('will re-bind the change event on the id object when the change:context event is triggered on the behavior', function(done) {
+    it('will re-bind the change event on the id object when the id-container-updated event is triggered on the behavior', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       var initialContextModel = new TorsoNestedModel();
       var contextContainer = new TorsoNestedModel();
@@ -1004,7 +1004,7 @@ ids = {\n\
             var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
             contextContainer.context = newContextModel;
-            dataBehavior.trigger('change:context');
+            dataBehavior.trigger('id-container-updated');
 
             dataBehavior.once('fetched', function() {
               expect(dataBehavior.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
