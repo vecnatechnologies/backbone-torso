@@ -130,12 +130,13 @@
       });
       _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
 
-      this.__normalizeAndValidateCache();
+      this.__validateCache();
       this.__normalizeAndValidateIds();
       this.__normalizeAndValidateUpdateEvents();
 
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.privateCollection = this.cache.createPrivateCollection(this.cid);
+      this.listenTo(this.privateCollection, 'all', this.trigger);
 
       Behavior.apply(this, arguments);
 
@@ -241,13 +242,8 @@
         if (canListenToEvents) {
           this.__currentContextWithListener = idsContext;
           this.__currentContextEventName = 'change:' + idsPropertyNameAndContext.idsPropertyName;
-          this.__dependsOnBehavior = idsPropertyNameAndContext.isBehavior;
-          if (this.__dependsOnBehavior) {
-            this.listenTo(this.__currentContextWithListener, 'fetched', this.retrieve);
-            this.listenTo(this.__currentContextWithListener.privateCollection, this.__currentContextEventName, this.retrieve);
-          } else {
-            this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
-          }
+          this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+          this.listenTo(this.__currentContextWithListener, 'fetched:ids', this.retrieve);
         }
       }
     },
@@ -258,12 +254,8 @@
      */
     stopListeningToIdsPropertyChangeEvent: function() {
       if (this.__currentContextWithListener) {
-        if (this.__dependsOnBehavior) {
-          this.stopListening(this.__currentContextWithListener, 'fetched', this.retrieve);
-          this.stopListening(this.__currentContextWithListener.privateCollection, this.__currentContextEventName, this.retrieve);
-        } else {
-          this.stopListening(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
-        }
+        this.stopListening(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+        this.stopListening(this.__currentContextWithListener, 'fetched:ids', this.retrieve);
         delete this.__currentContextWithListener;
         delete this.__currentContextEventName;
       }
@@ -373,10 +365,10 @@
 
     /**
      * Validates that the cache property is valid and if not throws an error describing why its not valid.
-     * @method __normalizeAndValidateCache
+     * @method __validateCache
      * @private
      */
-    __normalizeAndValidateCache: function() {
+    __validateCache: function() {
       if (!this.cache) {
         throw new Error('Torso Data Behavior constructed without a cache');
       }
@@ -572,6 +564,7 @@
      */
     __fetchSuccess: function() {
       this.trigger('fetched', { status: 'success' });
+      this.trigger('fetched:ids');
     },
 
     /**
@@ -581,6 +574,7 @@
      */
     __fetchFailed: function() {
       this.trigger('fetched', { status: 'failed' });
+      this.trigger('fetched:ids');
     },
 
     /**
