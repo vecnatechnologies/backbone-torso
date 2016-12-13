@@ -5895,7 +5895,7 @@
     /**
      * Object that manages interaction with the data.  Contains the privateCollection, proxies all events from the privateCollection,
      * and has get('...') and .toJSON() methods that access the private collection data.
-     * @property data {Data}
+     * @property data {Torso.behaviors.DataBehavior.Data}
      */
     data: undefined,
 
@@ -5924,14 +5924,9 @@
       this.__normalizeAndValidateUpdateEvents();
 
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
-      /**
-       * Private collection that maintains this behavior's view of the cache objects.
-       * @property data.privateCollection {Collection}
-       */
-      var privateCollection = this.cache.createPrivateCollection(this.cid);
       this.data = new this.Data({
         parentBehavior: this,
-        privateCollection: privateCollection
+        privateCollection: this.cache.createPrivateCollection(this.cid)
       });
 
       Behavior.apply(this, arguments);
@@ -6429,7 +6424,7 @@
     /**
      * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
      * @method toJSON
-     * @return {Object} containing the full contents of either the collection or model.
+     * @return {Object|Object[]} containing the full contents of either the collection or model.
      */
     toJSON: function() {
       var privateCollection = this.privateCollection;
