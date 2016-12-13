@@ -86,7 +86,7 @@
      */
     constructor: function(attributes, options) {
       options = options || {};
-      this.cache = {};
+      this.__cache = {};
       this.__currentUpdateEvents = [];
       this.__currentMappings = {};
       this.__currentObjectModels = {};
@@ -485,7 +485,7 @@
         currentHashValues[model.cid] = this.__generateHashValue(model);
       }
       hashValue = currentHashValues[model.cid];
-      var isStaleModel = this.cache[model.cid] !== hashValue;
+      var isStaleModel = this.__cache[model.cid] !== hashValue;
       if (staleModels) {
         if (isStaleModel) {
           staleModels[model.cid] = model;
@@ -793,21 +793,21 @@
     /**
      * Updates the form model's snapshot of the model's attributes to use later
      * @param model {Backbone.Model instance} the object model
-     * @param [cache=this.cache] {Object} if passed an object (can be empty), this method will fill
-     *   this cache object instead of this form model's cache field
+     * @param [cache=this.__cache] {Object} if passed an object (can be empty), this method will fill
+     *   this cache object instead of this form model's __cache field
      * @private
      * @method __updateCache
      */
     __updateCache: function(model) {
       if (!model) {
-        this.cache = {};
+        this.__cache = {};
         _.each(this.getTrackedModels(), function(model) {
           if (model) {
             this.__updateCache(model);
           }
         }, this);
       } else {
-        this.cache[model.cid] = this.__generateHashValue(model);
+        this.__cache[model.cid] = this.__generateHashValue(model);
       }
     },
 
