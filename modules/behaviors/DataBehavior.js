@@ -842,6 +842,16 @@
     _deactivate: function() {
       this.stopListeningToIdsPropertyChangeEvent();
       this._undelegateUpdateEvents();
+    },
+
+    /**
+     * Default dispose stuff because its not already on behavior.  See https://github.com/vecnatechnologies/backbone-torso/issues/295
+     * @method _dispose
+     * @private
+     */
+    _dispose: function() {
+      this.off();
+      this.stopListening();
     }
   });
 
