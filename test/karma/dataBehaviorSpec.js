@@ -192,7 +192,7 @@ describe('A Torso Data Behavior', function() {
     it('creates a private collection available in the initialize of the behavior', function() {
       var TestPrivateCollectionDataBehavior = TorsoDataBehavior.extend({
         initialize: function() {
-          this.testPrivateCollection = this.privateCollection;
+          this.testPrivateCollection = this.data.privateCollection;
         }
       });
       var defaultBehaviorConfigurationWithTestBehavior = getBasicBehaviorConfiguration();
@@ -209,7 +209,7 @@ describe('A Torso Data Behavior', function() {
     it('creates a private collection available in the initialize of the view', function() {
       var TestPrivateCollectionView = ViewWithDataBehavior.extend({
         initialize: function() {
-          this.testPrivateCollection = this.getBehavior('dataBehavior').privateCollection;
+          this.testPrivateCollection = this.getBehavior('dataBehavior').data.privateCollection;
         }
       });
       var testPrivateCollectionView = new TestPrivateCollectionView();
@@ -724,12 +724,12 @@ ids = {\n\
 
     it('can specify an object for ids that uses the property field to reference a data property on another behavior:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior2.someOtherId\'\n\
+  property: \'behaviors.dataBehavior2.data.someOtherId\'\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
-        property: 'behaviors.dataBehavior2.someOtherId'
+        property: 'behaviors.dataBehavior2.data.someOtherId'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       var ViewWithBehavior = TorsoView.extend({
@@ -741,10 +741,10 @@ ids = {\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 100 }));
-      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 'abd' }));
-      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 252341 }));
-      dataBehavior2.privateCollection.add(new TorsoNestedModel({ someOtherId: 'blah' }));
+      dataBehavior2.data.privateCollection.add(new TorsoNestedModel({ someOtherId: 100 }));
+      dataBehavior2.data.privateCollection.add(new TorsoNestedModel({ someOtherId: 'abd' }));
+      dataBehavior2.data.privateCollection.add(new TorsoNestedModel({ someOtherId: 252341 }));
+      dataBehavior2.data.privateCollection.add(new TorsoNestedModel({ someOtherId: 'blah' }));
       dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual([100, 'abd', 252341, 'blah']);
@@ -900,7 +900,7 @@ ids = {\n\
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.retrieve()
         .then(function() {
-          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialValue', count: 0 }]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialValue', count: 0 }]);
           done();
         });
     });
@@ -922,11 +922,11 @@ ids = {\n\
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.retrieve()
         .then(function() {
-          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           contextModel.referenceId = 'newId';
-          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           dataBehavior.on('fetched', function() {
-            expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
             done();
           });
           contextModel.trigger('change:referenceId');
@@ -954,11 +954,11 @@ ids = {\n\
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.retrieve()
         .then(function() {
-          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           initialContextModel.id = 'newId';
-          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           dataBehavior.once('fetched', function() {
-            expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
 
             var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
@@ -966,7 +966,7 @@ ids = {\n\
             dataBehavior.trigger('id-container-updated');
 
             dataBehavior.once('fetched', function() {
-              expect(dataBehavior.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
+              expect(dataBehavior.data.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
               done();
             });
           });
@@ -995,11 +995,11 @@ ids = {\n\
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.retrieve()
         .then(function() {
-          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           initialContextModel.id = 'newId';
-          expect(dataBehavior.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           dataBehavior.once('fetched', function() {
-            expect(dataBehavior.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
 
             var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
@@ -1007,12 +1007,12 @@ ids = {\n\
             dataBehavior.trigger('id-container-updated');
 
             dataBehavior.once('fetched', function() {
-              expect(dataBehavior.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
+              expect(dataBehavior.data.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
 
               newContextModel.id = 'yetAnotherId';
               newContextModel.trigger('change:id');
               dataBehavior.once('fetched', function() {
-                expect(dataBehavior.toJSON()).toEqual([{ id: 'yetAnotherId', count: 0 }]);
+                expect(dataBehavior.data.toJSON()).toEqual([{ id: 'yetAnotherId', count: 0 }]);
                 done();
               });
             });
@@ -1023,7 +1023,7 @@ ids = {\n\
 
     it('and depends on another behavior will re-fetch data when the ids on the root behavior change:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data.otherIds\'\n\
 }\n\\n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
@@ -1036,7 +1036,7 @@ ids = {\n\
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.otherIds'
+        property: 'behaviors.dataBehavior.data.otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1047,13 +1047,13 @@ ids = {\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
       dataBehavior2.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
-        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                 { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
         done();
@@ -1063,7 +1063,7 @@ ids = {\n\
 
     it('will handle a collection of models each with an array of ids:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data.otherIds\'\n\
 }\n\
 \n\
 dataBehavior gets multiple objects with this structure: { id: 10, otherIds: [1, 2, 3] ... }.\n\
@@ -1079,7 +1079,7 @@ dataBehavior2 will pull the unique collection of ids collected from all of the o
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.otherIds'
+        property: 'behaviors.dataBehavior.data.otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1090,17 +1090,17 @@ dataBehavior2 will pull the unique collection of ids collected from all of the o
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior.data.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                { id: 20, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                { id: 30, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
       dataBehavior2.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior.data.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                { id: 20, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                { id: 30, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
-        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                 { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] },
                                                 { id: 4, count: 3, otherIds: [4, 5, 6], otherOtherIds: ['a3', 'b3', 'c3', 'd3', 'e3', 'f3'] },
@@ -1118,19 +1118,19 @@ defaultBehaviorConfiguration.ids = {\n\
 \n\
 var defaultBehavior2Configuration = getBasicBehaviorConfiguration();\n\
 defaultBehavior2Configuration.ids = {\n\
-  property: \'behaviors.dataBehavior.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data.otherIds\'\n\
 };\n\
 \n\
 var defaultBehavior3Configuration = getBasicBehaviorConfiguration();\n\
 defaultBehavior3Configuration.ids = {\n\
-  property: \'behaviors.dataBehavior2.otherOtherIds\'\n\
+  property: \'behaviors.dataBehavior2.data.otherOtherIds\'\n\
 };\n\
 \n\
 var ViewWithBehavior = TorsoView.extend({\n\
   behaviors: {\n\
     dataBehavior: defaultBehaviorConfiguration,\n\
-      dataBehavior2: defaultBehavior2Configuration,\n\
-      dataBehavior3: defaultBehavior3Configuration\n\
+    dataBehavior2: defaultBehavior2Configuration,\n\
+    dataBehavior3: defaultBehavior3Configuration\n\
   }\n\
 });\n\
 ', function(done) {
@@ -1144,11 +1144,11 @@ var ViewWithBehavior = TorsoView.extend({\n\
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.otherIds'
+        property: 'behaviors.dataBehavior.data.otherIds'
       };
       var defaultBehavior3Configuration = getBasicBehaviorConfiguration();
       defaultBehavior3Configuration.ids = {
-        property: 'behaviors.dataBehavior2.otherOtherIds'
+        property: 'behaviors.dataBehavior2.data.otherOtherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1160,24 +1160,24 @@ var ViewWithBehavior = TorsoView.extend({\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
       dataBehavior2.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
-        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                 { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
       });
 
       var dataBehavior3 = viewWithBehavior.getBehavior('dataBehavior3');
       dataBehavior3.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
-        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                 { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
-        expect(dataBehavior3.toJSON()).toEqual([{ id: 'a0', count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior3.data.toJSON()).toEqual([{ id: 'a0', count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 'b0', count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                 { id: 'c0', count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] },
                                                 { id: 'd0', count: 3, otherIds: [4, 5, 6], otherOtherIds: ['a3', 'b3', 'c3', 'd3', 'e3', 'f3'] },
@@ -1202,11 +1202,11 @@ var ViewWithBehavior = TorsoView.extend({\n\
 
     it('will re-fetch when the id property on another data behavior changes to a non-empty value:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data.otherIds\'\n\
 }\n\
 \n\
 Manually force a change in the one model\'s value:\n\
-dataBehavior.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n\
+dataBehavior.data.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n\
 \n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
@@ -1219,7 +1219,7 @@ dataBehavior.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n\
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.otherIds'
+        property: 'behaviors.dataBehavior.data.otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1230,35 +1230,35 @@ dataBehavior.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
       dataBehavior2.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
-        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
           { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
           { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
 
         dataBehavior2.once('fetched', function() {
-          expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [20, 30, 40], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
-          expect(dataBehavior2.toJSON()).toEqual([{ id: 20, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+          expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [20, 30, 40], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+          expect(dataBehavior2.data.toJSON()).toEqual([{ id: 20, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
             { id: 30, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
             { id: 40, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
           done();
         });
-        dataBehavior.privateCollection.models[0].set('otherIds', [20, 30, 40]);
+        dataBehavior.data.privateCollection.models[0].set('otherIds', [20, 30, 40]);
       });
       viewWithBehavior.set('idFromView', 10);
     });
 
     it('will re-fetch when the id property on another data behavior changes to an empty value:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data.otherIds\'\n\
 }\n\
 \n\
 Manually force a change in the one model\'s value:\n\
-dataBehavior.privateCollection.models[0].unset(\'otherIds\');\n\
+dataBehavior.data.privateCollection.models[0].unset(\'otherIds\');\n\
 \n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
@@ -1271,7 +1271,7 @@ dataBehavior.privateCollection.models[0].unset(\'otherIds\');\n\
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.otherIds'
+        property: 'behaviors.dataBehavior.data.otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1282,22 +1282,22 @@ dataBehavior.privateCollection.models[0].unset(\'otherIds\');\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
       dataBehavior2.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
-        expect(dataBehavior2.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+        expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
           { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
           { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
 
         dataBehavior2.once('fetched', function() {
-          expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0, otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
-          expect(dataBehavior2.toJSON()).toEqual([]);
+          expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
+          expect(dataBehavior2.data.toJSON()).toEqual([]);
           done();
         });
-        dataBehavior.privateCollection.models[0].unset('otherIds');
+        dataBehavior.data.privateCollection.models[0].unset('otherIds');
       });
       viewWithBehavior.set('idFromView', 10);
     });
@@ -1326,10 +1326,10 @@ dataBehavior.trigger(\'some:random:event\');\n\
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
       viewWithBehavior._idFromView = 100;
@@ -1363,10 +1363,10 @@ viewWithBehavior.trigger(\'view-event\');\n\
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
       viewWithBehavior._idFromView = 100;
@@ -1400,10 +1400,10 @@ viewWithBehavior.viewState.trigger(\'viewState-event\');\n\
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
       viewWithBehavior._idFromView = 100;
@@ -1440,10 +1440,10 @@ viewWithBehavior.model.trigger(\'model-event\');\n\
     });
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
       viewWithBehavior._idFromView = 100;
@@ -1480,10 +1480,10 @@ dataBehavior2.trigger(\'otherBehavior-event\');\n\
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
       viewWithBehavior._idFromView = 100;
@@ -1518,10 +1518,10 @@ context.trigger(\'arbitraryContextEvent\');\n\
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
       viewWithBehavior._idFromView = 100;
@@ -1564,10 +1564,10 @@ context2.trigger(\'other-arbitrary-context-event\');\n\
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
       viewWithBehavior._idFromView = 100;
@@ -1635,25 +1635,25 @@ dataBehavior.trigger(\'this-event\');\n\
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
     dataBehavior.once('fetched', function() {
-      expect(dataBehavior.toJSON()).toEqual({ id: 10, count: 0 });
+      expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
       dataBehavior.once('fetched', function() {
-        expect(dataBehavior.toJSON()).toEqual({ id: 100, count: 0 });
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
 
         dataBehavior.once('fetched', function() {
-          expect(dataBehavior.toJSON()).toEqual({ id: 1000, count: 0 });
+          expect(dataBehavior.data.toJSON()).toEqual({ id: 1000, count: 0 });
 
           dataBehavior.once('fetched', function() {
-            expect(dataBehavior.toJSON()).toEqual({ id: 10000, count: 0 });
+            expect(dataBehavior.data.toJSON()).toEqual({ id: 10000, count: 0 });
 
             dataBehavior.once('fetched', function() {
-              expect(dataBehavior.toJSON()).toEqual({ id: 100000, count: 0 });
+              expect(dataBehavior.data.toJSON()).toEqual({ id: 100000, count: 0 });
 
               dataBehavior.once('fetched', function() {
-                expect(dataBehavior.toJSON()).toEqual({ id: 1000000, count: 0 });
+                expect(dataBehavior.data.toJSON()).toEqual({ id: 1000000, count: 0 });
 
                 dataBehavior.once('fetched', function() {
-                  expect(dataBehavior.toJSON()).toEqual({ id: 10000000, count: 0 });
+                  expect(dataBehavior.data.toJSON()).toEqual({ id: 10000000, count: 0 });
                   done();
                 });
                 viewWithBehavior._idFromView = 10000000;

@@ -52,6 +52,7 @@
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
                                 <li><a href="../classes/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
+                                <li><a href="../classes/Torso.behaviors.DataBehavior.Data.html">Torso.behaviors.DataBehavior.Data</a></li>
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
@@ -67,6 +68,7 @@
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/Torso.html">Torso</a></li>
                                 <li><a href="../modules/Torso.behaviors.html">Torso.behaviors</a></li>
+                                <li><a href="../modules/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
                             </ul>
                         </div>
                     </div>
@@ -192,7 +194,7 @@
      */
     constructor: function(attributes, options) {
       options = options || {};
-      this.cache = {};
+      this.__cache = {};
       this.__currentUpdateEvents = [];
       this.__currentMappings = {};
       this.__currentObjectModels = {};
@@ -591,7 +593,7 @@
         currentHashValues[model.cid] = this.__generateHashValue(model);
       }
       hashValue = currentHashValues[model.cid];
-      var isStaleModel = this.cache[model.cid] !== hashValue;
+      var isStaleModel = this.__cache[model.cid] !== hashValue;
       if (staleModels) {
         if (isStaleModel) {
           staleModels[model.cid] = model;
@@ -899,21 +901,21 @@
     /**
      * Updates the form model&#x27;s snapshot of the model&#x27;s attributes to use later
      * @param model {Backbone.Model instance} the object model
-     * @param [cache=this.cache] {Object} if passed an object (can be empty), this method will fill
-     *   this cache object instead of this form model&#x27;s cache field
+     * @param [cache=this.__cache] {Object} if passed an object (can be empty), this method will fill
+     *   this cache object instead of this form model&#x27;s __cache field
      * @private
      * @method __updateCache
      */
     __updateCache: function(model) {
       if (!model) {
-        this.cache = {};
+        this.__cache = {};
         _.each(this.getTrackedModels(), function(model) {
           if (model) {
             this.__updateCache(model);
           }
         }, this);
       } else {
-        this.cache[model.cid] = this.__generateHashValue(model);
+        this.__cache[model.cid] = this.__generateHashValue(model);
       }
     },
 

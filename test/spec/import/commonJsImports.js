@@ -57,7 +57,8 @@ commonJsImportTest('/modules/Behavior', ['underscore', 'backbone',
 commonJsImportTest('/modules/behaviors/DataBehavior', ['underscore', 'jquery', 'backbone',
                                                        '/modules/mixins/cellMixin', '/modules/Cell',
                                                        '/modules/Behavior',
-                                                       '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/Collection']);
+                                                       '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/Collection',
+                                                       '/modules/Events']);
 commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone',
                                          '/modules/mixins/pollingMixin', '/modules/NestedModel']);
 

@@ -21,13 +21,15 @@ YUI.add("yuidoc-meta", function(Y) {
         "Torso.Utils.stickitUtils",
         "Torso.Utils.templateRenderer",
         "Torso.behaviors.DataBehavior",
+        "Torso.behaviors.DataBehavior.Data",
         "Torso.validation",
         "View",
         "history"
     ],
     "modules": [
         "Torso",
-        "Torso.behaviors"
+        "Torso.behaviors",
+        "Torso.behaviors.DataBehavior"
     ],
     "allModules": [
         {
@@ -39,6 +41,10 @@ YUI.add("yuidoc-meta", function(Y) {
             "displayName": "Torso.behaviors",
             "name": "Torso.behaviors",
             "description": "Behaviors defined in Torso."
+        },
+        {
+            "displayName": "Torso.behaviors.DataBehavior",
+            "name": "Torso.behaviors.DataBehavior"
         }
     ],
     "elements": []
