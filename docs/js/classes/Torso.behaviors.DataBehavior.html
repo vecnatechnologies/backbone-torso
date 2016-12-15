@@ -694,7 +694,7 @@ This is done as part of validation because we first validate that both are not s
         <span class="paren">()</span>
 
         <span class="returns-inline">
-            <span class="type">IdsPropertyName: String, context: Object</span>
+            <span class="type">IdsPropertyName: String, idContainer: Object</span>
         </span>
 
 
@@ -716,7 +716,7 @@ This is done as part of validation because we first validate that both are not s
     </div>
 
     <div class="description">
-        <p>Converts the definition into the actual context object and property name to retrieve off of that context.</p>
+        <p>Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.</p>
 
     </div>
 
@@ -725,8 +725,8 @@ This is done as part of validation because we first validate that both are not s
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type">IdsPropertyName: String, context: Object</span>:
-                    <p>} the name of the ids property and the actual object to use as the context.</p>
+                        <span class="type">IdsPropertyName: String, idContainer: Object</span>:
+                    <p>} the name of the ids property and the actual object to use as the idContainer.</p>
 
             </div>
         </div>
@@ -1015,7 +1015,7 @@ This is done as part of validation because we first validate that both are not s
                             </li>
                             <li class="param">
                                     <code class="param-name optional">[id=behaviorOptions.ids]</code>
-                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, context: Object</span>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, idContainer: Object</span>
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
@@ -1026,7 +1026,7 @@ This is done as part of validation because we first validate that both are not s
                             </li>
                             <li class="param">
                                     <code class="param-name optional">[ids=behaviorOptions.id]</code>
-                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, context: Object</span>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, idContainer: Object</span>
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
@@ -1416,22 +1416,22 @@ and has get('...') and .toJSON() methods that access the private collection data
 <li>
 <p>{Object} - more complex configuration that identifies a model-like object that fires a change event and the
 property on that object to use. The object can fire the change event for the given property
-and have a .get('propertyName') method, or it can define the property directly on the context.
+and have a .get('propertyName') method, or it can define the property directly on the idContainer.
 Only one property can be identified as supplying the id for this data model.
 If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
-The context can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
+The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
 have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
 data behavior that the property has been modified.</p>
 <ul>
 <li>property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
-context is defined. The context is the object that fires a change event for the given property name.
-Uses the view or the context as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
+idContainer is defined. The idContainer is the object that fires a change event for the given property name.
+Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
 Will get the property before the first '.' from the view and if it is an object will try to use a
 .get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.
 If it is a string/number or array of string/number, then it will use that as the ids.
 Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
-old context and start listening to the new one defined by this property.</li>
-<li>context {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+old idContainer and start listening to the new one defined by this property.</li>
+<li>idContainer {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
 events and has a .get('propertyName') function. It isn't required to fire events -
 the change event is only required if it needs to re-fetch when the id property value changes.
 Examples:
@@ -1440,8 +1440,8 @@ Examples:
 <li>{ property: 'viewState.appointmentId' }</li>
 <li>{ property: 'model.type' }</li>
 <li>{ property: 'behaviors.demographics.data.appointments' }</li>
-<li>{ property: 'id', context: userService }</li>
-<li>{ property: 'username', context: function() { application.getCurrentUser() } }</li>
+<li>{ property: 'id', idContainer: userService }</li>
+<li>{ property: 'username', idContainer: function() { application.getCurrentUser() } }</li>
 </ul>
 </li>
 </ul>

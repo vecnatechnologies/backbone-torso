@@ -510,10 +510,10 @@ ids = {}\n\
       }
     });
 
-    it('can reference a context that does not exist and will return an empty array of ids:\n\
+    it('can reference a idContainer that does not exist and will return an empty array of ids:\n\
 ids = {\n\
   property: \'type\',\n\
-  context: function() {\n\
+  idContainer: function() {\n\
     return undefined;\n\
   }\n\
 }\n\
@@ -521,7 +521,7 @@ ids = {\n\
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
         property: 'type',
-        context: function() {
+        idContainer: function() {
           return undefined;
         }
       };
@@ -545,7 +545,7 @@ ids = {\n\
     it('can reference a property that does not exist and will return an empty array of ids:\n\
 ids = {\n\
   property: \'type\',\n\
-  context: function() {\n\
+  idContainer: function() {\n\
     return {\n\
       test: 1\n\
     };\n\
@@ -555,7 +555,7 @@ ids = {\n\
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
         property: 'type',
-        context: function() {
+        idContainer: function() {
           return {
             test: 1
           };
@@ -755,22 +755,22 @@ ids = {\n\
         });
     });
 
-    it('can specify an object for ids that uses the property field to reference a field of a context object:\n\
-var context = {\n\
+    it('can specify an object for ids that uses the property field to reference a field of a idContainer object:\n\
+var idContainer = {\n\
   dependencyIds: [\'blah\', \'blah\', \'blah\', \'blah\']\n\
 };\n\
 ids = {\n\
   property: \'dependencyIds\',\n\
-  context: context\n\
+  idContainer: idContainer\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      var context = {
+      var idContainer = {
         dependencyIds: ['blah', 'blah', 'blah', 'blah']
       };
       defaultBehaviorConfiguration.ids = {
         property: 'dependencyIds',
-        context: context
+        idContainer: idContainer
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -789,18 +789,18 @@ ids = {\n\
         });
     });
 
-    it('can specify an object for ids that uses the property field to reference an attribute of a context object:\n\
-var contextModel = new TorsoNestedModel({ referenceId: \'test\' });\n\
+    it('can specify an object for ids that uses the property field to reference an attribute of a idContainer object:\n\
+var idContainerModel = new TorsoNestedModel({ referenceId: \'test\' });\n\
 ids = {\n\
   property: \'referenceId\',\n\
-  context: contextModel\n\
+  idContainer: idContainerModel\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      var contextModel = new TorsoNestedModel({ referenceId: 'test' });
+      var idContainerModel = new TorsoNestedModel({ referenceId: 'test' });
       defaultBehaviorConfiguration.ids = {
         property: 'referenceId',
-        context: contextModel
+        idContainer: idContainerModel
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -819,10 +819,10 @@ ids = {\n\
         });
     });
 
-    it('can specify an object for ids that uses the property field to reference a field of a context object retrieved by a function:\n\
+    it('can specify an object for ids that uses the property field to reference a field of a idContainer object retrieved by a function:\n\
 ids = {\n\
   property: \'reference2Id\',\n\
-  context: function() {\n\
+  idContainer: function() {\n\
     return { reference2Id: \'test2\' }\n\
   }\n\
 }\n\
@@ -830,7 +830,7 @@ ids = {\n\
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
         property: 'reference2Id',
-        context: function() {
+        idContainer: function() {
           return { reference2Id: 'test2' }
         }
       };
@@ -851,19 +851,19 @@ ids = {\n\
         });
     });
 
-    it('can specify an object for ids that uses the property field to reference a field of a context object retrieved by a function where this is bound to the behavior:\n\
+    it('can specify an object for ids that uses the property field to reference a field of a idContainer object retrieved by a function where this is bound to the behavior:\n\
 ids = {\n\
   property: \'type\',\n\
-  context: function() {\n\
-    return this.contextModel;\n\
+  idContainer: function() {\n\
+    return this.idContainerModel;\n\
   }\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
         property: 'type',
-        context: function() {
-          return this.contextModel;
+        idContainer: function() {
+          return this.idContainerModel;
         }
       };
       var ViewWithBehavior = TorsoView.extend({
@@ -873,7 +873,7 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.contextModel = new TorsoNestedModel({ type: 'other' });
+      dataBehavior.idContainerModel = new TorsoNestedModel({ type: 'other' });
       dataBehavior.__getIds()
         .then(function(ids) {
           expect(ids).toEqual(['other']);
@@ -886,10 +886,10 @@ ids = {\n\
 
     it('has a toJSON() method that will return the contents of the fetched models', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      var contextModel = new TorsoNestedModel({ referenceId: 'initialValue' });
+      var idContainerModel = new TorsoNestedModel({ referenceId: 'initialValue' });
       defaultBehaviorConfiguration.ids = {
         property: 'referenceId',
-        context: contextModel
+        idContainer: idContainerModel
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -905,13 +905,13 @@ ids = {\n\
         });
     });
 
-    it('will re-fetch the ids and data when the ids context triggers a change event for the ids property', function(done) {
+    it('will re-fetch the ids and data when the ids idContainer triggers a change event for the ids property', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      var contextModel = new TorsoNestedModel();
-      contextModel.referenceId = 'initialId';
+      var idContainerModel = new TorsoNestedModel();
+      idContainerModel.referenceId = 'initialId';
       defaultBehaviorConfiguration.ids = {
         property: 'referenceId',
-        context: contextModel
+        idContainer: idContainerModel
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -923,26 +923,26 @@ ids = {\n\
       dataBehavior.retrieve()
         .then(function() {
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
-          contextModel.referenceId = 'newId';
+          idContainerModel.referenceId = 'newId';
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           dataBehavior.on('fetched', function() {
             expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
             done();
           });
-          contextModel.trigger('change:referenceId');
+          idContainerModel.trigger('change:referenceId');
         });
     });
 
     it('will re-fetch the ids and data when the id-container-updated event is triggered on the behavior', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       var initialContextModel = new TorsoNestedModel();
-      var contextContainer = new TorsoNestedModel();
-      contextContainer.context = initialContextModel;
+      var idContainerContainer = new TorsoNestedModel();
+      idContainerContainer.idContainer = initialContextModel;
       initialContextModel.id = 'initialId';
       defaultBehaviorConfiguration.ids = {
         property: 'id',
-        context: function() {
-          return contextContainer.context;
+        idContainer: function() {
+          return idContainerContainer.idContainer;
         }
       };
       var ViewWithBehavior = TorsoView.extend({
@@ -962,7 +962,7 @@ ids = {\n\
 
             var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
-            contextContainer.context = newContextModel;
+            idContainerContainer.idContainer = newContextModel;
             dataBehavior.trigger('id-container-updated');
 
             dataBehavior.once('fetched', function() {
@@ -977,13 +977,13 @@ ids = {\n\
     it('will re-bind the change event on the id object when the id-container-updated event is triggered on the behavior', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       var initialContextModel = new TorsoNestedModel();
-      var contextContainer = new TorsoNestedModel();
-      contextContainer.context = initialContextModel;
+      var idContainerContainer = new TorsoNestedModel();
+      idContainerContainer.idContainer = initialContextModel;
       initialContextModel.id = 'initialId';
       defaultBehaviorConfiguration.ids = {
         property: 'id',
-        context: function() {
-          return contextContainer.context;
+        idContainer: function() {
+          return idContainerContainer.idContainer;
         }
       };
       var ViewWithBehavior = TorsoView.extend({
@@ -1003,7 +1003,7 @@ ids = {\n\
 
             var newContextModel = new TorsoNestedModel();
             newContextModel.id = 'anotherId';
-            contextContainer.context = newContextModel;
+            idContainerContainer.idContainer = newContextModel;
             dataBehavior.trigger('id-container-updated');
 
             dataBehavior.once('fetched', function() {
@@ -1494,22 +1494,22 @@ dataBehavior2.trigger(\'otherBehavior-event\');\n\
     dataBehavior2.trigger('otherBehavior-event');
   });
 
-  it('will re-fetch the id and data when an arbitrary event on an arbitrary context is fired:\n\
+  it('will re-fetch the id and data when an arbitrary event on an arbitrary idContainer is fired:\n\
 ids = {\n\
   property: \'_idFromView\'\n\
 }\n\
-updateEvents = { arbitraryContextEvent: context }\n\
+updateEvents = { arbitraryContextEvent: idContainer }\n\
 \n\
-context.trigger(\'arbitraryContextEvent\');\n\
+idContainer.trigger(\'arbitraryContextEvent\');\n\
 \n\
 ', function(done) {
-    var context = new TorsoNestedModel();
+    var idContainer = new TorsoNestedModel();
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
     defaultBehaviorConfiguration.ids = {
       property: '_idFromView'
     };
-    defaultBehaviorConfiguration.updateEvents = { arbitraryContextEvent: context };
+    defaultBehaviorConfiguration.updateEvents = { arbitraryContextEvent: idContainer };
     var ViewWithBehavior = TorsoView.extend({
       behaviors: {
         dataBehavior: defaultBehaviorConfiguration
@@ -1525,36 +1525,36 @@ context.trigger(\'arbitraryContextEvent\');\n\
         done();
       });
       viewWithBehavior._idFromView = 100;
-      context.trigger('arbitraryContextEvent');
+      idContainer.trigger('arbitraryContextEvent');
     });
 
     viewWithBehavior._idFromView = 10;
-    context.trigger('arbitraryContextEvent');
+    idContainer.trigger('arbitraryContextEvent');
   });
 
-  it('will re-fetch the id and data when a arbitrary events on an arbitrary contexts are fired:\n\
+  it('will re-fetch the id and data when a arbitrary events on an arbitrary idContainers are fired:\n\
 ids = {\n\
   property: \'_idFromView\'\n\
 }\n\
 updateEvents = {\n\
-  arbitraryContextEvent: context1,\n\
-    \'other-arbitrary-context-event\': context2\n\
+  arbitraryContextEvent: idContainer1,\n\
+    \'other-arbitrary-idContainer-event\': idContainer2\n\
 }\n\
 \n\
-context1.trigger(\'arbitraryContextEvent\');\n\
-context2.trigger(\'other-arbitrary-context-event\');\n\
+idContainer1.trigger(\'arbitraryContextEvent\');\n\
+idContainer2.trigger(\'other-arbitrary-idContainer-event\');\n\
 \n\
 ', function(done) {
-    var context1 = new TorsoNestedModel();
-    var context2 = new TorsoNestedModel();
+    var idContainer1 = new TorsoNestedModel();
+    var idContainer2 = new TorsoNestedModel();
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
     defaultBehaviorConfiguration.ids = {
       property: '_idFromView'
     };
     defaultBehaviorConfiguration.updateEvents = {
-      arbitraryContextEvent: context1,
-      'other-arbitrary-context-event': context2
+      arbitraryContextEvent: idContainer1,
+      'other-arbitrary-idContainer-event': idContainer2
     };
     var ViewWithBehavior = TorsoView.extend({
       behaviors: {
@@ -1571,11 +1571,11 @@ context2.trigger(\'other-arbitrary-context-event\');\n\
         done();
       });
       viewWithBehavior._idFromView = 100;
-      context2.trigger('other-arbitrary-context-event');
+      idContainer2.trigger('other-arbitrary-idContainer-event');
     });
 
     viewWithBehavior._idFromView = 10;
-    context1.trigger('arbitraryContextEvent');
+    idContainer1.trigger('arbitraryContextEvent');
   });
 
   it('will re-fetch the id and data when multiple events are fired:\n\
@@ -1589,13 +1589,13 @@ updateEvents = [\n\
   \'model:model-event\',\n\
   \'dataBehavior2:otherBehavior-event\',\n\
   {\n\
-    arbitraryContextEvent: context1,\n\
-    \'other-arbitrary-context-event\': context2\n\
+    arbitraryContextEvent: idContainer1,\n\
+    \'other-arbitrary-idContainer-event\': idContainer2\n\
   }\n\
 ];\n\
 \n\
-context1.trigger(\'arbitraryContextEvent\');\n\
-context2.trigger(\'other-arbitrary-context-event\');\n\
+idContainer1.trigger(\'arbitraryContextEvent\');\n\
+idContainer2.trigger(\'other-arbitrary-idContainer-event\');\n\
 dataBehavior2.trigger(\'otherBehavior-event\');\n\
 viewWithBehavior.model.trigger(\'model-event\');\n\
 viewWithBehavior.viewState.trigger(\'viewState-event\');\n\
@@ -1603,8 +1603,8 @@ viewWithBehavior.trigger(\'view-event\');\n\
 dataBehavior.trigger(\'this-event\');\n\
 \n\
 ', function(done) {
-    var context1 = new TorsoNestedModel();
-    var context2 = new TorsoNestedModel();
+    var idContainer1 = new TorsoNestedModel();
+    var idContainer2 = new TorsoNestedModel();
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
     defaultBehaviorConfiguration.returnSingleResult = true;
     defaultBehaviorConfiguration.ids = {
@@ -1617,8 +1617,8 @@ dataBehavior.trigger(\'this-event\');\n\
       'model:model-event',
       'dataBehavior2:otherBehavior-event',
       {
-        arbitraryContextEvent: context1,
-        'other-arbitrary-context-event': context2
+        arbitraryContextEvent: idContainer1,
+        'other-arbitrary-idContainer-event': idContainer2
       }
     ];
     var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
@@ -1672,10 +1672,10 @@ dataBehavior.trigger(\'this-event\');\n\
         dataBehavior2.trigger('otherBehavior-event');
       });
       viewWithBehavior._idFromView = 100;
-      context2.trigger('other-arbitrary-context-event');
+      idContainer2.trigger('other-arbitrary-idContainer-event');
     });
 
     viewWithBehavior._idFromView = 10;
-    context1.trigger('arbitraryContextEvent');
+    idContainer1.trigger('arbitraryContextEvent');
   });
 });

@@ -281,21 +281,21 @@
      *   - {String[]|Number[]} - the ids to use directly.
      *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
      *                property on that object to use. The object can fire the change event for the given property
-     *                and have a .get('propertyName') method, or it can define the property directly on the context.
+     *                and have a .get('propertyName') method, or it can define the property directly on the idContainer.
      *                Only one property can be identified as supplying the id for this data model.
      *                If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
-     *                The context can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
+     *                The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
      *                have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
      *                data behavior that the property has been modified.
      *     - property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
-     *                           context is defined. The context is the object that fires a change event for the given property name.
-     *                           Uses the view or the context as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
+     *                           idContainer is defined. The idContainer is the object that fires a change event for the given property name.
+     *                           Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
      *                           Will get the property before the first '.' from the view and if it is an object will try to use a
      *                           .get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.
      *                           If it is a string/number or array of string/number, then it will use that as the ids.
      *                           Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
-     *                           old context and start listening to the new one defined by this property.
-     *     - context {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+     *                           old idContainer and start listening to the new one defined by this property.
+     *     - idContainer {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
      *                           events and has a .get('propertyName') function. It isn't required to fire events -
      *                           the change event is only required if it needs to re-fetch when the id property value changes.
      *     Examples:
@@ -303,8 +303,8 @@
      *       - { property: 'viewState.appointmentId' }
      *       - { property: 'model.type' }
      *       - { property: 'behaviors.demographics.data.appointments' }
-     *       - { property: 'id', context: userService }
-     *       - { property: 'username', context: function() { application.getCurrentUser() } }
+     *       - { property: 'id', idContainer: userService }
+     *       - { property: 'username', idContainer: function() { application.getCurrentUser() } }
      *   - {Function(cache)} - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
      *                         to track with the private collection. Cache is passed in as the first argument so that the behavior
      *                         can be defined and the cache can be overridden later.
@@ -349,8 +349,8 @@
      *   @param behaviorOptions.cache {Collection} see cache property.
      *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
      *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see alwaysFetch property.
-     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see id property.
-     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|{property: String, context: Object}|Function} see ids property.
+     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see id property.
+     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see ids property.
      *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see updateEvents property.
      * @param [viewOptions] {Object} options passed to View's initialize
      */
@@ -442,10 +442,10 @@
       if (!_.isUndefined(this.ids.property)) {
         this.stopListeningToIdsPropertyChangeEvent();
         var idsPropertyNameAndContext = this.__parseIdsPropertyNameAndContext();
-        var idsContext = idsPropertyNameAndContext.idsContext;
-        var canListenToEvents = idsContext && _.isFunction(idsContext.on);
+        var idContainer = idsPropertyNameAndContext.idContainer;
+        var canListenToEvents = idContainer && _.isFunction(idContainer.on);
         if (canListenToEvents) {
-          this.__currentContextWithListener = idsContext;
+          this.__currentContextWithListener = idContainer;
           this.__currentContextEventName = 'change:' + idsPropertyNameAndContext.idsPropertyName;
           this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
           this.listenTo(this.__currentContextWithListener, 'fetched:ids', this.retrieve);
@@ -475,7 +475,7 @@
       this._undelegateUpdateEvents();
       var updateEvents = this.__parseUpdateEvents();
       _.each(updateEvents, function(parsedUpdateEvent) {
-        this.listenTo(parsedUpdateEvent.context, parsedUpdateEvent.eventName, this.retrieve);
+        this.listenTo(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, this.retrieve);
       }, this);
     },
 
@@ -487,13 +487,13 @@
     _undelegateUpdateEvents: function() {
       var updateEvents = this.__parseUpdateEvents();
       _.each(updateEvents, function(parsedUpdateEvent) {
-        this.stopListening(parsedUpdateEvent.context, parsedUpdateEvent.eventName, this.retrieve);
+        this.stopListening(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, this.retrieve);
       }, this);
     },
 
     /**
      * Parses this.updateEvents configuration.
-     * @return {[{ eventName: String, context: Object }]} an array of objects with the event name and context included.
+     * @return {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
      * @private
      */
     __parseUpdateEvents: function() {
@@ -506,7 +506,7 @@
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param updateEventConfiguration {String | Object} the configuration for an individual event configuration.
-     * @return {[{ eventName: String, context: Object }] | undefined} an array of objects with the event name and context included.
+     * @return {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */
@@ -522,9 +522,9 @@
         }
       }
       if (_.isObject(updateEventConfiguration)) {
-        parsedUpdateEvents = _.map(updateEventConfiguration, function(context, eventName) {
+        parsedUpdateEvents = _.map(updateEventConfiguration, function(idContainer, eventName) {
           return {
-            context: context,
+            idContainer: idContainer,
             eventName: eventName
           };
         });
@@ -541,38 +541,38 @@
      *   model (maps to the behavior's view's model),
      *   <*> any others are assumed to be the names of behaviors on this behavior's view.
      * @param updateEventConfiguration {String} a string representation of the event.
-     * @return {{eventName: String, context: Backbone.Events}} the parsed configuration with the event name and context object.
+     * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
      * @private
      */
     __parseStringUpdateEvent: function(updateEventConfiguration) {
-      var contextString = updateEventConfiguration.split(':', 1)[0];
-      var rootContextString = contextString.split('.', 1)[0];
-      var rootContext;
+      var idContainerString = updateEventConfiguration.split(':', 1)[0];
+      var rootContextString = idContainerString.split('.', 1)[0];
+      var rootIdContainer;
       if (rootContextString === 'this') {
-        rootContext = this;
+        rootIdContainer = this;
       } else if (rootContextString === 'view') {
-        rootContext = this.view;
+        rootIdContainer = this.view;
       } else if (rootContextString === 'viewState') {
-        rootContext = this.view.viewState;
+        rootIdContainer = this.view.viewState;
       } else if (rootContextString === 'model') {
-        rootContext = this.view.model;
+        rootIdContainer = this.view.model;
       } else {
         // assume its a behavior alias.
-        rootContext = this.view.getBehavior(rootContextString);
+        rootIdContainer = this.view.getBehavior(rootContextString);
       }
-      if (!_.isUndefined(rootContext)) {
-        var context = rootContext;
-        var contextPropertyString = contextString.replace(rootContextString, '');
-        if (contextPropertyString) {
+      if (!_.isUndefined(rootIdContainer)) {
+        var idContainer = rootIdContainer;
+        var idContainerPropertyString = idContainerString.replace(rootContextString, '');
+        if (idContainerPropertyString) {
           // remove . in the case that there is a property string.
-          contextPropertyString = contextPropertyString.substring(1);
-          context = rootContext[contextPropertyString.substring(1)];
+          idContainerPropertyString = idContainerPropertyString.substring(1);
+          idContainer = rootIdContainer[idContainerPropertyString.substring(1)];
         }
 
-        var eventName = updateEventConfiguration.replace(contextString + ':', '');
+        var eventName = updateEventConfiguration.replace(idContainerString + ':', '');
         return {
           eventName: eventName,
-          context: context
+          idContainer: idContainer
         };
       }
     },
@@ -695,14 +695,14 @@
       } else if (!_.isUndefined(this.ids.property)) {
         var parsedContextDefinition = this.__parseIdsPropertyNameAndContext();
         var propertyName = parsedContextDefinition.idsPropertyName;
-        var context = parsedContextDefinition.idsContext;
+        var idContainer = parsedContextDefinition.idContainer;
 
-        ids = context && context[propertyName];
-        var propertyOnContextIsUndefined = context && _.isUndefined(ids);
-        var contextHasGetMethod = context && _.isFunction(context.get);
+        ids = idContainer && idContainer[propertyName];
+        var propertyOnContextIsUndefined = idContainer && _.isUndefined(ids);
+        var idContainerHasGetMethod = idContainer && _.isFunction(idContainer.get);
 
-        if (propertyOnContextIsUndefined && contextHasGetMethod) {
-          ids = context.get(propertyName);
+        if (propertyOnContextIsUndefined && idContainerHasGetMethod) {
+          ids = idContainer.get(propertyName);
         }
         normalizedIds = normalizeIds(ids);
 
@@ -712,13 +712,13 @@
     },
 
     /**
-     * Converts the definition into the actual context object and property name to retrieve off of that context.
+     * Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.
      * @method __parseIdsPropertyNameAndContext
-     * @return {{idsPropertyName: String, context: Object}} the name of the ids property and the actual object to use as the context.
+     * @return {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
      * @private
      */
     __parseIdsPropertyNameAndContext: function() {
-      var context = this.__parseIdsContext();
+      var idContainer = this.__parseIdsContext();
 
       var propertyName = this.ids.property;
 
@@ -728,46 +728,46 @@
         var rootPropertyName = propertyParts[0];
         if (rootPropertyName === 'behaviors' || rootPropertyName === 'behavior') {
           var behaviorName = propertyParts[1];
-          context = this.view.getBehavior(behaviorName);
+          idContainer = this.view.getBehavior(behaviorName);
           if (propertyParts[2] === 'data') {
-            context = context.data;
+            idContainer = idContainer.data;
             propertyName = propertyParts.slice(3).join('.');
           } else {
             propertyName = propertyParts.slice(2).join('.');
           }
-        } else if (!_.isUndefined(context[rootPropertyName])) {
-          context = context[rootPropertyName];
+        } else if (!_.isUndefined(idContainer[rootPropertyName])) {
+          idContainer = idContainer[rootPropertyName];
           propertyName = propertyParts.slice(1).join('.');
         }
       }
 
       return {
         idsPropertyName: propertyName,
-        idsContext: context
+        idContainer: idContainer
       };
     },
 
     /**
-     * Parses the context property of ids.
-     * @return {Object} the context object to apply the properties value to (may not be the final context depending on the property definition).
+     * Parses the idContainer property of ids.
+     * @return {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
      * @private
      */
     __parseIdsContext: function() {
-      var contextDefinition = this.ids.context;
-      var context;
-      if (_.isUndefined(contextDefinition)) {
-        context = this.view;
-      } else if (_.isFunction(contextDefinition)) {
-        var contextFxn = _.bind(contextDefinition, this);
-        context = contextFxn();
-      } else if (_.isString(contextDefinition)) {
-        context = _.result(this, contextDefinition);
-      } else if (_.isObject(contextDefinition)) {
-        context = contextDefinition;
+      var idContainerDefinition = this.ids.idContainer;
+      var idContainer;
+      if (_.isUndefined(idContainerDefinition)) {
+        idContainer = this.view;
+      } else if (_.isFunction(idContainerDefinition)) {
+        var idContainerFxn = _.bind(idContainerDefinition, this);
+        idContainer = idContainerFxn();
+      } else if (_.isString(idContainerDefinition)) {
+        idContainer = _.result(this, idContainerDefinition);
+      } else if (_.isObject(idContainerDefinition)) {
+        idContainer = idContainerDefinition;
       } else {
-        throw new Error('Invalid context.  Not a string, object or function: ' + JSON.stringify(this.ids));
+        throw new Error('Invalid idContainer.  Not a string, object or function: ' + JSON.stringify(this.ids));
       }
-      return context;
+      return idContainer;
     },
 
     /**
