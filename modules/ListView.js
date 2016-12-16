@@ -14,7 +14,7 @@
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
-     * @param view {List View} the list view
+     * @param view {ListView} the list view
      * @private
      * @method breakDelayedRender
      */
@@ -34,8 +34,8 @@
      * batch render calls
      * @private
      * @method aggregateRenders
-     * @param wait {Numeric} the number of milliseconds to wait before rendering
-     * @param view {List View} the list view
+     * @param wait {Number} the number of milliseconds to wait before rendering
+     * @param view {ListView} the list view
      */
     aggregateRenders = function(wait, view) {
       var postpone = function() {
@@ -187,6 +187,11 @@
     __itemContext: null,
     __renderWait: 0,
     __delayedRender: null,
+    /**
+     * @property __delayedRenderTimeout
+     * @private
+     * @type {Number}
+     */
     __delayedRenderTimeout: null,
 
     /**
@@ -200,7 +205,7 @@
      *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
      *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom functionality.
-     *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
+     *   @param [args.renderWait=0] {Number} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
      *   @param [args.childView] {String} DEPRECATED - deprecated alias to args.itemView

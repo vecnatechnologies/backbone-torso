@@ -1673,6 +1673,28 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['./Cell'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('./Cell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.ServiceCell = factory(root.Torso.Cell);
+  }
+}(this, function(Cell) {
+  'use strict';
+  /**
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
+   * @module    Torso
+   * @class  ServiceCell
+   * @author kent.willis@vecna.com
+   */
+  var ServiceCell = Cell.extend({ });
+
+  return ServiceCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
@@ -2999,28 +3021,6 @@
   });
 
   return View;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['./Cell'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('./Cell'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root.Torso.Cell);
-  }
-}(this, function(Cell) {
-  'use strict';
-  /**
-   * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @author kent.willis@vecna.com
-   */
-  var ServiceCell = Cell.extend({ });
-
-  return ServiceCell;
 }));
 
 (function(root, factory) {
@@ -4891,7 +4891,7 @@
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
-     * @param view {List View} the list view
+     * @param view {ListView} the list view
      * @private
      * @method breakDelayedRender
      */
@@ -4911,8 +4911,8 @@
      * batch render calls
      * @private
      * @method aggregateRenders
-     * @param wait {Numeric} the number of milliseconds to wait before rendering
-     * @param view {List View} the list view
+     * @param wait {Number} the number of milliseconds to wait before rendering
+     * @param view {ListView} the list view
      */
     aggregateRenders = function(wait, view) {
       var postpone = function() {
@@ -5064,6 +5064,11 @@
     __itemContext: null,
     __renderWait: 0,
     __delayedRender: null,
+    /**
+     * @property __delayedRenderTimeout
+     * @private
+     * @type {Number}
+     */
     __delayedRenderTimeout: null,
 
     /**
@@ -5077,7 +5082,7 @@
      *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
      *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom functionality.
-     *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
+     *   @param [args.renderWait=0] {Number} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
      *   @param [args.childView] {String} DEPRECATED - deprecated alias to args.itemView
@@ -5638,46 +5643,6 @@
    * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
    *
    * See https://tonicdev.com/torso/databehavior for more in-depth documentation and details.
-   *
-   * Ways to cause this data behavior to refresh the data.  Ids are retrieved from the idsContainer whenever a refresh of data is requested.
-   *  * __view.getBehavior('thisBehaviorAlias').pull()__ - Any ids that are already in the cache are added immediately.
-   *                                                       Any that are not already in the cache are fetched as a single batch of ids.
-   *  * __view.getBehavior('thisBehaviorAlias').fetch()__ - Regardless of the cache state all ids identified by this behavior are fetched from the server.
-   *  * __view.getBehavior('thisBehaviorAlias').retrieve()__ - Will either fetch or pull based on the current value of 'alwaysFetch'.
-   *                                                           Defaults to pull (if alwaysFetch is not explicitly set).
-   *  * __view.getBehavior('thisBehaviorAlias').trigger('ids-container-updated')__ - this is a way to indicate that the id container changed
-   *                                                                                 which means the id listeners should be rebound and data should be refreshed.
-   *  * __idsContainer.trigger('change:<idPropertyName>')__ - This is the change event that is already emitted by Cell-like objects when their properties change.
-   *  * __idsContainer.trigger('fetched:ids')__ - This indicates that the ids have been fetched for the first time (when a change event may not be fired) and is used
-   *                                              mainly to chain data behaviors together (this event is also emitted by this behavior whenever a fetch or pull completes).
-   *
-   * Ways to get properties from the data in this behavior:
-   *  * __view.getBehavior('thisBehaviorAlias').data.toJSON()__ - Either array of data if returnSingleResult is false (default),
-   *                                                              Or the object data directly if returnSingleResult is true.
-   *  * __view.getBehavior('thisBehaviorAlias').data.toJSON('some.data.property')__ - returns just that property of the result or undefined if it hasn't been fetched or doesn't exist.
-   *                                                                                  If returnSingleResult is false then an array of values for that object is returned
-   *                                                                                  This is equivalent to _.pluck(view.getBehavior('thisBehaviorAlias').toJSON(), 'some.data.property').
-   *
-   *   The context generated by `view.prepare()` will contain all of the data associated with this view namespaced by the behavior's alias .data on the view.
-   *   This the same data as returned by `view.getBehavior('thisBehaviorAlias').data.toJSON()`.
-   *
-   *     View.extend({
-   *       behaviors: {
-   *         thisBehaviorAlias: {
-   *           behavior: ThisBehaviorClass
-   *         }
-   *       }
-   *     });
-   *
-   *   result from prepare:
-   *
-   *     {
-   *       ...,
-   *       thisBehaviorAlias: {
-   *         ...,
-   *         data: <result of view.getBehavior('thisBehaviorAlias').data.toJSON()>
-   *       }
-   *     }
    *
    * @class DataBehavior
    * @method constructor
