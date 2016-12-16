@@ -605,6 +605,91 @@ ids = {\n\
         });
     });
 
+    it('can specify an object for ids that uses the property field to reference a property directly on the view using the "view" alias:\n\
+ids = {\n\
+  property: \'view:_viewId\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'view:_viewId'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        _viewId: 1,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a nested object for the id container:\n\
+ids = {\n\
+  property: \'view.someIdContainer:_viewId\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'view.someIdContainer:_viewId'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        someIdContainer: {
+          _viewId: 1
+        },
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify a nested object for the id property:\n\
+ids = {\n\
+  property: \'view:someIdContainer._viewId\'\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = {
+        property: 'view:someIdContainer._viewId'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        someIdContainer: {
+          _viewId: 1
+        },
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([1]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
     it('can specify an object for ids that uses the property field to reference a property directly on the viewState:\n\
 ids = {\n\
   property: \'testId\'\n\
@@ -636,12 +721,12 @@ ids = {\n\
 
     it('can specify an object for ids that uses the property field to reference a property directly on the viewState:\n\
 ids = {\n\
-  property: \'viewState.testId2\'\n\
+  property: \'viewState:testId2\'\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
-        property: 'viewState.testId2'
+        property: 'viewState:testId2'
       };
       var ViewWithBehavior = TorsoView.extend({
         initialize: function() {
@@ -665,12 +750,12 @@ ids = {\n\
 
     it('can specify an object for ids that uses the property field to reference a property directly on the view.model:\n\
 ids = {\n\
-  property: \'model.dependentIds\'\n\
+  property: \'model:dependentIds\'\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
-        property: 'model.dependentIds'
+        property: 'model:dependentIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         initialize: function() {
@@ -694,12 +779,12 @@ ids = {\n\
 
     it('can specify an object for ids that uses the property field to reference a property on another behavior:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior2._someIds\'\n\
+  property: \'behaviors.dataBehavior2:_someIds\'\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
-        property: 'behaviors.dataBehavior2._someIds'
+        property: 'behaviors.dataBehavior2:_someIds'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       var ViewWithBehavior = TorsoView.extend({
@@ -724,12 +809,12 @@ ids = {\n\
 
     it('can specify an object for ids that uses the property field to reference a data property on another behavior:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior2.data.someOtherId\'\n\
+  property: \'behaviors.dataBehavior2.data:someOtherId\'\n\
 }\n\
 ', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
-        property: 'behaviors.dataBehavior2.data.someOtherId'
+        property: 'behaviors.dataBehavior2.data:someOtherId'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       var ViewWithBehavior = TorsoView.extend({
@@ -1021,9 +1106,83 @@ ids = {\n\
         });
     });
 
+    it('and depends on a nested id container defined on the view will re-fetch data when the ids on the nested id container change:\n\
+ids = {\n\
+  property: \'idContainer:someIds\'\n\
+}\n\\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.returnSingleResult = true;
+      defaultBehaviorConfiguration.ids = {
+        property: 'idContainer:someIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        idContainer: new TorsoNestedModel(),
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
+        done();
+      });
+      viewWithBehavior.idContainer.set('someIds', 10);
+    });
+
+    it('and depends on a nested id container defined on the view will re-fetch data when the ids on the nested id container change:\n\
+ids = {\n\
+  property: \'view.idContainer:someIds\'\n\
+}\n\\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.returnSingleResult = true;
+      defaultBehaviorConfiguration.ids = {
+        property: 'view.idContainer:someIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        idContainer: new TorsoNestedModel(),
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
+        done();
+      });
+      viewWithBehavior.idContainer.set('someIds', 10);
+    });
+
+    it('and depends on a nested id property defined on the viewState will re-fetch data when the ids in the nested id property change:\n\
+ids = {\n\
+  property: \'view:idContainer.someIds\'\n\
+}\n\\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.returnSingleResult = true;
+      defaultBehaviorConfiguration.ids = {
+        property: 'viewState:idContainer.someIds'
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.once('fetched', function() {
+        expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
+        done();
+      });
+      viewWithBehavior.set('idContainer.someIds', 10);
+    });
+
     it('and depends on another behavior will re-fetch data when the ids on the root behavior change:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.data.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data:otherIds\'\n\
 }\n\\n\
 ', function(done) {
       $.mockjax.clear(this.routes['/myModel/ids|post']);
@@ -1032,11 +1191,11 @@ ids = {\n\
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.returnSingleResult = true;
       defaultBehaviorConfiguration.ids = {
-        property: 'viewState.idFromView'
+        property: 'viewState:idFromView'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.data.otherIds'
+        property: 'behaviors.dataBehavior.data:otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1063,7 +1222,7 @@ ids = {\n\
 
     it('will handle a collection of models each with an array of ids:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.data.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data:otherIds\'\n\
 }\n\
 \n\
 dataBehavior gets multiple objects with this structure: { id: 10, otherIds: [1, 2, 3] ... }.\n\
@@ -1075,11 +1234,11 @@ dataBehavior2 will pull the unique collection of ids collected from all of the o
 
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.ids = {
-        property: 'viewState.idFromView'
+        property: 'viewState:idFromView'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.data.otherIds'
+        property: 'behaviors.dataBehavior.data:otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1113,17 +1272,17 @@ dataBehavior2 will pull the unique collection of ids collected from all of the o
     it('will handle a chain of behaviors:\n\
 defaultBehaviorConfiguration.returnSingleResult = true;\n\
 defaultBehaviorConfiguration.ids = {\n\
-  property: \'viewState.idFromView\'\n\
+  property: \'viewState:idFromView\'\n\
 };\n\
 \n\
 var defaultBehavior2Configuration = getBasicBehaviorConfiguration();\n\
 defaultBehavior2Configuration.ids = {\n\
-  property: \'behaviors.dataBehavior.data.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data:otherIds\'\n\
 };\n\
 \n\
 var defaultBehavior3Configuration = getBasicBehaviorConfiguration();\n\
 defaultBehavior3Configuration.ids = {\n\
-  property: \'behaviors.dataBehavior2.data.otherOtherIds\'\n\
+  property: \'behaviors.dataBehavior2.data:otherOtherIds\'\n\
 };\n\
 \n\
 var ViewWithBehavior = TorsoView.extend({\n\
@@ -1140,15 +1299,15 @@ var ViewWithBehavior = TorsoView.extend({\n\
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.returnSingleResult = true;
       defaultBehaviorConfiguration.ids = {
-        property: 'viewState.idFromView'
+        property: 'viewState:idFromView'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.data.otherIds'
+        property: 'behaviors.dataBehavior.data:otherIds'
       };
       var defaultBehavior3Configuration = getBasicBehaviorConfiguration();
       defaultBehavior3Configuration.ids = {
-        property: 'behaviors.dataBehavior2.data.otherOtherIds'
+        property: 'behaviors.dataBehavior2.data:otherOtherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1202,7 +1361,7 @@ var ViewWithBehavior = TorsoView.extend({\n\
 
     it('will re-fetch when the id property on another data behavior changes to a non-empty value:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.data.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data:otherIds\'\n\
 }\n\
 \n\
 Manually force a change in the one model\'s value:\n\
@@ -1215,11 +1374,11 @@ dataBehavior.data.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.returnSingleResult = true;
       defaultBehaviorConfiguration.ids = {
-        property: 'viewState.idFromView'
+        property: 'viewState:idFromView'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.data.otherIds'
+        property: 'behaviors.dataBehavior.data:otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1254,7 +1413,7 @@ dataBehavior.data.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n
 
     it('will re-fetch when the id property on another data behavior changes to an empty value:\n\
 ids = {\n\
-  property: \'behaviors.dataBehavior.data.otherIds\'\n\
+  property: \'behaviors.dataBehavior.data:otherIds\'\n\
 }\n\
 \n\
 Manually force a change in the one model\'s value:\n\
@@ -1267,11 +1426,11 @@ dataBehavior.data.privateCollection.models[0].unset(\'otherIds\');\n\
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       defaultBehaviorConfiguration.returnSingleResult = true;
       defaultBehaviorConfiguration.ids = {
-        property: 'viewState.idFromView'
+        property: 'viewState:idFromView'
       };
       var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
       defaultBehavior2Configuration.ids = {
-        property: 'behaviors.dataBehavior.data.otherIds'
+        property: 'behaviors.dataBehavior.data:otherIds'
       };
       var ViewWithBehavior = TorsoView.extend({
         behaviors: {
@@ -1458,7 +1617,7 @@ viewWithBehavior.model.trigger(\'model-event\');\n\
 ids = {\n\
   property: \'_idFromView\'\n\
 }\n\
-updateEvents = \'dataBehavior2:otherBehavior-event\'\n\
+updateEvents = \'behaviors.dataBehavior2:otherBehavior-event\'\n\
 \n\
 dataBehavior2.trigger(\'otherBehavior-event\');\n\
 \n\
@@ -1468,7 +1627,7 @@ dataBehavior2.trigger(\'otherBehavior-event\');\n\
     defaultBehaviorConfiguration.ids = {
       property: '_idFromView'
     };
-    defaultBehaviorConfiguration.updateEvents = 'dataBehavior2:otherBehavior-event';
+    defaultBehaviorConfiguration.updateEvents = 'behaviors.dataBehavior2:otherBehavior-event';
     var defaultBehavior2Configuration = getBasicBehaviorConfiguration();
     var ViewWithBehavior = TorsoView.extend({
       behaviors: {
@@ -1587,7 +1746,7 @@ updateEvents = [\n\
   \'view:view-event\',\n\
   \'viewState:viewState-event\',\n\
   \'model:model-event\',\n\
-  \'dataBehavior2:otherBehavior-event\',\n\
+  \'behaviors.dataBehavior2:otherBehavior-event\',\n\
   {\n\
     arbitraryContextEvent: idContainer1,\n\
     \'other-arbitrary-idContainer-event\': idContainer2\n\
@@ -1615,7 +1774,7 @@ dataBehavior.trigger(\'this-event\');\n\
       'view:view-event',
       'viewState:viewState-event',
       'model:model-event',
-      'dataBehavior2:otherBehavior-event',
+      'behaviors.dataBehavior2:otherBehavior-event',
       {
         arbitraryContextEvent: idContainer1,
         'other-arbitrary-idContainer-event': idContainer2

@@ -107,7 +107,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l45"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:45</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l72"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:72</code></a>
         </div>
 
             Module: <a href="../modules/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a>
@@ -119,28 +119,7 @@
     <p>This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
 This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
 This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.</p>
-<p>Example Configuration on the view:</p>
-<pre class="code prettyprint"><code>TorsoView.extend({
-  behaviors: {
-    demographics: {
-      behavior: TorsoDataBehavior,
-      cache: require('./demographicsCacheCollection'),
-      returnSingleResult: true,
-      id: { property: '_patientVecnaId' }
-    }
-  }
-}
-</code></pre>
-<p>Any options for this behavior can also be configured directly on it using the same extension mechanism as other
-Backbone or Torso objects.</p>
-<p>Example configuration by extension:</p>
-<pre class="code prettyprint"><code>var AppointmentDataBehavior = DataBehavior.extend({
-  cache: require('./appointmentCacheCollection'),
-  id: { property: '_appointmentExternalId' },
-  returnSingleResult: true,
-  alwaysFetch: true
-});
-</code></pre>
+<p>See <a href="https://tonicdev.com/torso/databehavior">https://tonicdev.com/torso/databehavior</a> for more in-depth documentation and details.</p>
 <p>Ways to cause this data behavior to refresh the data.  Ids are retrieved from the idsContainer whenever a refresh of data is requested.</p>
 <ul>
 <li><strong>view.getBehavior('thisBehaviorAlias').pull()</strong> - Any ids that are already in the cache are added immediately.
@@ -179,124 +158,7 @@ This the same data as returned by <code>view.getBehavior('thisBehaviorAlias').da
     ...,
     data: &lt;result of view.getBehavior('thisBehaviorAlias').data.toJSON()&gt;
   }
-}
-</code></pre>
-<p>Some Example Configurations:</p>
-<p><strong>Static id</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
-<pre class="code prettyprint"><code>View.extend({
-   behaviors: {
-     article: {
-       behavior: require('torso/modules/behaviors/DataBehavior'),
-       cache: require('app/article/articleCacheCollection'),
-       returnSingleResult: true,
-       id: 1234
-     }
-   }
- });
-</code></pre>
-<p>value used for id: <code>1234</code></p>
-<p>context for template:</p>
-<pre class="code prettyprint"><code>{
-  ...,
-  article: {
-    ...,
-    data: {
-      id: 1234,
-      title: 'A really cool thing',
-      text: 'So I was walking down the street one day...'
-    }
-  }
-}
-</code></pre>
-<p><strong>Static ids</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
-<pre class="code prettyprint"><code>View.extend({
-  behaviors: {
-    posts: {
-      behavior: require('torso/modules/behaviors/DataBehavior'),
-      cache: require('app/article/postCacheCollection'),
-      ids: [ 'yesterday-by-the-river', 'tomorrow-by-the-sea' ]
-    }
-  }
-});
-</code></pre>
-<p>value used for ids: <code>[ 'yesterday-by-the-river', 'tomorrow-by-the-sea' ]</code></p>
-<p>context for template:</p>
-<pre class="code prettyprint"><code> {
-   ...,
-   posts: {
-     ...,
-     data: [{
-       id: 'yesterday-by-the-river',
-       title: 'Yesterday by the River',
-       author: 'John Smith',
-       content: 'While I was walking by the river...'
-     },{
-       id: 'tomorrow-by-the-sea',
-       title: 'Tomorrow by the Sea',
-       author: 'Mary Smith',
-       content: 'I will walk on the beach tomorrow...'
-     }]
-   }
- }
-</code></pre>
-<p><strong>Static id property on view</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
-<pre class="code prettyprint"><code>View.extend({
-   behaviors: {
-     article: {
-       behavior: require('torso/modules/behaviors/DataBehavior'),
-       cache: require('app/article/articleCacheCollection'),
-       returnSingleResult: true,
-       id: { property: '_articleId' }
-     }
-   }
- });
-</code></pre>
-<p>value used for id: <code>view._articleId</code></p>
-<p>context for template:</p>
-<pre class="code prettyprint"><code>{
-  ...,
-  article: {
-    ...,
-    data: {
-      id: 12,
-      title: 'A really cool thing',
-      text: 'So I was walking down the street one day...'
-    }
-  }
-}
-</code></pre>
-<p><strong>Static ids property on view</strong> (can be a single String or Number or an array of Strings or Numbers):</p>
-<pre class="code prettyprint"><code>View.extend({
-  behaviors: {
-    posts: {
-      behavior: require('torso/modules/behaviors/DataBehavior'),
-      cache: require('app/article/postCacheCollection'),
-      ids: { property: '_postIds' }
-    }
-  }
-});
-</code></pre>
-<p>value used for ids: <code>view._postIds</code></p>
-<p>context for template:</p>
-<pre class="code prettyprint"><code> {
-   ...,
-   posts: {
-     ...,
-     data: [{
-       id: 'yesterday-by-the-river',
-       title: 'Yesterday by the River',
-       author: 'John Smith',
-       content: 'While I was walking by the river...'
-     },{
-       id: 'tomorrow-by-the-sea',
-       title: 'Tomorrow by the Sea',
-       author: 'Mary Smith',
-       content: 'I will walk on the beach tomorrow...'
-     }]
-   }
- }
-</code></pre>
-<p>__</p>
+}</code></pre>
 
 </div>
 
@@ -346,7 +208,7 @@ This the same data as returned by <code>view.getBehavior('thisBehaviorAlias').da
 
                             </li>
                             <li class="index-item method private">
-                                <a href="#method___parseIdsPropertyNameAndContext">__parseIdsPropertyNameAndContext</a>
+                                <a href="#method___parseIdsPropertyNameAndIdContainer">__parseIdsPropertyNameAndIdContainer</a>
 
                             </li>
                             <li class="index-item method private">
@@ -458,7 +320,7 @@ This the same data as returned by <code>view.getBehavior('thisBehaviorAlias').da
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l785"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:785</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l685"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:685</code></a>
         </p>
 
 
@@ -491,7 +353,7 @@ This the same data as returned by <code>view.getBehavior('thisBehaviorAlias').da
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l773"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:773</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l673"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:673</code></a>
         </p>
 
 
@@ -527,7 +389,7 @@ This the same data as returned by <code>view.getBehavior('thisBehaviorAlias').da
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l671"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:671</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l508"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:508</code></a>
         </p>
 
 
@@ -569,7 +431,7 @@ or rejects with the error message.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l594"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:594</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l422"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:422</code></a>
         </p>
 
 
@@ -604,7 +466,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l609"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:609</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l437"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:437</code></a>
         </p>
 
 
@@ -639,7 +501,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l658"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:658</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l495"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:495</code></a>
         </p>
 
 
@@ -672,7 +534,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l634"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:634</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l471"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:471</code></a>
         </p>
 
 
@@ -688,8 +550,8 @@ This is done as part of validation because we first validate that both are not s
 
 
 </div>
-<div id="method___parseIdsPropertyNameAndContext" class="method item private">
-    <h3 class="name"><code>__parseIdsPropertyNameAndContext</code></h3>
+<div id="method___parseIdsPropertyNameAndIdContainer" class="method item private">
+    <h3 class="name"><code>__parseIdsPropertyNameAndIdContainer</code></h3>
 
         <span class="paren">()</span>
 
@@ -708,7 +570,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l714"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:714</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l551"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:551</code></a>
         </p>
 
 
@@ -750,7 +612,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l580"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:580</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l408"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:408</code></a>
         </p>
 
 
@@ -783,7 +645,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l797"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:797</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l697"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:697</code></a>
         </p>
 
 
@@ -816,7 +678,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l808"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:808</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l708"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:708</code></a>
         </p>
 
 
@@ -849,7 +711,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l469"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:469</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l343"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:343</code></a>
         </p>
 
 
@@ -882,7 +744,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l819"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:819</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l719"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:719</code></a>
         </p>
 
 
@@ -915,7 +777,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l482"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:482</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l356"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:356</code></a>
         </p>
 
 
@@ -956,7 +818,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l345"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:345</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l219"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:219</code></a>
         </p>
 
 
@@ -1085,7 +947,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l412"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:412</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l286"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:286</code></a>
         </p>
 
 
@@ -1126,7 +988,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l437"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:437</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l311"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:311</code></a>
         </p>
 
 
@@ -1158,7 +1020,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l426"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:426</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l300"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:300</code></a>
         </p>
 
 
@@ -1193,7 +1055,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l398"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:398</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l272"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:272</code></a>
         </p>
 
 
@@ -1237,7 +1099,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l384"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:384</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l258"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:258</code></a>
         </p>
 
 
@@ -1279,7 +1141,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l456"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:456</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l330"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:330</code></a>
         </p>
 
 
@@ -1312,7 +1174,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l266"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:266</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l140"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:140</code></a>
         </p>
 
 
@@ -1344,7 +1206,7 @@ This property will be ignored if <code>fetch()</code> or <code>pull()</code> is 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l250"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:250</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l124"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:124</code></a>
         </p>
 
 
@@ -1371,7 +1233,7 @@ This property/option is required.  Instantiation will fail if it is not set.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l338"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:338</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l212"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:212</code></a>
         </p>
 
 
@@ -1398,7 +1260,7 @@ and has get('...') and .toJSON() methods that access the private collection data
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l278"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:278</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l152"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:152</code></a>
         </p>
 
 
@@ -1478,7 +1340,7 @@ What was criteria should use this instead:</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l257"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:257</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l131"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:131</code></a>
         </p>
 
 
@@ -1507,7 +1369,7 @@ false (default) - an array of model results are returned.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l324"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:324</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l198"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:198</code></a>
         </p>
 
 

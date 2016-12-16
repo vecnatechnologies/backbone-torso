@@ -124,6 +124,9 @@
 }(this, function(_, $, Behavior, Collection, Events) {
   &#x27;use strict&#x27;;
 
+  var PROPERTY_SEPARATOR = &#x27;.&#x27;;
+  var CONTAINER_SEPARATOR = &#x27;:&#x27;;
+
   /**
    * Converts string or number values into an array with a single string or number item.
    * If the input is not a string, number or array then undefined is returned.
@@ -145,6 +148,30 @@
   }
 
   /**
+   * Gets a nested property from an object, returning undefined if it doesn&#x27;t exist on any level.
+   * @param rootObject {Object} object containing the property to get.
+   * @param propertyString {String} string identifying the nested object to retrieve.
+   * @return {*} either undefined or the property referenced from the rootObject.
+   */
+  function getNestedProperty(rootObject, propertyString) {
+    propertyString = propertyString.replace(/\[(\w+)\]/g, &#x27;.$1&#x27;); // convert indexes to properties
+    propertyString = propertyString.replace(/^\./, &#x27;&#x27;);           // strip a leading dot
+    var propertyStringParts = propertyString.split(PROPERTY_SEPARATOR);
+    return _.reduce(propertyStringParts, function(currentBaseObject, currentPropertyName) {
+      return _.isUndefined(currentBaseObject) ? undefined : currentBaseObject[currentPropertyName];
+    }, rootObject);
+  }
+
+  /**
+   * Determines if the stringDefinition contains a container definition (i.e. has a &#x27;:&#x27; in it).
+   * @param stringDefinition to test.
+   * @return {boolean} true if the string definition contains a container definition, false otherwise.
+   */
+  function containsContainerDefinition(stringDefinition) {
+    return !!stringDefinition &amp;&amp; stringDefinition.indexOf(CONTAINER_SEPARATOR) &gt; -1;
+  }
+
+  /**
    * Behaviors defined in Torso.
    * @module Torso.behaviors
    * @namespace Torso.behaviors
@@ -155,30 +182,7 @@
    * This behavior manages re-rendering when data changes and automatically adding the returned data to the view&#x27;s context.
    * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
    *
-   * Example Configuration on the view:
-   *
-   *     TorsoView.extend({
-   *       behaviors: {
-   *         demographics: {
-   *           behavior: TorsoDataBehavior,
-   *           cache: require(&#x27;./demographicsCacheCollection&#x27;),
-   *           returnSingleResult: true,
-   *           id: { property: &#x27;_patientVecnaId&#x27; }
-   *         }
-   *       }
-   *     }
-   *
-   * Any options for this behavior can also be configured directly on it using the same extension mechanism as other
-   * Backbone or Torso objects.
-   *
-   * Example configuration by extension:
-   *
-   *     var AppointmentDataBehavior = DataBehavior.extend({
-   *       cache: require(&#x27;./appointmentCacheCollection&#x27;),
-   *       id: { property: &#x27;_appointmentExternalId&#x27; },
-   *       returnSingleResult: true,
-   *       alwaysFetch: true
-   *     });
+   * See https://tonicdev.com/torso/databehavior for more in-depth documentation and details.
    *
    * Ways to cause this data behavior to refresh the data.  Ids are retrieved from the idsContainer whenever a refresh of data is requested.
    *  * __view.getBehavior(&#x27;thisBehaviorAlias&#x27;).pull()__ - Any ids that are already in the cache are added immediately.
@@ -219,136 +223,6 @@
    *         data: &lt;result of view.getBehavior(&#x27;thisBehaviorAlias&#x27;).data.toJSON()&gt;
    *       }
    *     }
-   *
-   * Some Example Configurations:
-   *
-   * __Static id__ (can be a single String or Number or an array of Strings or Numbers):
-   *
-   *     View.extend({
-   *        behaviors: {
-   *          article: {
-   *            behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
-   *            cache: require(&#x27;app/article/articleCacheCollection&#x27;),
-   *            returnSingleResult: true,
-   *            id: 1234
-   *          }
-   *        }
-   *      });
-   *
-   *    value used for id: &#x60;1234&#x60;
-   *
-   *    context for template:
-   *
-   *     {
-   *       ...,
-   *       article: {
-   *         ...,
-   *         data: {
-   *           id: 1234,
-   *           title: &#x27;A really cool thing&#x27;,
-   *           text: &#x27;So I was walking down the street one day...&#x27;
-   *         }
-   *       }
-   *     }
-   *
-   * __Static ids__ (can be a single String or Number or an array of Strings or Numbers):
-   *
-   *     View.extend({
-   *       behaviors: {
-   *         posts: {
-   *           behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
-   *           cache: require(&#x27;app/article/postCacheCollection&#x27;),
-   *           ids: [ &#x27;yesterday-by-the-river&#x27;, &#x27;tomorrow-by-the-sea&#x27; ]
-   *         }
-   *       }
-   *     });
-   *
-   *    value used for ids: &#x60;[ &#x27;yesterday-by-the-river&#x27;, &#x27;tomorrow-by-the-sea&#x27; ]&#x60;
-   *
-   *    context for template:
-   *
-   *      {
-   *        ...,
-   *        posts: {
-   *          ...,
-   *          data: [{
-   *            id: &#x27;yesterday-by-the-river&#x27;,
-   *            title: &#x27;Yesterday by the River&#x27;,
-   *            author: &#x27;John Smith&#x27;,
-   *            content: &#x27;While I was walking by the river...&#x27;
-   *          },{
-   *            id: &#x27;tomorrow-by-the-sea&#x27;,
-   *            title: &#x27;Tomorrow by the Sea&#x27;,
-   *            author: &#x27;Mary Smith&#x27;,
-   *            content: &#x27;I will walk on the beach tomorrow...&#x27;
-   *          }]
-   *        }
-   *      }
-   *
-   * __Static id property on view__ (can be a single String or Number or an array of Strings or Numbers):
-   *
-   *     View.extend({
-   *        behaviors: {
-   *          article: {
-   *            behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
-   *            cache: require(&#x27;app/article/articleCacheCollection&#x27;),
-   *            returnSingleResult: true,
-   *            id: { property: &#x27;_articleId&#x27; }
-   *          }
-   *        }
-   *      });
-   *
-   *    value used for id: &#x60;view._articleId&#x60;
-   *
-   *    context for template:
-   *
-   *     {
-   *       ...,
-   *       article: {
-   *         ...,
-   *         data: {
-   *           id: 12,
-   *           title: &#x27;A really cool thing&#x27;,
-   *           text: &#x27;So I was walking down the street one day...&#x27;
-   *         }
-   *       }
-   *     }
-   *
-   * __Static ids property on view__ (can be a single String or Number or an array of Strings or Numbers):
-   *
-   *     View.extend({
-   *       behaviors: {
-   *         posts: {
-   *           behavior: require(&#x27;torso/modules/behaviors/DataBehavior&#x27;),
-   *           cache: require(&#x27;app/article/postCacheCollection&#x27;),
-   *           ids: { property: &#x27;_postIds&#x27; }
-   *         }
-   *       }
-   *     });
-   *
-   *    value used for ids: &#x60;view._postIds&#x60;
-   *
-   *    context for template:
-   *
-   *      {
-   *        ...,
-   *        posts: {
-   *          ...,
-   *          data: [{
-   *            id: &#x27;yesterday-by-the-river&#x27;,
-   *            title: &#x27;Yesterday by the River&#x27;,
-   *            author: &#x27;John Smith&#x27;,
-   *            content: &#x27;While I was walking by the river...&#x27;
-   *          },{
-   *            id: &#x27;tomorrow-by-the-sea&#x27;,
-   *            title: &#x27;Tomorrow by the Sea&#x27;,
-   *            author: &#x27;Mary Smith&#x27;,
-   *            content: &#x27;I will walk on the beach tomorrow...&#x27;
-   *          }]
-   *        }
-   *      }
-   *
-   * __
    *
    * @class DataBehavior
    * @method constructor
@@ -549,7 +423,7 @@
     listenToIdsPropertyChangeEvent: function() {
       if (!_.isUndefined(this.ids.property)) {
         this.stopListeningToIdsPropertyChangeEvent();
-        var idsPropertyNameAndContext = this.__parseIdsPropertyNameAndContext();
+        var idsPropertyNameAndContext = this.__parseIdsPropertyNameAndIdContainer();
         var idContainer = idsPropertyNameAndContext.idContainer;
         var canListenToEvents = idContainer &amp;&amp; _.isFunction(idContainer.on);
         if (canListenToEvents) {
@@ -628,8 +502,7 @@
         if (!_.isUndefined(updateEvent)) {
           parsedUpdateEvents.push(updateEvent);
         }
-      }
-      if (_.isObject(updateEventConfiguration)) {
+      } else if (_.isObject(updateEventConfiguration)) {
         parsedUpdateEvents = _.map(updateEventConfiguration, function(idContainer, eventName) {
           return {
             idContainer: idContainer,
@@ -638,51 +511,6 @@
         });
       }
       return parsedUpdateEvents;
-    },
-
-    /**
-     * Parse a string type update event.
-     * Context Key (first part of the string up to the first &#x27;:&#x27;) can be one of the following:
-     *   this (maps to the behavior),
-     *   view (maps to the behavior&#x27;s view),
-     *   viewState (maps to the behavior&#x27;s view&#x27;s viewState),
-     *   model (maps to the behavior&#x27;s view&#x27;s model),
-     *   &lt;*&gt; any others are assumed to be the names of behaviors on this behavior&#x27;s view.
-     * @param updateEventConfiguration {String} a string representation of the event.
-     * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
-     * @private
-     */
-    __parseStringUpdateEvent: function(updateEventConfiguration) {
-      var idContainerString = updateEventConfiguration.split(&#x27;:&#x27;, 1)[0];
-      var rootContextString = idContainerString.split(&#x27;.&#x27;, 1)[0];
-      var rootIdContainer;
-      if (rootContextString === &#x27;this&#x27;) {
-        rootIdContainer = this;
-      } else if (rootContextString === &#x27;view&#x27;) {
-        rootIdContainer = this.view;
-      } else if (rootContextString === &#x27;viewState&#x27;) {
-        rootIdContainer = this.view.viewState;
-      } else if (rootContextString === &#x27;model&#x27;) {
-        rootIdContainer = this.view.model;
-      } else {
-        // assume its a behavior alias.
-        rootIdContainer = this.view.getBehavior(rootContextString);
-      }
-      if (!_.isUndefined(rootIdContainer)) {
-        var idContainer = rootIdContainer;
-        var idContainerPropertyString = idContainerString.replace(rootContextString, &#x27;&#x27;);
-        if (idContainerPropertyString) {
-          // remove . in the case that there is a property string.
-          idContainerPropertyString = idContainerPropertyString.substring(1);
-          idContainer = rootIdContainer[idContainerPropertyString.substring(1)];
-        }
-
-        var eventName = updateEventConfiguration.replace(idContainerString + &#x27;:&#x27;, &#x27;&#x27;);
-        return {
-          eventName: eventName,
-          idContainer: idContainer
-        };
-      }
     },
 
     /**
@@ -736,6 +564,15 @@
         throw new Error(&#x27;Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: &#x27; + JSON.stringify(this.ids));
       } else if (!idsIsValid) {
         throw new Error(&#x27;Data Behavior ids invalid definition.  Not a string, number, object, array or function: &#x27; + JSON.stringify(this.ids));
+      }
+
+      if (idsIsObjectWithStringProperty) {
+        var propertyNameContainsIdContainer = containsContainerDefinition(this.ids.property);
+        var hasIdContainerProperty = !_.isUndefined(this.ids.idContainer);
+
+        if (hasIdContainerProperty &amp;&amp; propertyNameContainsIdContainer) {
+          throw new Error(&#x27;Data Behavior ids invalid definition.  Id container defined on both ids.property and ids.idContainer: &#x27;, JSON.stringify(this.ids));
+        }
       }
     },
 
@@ -801,11 +638,11 @@
           idsDeferred.resolve([]);
         }
       } else if (!_.isUndefined(this.ids.property)) {
-        var parsedContextDefinition = this.__parseIdsPropertyNameAndContext();
+        var parsedContextDefinition = this.__parseIdsPropertyNameAndIdContainer();
         var propertyName = parsedContextDefinition.idsPropertyName;
         var idContainer = parsedContextDefinition.idContainer;
 
-        ids = idContainer &amp;&amp; idContainer[propertyName];
+        ids = getNestedProperty(idContainer, propertyName);
         var propertyOnContextIsUndefined = idContainer &amp;&amp; _.isUndefined(ids);
         var idContainerHasGetMethod = idContainer &amp;&amp; _.isFunction(idContainer.get);
 
@@ -821,32 +658,28 @@
 
     /**
      * Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.
-     * @method __parseIdsPropertyNameAndContext
+     * @method __parseIdsPropertyNameAndIdContainer
      * @return {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
      * @private
      */
-    __parseIdsPropertyNameAndContext: function() {
-      var idContainer = this.__parseIdsContext();
-
+    __parseIdsPropertyNameAndIdContainer: function() {
       var propertyName = this.ids.property;
+      var propertyNameContainsIdContainer = containsContainerDefinition(propertyName);
+      var hasIdContainerProperty = !_.isUndefined(this.ids.idContainer);
 
-      var propertyParts = propertyName.split(&#x27;.&#x27;);
-      var isNestedProperty = propertyParts.length &gt; 1;
-      if (isNestedProperty) {
-        var rootPropertyName = propertyParts[0];
-        if (rootPropertyName === &#x27;behaviors&#x27; || rootPropertyName === &#x27;behavior&#x27;) {
-          var behaviorName = propertyParts[1];
-          idContainer = this.view.getBehavior(behaviorName);
-          if (propertyParts[2] === &#x27;data&#x27;) {
-            idContainer = idContainer.data;
-            propertyName = propertyParts.slice(3).join(&#x27;.&#x27;);
-          } else {
-            propertyName = propertyParts.slice(2).join(&#x27;.&#x27;);
-          }
-        } else if (!_.isUndefined(idContainer[rootPropertyName])) {
-          idContainer = idContainer[rootPropertyName];
-          propertyName = propertyParts.slice(1).join(&#x27;.&#x27;);
-        }
+      var idContainer;
+      if (hasIdContainerProperty) {
+        idContainer = this.__parseIdContainer();
+      }
+
+      if (propertyNameContainsIdContainer) {
+        var containerAndDetail = this.__parseContainerDetailString(propertyName);
+        propertyName = containerAndDetail.detail;
+        idContainer = containerAndDetail.idContainer;
+      }
+
+      if (_.isUndefined(idContainer)) {
+        idContainer = this.view;
       }
 
       return {
@@ -860,22 +693,89 @@
      * @return {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
      * @private
      */
-    __parseIdsContext: function() {
+    __parseIdContainer: function() {
       var idContainerDefinition = this.ids.idContainer;
       var idContainer;
       if (_.isUndefined(idContainerDefinition)) {
-        idContainer = this.view;
+        idContainer = undefined;
       } else if (_.isFunction(idContainerDefinition)) {
         var idContainerFxn = _.bind(idContainerDefinition, this);
         idContainer = idContainerFxn();
-      } else if (_.isString(idContainerDefinition)) {
-        idContainer = _.result(this, idContainerDefinition);
       } else if (_.isObject(idContainerDefinition)) {
         idContainer = idContainerDefinition;
       } else {
-        throw new Error(&#x27;Invalid idContainer.  Not a string, object or function: &#x27; + JSON.stringify(this.ids));
+        throw new Error(&#x27;Invalid idContainer.  Not an object or function: &#x27; + JSON.stringify(this.ids));
       }
       return idContainer;
+    },
+
+    /**
+     * Parses a string that contains a container and details for that container (event name or property name).
+     * Strings are expected to be of the form &#x27;&lt;some container path&gt;:&lt;detail&gt;&#x27;.
+     * @param fullContainerAndDetail
+     * @return {{detail: String, idContainer: *}} the idContainer is the actual object containing the ids.
+     *         details is the rest of the idContainer string without the idContainer definition.
+     * @private
+     */
+    __parseContainerDetailString: function(fullContainerAndDetail) {
+      var containerString = &#x27;&#x27;;
+      if (containsContainerDefinition(fullContainerAndDetail)) {
+        containerString = fullContainerAndDetail.split(CONTAINER_SEPARATOR, 1)[0];
+      }
+      var containerStringParts = containerString.split(PROPERTY_SEPARATOR);
+
+      var rootContainerString = containerStringParts[0];
+      var rootContainer;
+      if (rootContainerString === &#x27;this&#x27;) {
+        rootContainer = this;
+      } else if (rootContainerString === &#x27;behaviors&#x27; || rootContainerString === &#x27;behavior&#x27;) {
+        var behaviorAlias = containerStringParts[1];
+        rootContainerString += PROPERTY_SEPARATOR + behaviorAlias; // property track what part of the string has been consumed.
+        rootContainer = this.view.getBehavior(behaviorAlias);
+      } else {
+        if (rootContainerString !== &#x27;view&#x27;) {
+          rootContainerString = &#x27;&#x27;; // property track what part of the string has been consumed.
+        }
+        rootContainer = this.view;
+      }
+
+      var container = rootContainer;
+      var rootContainerPropertyString = containerString.replace(rootContainerString, &#x27;&#x27;);
+      if (rootContainerPropertyString) {
+        // remove leading .
+        if (rootContainerPropertyString[0] === PROPERTY_SEPARATOR) {
+          rootContainerPropertyString = rootContainerPropertyString.slice(1);
+        }
+        container = getNestedProperty(rootContainer, rootContainerPropertyString);
+      }
+
+      var detail = fullContainerAndDetail.replace(containerString + CONTAINER_SEPARATOR, &#x27;&#x27;);
+      return {
+        detail: detail,
+        idContainer: container
+      };
+    },
+
+    /**
+     * Parse a string type update event.
+     * Context Key (first part of the string up to the first &#x27;:&#x27;) can be one of the following:
+     *   this (maps to the behavior),
+     *   view or empty (maps to the behavior&#x27;s view),
+     *   viewState (maps to the behavior&#x27;s view&#x27;s viewState),
+     *   model (maps to the behavior&#x27;s view&#x27;s model),
+     *   &lt;*&gt; any others are assumed to be the names of behaviors on this behavior&#x27;s view.
+     * @param updateEventConfiguration {String} a string representation of the event.
+     * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
+     * @private
+     */
+    __parseStringUpdateEvent: function(updateEventConfiguration) {
+      var parsedIdContainerDetails = this.__parseContainerDetailString(updateEventConfiguration);
+      if (parsedIdContainerDetails) {
+        return {
+          idContainer: parsedIdContainerDetails.idContainer,
+          eventName: parsedIdContainerDetails.detail
+        };
+      }
     },
 
     /**

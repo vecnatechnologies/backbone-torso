@@ -22,7 +22,9 @@
       if (view.__delayedRenderTimeout) {
         clearTimeout(view.__delayedRenderTimeout);
         view.__delayedRenderTimeout = null;
-        view.render();
+        if (!view.isDisposed()) {
+          view.render();
+        }
       }
     };
 
@@ -38,12 +40,14 @@
     aggregateRenders = function(wait, view) {
       var postpone = function() {
         view.__delayedRenderTimeout = null;
-        view.render();
+        if (!view.isDisposed()) {
+          view.render();
+        }
       };
       return function() {
         if (!view.__delayedRenderTimeout && wait > 0) {
           view.__delayedRenderTimeout = setTimeout(postpone, wait);
-        } else if (wait <= 0) {
+        } else if (wait <= 0 && !view.isDisposed()) {
           view.render();
         }
       };
