@@ -12,6 +12,12 @@ var ViewWithBehavior = TorsoView.extend({
   }
 });
 
+var ViewWithSimplifiedBehavior = TorsoView.extend({
+    behaviors: {
+        torsoBehavior: TorsoBehavior
+    }
+});
+
 var BehaviorRecordingInitializeArguments = TorsoBehavior.extend({
   initialize: function() {
     this.initializeArguments = arguments;
@@ -365,6 +371,12 @@ describe('A Torso Behavior', function() {
     expect(behaviorInView).toBeDefined();
   });
 
+  it('A view can reference its behavior using an alias when the simplified syntax is used', function() {
+      var viewWithSimplifiedBehavior = new ViewWithSimplifiedBehavior();
+      var behaviorInView = viewWithSimplifiedBehavior.getBehavior('torsoBehavior');
+      expect(behaviorInView).toBeDefined();
+  });
+
   it('are not static fields on view, i.e. they are instantiated per view instance', function() {
     var firstViewWithBehavior = new ViewWithBehavior();
     var secondViewWithBehavior = new ViewWithBehavior();
@@ -373,6 +385,16 @@ describe('A Torso Behavior', function() {
     var secondBehavior = secondViewWithBehavior.getBehavior('torsoBehavior');
 
     expect(firstBehavior).not.toBe(secondBehavior);
+  });
+
+  it('are not static fields on view when the simplified syntax is used, i.e. they are instantiated per view instance', function() {
+      var firstViewWithSimplifiedBehavior = new ViewWithSimplifiedBehavior();
+      var secondViewWithSimplifiedBehavior = new ViewWithSimplifiedBehavior();
+
+      var firstBehavior = firstViewWithSimplifiedBehavior.getBehavior('torsoBehavior');
+      var secondBehavior = secondViewWithSimplifiedBehavior.getBehavior('torsoBehavior');
+
+      expect(firstBehavior).not.toBe(secondBehavior);
   });
 
   it('A view can have multiple behaviors distinguished by alias', function() {
@@ -394,11 +416,33 @@ describe('A Torso Behavior', function() {
     expect(firstBehavior).not.toBe(secondBehavior);
   });
 
+  it('A view can have multiple behaviors distinguished by alias when the simplified syntax is used', function() {
+      var ViewWithTwoSimplifiedBehaviors = TorsoView.extend({
+          behaviors: {
+              firstBehavior: TorsoBehavior,
+              secondBehavior: TorsoBehavior
+          }
+      });
+      var viewWithTwoSimplifiedBehaviors = new ViewWithTwoSimplifiedBehaviors();
+      var firstBehavior = viewWithTwoSimplifiedBehaviors.getBehavior('firstBehavior');
+      expect(firstBehavior).toBeDefined();
+      var secondBehavior = viewWithTwoSimplifiedBehaviors.getBehavior('secondBehavior');
+      expect(secondBehavior).toBeDefined();
+      expect(firstBehavior).not.toBe(secondBehavior);
+  });
+
   it('instantiated as part of a view has a reference to its containing view', function() {
     var viewWithBehavior = new ViewWithBehavior();
     var behaviorInView = viewWithBehavior.getBehavior('torsoBehavior');
     expect(behaviorInView.view).toBeDefined();
     expect(behaviorInView.view).toBe(viewWithBehavior);
+  });
+
+  it('instantiated as part of a view has a reference to its containing view when the simplified syntax is used', function() {
+      var viewWithSimplifiedBehavior = new ViewWithSimplifiedBehavior();
+      var behaviorInView = viewWithSimplifiedBehavior.getBehavior('torsoBehavior');
+      expect(behaviorInView.view).toBeDefined();
+      expect(behaviorInView.view).toBe(viewWithSimplifiedBehavior);
   });
 
   it('if any behavior definition has no "behavior" key, an instantiation-time error will be thrown', function() {
@@ -447,6 +491,22 @@ describe('A Torso Behavior', function() {
     expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
     var recordedViewOptions = behaviorRecordingInitializeArguments.initializeArguments[1];
     expect(_.isMatch(recordedViewOptions, viewOptions)).toBe(true);
+  });
+
+  it('view options are passed to behavior initialize as second argument when the simplified syntax is used', function() {
+      var viewOptions = {propertyKey: 'propertyValue'};
+
+      var ViewWithSimplifiedBehavior = TorsoView.extend({
+          behaviors: {
+              behaviorRecordingInitializeArguments: BehaviorRecordingInitializeArguments
+          }
+      });
+
+      var viewWithSimplifiedBehavior = new ViewWithSimplifiedBehavior(viewOptions);
+      var behaviorRecordingInitializeArguments = viewWithSimplifiedBehavior.getBehavior('behaviorRecordingInitializeArguments');
+      expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
+      var recordedViewOptions = behaviorRecordingInitializeArguments.initializeArguments[1];
+      expect(_.isMatch(recordedViewOptions, viewOptions)).toBe(true);
   });
 
   describe('runs lifecycle methods at the appropriate time', function() {
