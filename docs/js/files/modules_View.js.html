@@ -779,6 +779,9 @@
       if (!_.isEmpty(this.behaviors)) {
         view.__behaviorInstances = {};
         _.each(this.behaviors, function(behaviorDefinition, alias) {
+          if (!_.has(behaviorDefinition, &#x27;behavior&#x27;)) {
+            behaviorDefinition = {behavior: behaviorDefinition};
+          }
           var BehaviorClass = behaviorDefinition.behavior;
           if (!(BehaviorClass &amp;&amp; _.isFunction(BehaviorClass))) {
             throw new Error(&#x27;Incorrect behavior definition. Expected key &quot;behavior&quot; to be a class but instead got &#x27; +

@@ -4820,7 +4820,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 705,
+            "line": 708,
             "description": "If the view is attaching during the render process, then it replaces the injection site\nwith the view's element after the view has generated its DOM.",
             "itemtype": "method",
             "name": "__performPendingAttach",
@@ -4831,7 +4831,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 716,
+            "line": 719,
             "description": "Deactivates all tracked views or a subset of them based on the options parameter.",
             "params": [
                 {
@@ -4865,7 +4865,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 731,
+            "line": 734,
             "description": "Activates all tracked views or a subset of them based on the options parameter.",
             "params": [
                 {
@@ -4899,7 +4899,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 746,
+            "line": 749,
             "description": "Disposes all child views recursively",
             "itemtype": "method",
             "name": "disposeChildViews",
@@ -4910,7 +4910,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 757,
+            "line": 760,
             "description": "Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view\npreviously had another view at this injections site, this previous view will be removed with that view's transitionOut.\nIf this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even\nthough they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.\nIf the previous view is the same as the new view, it is injected normally without transitioning in.\nThe previous view must has used an injection site with the standard \"inject=<name of injection site>\" attribute to be found.",
             "itemtype": "method",
             "name": "transitionNewViewIntoSite",
@@ -4965,7 +4965,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 808,
+            "line": 811,
             "description": "Will transition out previousView at the same time as transitioning in newView.",
             "itemtype": "method",
             "name": "__performTwoWayTransition",
@@ -5012,7 +5012,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 843,
+            "line": 846,
             "description": "Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.\nThis method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.",
             "params": [
                 {
@@ -5061,7 +5061,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 869,
+            "line": 872,
             "description": "Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.\nNOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.\nThis means that you can add \"add\" or \"remove\" tracked view using this method, however you can interact with the views inside the map completely.",
             "params": [
                 {
@@ -5098,7 +5098,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 896,
+            "line": 899,
             "description": "Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.",
             "access": "private",
             "tagname": "",
@@ -5109,7 +5109,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 911,
+            "line": 914,
             "description": "Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).\nWhen used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.",
             "access": "private",
             "tagname": "",
@@ -5131,7 +5131,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 935,
+            "line": 938,
             "description": "Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method",
             "itemtype": "method",
             "name": "__replaceInjectionSite",
@@ -5170,7 +5170,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 952,
+            "line": 955,
             "description": "Call this method when a view is attached to the DOM. It is recursive to child views, but checks whether each child view is attached.",
             "itemtype": "method",
             "name": "__invokeAttached",
@@ -5181,7 +5181,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 971,
+            "line": 974,
             "description": "Call this method when a view is detached from the DOM. It is recursive to child views.",
             "itemtype": "method",
             "name": "__invokeDetached",
@@ -5190,7 +5190,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 989,
+            "line": 992,
             "description": "Generates callbacks for changes in feedback cell fields\n'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback cell\nIf feedbackCell.get('fullName') returns:\n{ text: 'my text',\n  attr: {class: 'newClass'}\n  hide: [100, function() {...}]\n...}\nThen it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.",
             "access": "private",
             "tagname": "",
@@ -5201,7 +5201,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1036,
+            "line": 1039,
             "description": "Processes the result of the then method. Adds to the feedback cell.",
             "params": [
                 {
@@ -5224,7 +5224,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1049,
+            "line": 1052,
             "description": "Creates the \"when\" bindings, and collates and invokes the \"then\" methods for all feedbacks\nFinds all feedback zones that match the \"to\" field, and binds the \"when\" events to invoke the \"then\" method",
             "access": "private",
             "tagname": "",
@@ -5235,7 +5235,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1158,
+            "line": 1161,
             "description": "Returns a properly wrapped \"then\" using a configuration object \"bindInfo\" and an \"eventKey\" that will be passed as the type",
             "params": [
                 {
@@ -5272,7 +5272,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1181,
+            "line": 1184,
             "description": "Returns all elements on the page that match the feedback mapping\nIf dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback=\"my-feedback-foo[*][*]\"",
             "params": [
                 {
@@ -5294,7 +5294,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1204,
+            "line": 1207,
             "description": "Generates the events needed to listen to the feedback's when methods. A when event is only created\nif the appropriate element exist on the page",
             "params": [
                 {
@@ -5318,7 +5318,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1244,
+            "line": 1247,
             "description": "Returns an array of all the values and variables used within the array notations in a string\nExample: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers\nThis does not handle or return any \"open\" array notations: []",
             "access": "private",
             "tagname": "",
@@ -5329,7 +5329,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1263,
+            "line": 1266,
             "description": "Replaces all array notations with open array notations.\nExample: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]",
             "access": "private",
             "tagname": "",
@@ -5340,7 +5340,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1276,
+            "line": 1279,
             "description": "Takes a map from variable name to value to be replaced and processes a string with them.\nExample: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]",
             "access": "private",
             "tagname": "",
@@ -5351,7 +5351,7 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1294,
+            "line": 1297,
             "description": "Generates an array of all the possible field accessors and their indices when using\nthe \"open\" array notation:\n   foo[] -> ['foo[0]', 'foo[1]'].\nWill also perform nested arrays:\n   foo[][] -> ['foo[0][0]', foo[1][0]']",
             "itemtype": "method",
             "name": "__generateSubAttributes",
