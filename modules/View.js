@@ -152,8 +152,10 @@
      * @return {Promise} a promise that when resolved signifies that the rendering process is complete.
      */
     render: function() {
-      var promises,
-        view = this;
+      if (this.isDisposed()) {
+        throw new Error('Render called on a view that has already been disposed.');
+      }
+      var view = this;
       this.trigger('render:begin');
       this.prerender();
       this.__updateInjectionSiteMap();
@@ -167,7 +169,7 @@
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
       this.trigger('render:before-attach-tracked-views');
-      promises = this.attachTrackedViews();
+      var promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
         view.trigger('render:complete');

@@ -574,8 +574,6 @@
     root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
 }(this, function(_, $) {
-
-  var fetchIdentifier = 0;
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -724,7 +722,7 @@
             allPromisesToWaitFor.push(thisFetchPromise);
             var allUniquePromisesToWaitFor = _.uniq(allPromisesToWaitFor);
             return $.when.apply($, allUniquePromisesToWaitFor)
-              // Make it look like the muliple promises was performed by a single request.
+              // Make it look like the multiple promises was performed by a single request.
               .then(function() {
                 // collects the parts of each ajax call into arrays: result = { [data1, data2, ...], [textStatus1, textStatus2, ...], [jqXHR1, jqXHR2, ...] };
                 var result = _.zip(arguments);
@@ -935,7 +933,6 @@
        * @return {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(options) {
-        var fetchId = fetchIdentifier++;
         options = options || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
         var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
@@ -988,7 +985,7 @@
             // Track that the fetch was completed so we don't add a dead promise (since this is what cleans up completed promises).
             fetchComplete = true;
 
-            // Note that an id may have mulitple promises (if fetch was called multiple times and then a pull with the same id). 
+            // Note that an id may have multiple promises (if fetch was called multiple times and then a pull with the same id).
             // We want to wait for all of them to complete, this tracks them separately and removes the in-flight promises once they are done.
             _.each(requestedIds, function(requestedId) {
               if (collection.idPromises) {
@@ -1004,7 +1001,7 @@
           });
 
         // Track the promises associated with each id so we know when that id has completed fetching.
-        // Multiple simultaneous pulls will generate multiple promises for a shared id.  
+        // Multiple simultaneous pulls will generate multiple promises for a shared id.
         // Pulls will not generate new promises for the given ids (if there are ids being fetched
         if (!fetchComplete) { // fixes the sync case (mainly during tests when mockjax is used).
           _.each(requestedIds, function(requestedId) {
@@ -1548,7 +1545,7 @@
         throw new Error('Torso Behavior constructed without behaviorOptions.alias');
       }
       this.alias = behaviorOptions.alias;
-      this.cid = _.uniqueId(this.cidPrefix);
+      this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.__bindLifecycleMethods();
       Cell.apply(this, arguments);
       this.__bindEventCallbacks();
@@ -1850,8 +1847,10 @@
      * @return {Promise} a promise that when resolved signifies that the rendering process is complete.
      */
     render: function() {
-      var promises,
-        view = this;
+      if (this.isDisposed()) {
+        throw new Error('Render called on a view that has already been disposed.');
+      }
+      var view = this;
       this.trigger('render:begin');
       this.prerender();
       this.__updateInjectionSiteMap();
@@ -1865,7 +1864,7 @@
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
       this.trigger('render:before-attach-tracked-views');
-      promises = this.attachTrackedViews();
+      var promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
         view.trigger('render:complete');
@@ -4895,7 +4894,7 @@
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
-     * @param view {List View} the list view
+     * @param view {ListView} the list view
      * @private
      * @method breakDelayedRender
      */
@@ -4903,7 +4902,9 @@
       if (view.__delayedRenderTimeout) {
         clearTimeout(view.__delayedRenderTimeout);
         view.__delayedRenderTimeout = null;
-        view.render();
+        if (!view.isDisposed()) {
+          view.render();
+        }
       }
     };
 
@@ -4913,18 +4914,20 @@
      * batch render calls
      * @private
      * @method aggregateRenders
-     * @param wait {Numeric} the number of milliseconds to wait before rendering
-     * @param view {List View} the list view
+     * @param wait {Number} the number of milliseconds to wait before rendering
+     * @param view {ListView} the list view
      */
     aggregateRenders = function(wait, view) {
       var postpone = function() {
         view.__delayedRenderTimeout = null;
-        view.render();
+        if (!view.isDisposed()) {
+          view.render();
+        }
       };
       return function() {
         if (!view.__delayedRenderTimeout && wait > 0) {
           view.__delayedRenderTimeout = setTimeout(postpone, wait);
-        } else if (wait <= 0) {
+        } else if (wait <= 0 && !view.isDisposed()) {
           view.render();
         }
       };
@@ -5064,6 +5067,11 @@
     __itemContext: null,
     __renderWait: 0,
     __delayedRender: null,
+    /**
+     * @property __delayedRenderTimeout
+     * @private
+     * @type {Number}
+     */
     __delayedRenderTimeout: null,
 
     /**
@@ -5077,7 +5085,7 @@
      *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
      *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
      *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom functionality.
-     *   @param [args.renderWait=0] {Numeric} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
+     *   @param [args.renderWait=0] {Number} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
      *   @param [args.childView] {String} DEPRECATED - deprecated alias to args.itemView
@@ -5561,6 +5569,815 @@
   return ListView;
 }));
 
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'jquery', '../Behavior', '../Collection', '../Events'], factory);
+  } else if (typeof exports === 'object') {
+    var _ = require('underscore');
+    var $ = require('jquery');
+    var Behavior = require('../Behavior');
+    var Collection = require('../Collection');
+    var Events = require('../Events');
+    module.exports = factory(_, $, Behavior, Collection, Events);
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.behaviors = root.Torso.behaviors || {};
+    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
+  }
+}(this, function(_, $, Behavior, Collection, Events) {
+  'use strict';
+
+  var PROPERTY_SEPARATOR = '.';
+  var CONTAINER_SEPARATOR = ':';
+
+  /**
+   * Converts string or number values into an array with a single string or number item.
+   * If the input is not a string, number or array then undefined is returned.
+   * This is a private helper method used internally by this behavior and is not exposed in any way.
+   * @param ids {String|Number|String[]|Number[]} the ids to convert.
+   * @return {String[]|Number[]} an array of strings or numbers.
+   * @private
+   */
+  function normalizeIds(ids) {
+    if (_.isArray(ids)) {
+      // remove any nesting of arrays - it is assumed that the resulting ids will be simple string or number values.
+      ids = _.flatten(ids);
+      // remove any duplicate ids.
+      return _.uniq(ids);
+    } else if (_.isString(ids) || _.isNumber(ids)) {
+      // individual id - convert to array for consistency.
+      return [ids];
+    }
+  }
+
+  /**
+   * Gets a nested property from an object, returning undefined if it doesn't exist on any level.
+   * @param rootObject {Object} object containing the property to get.
+   * @param propertyString {String} string identifying the nested object to retrieve.
+   * @return {*} either undefined or the property referenced from the rootObject.
+   */
+  function getNestedProperty(rootObject, propertyString) {
+    propertyString = propertyString.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+    propertyString = propertyString.replace(/^\./, '');           // strip a leading dot
+    var propertyStringParts = propertyString.split(PROPERTY_SEPARATOR);
+    return _.reduce(propertyStringParts, function(currentBaseObject, currentPropertyName) {
+      return _.isUndefined(currentBaseObject) ? undefined : currentBaseObject[currentPropertyName];
+    }, rootObject);
+  }
+
+  /**
+   * Determines if the stringDefinition contains a container definition (i.e. has a ':' in it).
+   * @param stringDefinition to test.
+   * @return {boolean} true if the string definition contains a container definition, false otherwise.
+   */
+  function containsContainerDefinition(stringDefinition) {
+    return !!stringDefinition && stringDefinition.indexOf(CONTAINER_SEPARATOR) > -1;
+  }
+
+  /**
+   * Behaviors defined in Torso.
+   * @module Torso.behaviors
+   * @namespace Torso.behaviors
+   */
+
+  /**
+   * This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
+   * This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
+   * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
+   *
+   * See https://tonicdev.com/torso/databehavior for more in-depth documentation and details.
+   *
+   * @class DataBehavior
+   * @method constructor
+   * @author  jyoung@vecna.com
+   */
+  var DataBehavior = Behavior.extend({
+    /**
+     * The torso collection that is acting as a cache used to create the private collections.
+     * This property/option is required.  Instantiation will fail if it is not set.
+     * @property cache {Collection}
+     */
+    cache: undefined,
+
+    /**
+     * Determines the result of `view.getBehavior('thisBehaviorAlias').toJSON()`.
+     * true - a single model result is returned.
+     * false (default) - an array of model results are returned.
+     * @property returnSingleResult {Boolean}
+     * @default false
+     */
+    returnSingleResult: false,
+
+    /**
+     * Determines whether `pull()` or `fetch()` is called when using `retrieve()`.
+     * true - Use fetch() by default on the private collection.
+     * false (default) - Use pull() by default on the private collection.
+     * True will query the server more often, but will provide more up-to-date data.
+     * False will only query the server if the model hasn't already been retrieved.
+     * This property will be ignored if `fetch()` or `pull()` is called directly.
+     * @property alwaysFetch {Boolean}
+     * @default false
+     */
+    alwaysFetch: false,
+
+    /**
+     * Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).
+     *   - {String|Number} - the id to use directly (equivalent to an array of a single id).
+     *   - {String[]|Number[]} - the ids to use directly.
+     *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
+     *                property on that object to use. The object can fire the change event for the given property
+     *                and have a .get('propertyName') method, or it can define the property directly on the idContainer.
+     *                Only one property can be identified as supplying the id for this data model.
+     *                If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
+     *                The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
+     *                have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
+     *                data behavior that the property has been modified.
+     *     - property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+     *                           idContainer is defined. The idContainer is the object that fires a change event for the given property name.
+     *                           Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
+     *                           Will get the property before the first '.' from the view and if it is an object will try to use a
+     *                           .get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.
+     *                           If it is a string/number or array of string/number, then it will use that as the ids.
+     *                           Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
+     *                           old idContainer and start listening to the new one defined by this property.
+     *     - idContainer {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+     *                           events and has a .get('propertyName') function. It isn't required to fire events -
+     *                           the change event is only required if it needs to re-fetch when the id property value changes.
+     *     Examples:
+     *       - { property: '_patientId' }
+     *       - { property: 'viewState.appointmentId' }
+     *       - { property: 'model.type' }
+     *       - { property: 'behaviors.demographics.data.appointments' }
+     *       - { property: 'id', idContainer: userService }
+     *       - { property: 'username', idContainer: function() { application.getCurrentUser() } }
+     *   - {Function(cache)} - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
+     *                         to track with the private collection. Cache is passed in as the first argument so that the behavior
+     *                         can be defined and the cache can be overridden later.
+     *                         'this' is the behavior (from which you can get the view if needed).
+     *                         What was criteria should use this instead:
+     *
+     *         function(cache) {
+     *           var thisBehaviorInstance = this;
+     *           var view = this.view;
+     *           var criteria = { ... some criteria ... };
+     *           return cache.fetchIdsByCriteria(criteria);
+     *         }
+     * @property ids {String|Number|String[]|Number[]|Object|Function}
+     */
+    ids: undefined,
+
+    /**
+     * cause this behavior to re-calculate its ids and refetch them from the server if the given events are triggered
+     * (space separated if string, single item is equivalent to array of single item).
+     *   - 'view:eventName' - arbitrary event triggered on the view (eventName can be a change:propertyName event).
+     *   - 'viewState:eventName' - arbitrary event triggered on the viewState (eventName can be a change:propertyName event).
+     *   - 'model:eventName' - arbitrary even triggered on the view's model (eventName can be a change:propertyName event).
+     *   - 'this:eventName' - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).
+     *   - 'behaviorAlias:eventName' - arbitrary event triggered by another data behavior on this view (eventName can be a change:propertyName event).
+     *   - 'behaviorAlias.data:eventName' - arbitrary event triggered by the data of another DataBehavior on this view (eventName can be a change:propertyName event).
+     *   - { '<eventName>': < object (or function returning an object) that the event is triggered on > } - arbitrary ('<eventName>') triggered on the supplied object.
+     * @property updateEvents {String|String[]|Object|Object[]}
+     */
+    updateEvents: undefined,
+
+    /**
+     * Object that manages interaction with the data.  Contains the privateCollection, proxies all events from the privateCollection,
+     * and has get('...') and .toJSON() methods that access the private collection data.
+     * @property data {Torso.behaviors.DataBehavior.Data}
+     */
+    data: undefined,
+
+    /**
+     * @method constructor
+     * @override
+     * @param behaviorOptions {Object}
+     *   @param behaviorOptions.cache {Collection} see cache property.
+     *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
+     *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see alwaysFetch property.
+     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see id property.
+     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see ids property.
+     *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see updateEvents property.
+     * @param [viewOptions] {Object} options passed to View's initialize
+     */
+    constructor: function(behaviorOptions, viewOptions) {
+      _.bindAll(this, '__fetchSuccess', '__fetchFailed');
+      behaviorOptions = behaviorOptions || {};
+      behaviorOptions = _.defaults(behaviorOptions, {
+        alwaysFetch: false
+      });
+      _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
+
+      this.__validateCache();
+      this.__normalizeAndValidateIds();
+      this.__normalizeAndValidateUpdateEvents();
+
+      this.cid = this.cid || _.uniqueId(this.cidPrefix);
+      this.data = new this.Data({
+        parentBehavior: this,
+        privateCollection: this.cache.createPrivateCollection(this.cid)
+      });
+
+      Behavior.apply(this, arguments);
+
+      this.on('id-container-updated', this.listenToIdsPropertyChangeEvent);
+      this.on('id-container-updated', this.retrieve);
+      this.listenTo(this.view, 'initialize:complete', this.listenToIdsPropertyChangeEvent);
+      this.listenTo(this.view, 'initialize:complete', this._delegateUpdateEvents);
+      this.listenTo(this.view, 'initialize:complete', this.retrieve);
+    },
+
+    /**
+     * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
+     * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
+     * @method retrieve
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     */
+    retrieve: function() {
+      if (this.alwaysFetch) {
+        return this.fetch();
+      } else {
+        return this.pull();
+      }
+    },
+
+    /**
+     * Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
+     * @method pull
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     */
+    pull: function() {
+      var thisDataBehavior = this;
+      return this.__getIds()
+        .then(function(ids) {
+          return thisDataBehavior.data.privateCollection.trackAndPull(ids);
+        })
+        .then(this.__fetchSuccess, this.__fetchFailed);
+    },
+
+    /**
+     * Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
+     * @method fetch
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     */
+    fetch: function() {
+      var thisDataBehavior = this;
+      return this.__getIds()
+        .then(function(ids) {
+          return thisDataBehavior.data.privateCollection.trackAndFetch(ids);
+        })
+        .then(this.__fetchSuccess, this.__fetchFailed);
+    },
+
+    /**
+     * Adds the toJSON of the data represented by this behavior to the context.
+     * @method prepare
+     * @override
+     */
+    prepare: function() {
+      var behaviorContext = Behavior.prototype.prepare.apply(this);
+      behaviorContext.data = this.data.toJSON();
+      return behaviorContext;
+    },
+
+    /**
+     * Listens for the change event on the ids property and, if triggered, re-fetches the data based on the new ids.
+     * @method listenToIdsPropertyChangeEvent
+     */
+    listenToIdsPropertyChangeEvent: function() {
+      if (!_.isUndefined(this.ids.property)) {
+        this.stopListeningToIdsPropertyChangeEvent();
+        var idsPropertyNameAndContext = this.__parseIdsPropertyNameAndIdContainer();
+        var idContainer = idsPropertyNameAndContext.idContainer;
+        var canListenToEvents = idContainer && _.isFunction(idContainer.on);
+        if (canListenToEvents) {
+          this.__currentContextWithListener = idContainer;
+          this.__currentContextEventName = 'change:' + idsPropertyNameAndContext.idsPropertyName;
+          this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+          this.listenTo(this.__currentContextWithListener, 'fetched:ids', this.retrieve);
+        }
+      }
+    },
+
+    /**
+     * Removes the listener added by listenToIdsPropertyChangeEvent().
+     * @method stopListeningToIdsPropertyChangeEvent
+     */
+    stopListeningToIdsPropertyChangeEvent: function() {
+      if (this.__currentContextWithListener) {
+        this.stopListening(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
+        this.stopListening(this.__currentContextWithListener, 'fetched:ids', this.retrieve);
+        delete this.__currentContextWithListener;
+        delete this.__currentContextEventName;
+      }
+    },
+
+    /**
+     * Removes existing listeners and adds new ones for all of the updateEvents configured.
+     * @method _delegateUpdateEvents
+     * @private
+     */
+    _delegateUpdateEvents: function() {
+      this._undelegateUpdateEvents();
+      var updateEvents = this.__parseUpdateEvents();
+      _.each(updateEvents, function(parsedUpdateEvent) {
+        this.listenTo(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, this.retrieve);
+      }, this);
+    },
+
+    /**
+     * Removes existing event listeners.
+     * @method _undelegateEvents
+     * @private
+     */
+    _undelegateUpdateEvents: function() {
+      var updateEvents = this.__parseUpdateEvents();
+      _.each(updateEvents, function(parsedUpdateEvent) {
+        this.stopListening(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, this.retrieve);
+      }, this);
+    },
+
+    /**
+     * Parses this.updateEvents configuration.
+     * @return {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
+     * @private
+     */
+    __parseUpdateEvents: function() {
+      this.__normalizeAndValidateUpdateEvents();
+      var updateEvents = _.flatten(_.map(this.updateEvents, this.__parseUpdateEvent, this));
+      return _.compact(updateEvents);
+    },
+
+    /**
+     * Parses an individual event configuration.
+     * Note: events defined using objects can have more than one event defined w/in the object.
+     * @param updateEventConfiguration {String | Object} the configuration for an individual event configuration.
+     * @return {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     *                                                                If the event could not be parsed, undefined is returned.
+     * @private
+     */
+    __parseUpdateEvent: function(updateEventConfiguration) {
+      if (_.isUndefined(updateEventConfiguration)) {
+        return undefined;
+      }
+      var parsedUpdateEvents = [];
+      if (_.isString(updateEventConfiguration)) {
+        var updateEvent = this.__parseStringUpdateEvent(updateEventConfiguration);
+        if (!_.isUndefined(updateEvent)) {
+          parsedUpdateEvents.push(updateEvent);
+        }
+      } else if (_.isObject(updateEventConfiguration)) {
+        parsedUpdateEvents = _.map(updateEventConfiguration, function(idContainer, eventName) {
+          return {
+            idContainer: idContainer,
+            eventName: eventName
+          };
+        });
+      }
+      return parsedUpdateEvents;
+    },
+
+    /**
+     * Validates that the cache property is valid and if not throws an error describing why its not valid.
+     * @method __validateCache
+     * @private
+     */
+    __validateCache: function() {
+      if (!this.cache) {
+        throw new Error('Torso Data Behavior constructed without a cache');
+      }
+      if (!(this.cache instanceof Collection)) {
+        throw new Error('Torso Data Behavior\'s cache is not of type Torso.Collection');
+      }
+    },
+
+    /**
+     * Validates that the ids property is valid and if not throws an error describing why its not valid.
+     * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
+     * This is done as part of validation because we first validate that both are not set.
+     * @method __normalizeAndValidateIds
+     * @private
+     */
+    __normalizeAndValidateIds: function() {
+      if (!_.isUndefined(this.ids) && !_.isUndefined(this.id)) {
+        throw new Error('Torso Data Behavior constructed with both id and ids.  Please define only one.');
+      }
+      this.ids = this.id || this.ids;
+      this.__validateIds();
+    },
+
+    /**
+     * Validates that the ids property is valid and if not throws an error describing why its not valid.
+     * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
+     * This is done as part of validation because we first validate that both are not set.
+     * @method __normalizeAndValidateIds
+     * @private
+     */
+    __validateIds: function() {
+      if (_.isUndefined(this.ids)) {
+        throw new Error('Torso Data Behavior constructed without a way to identify the ids for this data.  Please define either id, ids.');
+      }
+
+      var idsIsArray = _.isArray(this.ids);
+      var idsIsSingleId = _.isString(this.ids) || _.isNumber(this.ids);
+      var idsIsFunction = _.isFunction(this.ids);
+      var idsIsObjectWithStringProperty = _.isString(this.ids.property);
+      var idsIsObject = _.isObject(this.ids);
+      var idsIsValid = idsIsArray || idsIsSingleId || idsIsFunction || idsIsObjectWithStringProperty;
+      if (!idsIsValid && idsIsObject) {
+        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.ids));
+      } else if (!idsIsValid) {
+        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.ids));
+      }
+
+      if (idsIsObjectWithStringProperty) {
+        var propertyNameContainsIdContainer = containsContainerDefinition(this.ids.property);
+        var hasIdContainerProperty = !_.isUndefined(this.ids.idContainer);
+
+        if (hasIdContainerProperty && propertyNameContainsIdContainer) {
+          throw new Error('Data Behavior ids invalid definition.  Id container defined on both ids.property and ids.idContainer: ', JSON.stringify(this.ids));
+        }
+      }
+    },
+
+    /**
+     * Validates that the updateEvents property is valid and if not throws an error describing why its not valid.
+     * @method __normalizeAndValidateUpdateEvents
+     * @private
+     */
+    __normalizeAndValidateUpdateEvents: function() {
+      var updateEventsIsArray = _.isArray(this.updateEvents);
+      var updateEventsIsSingleValue = !updateEventsIsArray && (_.isObject(this.updateEvents) || _.isString(this.updateEvents));
+      var updateEventsIsUndefined = _.isUndefined(this.updateEvents);
+      var updateEventsIsValidType = updateEventsIsArray || updateEventsIsSingleValue || updateEventsIsUndefined;
+
+      if (updateEventsIsSingleValue) {
+        this.updateEvents = [this.updateEvents];
+      }
+
+      if (!updateEventsIsValidType) {
+        throw new Error('Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: ', this.updateEvents);
+      }
+
+      // Remove any random falsey values (mostly to get rid of undefined events).
+      this.updateEvents = _.compact(this.updateEvents);
+      _.each(this.updateEvents, this.__validUpdateEvent);
+    },
+
+    /**
+     * Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.
+     * @method __normalizeAndValidateIds
+     * @private
+     */
+    __validUpdateEvent: function(updateEventConfiguration) {
+      var validStringConfig = _.isString(updateEventConfiguration);
+      var validObjectConfig = _.isObject(updateEventConfiguration) && _.keys(updateEventConfiguration).length > 0;
+      if (!validStringConfig && !validObjectConfig) {
+        throw new Error('Not a valid updateEvent configuration.  Update events need to either be strings or objects with a single property: ' + JSON.stringify(updateEventConfiguration));
+      }
+    },
+
+    /**
+     * @method __getIds
+     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the ids to track in the private collection
+     *                              or rejects with the error message.
+     * @private
+     */
+    __getIds: function() {
+      this.__validateIds(); // validate ids enforces a fast-fail that guarantees that one of the if statements below will work.
+
+      var idsDeferred = $.Deferred();
+      var ids = this.ids;
+      var normalizedIds = normalizeIds(ids);
+      if (!_.isUndefined(normalizedIds)) {
+        idsDeferred.resolve(normalizedIds);
+      } else if (_.isFunction(this.ids)) {
+        ids = this.ids(this.cache);
+        normalizedIds = normalizeIds(ids);
+        if (!_.isUndefined(normalizedIds)) {
+          idsDeferred.resolve(normalizedIds);
+        } else if (!_.isUndefined(ids) && _.isFunction(ids.then)) {
+          idsDeferred = ids.then(normalizeIds);
+        } else {
+          idsDeferred.resolve([]);
+        }
+      } else if (!_.isUndefined(this.ids.property)) {
+        var parsedContextDefinition = this.__parseIdsPropertyNameAndIdContainer();
+        var propertyName = parsedContextDefinition.idsPropertyName;
+        var idContainer = parsedContextDefinition.idContainer;
+
+        ids = getNestedProperty(idContainer, propertyName);
+        var propertyOnContextIsUndefined = idContainer && _.isUndefined(ids);
+        var idContainerHasGetMethod = idContainer && _.isFunction(idContainer.get);
+
+        if (propertyOnContextIsUndefined && idContainerHasGetMethod) {
+          ids = idContainer.get(propertyName);
+        }
+        normalizedIds = normalizeIds(ids);
+
+        idsDeferred.resolve(normalizedIds || []);
+      }
+      return idsDeferred.promise();
+    },
+
+    /**
+     * Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.
+     * @method __parseIdsPropertyNameAndIdContainer
+     * @return {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
+     * @private
+     */
+    __parseIdsPropertyNameAndIdContainer: function() {
+      var propertyName = this.ids.property;
+      var propertyNameContainsIdContainer = containsContainerDefinition(propertyName);
+      var hasIdContainerProperty = !_.isUndefined(this.ids.idContainer);
+
+      var idContainer;
+      if (hasIdContainerProperty) {
+        idContainer = this.__parseIdContainer();
+      }
+
+      if (propertyNameContainsIdContainer) {
+        var containerAndDetail = this.__parseContainerDetailString(propertyName);
+        propertyName = containerAndDetail.detail;
+        idContainer = containerAndDetail.idContainer;
+      }
+
+      if (_.isUndefined(idContainer)) {
+        idContainer = this.view;
+      }
+
+      return {
+        idsPropertyName: propertyName,
+        idContainer: idContainer
+      };
+    },
+
+    /**
+     * Parses the idContainer property of ids.
+     * @return {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
+     * @private
+     */
+    __parseIdContainer: function() {
+      var idContainerDefinition = this.ids.idContainer;
+      var idContainer;
+      if (_.isUndefined(idContainerDefinition)) {
+        idContainer = undefined;
+      } else if (_.isFunction(idContainerDefinition)) {
+        var idContainerFxn = _.bind(idContainerDefinition, this);
+        idContainer = idContainerFxn();
+      } else if (_.isObject(idContainerDefinition)) {
+        idContainer = idContainerDefinition;
+      } else {
+        throw new Error('Invalid idContainer.  Not an object or function: ' + JSON.stringify(this.ids));
+      }
+      return idContainer;
+    },
+
+    /**
+     * Parses a string that contains a container and details for that container (event name or property name).
+     * Strings are expected to be of the form '<some container path>:<detail>'.
+     * @param fullContainerAndDetail
+     * @return {{detail: String, idContainer: *}} the idContainer is the actual object containing the ids.
+     *         details is the rest of the idContainer string without the idContainer definition.
+     * @private
+     */
+    __parseContainerDetailString: function(fullContainerAndDetail) {
+      var containerString = '';
+      if (containsContainerDefinition(fullContainerAndDetail)) {
+        containerString = fullContainerAndDetail.split(CONTAINER_SEPARATOR, 1)[0];
+      }
+      var containerStringParts = containerString.split(PROPERTY_SEPARATOR);
+
+      var rootContainerString = containerStringParts[0];
+      var rootContainer;
+      if (rootContainerString === 'this') {
+        rootContainer = this;
+      } else if (rootContainerString === 'behaviors' || rootContainerString === 'behavior') {
+        var behaviorAlias = containerStringParts[1];
+        rootContainerString += PROPERTY_SEPARATOR + behaviorAlias; // property track what part of the string has been consumed.
+        rootContainer = this.view.getBehavior(behaviorAlias);
+      } else {
+        if (rootContainerString !== 'view') {
+          rootContainerString = ''; // property track what part of the string has been consumed.
+        }
+        rootContainer = this.view;
+      }
+
+      var container = rootContainer;
+      var rootContainerPropertyString = containerString.replace(rootContainerString, '');
+      if (rootContainerPropertyString) {
+        // remove leading .
+        if (rootContainerPropertyString[0] === PROPERTY_SEPARATOR) {
+          rootContainerPropertyString = rootContainerPropertyString.slice(1);
+        }
+        container = getNestedProperty(rootContainer, rootContainerPropertyString);
+      }
+
+      var detail = fullContainerAndDetail.replace(containerString + CONTAINER_SEPARATOR, '');
+      return {
+        detail: detail,
+        idContainer: container
+      };
+    },
+
+    /**
+     * Parse a string type update event.
+     * Context Key (first part of the string up to the first ':') can be one of the following:
+     *   this (maps to the behavior),
+     *   view or empty (maps to the behavior's view),
+     *   viewState (maps to the behavior's view's viewState),
+     *   model (maps to the behavior's view's model),
+     *   <*> any others are assumed to be the names of behaviors on this behavior's view.
+     * @param updateEventConfiguration {String} a string representation of the event.
+     * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
+     * @private
+     */
+    __parseStringUpdateEvent: function(updateEventConfiguration) {
+      var parsedIdContainerDetails = this.__parseContainerDetailString(updateEventConfiguration);
+      if (parsedIdContainerDetails) {
+        return {
+          idContainer: parsedIdContainerDetails.idContainer,
+          eventName: parsedIdContainerDetails.detail
+        };
+      }
+    },
+
+    /**
+     * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
+     * @method __fetchSuccess
+     * @private
+     */
+    __fetchSuccess: function() {
+      this.trigger('fetched', { status: 'success' });
+      this.data.trigger('fetched', { status: 'success' });
+      this.trigger('fetched:ids');
+      this.data.trigger('fetched:ids');
+    },
+
+    /**
+     * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
+     * @method __fetchFailed
+     * @private
+     */
+    __fetchFailed: function() {
+      this.trigger('fetched', { status: 'failed' });
+      this.data.trigger('fetched', { status: 'failed' });
+      this.trigger('fetched:ids');
+      this.data.trigger('fetched:ids');
+    },
+
+    /**
+     * Adds listeners when the view is activated.
+     * @method _activate
+     * @private
+     */
+    _activate: function() {
+      this.listenToIdsPropertyChangeEvent();
+      this._delegateUpdateEvents();
+      this.data.activate();
+    },
+
+    /**
+     * Stops listening when the view is deactivated.
+     * @method _deactivate
+     * @private
+     */
+    _deactivate: function() {
+      this.stopListeningToIdsPropertyChangeEvent();
+      this._undelegateUpdateEvents();
+      this.data.deactivate();
+    },
+
+    /**
+     * Default dispose stuff because its not already on behavior.  See https://github.com/vecnatechnologies/backbone-torso/issues/295
+     * @method _dispose
+     * @private
+     */
+    _dispose: function() {
+      this.data.dispose();
+
+      this.off();
+      this.stopListening();
+    }
+  });
+
+  /**
+   * @module Torso.behaviors.DataBehavior
+   * @namespace Torso.behaviors.DataBehavior
+   */
+
+  /**
+   * Data object used to create the .data property of the DataBehavior.
+   * @class Data
+   * @constructor
+   */
+  var Data = function(options) {
+    this.initialize(options);
+  };
+
+  _.extend(Data.prototype, {
+    /**
+     * Instantiates the data objects and binds it to this behavior instance.
+     * @param options {Object} to pass to the initialize methods.
+     *   @param options.parentBehavior {DataBehavior} the data behavior instance that this Data object should be bound to.
+     *   @param options.privateCollection {Collection} the private collection that this data represents.
+     */
+    initialize: function(options) {
+      _.extend(this, Events);
+      /**
+       * The dataBehavior instance that owns this data object.
+       * @property parentBehavior {DataBehavior}
+       */
+      this.parentBehavior = options.parentBehavior;
+      /**
+       * The private collection that this data object manages.
+       * @property privateCollection {Collection}
+       */
+      this.privateCollection = options.privateCollection;
+    },
+
+    /**
+     * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
+     * @method toJSON
+     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     */
+    toJSON: function() {
+      var privateCollection = this.privateCollection;
+      if (!this.parentBehavior.returnSingleResult) {
+        return privateCollection.toJSON();
+      }
+
+      if (privateCollection.length === 0) {
+        return undefined;
+      } else if (privateCollection.length === 1) {
+        var singleResultModel = privateCollection.at(0);
+        return singleResultModel.toJSON();
+      } else {
+        throw new Error('Multiple results found, but single result expected: ' + JSON.stringify(privateCollection.toJSON()));
+      }
+    },
+
+    /**
+     * Get the full data object contents (either an array of model attributes or a single model attribute based on the
+     * value of propertyName) or the value of a specific property if a single result is expected.
+     *
+     * If returnSingleResult is true then this will return the given property from the model (if that model exists).
+     * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
+     * @method get
+     * @param [propertyName] {String} the property to get from the model(s).
+     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     */
+    get: function(propertyName) {
+      var privateCollection = this.privateCollection;
+      if (!this.parentBehavior.returnSingleResult) {
+        if (_.isString(propertyName)) {
+          return privateCollection.pluck(propertyName);
+        } else {
+          return privateCollection.toJSON();
+        }
+      }
+
+      if (privateCollection.length === 0) {
+        return undefined;
+      } else if (privateCollection.length === 1) {
+        var singleResultModel = privateCollection.at(0);
+        if (_.isString(propertyName)) {
+          return singleResultModel.get(propertyName);
+        }
+        return singleResultModel.toJSON();
+      } else {
+        throw new Error('Multiple results found, but single result expected: ' + JSON.stringify(privateCollection.toJSON()));
+      }
+    },
+
+    /**
+     * Adds the listeners to the private collection.
+     * @method activate
+     */
+    activate: function() {
+      this.listenTo(this.privateCollection, 'all', this.trigger);
+    },
+
+    /**
+     * Removes the listeners on the private collection.
+     * @method deactivate
+     */
+    deactivate: function() {
+      this.stopListening(this.privateCollection, 'all', this.trigger);
+    },
+
+    /**
+     * Dispose of the data events.
+     */
+    dispose: function() {
+      this.off();
+      this.stopListening();
+    }
+  });
+
+  DataBehavior.prototype.Data = Data;
+
+  return DataBehavior;
+}));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {

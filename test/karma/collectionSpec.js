@@ -1,4 +1,3 @@
-var spyOnBackbone = require('./helpers/spyOnBackbone');
 require('./helpers/mockjax')();
 var _ = require('underscore');
 var Collection = require('../../modules/Collection');

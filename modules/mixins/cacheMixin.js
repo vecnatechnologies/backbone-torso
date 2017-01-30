@@ -9,8 +9,6 @@
     root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
   }
 }(this, function(_, $) {
-
-  var fetchIdentifier = 0;
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -159,7 +157,7 @@
             allPromisesToWaitFor.push(thisFetchPromise);
             var allUniquePromisesToWaitFor = _.uniq(allPromisesToWaitFor);
             return $.when.apply($, allUniquePromisesToWaitFor)
-              // Make it look like the muliple promises was performed by a single request.
+              // Make it look like the multiple promises was performed by a single request.
               .then(function() {
                 // collects the parts of each ajax call into arrays: result = { [data1, data2, ...], [textStatus1, textStatus2, ...], [jqXHR1, jqXHR2, ...] };
                 var result = _.zip(arguments);
@@ -370,7 +368,6 @@
        * @return {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(options) {
-        var fetchId = fetchIdentifier++;
         options = options || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
         var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
@@ -423,7 +420,7 @@
             // Track that the fetch was completed so we don't add a dead promise (since this is what cleans up completed promises).
             fetchComplete = true;
 
-            // Note that an id may have mulitple promises (if fetch was called multiple times and then a pull with the same id). 
+            // Note that an id may have multiple promises (if fetch was called multiple times and then a pull with the same id).
             // We want to wait for all of them to complete, this tracks them separately and removes the in-flight promises once they are done.
             _.each(requestedIds, function(requestedId) {
               if (collection.idPromises) {
@@ -439,7 +436,7 @@
           });
 
         // Track the promises associated with each id so we know when that id has completed fetching.
-        // Multiple simultaneous pulls will generate multiple promises for a shared id.  
+        // Multiple simultaneous pulls will generate multiple promises for a shared id.
         // Pulls will not generate new promises for the given ids (if there are ids being fetched
         if (!fetchComplete) { // fixes the sync case (mainly during tests when mockjax is used).
           _.each(requestedIds, function(requestedId) {

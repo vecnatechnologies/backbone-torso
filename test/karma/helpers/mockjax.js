@@ -1,5 +1,5 @@
 var _ = require('underscore');
-jQuery = $ = require('jquery')
+jQuery = $ = require('jquery');
 require('jquery-mockjax');
 
 module.exports = function() {

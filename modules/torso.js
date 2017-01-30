@@ -1,6 +1,7 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['/Behavior',
+    define(['./behaviors/DataBehavior',
+            './Behavior',
             './Cell',
             './Collection',
             './Events',
@@ -19,7 +20,8 @@
   } else if (typeof exports === 'object') {
     require('./stickitUtils');
     require('./configure');
-    module.exports = factory(require('./Behavior'),
+    module.exports = factory(require('./behaviors/DataBehavior'),
+                             require('./Behavior'),
                              require('./Cell'),
                              require('./Collection'),
                              require('./Events'),
@@ -34,7 +36,8 @@
   } else {
     root.Torso = root.Torso || {};
   }
-}(this, function(Behavior,
+}(this, function(DataBehavior,
+                 Behavior,
                  Cell,
                  Collection,
                  Events,
@@ -57,6 +60,9 @@
    * @author    jyoung@vecna.com
    */
   return {
+    behaviors: {
+      DataBehavior: DataBehavior
+    },
     Behavior: Behavior,
     Cell: Cell,
     Collection: Collection,

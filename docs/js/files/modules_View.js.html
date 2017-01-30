@@ -51,6 +51,8 @@
                                 <li><a href="../classes/Router.html">Router</a></li>
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
+                                <li><a href="../classes/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
+                                <li><a href="../classes/Torso.behaviors.DataBehavior.Data.html">Torso.behaviors.DataBehavior.Data</a></li>
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
@@ -65,6 +67,8 @@
                 
                             <ul id="api-modules" class="apis modules">
                                 <li><a href="../modules/Torso.html">Torso</a></li>
+                                <li><a href="../modules/Torso.behaviors.html">Torso.behaviors</a></li>
+                                <li><a href="../modules/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
                             </ul>
                         </div>
                     </div>
@@ -256,8 +260,10 @@
      * @return {Promise} a promise that when resolved signifies that the rendering process is complete.
      */
     render: function() {
-      var promises,
-        view = this;
+      if (this.isDisposed()) {
+        throw new Error(&#x27;Render called on a view that has already been disposed.&#x27;);
+      }
+      var view = this;
       this.trigger(&#x27;render:begin&#x27;);
       this.prerender();
       this.__updateInjectionSiteMap();
@@ -271,7 +277,7 @@
       this.delegateEvents();
       this.trigger(&#x27;render:after-delegate-events&#x27;);
       this.trigger(&#x27;render:before-attach-tracked-views&#x27;);
-      promises = this.attachTrackedViews();
+      var promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
         view.trigger(&#x27;render:complete&#x27;);

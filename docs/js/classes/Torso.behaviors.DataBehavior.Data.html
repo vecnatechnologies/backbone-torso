@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso.Mixins.pollingMixin - backbone-torso</title>
+    <title>Torso.behaviors.DataBehavior.Data - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -102,26 +102,57 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Torso.Mixins.pollingMixin Class</h1>
+<h1>Torso.behaviors.DataBehavior.Data Class</h1>
 <div class="box meta">
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_mixins_pollingMixin.js.html#l12"><code>modules&#x2F;mixins&#x2F;pollingMixin.js:12</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l697"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:697</code></a>
         </div>
 
-            Module: <a href="../modules/Torso.html">Torso</a>
+            Module: <a href="../modules/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a>
 
 </div>
 
 
 <div class="box intro">
-    <p>Periodic Polling Object to be mixed into Backbone Collections and Models.</p>
-<p>The polling functionality should only be used for collections and for models that are not
-part of any collections. It should not be used for a model that is a part of a collection.</p>
+    <p>Data object used to create the .data property of the DataBehavior.</p>
 
 </div>
 
+    <div class="constructor">
+        <h2>Constructor</h2>
+<div id="method_Torso.behaviors.DataBehavior.Data" class="method item">
+    <h3 class="name"><code>Torso.behaviors.DataBehavior.Data</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l697"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:697</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+
+
+
+</div>
+    </div>
 
 <div id="classdocs" class="tabview">
     <ul class="api-class-tabs">
@@ -139,24 +170,20 @@ part of any collections. It should not be used for a model that is a part of a c
                     <h3>Methods</h3>
 
                     <ul class="index-list methods">
-                            <li class="index-item method private">
-                                <a href="#method___poll">__poll</a>
+                            <li class="index-item method">
+                                <a href="#method_activate">activate</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_isPolling">isPolling</a>
+                                <a href="#method_deactivate">deactivate</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_polledFetch">polledFetch</a>
+                                <a href="#method_get">get</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_startPolling">startPolling</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_stopPolling">stopPolling</a>
+                                <a href="#method_toJSON">toJSON</a>
 
                             </li>
                     </ul>
@@ -167,7 +194,11 @@ part of any collections. It should not be used for a model that is a part of a c
 
                     <ul class="index-list properties">
                             <li class="index-item property">
-                                <a href="#property_pollTimeoutId  The id from when setTimeout was called to start polling.">pollTimeoutId  The id from when setTimeout was called to start polling.</a>
+                                <a href="#property_parentBehavior">parentBehavior</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_privateCollection">privateCollection</a>
 
                             </li>
                     </ul>
@@ -179,40 +210,8 @@ part of any collections. It should not be used for a model that is a part of a c
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
-<div id="method___poll" class="method item private">
-    <h3 class="name"><code>__poll</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-        <span class="flag private">private</span>
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/modules_mixins_pollingMixin.js.html#l82"><code>modules&#x2F;mixins&#x2F;pollingMixin.js:82</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Private function to recursively call itself and poll for db updates.</p>
-
-    </div>
-
-
-
-
-</div>
-<div id="method_isPolling" class="method item">
-    <h3 class="name"><code>isPolling</code></h3>
+<div id="method_activate" class="method item">
+    <h3 class="name"><code>activate</code></h3>
 
         <span class="paren">()</span>
 
@@ -226,7 +225,7 @@ part of any collections. It should not be used for a model that is a part of a c
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_pollingMixin.js.html#l30"><code>modules&#x2F;mixins&#x2F;pollingMixin.js:30</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l781"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:781</code></a>
         </p>
 
 
@@ -234,7 +233,7 @@ part of any collections. It should not be used for a model that is a part of a c
     </div>
 
     <div class="description">
-        <p>Returns true if the poll is active</p>
+        <p>Adds the listeners to the private collection.</p>
 
     </div>
 
@@ -242,8 +241,8 @@ part of any collections. It should not be used for a model that is a part of a c
 
 
 </div>
-<div id="method_polledFetch" class="method item">
-    <h3 class="name"><code>polledFetch</code></h3>
+<div id="method_deactivate" class="method item">
+    <h3 class="name"><code>deactivate</code></h3>
 
         <span class="paren">()</span>
 
@@ -257,7 +256,7 @@ part of any collections. It should not be used for a model that is a part of a c
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_pollingMixin.js.html#l71"><code>modules&#x2F;mixins&#x2F;pollingMixin.js:71</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l789"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:789</code></a>
         </p>
 
 
@@ -265,8 +264,7 @@ part of any collections. It should not be used for a model that is a part of a c
     </div>
 
     <div class="description">
-        <p>By default, the polled fetching operation is routed directly
-to backbone's fetch all.</p>
+        <p>Removes the listeners on the private collection.</p>
 
     </div>
 
@@ -274,17 +272,20 @@ to backbone's fetch all.</p>
 
 
 </div>
-<div id="method_startPolling" class="method item">
-    <h3 class="name"><code>startPolling</code></h3>
+<div id="method_get" class="method item">
+    <h3 class="name"><code>get</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>pollInterval</code>
+                        <code class="optional">[propertyName]</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
 
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>
+        </span>
 
 
 
@@ -295,7 +296,7 @@ to backbone's fetch all.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_pollingMixin.js.html#l38"><code>modules&#x2F;mixins&#x2F;pollingMixin.js:38</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l748"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:748</code></a>
         </p>
 
 
@@ -303,9 +304,10 @@ to backbone's fetch all.</p>
     </div>
 
     <div class="description">
-        <p>Starts polling Model/Collection by calling fetch every pollInterval.
-Note: Each Model/Collection will only allow a singleton of polling to occur so
-as not to have duplicate threads updating Model/Collection.</p>
+        <p>Get the full data object contents (either an array of model attributes or a single model attribute based on the
+value of propertyName) or the value of a specific property if a single result is expected.</p>
+<p>If returnSingleResult is true then this will return the given property from the model (if that model exists).
+If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.</p>
 
     </div>
 
@@ -314,12 +316,13 @@ as not to have duplicate threads updating Model/Collection.</p>
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">pollInterval</code>
-                        <span class="type">Integer</span>
+                        <code class="param-name optional">[propertyName]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
 
 
                     <div class="param-description">
-                        <p>interval between each poll in ms.</p>
+                        <p>the property to get from the model(s).</p>
 
                     </div>
 
@@ -327,14 +330,26 @@ as not to have duplicate threads updating Model/Collection.</p>
             </ul>
         </div>
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>:
+                    <p>containing the full contents of either the collection or model.</p>
+
+            </div>
+        </div>
 
 
 </div>
-<div id="method_stopPolling" class="method item">
-    <h3 class="name"><code>stopPolling</code></h3>
+<div id="method_toJSON" class="method item">
+    <h3 class="name"><code>toJSON</code></h3>
 
         <span class="paren">()</span>
 
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>
+        </span>
 
 
 
@@ -345,7 +360,7 @@ as not to have duplicate threads updating Model/Collection.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_pollingMixin.js.html#l62"><code>modules&#x2F;mixins&#x2F;pollingMixin.js:62</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l727"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:727</code></a>
         </p>
 
 
@@ -353,11 +368,20 @@ as not to have duplicate threads updating Model/Collection.</p>
     </div>
 
     <div class="description">
-        <p>Stops polling Model and clears all Timeouts.</p>
+        <p>Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.</p>
 
     </div>
 
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>:
+                    <p>containing the full contents of either the collection or model.</p>
+
+            </div>
+        </div>
 
 
 </div>
@@ -366,9 +390,9 @@ as not to have duplicate threads updating Model/Collection.</p>
             <div id="properties" class="api-class-tabpanel">
                 <h2 class="off-left">Properties</h2>
 
-<div id="property_pollTimeoutId  The id from when setTimeout was called to start polling." class="property item">
-    <h3 class="name"><code>pollTimeoutId  The id from when setTimeout was called to start polling.</code></h3>
-    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+<div id="property_parentBehavior" class="property item">
+    <h3 class="name"><code>parentBehavior</code></h3>
+    <span class="type">DataBehavior</span>
 
 
 
@@ -377,14 +401,40 @@ as not to have duplicate threads updating Model/Collection.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_pollingMixin.js.html#l23"><code>modules&#x2F;mixins&#x2F;pollingMixin.js:23</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l715"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:715</code></a>
         </p>
 
 
     </div>
 
     <div class="description">
-        
+        <p>The dataBehavior instance that owns this data object.</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_privateCollection" class="property item">
+    <h3 class="name"><code>privateCollection</code></h3>
+    <span class="type"><a href="../classes/Collection.html" class="crosslink">Collection</a></span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l720"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:720</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The private collection that this data object manages.</p>
+
     </div>
 
 

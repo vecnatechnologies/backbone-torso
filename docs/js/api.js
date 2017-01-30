@@ -20,18 +20,31 @@ YUI.add("yuidoc-meta", function(Y) {
         "Torso.Utils.handlebarsUtils",
         "Torso.Utils.stickitUtils",
         "Torso.Utils.templateRenderer",
+        "Torso.behaviors.DataBehavior",
+        "Torso.behaviors.DataBehavior.Data",
         "Torso.validation",
         "View",
         "history"
     ],
     "modules": [
-        "Torso"
+        "Torso",
+        "Torso.behaviors",
+        "Torso.behaviors.DataBehavior"
     ],
     "allModules": [
         {
             "displayName": "Torso",
             "name": "Torso",
             "description": "Custom additions to the Backbone Collection object.\n- safe disposal methods for memory + event management\n- special functional overrides to support ID registration for different views"
+        },
+        {
+            "displayName": "Torso.behaviors",
+            "name": "Torso.behaviors",
+            "description": "Behaviors defined in Torso."
+        },
+        {
+            "displayName": "Torso.behaviors.DataBehavior",
+            "name": "Torso.behaviors.DataBehavior"
         }
     ],
     "elements": []

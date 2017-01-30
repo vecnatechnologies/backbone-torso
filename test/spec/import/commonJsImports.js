@@ -52,6 +52,13 @@ commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
 commonJsImportTest('/modules/mixins/loadingMixin', ['jquery']);
 commonJsImportTest('/modules/mixins/cacheMixin', ['underscore', 'jquery']);
 commonJsImportTest('/modules/mixins/pollingMixin', []);
+commonJsImportTest('/modules/Behavior', ['underscore', 'backbone',
+                                         '/modules/mixins/cellMixin', '/modules/Cell']);
+commonJsImportTest('/modules/behaviors/DataBehavior', ['underscore', 'jquery', 'backbone',
+                                                       '/modules/mixins/cellMixin', '/modules/Cell',
+                                                       '/modules/Behavior',
+                                                       '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/Collection',
+                                                       '/modules/Events']);
 commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone',
                                          '/modules/mixins/pollingMixin', '/modules/NestedModel']);
 
@@ -80,6 +87,7 @@ commonJsImportTest('/modules/configure', ['backbone', 'jquery']);
 commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.stickit', 'underscore', 'jquery',
                                '/modules/stickitUtils',
                                '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/mixins/cellMixin', '/modules/validation',
+                               '/modules/behaviors/DataBehavior',
                                '/modules/Behavior',
                                '/modules/Cell',
                                '/modules/Collection',

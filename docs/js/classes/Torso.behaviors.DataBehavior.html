@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Torso.behaviors.DataBehavior - backbone-torso</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="icon" href="../assets/favicon.ico">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+                <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.6.18</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+                    <h2 class="off-left">APIs</h2>
+                    <div id="api-tabview" class="tabview">
+                        <ul class="tabs">
+                            <li><a href="#api-classes">Classes</a></li>
+                            <li><a href="#api-modules">Modules</a></li>
+                        </ul>
+                
+                        <div id="api-tabview-filter">
+                            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+                        </div>
+                
+                        <div id="api-tabview-panel">
+                            <ul id="api-classes" class="apis classes">
+                                <li><a href="../classes/Behavior.html">Behavior</a></li>
+                                <li><a href="../classes/Cell.html">Cell</a></li>
+                                <li><a href="../classes/Collection.html">Collection</a></li>
+                                <li><a href="../classes/Events.html">Events</a></li>
+                                <li><a href="../classes/FormModel.html">FormModel</a></li>
+                                <li><a href="../classes/FormView.html">FormView</a></li>
+                                <li><a href="../classes/history.html">history</a></li>
+                                <li><a href="../classes/ListView.html">ListView</a></li>
+                                <li><a href="../classes/Model.html">Model</a></li>
+                                <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+                                <li><a href="../classes/Router.html">Router</a></li>
+                                <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
+                                <li><a href="../classes/Torso.html">Torso</a></li>
+                                <li><a href="../classes/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
+                                <li><a href="../classes/Torso.behaviors.DataBehavior.Data.html">Torso.behaviors.DataBehavior.Data</a></li>
+                                <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
+                                <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
+                                <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
+                                <li><a href="../classes/Torso.Utils.templateRenderer.html">Torso.Utils.templateRenderer</a></li>
+                                <li><a href="../classes/Torso.validation.html">Torso.validation</a></li>
+                                <li><a href="../classes/View.html">View</a></li>
+                            </ul>
+                
+                
+                            <ul id="api-modules" class="apis modules">
+                                <li><a href="../modules/Torso.html">Torso</a></li>
+                                <li><a href="../modules/Torso.behaviors.html">Torso.behaviors</a></li>
+                                <li><a href="../modules/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+                    Show:
+                    <label for="api-show-inherited">
+                        <input type="checkbox" id="api-show-inherited" checked>
+                        Inherited
+                    </label>
+            
+                    <label for="api-show-protected">
+                        <input type="checkbox" id="api-show-protected">
+                        Protected
+                    </label>
+            
+                    <label for="api-show-private">
+                        <input type="checkbox" id="api-show-private">
+                        Private
+                    </label>
+                    <label for="api-show-deprecated">
+                        <input type="checkbox" id="api-show-deprecated">
+                        Deprecated
+                    </label>
+            
+                </div>
+            
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+<h1>Torso.behaviors.DataBehavior Class</h1>
+<div class="box meta">
+
+
+        <div class="foundat">
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l72"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:72</code></a>
+        </div>
+
+            Module: <a href="../modules/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a>
+
+</div>
+
+
+<div class="box intro">
+    <p>This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
+This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
+This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.</p>
+<p>See <a href="https://tonicdev.com/torso/databehavior">https://tonicdev.com/torso/databehavior</a> for more in-depth documentation and details.</p>
+
+</div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+            <li class="api-class-tab properties"><a href="#properties">Properties</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method private">
+                                <a href="#method___fetchFailed">__fetchFailed</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___fetchSuccess">__fetchSuccess</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___getIds">__getIds</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___normalizeAndValidateIds">__normalizeAndValidateIds</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___normalizeAndValidateIds">__normalizeAndValidateIds</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___normalizeAndValidateIds">__normalizeAndValidateIds</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___normalizeAndValidateUpdateEvents">__normalizeAndValidateUpdateEvents</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___parseIdsPropertyNameAndIdContainer">__parseIdsPropertyNameAndIdContainer</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___validateCache">__validateCache</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__activate">_activate</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__deactivate">_deactivate</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__delegateUpdateEvents">_delegateUpdateEvents</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__dispose">_dispose</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method__undelegateEvents">_undelegateEvents</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_constructor">constructor</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_fetch">fetch</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_listenToIdsPropertyChangeEvent">listenToIdsPropertyChangeEvent</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_prepare">prepare</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_pull">pull</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_retrieve">retrieve</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_stopListeningToIdsPropertyChangeEvent">stopListeningToIdsPropertyChangeEvent</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+                <div class="index-section properties">
+                    <h3>Properties</h3>
+
+                    <ul class="index-list properties">
+                            <li class="index-item property">
+                                <a href="#property_alwaysFetch">alwaysFetch</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_cache">cache</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_data">data</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_ids">ids</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_returnSingleResult">returnSingleResult</a>
+
+                            </li>
+                            <li class="index-item property">
+                                <a href="#property_updateEvents">updateEvents</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method___fetchFailed" class="method item private">
+    <h3 class="name"><code>__fetchFailed</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l645"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:645</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___fetchSuccess" class="method item private">
+    <h3 class="name"><code>__fetchSuccess</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l633"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:633</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___getIds" class="method item private">
+    <h3 class="name"><code>__getIds</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l468"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:468</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the ids to track in the private collection
+or rejects with the error message.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method___normalizeAndValidateIds" class="method item private">
+    <h3 class="name"><code>__normalizeAndValidateIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l382"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:382</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the ids property is valid and if not throws an error describing why its not valid.
+A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
+This is done as part of validation because we first validate that both are not set.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___normalizeAndValidateIds" class="method item private">
+    <h3 class="name"><code>__normalizeAndValidateIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l397"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:397</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the ids property is valid and if not throws an error describing why its not valid.
+A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
+This is done as part of validation because we first validate that both are not set.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___normalizeAndValidateIds" class="method item private">
+    <h3 class="name"><code>__normalizeAndValidateIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l455"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:455</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___normalizeAndValidateUpdateEvents" class="method item private">
+    <h3 class="name"><code>__normalizeAndValidateUpdateEvents</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l431"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:431</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the updateEvents property is valid and if not throws an error describing why its not valid.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___parseIdsPropertyNameAndIdContainer" class="method item private">
+    <h3 class="name"><code>__parseIdsPropertyNameAndIdContainer</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">IdsPropertyName: String, idContainer: Object</span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l511"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:511</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">IdsPropertyName: String, idContainer: Object</span>:
+                    <p>} the name of the ids property and the actual object to use as the idContainer.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method___validateCache" class="method item private">
+    <h3 class="name"><code>__validateCache</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l368"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:368</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the cache property is valid and if not throws an error describing why its not valid.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__activate" class="method item private">
+    <h3 class="name"><code>_activate</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l657"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:657</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds listeners when the view is activated.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__deactivate" class="method item private">
+    <h3 class="name"><code>_deactivate</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l668"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:668</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Stops listening when the view is deactivated.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__delegateUpdateEvents" class="method item private">
+    <h3 class="name"><code>_delegateUpdateEvents</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l303"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:303</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Removes existing listeners and adds new ones for all of the updateEvents configured.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__dispose" class="method item private">
+    <h3 class="name"><code>_dispose</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l679"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:679</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Default dispose stuff because its not already on behavior.  See <a href="https://github.com/vecnatechnologies/backbone-torso/issues/295">https://github.com/vecnatechnologies/backbone-torso/issues/295</a></p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__undelegateEvents" class="method item private">
+    <h3 class="name"><code>_undelegateEvents</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l316"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:316</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Removes existing event listeners.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_constructor" class="method item">
+    <h3 class="name"><code>constructor</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>behaviorOptions</code>
+                </li>
+                <li class="arg">
+                        <code class="optional">[viewOptions]</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l179"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:179</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">behaviorOptions</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                        <ul class="params-list">
+                            <li class="param">
+                                    <code class="param-name">cache</code>
+                                    <span class="type"><a href="../classes/Collection.html" class="crosslink">Collection</a></span>
+
+                                <div class="param-description">
+                                    <p>see cache property.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[returnSingleResult=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see returnSingleResult property.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[alwaysFetch=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see alwaysFetch property.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[id=behaviorOptions.ids]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, idContainer: Object</span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>|Function} see id property.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[ids=behaviorOptions.id]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | Property: String, idContainer: Object</span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>|Function} see ids property.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[updateEvents]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>see updateEvents property.</p>
+
+                                </div>
+
+                            </li>
+                        </ul>
+                </li>
+                <li class="param">
+                        <code class="param-name optional">[viewOptions]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+
+
+                    <div class="param-description">
+                        <p>options passed to View's initialize</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_fetch" class="method item">
+    <h3 class="name"><code>fetch</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l246"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:246</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the retrieved models.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_listenToIdsPropertyChangeEvent" class="method item">
+    <h3 class="name"><code>listenToIdsPropertyChangeEvent</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l271"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:271</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Listens for the change event on the ids property and, if triggered, re-fetches the data based on the new ids.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_prepare" class="method item">
+    <h3 class="name"><code>prepare</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l260"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:260</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Adds the toJSON of the data represented by this behavior to the context.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_pull" class="method item">
+    <h3 class="name"><code>pull</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l232"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:232</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the retrieved models.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_retrieve" class="method item">
+    <h3 class="name"><code>retrieve</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">$.Deferred.Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l218"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:218</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Retrieves the ids for this data object and passes them off to the private collection to track and then does a
+pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">$.Deferred.Promise</span>:
+                    <p>a jquery deferred promise that resolves to the retrieved models.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_stopListeningToIdsPropertyChangeEvent" class="method item">
+    <h3 class="name"><code>stopListeningToIdsPropertyChangeEvent</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l290"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:290</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Removes the listener added by listenToIdsPropertyChangeEvent().</p>
+
+    </div>
+
+
+
+
+</div>
+            </div>
+
+            <div id="properties" class="api-class-tabpanel">
+                <h2 class="off-left">Properties</h2>
+
+<div id="property_alwaysFetch" class="property item">
+    <h3 class="name"><code>alwaysFetch</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l100"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:100</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Determines whether <code>pull()</code> or <code>fetch()</code> is called when using <code>retrieve()</code>.
+true - Use fetch() by default on the private collection.
+false (default) - Use pull() by default on the private collection.
+True will query the server more often, but will provide more up-to-date data.
+False will only query the server if the model hasn't already been retrieved.
+This property will be ignored if <code>fetch()</code> or <code>pull()</code> is called directly.</p>
+
+    </div>
+
+        <p><strong>Default:</strong> false</p>
+
+
+</div>
+<div id="property_cache" class="property item">
+    <h3 class="name"><code>cache</code></h3>
+    <span class="type"><a href="../classes/Collection.html" class="crosslink">Collection</a></span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l84"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:84</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>The torso collection that is acting as a cache used to create the private collections.
+This property/option is required.  Instantiation will fail if it is not set.</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_data" class="property item">
+    <h3 class="name"><code>data</code></h3>
+    <span class="type"><a href="../classes/Torso.behaviors.DataBehavior.Data.html" class="crosslink">Torso.behaviors.DataBehavior.Data</a></span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l172"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:172</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Object that manages interaction with the data.  Contains the privateCollection, proxies all events from the privateCollection,
+and has get('...') and .toJSON() methods that access the private collection data.</p>
+
+    </div>
+
+
+
+</div>
+<div id="property_ids" class="property item">
+    <h3 class="name"><code>ids</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l112"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:112</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).</p>
+<ul>
+<li>
+<p>{String|Number} - the id to use directly (equivalent to an array of a single id).</p>
+</li>
+<li>
+<p>{String[]|Number[]} - the ids to use directly.</p>
+</li>
+<li>
+<p>{Object} - more complex configuration that identifies a model-like object that fires a change event and the
+property on that object to use. The object can fire the change event for the given property
+and have a .get('propertyName') method, or it can define the property directly on the idContainer.
+Only one property can be identified as supplying the id for this data model.
+If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
+The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
+have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
+data behavior that the property has been modified.</p>
+<ul>
+<li>property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+idContainer is defined. The idContainer is the object that fires a change event for the given property name.
+Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
+Will get the property before the first '.' from the view and if it is an object will try to use a
+.get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.
+If it is a string/number or array of string/number, then it will use that as the ids.
+Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
+old idContainer and start listening to the new one defined by this property.</li>
+<li>idContainer {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change
+events and has a .get('propertyName') function. It isn't required to fire events -
+the change event is only required if it needs to re-fetch when the id property value changes.
+Examples:
+<ul>
+<li>{ property: '_patientId' }</li>
+<li>{ property: 'viewState.appointmentId' }</li>
+<li>{ property: 'model.type' }</li>
+<li>{ property: 'behaviors.demographics.data.appointments' }</li>
+<li>{ property: 'id', idContainer: userService }</li>
+<li>{ property: 'username', idContainer: function() { application.getCurrentUser() } }</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>{Function(cache)} - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)
+to track with the private collection. Cache is passed in as the first argument so that the behavior
+can be defined and the cache can be overridden later.
+'this' is the behavior (from which you can get the view if needed).
+What was criteria should use this instead:</p>
+<pre class="code prettyprint"><code>function(cache) {
+  var thisBehaviorInstance = this;
+  var view = this.view;
+  var criteria = { ... some criteria ... };
+  return cache.fetchIdsByCriteria(criteria);
+}</code></pre>
+</li>
+</ul>
+
+    </div>
+
+
+
+</div>
+<div id="property_returnSingleResult" class="property item">
+    <h3 class="name"><code>returnSingleResult</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l91"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:91</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>Determines the result of <code>view.getBehavior('thisBehaviorAlias').toJSON()</code>.
+true - a single model result is returned.
+false (default) - an array of model results are returned.</p>
+
+    </div>
+
+        <p><strong>Default:</strong> false</p>
+
+
+</div>
+<div id="property_updateEvents" class="property item">
+    <h3 class="name"><code>updateEvents</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String[]</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l158"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:158</code></a>
+        </p>
+
+
+    </div>
+
+    <div class="description">
+        <p>cause this behavior to re-calculate its ids and refetch them from the server if the given events are triggered
+(space separated if string, single item is equivalent to array of single item).</p>
+<ul>
+<li>'view:eventName' - arbitrary event triggered on the view (eventName can be a change:propertyName event).</li>
+<li>'viewState:eventName' - arbitrary event triggered on the viewState (eventName can be a change:propertyName event).</li>
+<li>'model:eventName' - arbitrary even triggered on the view's model (eventName can be a change:propertyName event).</li>
+<li>'this:eventName' - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).</li>
+<li>'behaviorAlias:eventName' - arbitrary event triggered by another data behavior on this view (eventName can be a change:propertyName event).</li>
+<li>'behaviorAlias.data:eventName' - arbitrary event triggered by the data of another DataBehavior on this view (eventName can be a change:propertyName event).</li>
+<li>{ '<eventName>': &lt; object (or function returning an object) that the event is triggered on &gt; } - arbitrary ('<eventName>') triggered on the supplied object.</li>
+</ul>
+
+    </div>
+
+
+
+</div>
+            </div>
+
+
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
