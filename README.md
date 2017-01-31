@@ -192,6 +192,12 @@ Backbone offers an easy starting point, but there are many unanswered questions.
 Each point raised here can break functionality if it is inconsistent within your app. With Torso, we lay down the laws that answer questions just like these and keep your application consistent.
 A Torso view's render methods never take arguments, can be called at any time, and never change the state of the application. We'll explain how to make this possible, as well as covering other rules, [here](/docs/RULES.md).
 
+### Behaviors
+[Behaviors](/modules/Behavior.js) are a way for torso to share view mechanics between different view hierarchies.
+
+Here are some behaviors that come with torso:
+* [Data Behavior](/docs/modules/behaviors/DATA_BEHAVIOR.md)
+
 ### Want to help out?
 Check out the [dev page](/docs/DEVELOPMENT.md).
 
