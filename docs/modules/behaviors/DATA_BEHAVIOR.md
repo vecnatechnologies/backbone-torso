@@ -528,7 +528,8 @@ Data access examples will use the ArticleWithPostsView defined earlier.
     
     postsDataBehavior.toJSON(); // returns an array of objects containing the post objects.  Equivalent to articleDataBehavior.data.privateCollection.toJSON();
     postsDataBehavior.get('text'); // returns an array containing each post's text. Equivalent to articleDataBehavior.data.privateCollection.pluck('text');
-    postsDataBehavior.get('id'); // [ 'yesterday-by-the-river', 'tomorrow-by-the-sea' ] or undefined if the post with those ids do not exist on the server (or a subset if only a single post exists on the server).
+    postsDataBehavior.get('id'); // `[ 'yesterday-by-the-river', 'tomorrow-by-the-sea' ]` or undefined if the posts with those ids do not exist on the server (or a subset if only a single post exists on the server).
+    postsDataBehavior.getModels(): // an array of all post models matching the ids `[ 'yesterday-by-the-river', 'tomorrow-by-the-sea' ]` or an empty array if the posts with those ids do not exist on the server (or a subset if only a single post exists on the server)..
     ```
 * returnSingleResult === true
     ```JavaScript
@@ -538,6 +539,8 @@ Data access examples will use the ArticleWithPostsView defined earlier.
     articleDataBehavior.toJSON(); // returns a single object containing the article properties.  Equivalent to articleDataBehavior.data.privateCollection.at(0).toJSON();
     articleDataBehavior.get('title'); // returns the title of the retrieved article. Equivalent to articleDataBehavior.data.privateCollection.at(0).get('title');
     articleDataBehavior.get('id'); // 1234 or undefined if the article with that id does not exist on the server.
+    articleDataBehavior.getModel(); // the model object.
+    postsDataBehavior.getModels(): // an array of a single article model matching the id `1234` or an empty array if the article with that id does not exist on the server.
     ```
 Note: the idAttribute can be defined on the underlying Model and everything should respect that (i.e. the "id" property in the examples above can be different if "idAttribute" is set on the Backbone.Model backing the data in the cache collection - see backbone docs for more info on idAttribute).
 
