@@ -5834,7 +5834,7 @@
      * @override
      */
     prepare: function() {
-      var behaviorContext = Behavior.prototype.prepare.apply(this);
+      var behaviorContext = Behavior.prototype.prepare.apply(this) || {};
       behaviorContext.data = this.data.toJSON();
       return behaviorContext;
     },
@@ -6336,17 +6336,40 @@
         }
       }
 
-      if (privateCollection.length === 0) {
-        return undefined;
-      } else if (privateCollection.length === 1) {
-        var singleResultModel = privateCollection.at(0);
+      var singleResultModel = this.getModel();
+      if (singleResultModel) {
         if (_.isString(propertyName)) {
           return singleResultModel.get(propertyName);
         }
         return singleResultModel.toJSON();
+      }
+    },
+
+    /**
+     * @method getModel
+     * @return {Backbone.Model}
+     * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
+     */
+    getModel: function() {
+      var privateCollection = this.privateCollection;
+      if (!this.parentBehavior.returnSingleResult) {
+        throw new Error('data.getModel() of a DataBehavior is only valid if the behavior is set to returnSingleResult === true');
+      }
+      if (privateCollection.length === 0) {
+        return undefined;
+      } else if (privateCollection.length === 1) {
+        return privateCollection.at(0);
       } else {
         throw new Error('Multiple results found, but single result expected: ' + JSON.stringify(privateCollection.toJSON()));
       }
+    },
+
+    /**
+     * @method getModels
+     * @return {Backbone.Model[]} new array containing all the models in the data's private collection.
+     */
+    getModels: function() {
+      return this.privateCollection.models.slice(0);
     },
 
     /**
