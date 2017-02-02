@@ -1305,8 +1305,15 @@
             "line": 809,
             "itemtype": "method",
             "name": "getModel",
+            "params": [
+                {
+                    "name": "modelId",
+                    "description": "The id of the model to get from the collection.",
+                    "type": "Number|String"
+                }
+            ],
             "return": {
-                "description": "",
+                "description": "either the model with the given id or the only model on this behavior (if model id is undefined).",
                 "type": "Backbone.Model"
             },
             "throws": {
@@ -1318,7 +1325,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 828,
+            "line": 834,
             "itemtype": "method",
             "name": "getModels",
             "return": {
@@ -1331,7 +1338,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 836,
+            "line": 842,
             "description": "Adds the listeners to the private collection.",
             "itemtype": "method",
             "name": "activate",
@@ -1341,7 +1348,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 844,
+            "line": 850,
             "description": "Removes the listeners on the private collection.",
             "itemtype": "method",
             "name": "deactivate",
@@ -1351,7 +1358,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 852,
+            "line": 858,
             "description": "Dispose of the data events.",
             "class": "Torso.behaviors.DataBehavior.Data",
             "module": "Torso.behaviors.DataBehavior",
@@ -5891,7 +5898,7 @@
         },
         {
             "message": "Missing item type\nDispose of the data events.",
-            "line": " modules/behaviors/DataBehavior.js:852"
+            "line": " modules/behaviors/DataBehavior.js:858"
         },
         {
             "message": "Missing item type\nViewStateCell is a NestedCell that holds view state data and can trigger\nchange events. These changes events will propogate up and trigger on the view\nas well.",
