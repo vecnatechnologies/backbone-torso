@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.19</em>
+            <em>API Docs for: 0.6.20</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -371,7 +371,7 @@
      * @override
      */
     prepare: function() {
-      var behaviorContext = Behavior.prototype.prepare.apply(this);
+      var behaviorContext = Behavior.prototype.prepare.apply(this) || {};
       behaviorContext.data = this.data.toJSON();
       return behaviorContext;
     },
@@ -873,17 +873,40 @@
         }
       }
 
-      if (privateCollection.length === 0) {
-        return undefined;
-      } else if (privateCollection.length === 1) {
-        var singleResultModel = privateCollection.at(0);
+      var singleResultModel = this.getModel();
+      if (singleResultModel) {
         if (_.isString(propertyName)) {
           return singleResultModel.get(propertyName);
         }
         return singleResultModel.toJSON();
+      }
+    },
+
+    /**
+     * @method getModel
+     * @return {Backbone.Model}
+     * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
+     */
+    getModel: function() {
+      var privateCollection = this.privateCollection;
+      if (!this.parentBehavior.returnSingleResult) {
+        throw new Error(&#x27;data.getModel() of a DataBehavior is only valid if the behavior is set to returnSingleResult === true&#x27;);
+      }
+      if (privateCollection.length === 0) {
+        return undefined;
+      } else if (privateCollection.length === 1) {
+        return privateCollection.at(0);
       } else {
         throw new Error(&#x27;Multiple results found, but single result expected: &#x27; + JSON.stringify(privateCollection.toJSON()));
       }
+    },
+
+    /**
+     * @method getModels
+     * @return {Backbone.Model[]} new array containing all the models in the data&#x27;s private collection.
+     */
+    getModels: function() {
+      return this.privateCollection.models.slice(0);
     },
 
     /**

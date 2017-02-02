@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.19</em>
+            <em>API Docs for: 0.6.20</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -183,6 +183,14 @@
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method_getModel">getModel</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_getModels">getModels</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_toJSON">toJSON</a>
 
                             </li>
@@ -225,7 +233,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l781"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:781</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l804"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:804</code></a>
         </p>
 
 
@@ -256,7 +264,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l789"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:789</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l812"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:812</code></a>
         </p>
 
 
@@ -336,6 +344,96 @@ If returnSingleResult is false then this will return an array containing that pr
             <div class="returns-description">
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object[]</a></span>:
                     <p>containing the full contents of either the collection or model.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_getModel" class="method item">
+    <h3 class="name"><code>getModel</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Backbone.Model</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l777"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:777</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Backbone.Model</span>:
+            </div>
+        </div>
+
+        <div class="throws">
+            <h4>Throws:</h4>
+
+            <div class="throws-description">
+                    <p>an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.</p>
+
+            </div>
+        </div>
+
+</div>
+<div id="method_getModels" class="method item">
+    <h3 class="name"><code>getModels</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">Backbone.Model</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l796"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:796</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">Backbone.Model</span>:
+                    <p>new array containing all the models in the data's private collection.</p>
 
             </div>
         </div>

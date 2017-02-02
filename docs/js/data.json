@@ -2,7 +2,7 @@
     "project": {
         "name": "backbone-torso",
         "description": "backbone-torso",
-        "version": "0.6.19"
+        "version": "0.6.20"
     },
     "files": {
         "modules/behaviors/DataBehavior.js": {
@@ -1277,7 +1277,36 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 781,
+            "line": 777,
+            "itemtype": "method",
+            "name": "getModel",
+            "return": {
+                "description": "",
+                "type": "Backbone.Model"
+            },
+            "throws": {
+                "description": "an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false."
+            },
+            "class": "Torso.behaviors.DataBehavior.Data",
+            "module": "Torso.behaviors.DataBehavior",
+            "namespace": "Torso.behaviors.DataBehavior"
+        },
+        {
+            "file": "modules/behaviors/DataBehavior.js",
+            "line": 796,
+            "itemtype": "method",
+            "name": "getModels",
+            "return": {
+                "description": "new array containing all the models in the data's private collection.",
+                "type": "Backbone.Model[]"
+            },
+            "class": "Torso.behaviors.DataBehavior.Data",
+            "module": "Torso.behaviors.DataBehavior",
+            "namespace": "Torso.behaviors.DataBehavior"
+        },
+        {
+            "file": "modules/behaviors/DataBehavior.js",
+            "line": 804,
             "description": "Adds the listeners to the private collection.",
             "itemtype": "method",
             "name": "activate",
@@ -1287,7 +1316,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 789,
+            "line": 812,
             "description": "Removes the listeners on the private collection.",
             "itemtype": "method",
             "name": "deactivate",
@@ -1297,7 +1326,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 797,
+            "line": 820,
             "description": "Dispose of the data events.",
             "class": "Torso.behaviors.DataBehavior.Data",
             "module": "Torso.behaviors.DataBehavior",
@@ -5837,7 +5866,7 @@
         },
         {
             "message": "Missing item type\nDispose of the data events.",
-            "line": " modules/behaviors/DataBehavior.js:797"
+            "line": " modules/behaviors/DataBehavior.js:820"
         },
         {
             "message": "Missing item type\nViewStateCell is a NestedCell that holds view state data and can trigger\nchange events. These changes events will propogate up and trigger on the view\nas well.",
