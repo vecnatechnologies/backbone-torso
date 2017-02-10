@@ -703,7 +703,7 @@
     this.initialize(options);
   };
 
-  _.extend(Data.prototype, {
+  _.extend(Data.prototype, Events, {
     /**
      * Instantiates the data objects and binds it to this behavior instance.
      * @param options {Object} to pass to the initialize methods.
@@ -711,7 +711,6 @@
      *   @param options.privateCollection {Collection} the private collection that this data represents.
      */
     initialize: function(options) {
-      _.extend(this, Events);
       /**
        * The dataBehavior instance that owns this data object.
        * @property parentBehavior {DataBehavior}
