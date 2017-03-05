@@ -5591,8 +5591,8 @@
   var CONTAINER_SEPARATOR = ':';
 
   var FETCHED_STATUSES = {
-    SUCCESS: 'SUCCESS',
-    FAILURE: 'FAILURE'
+    SUCCESS: 'success',
+    FAILURE: 'failed'
   };
 
   /**
