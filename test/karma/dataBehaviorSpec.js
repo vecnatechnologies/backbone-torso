@@ -32,6 +32,20 @@ var MOCKJAX_ROUTE_WITH_OTHER_IDS = {
   }
 };
 
+var MOCKJAX_ERROR_RESPONSE_TEXT = "A random error occurred";
+
+var MOCKJAX_ROUTE_WITH_IDS_ERROR = {
+  url: '/myModel/ids',
+  type: 'POST',
+  dataType: 'json',
+  responseTime: 100,
+  status: 500,
+  responseText: MOCKJAX_ERROR_RESPONSE_TEXT
+};
+
+var SUCCESS_EVENT_PAYLOAD = { status: TorsoDataBehavior.FETCHED_STATUSES.SUCCESS };
+var FAILURE_EVENT_PAYLOAD = { status: TorsoDataBehavior.FETCHED_STATUSES.FAILURE };
+
 function getBasicBehaviorConfiguration() {
   return {
     behavior: TorsoDataBehavior,
@@ -1042,7 +1056,8 @@ ids = {\n\
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           initialContextModel.id = 'newId';
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
-          dataBehavior.once('fetched', function() {
+          dataBehavior.once('fetched', function(result) {
+            expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
             expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
 
             var newContextModel = new TorsoNestedModel();
@@ -1050,7 +1065,8 @@ ids = {\n\
             idContainerContainer.idContainer = newContextModel;
             dataBehavior.trigger('id-container-updated');
 
-            dataBehavior.once('fetched', function() {
+            dataBehavior.once('fetched', function(result) {
+              expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
               expect(dataBehavior.data.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
               done();
             });
@@ -1083,7 +1099,8 @@ ids = {\n\
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           initialContextModel.id = 'newId';
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
-          dataBehavior.once('fetched', function() {
+          dataBehavior.once('fetched', function(result) {
+            expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
             expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
 
             var newContextModel = new TorsoNestedModel();
@@ -1091,12 +1108,14 @@ ids = {\n\
             idContainerContainer.idContainer = newContextModel;
             dataBehavior.trigger('id-container-updated');
 
-            dataBehavior.once('fetched', function() {
+            dataBehavior.once('fetched', function(result) {
+              expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
               expect(dataBehavior.data.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
 
               newContextModel.id = 'yetAnotherId';
               newContextModel.trigger('change:id');
-              dataBehavior.once('fetched', function() {
+              dataBehavior.once('fetched', function(result) {
+                expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
                 expect(dataBehavior.data.toJSON()).toEqual([{ id: 'yetAnotherId', count: 0 }]);
                 done();
               });
@@ -1124,7 +1143,8 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
         done();
       });
@@ -1149,7 +1169,8 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
         done();
       });
@@ -1173,7 +1194,8 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
         done();
       });
@@ -1205,12 +1227,14 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-      dataBehavior2.once('fetched', function() {
+      dataBehavior2.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
         expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
@@ -1248,14 +1272,16 @@ dataBehavior2 will pull the unique collection of ids collected from all of the o
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                { id: 20, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                { id: 30, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-      dataBehavior2.once('fetched', function() {
+      dataBehavior2.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual([{ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                { id: 20, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
                                                { id: 30, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
@@ -1318,12 +1344,14 @@ var ViewWithBehavior = TorsoView.extend({\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-      dataBehavior2.once('fetched', function() {
+      dataBehavior2.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
         expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
@@ -1331,7 +1359,8 @@ var ViewWithBehavior = TorsoView.extend({\n\
       });
 
       var dataBehavior3 = viewWithBehavior.getBehavior('dataBehavior3');
-      dataBehavior3.once('fetched', function() {
+      dataBehavior3.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
         expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
                                                 { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
@@ -1388,18 +1417,21 @@ dataBehavior.data.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-      dataBehavior2.once('fetched', function() {
+      dataBehavior2.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
         expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
           { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
           { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
 
-        dataBehavior2.once('fetched', function() {
+        dataBehavior2.once('fetched', function(result) {
+          expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
           expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [20, 30, 40], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
           expect(dataBehavior2.data.toJSON()).toEqual([{ id: 20, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
             { id: 30, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
@@ -1440,18 +1472,21 @@ dataBehavior.data.privateCollection.models[0].unset(\'otherIds\');\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
       });
 
       var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-      dataBehavior2.once('fetched', function() {
+      dataBehavior2.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
         expect(dataBehavior2.data.toJSON()).toEqual([{ id: 1, count: 0, otherIds: [1, 2, 3], otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] },
           { id: 2, count: 1, otherIds: [2, 3, 4], otherOtherIds: ['a1', 'b1', 'c1', 'd1', 'e1', 'f1'] },
           { id: 3, count: 2, otherIds: [3, 4, 5], otherOtherIds: ['a2', 'b2', 'c2', 'd2', 'e2', 'f2'] }]);
 
-        dataBehavior2.once('fetched', function() {
+        dataBehavior2.once('fetched', function(result) {
+          expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
           expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0, otherOtherIds: ['a0', 'b0', 'c0', 'd0', 'e0', 'f0'] });
           expect(dataBehavior2.data.toJSON()).toEqual([]);
           done();
@@ -1484,10 +1519,12 @@ dataBehavior.trigger(\'some:random:event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
@@ -1521,10 +1558,12 @@ viewWithBehavior.trigger(\'view-event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
@@ -1558,10 +1597,12 @@ viewWithBehavior.viewState.trigger(\'viewState-event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
@@ -1598,10 +1639,12 @@ viewWithBehavior.model.trigger(\'model-event\');\n\
       model: viewModel
     });
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
@@ -1638,10 +1681,12 @@ dataBehavior2.trigger(\'otherBehavior-event\');\n\
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
@@ -1676,10 +1721,12 @@ idContainer.trigger(\'arbitraryContextEvent\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
@@ -1722,10 +1769,12 @@ idContainer2.trigger(\'other-arbitrary-idContainer-event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
         done();
       });
@@ -1793,25 +1842,32 @@ dataBehavior.trigger(\'this-event\');\n\
     });
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-    dataBehavior.once('fetched', function() {
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function() {
+      dataBehavior.once('fetched', function(result) {
+        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
 
-        dataBehavior.once('fetched', function() {
+        dataBehavior.once('fetched', function(result) {
+          expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
           expect(dataBehavior.data.toJSON()).toEqual({ id: 1000, count: 0 });
 
-          dataBehavior.once('fetched', function() {
+          dataBehavior.once('fetched', function(result) {
+            expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
             expect(dataBehavior.data.toJSON()).toEqual({ id: 10000, count: 0 });
 
-            dataBehavior.once('fetched', function() {
+            dataBehavior.once('fetched', function(result) {
+              expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
               expect(dataBehavior.data.toJSON()).toEqual({ id: 100000, count: 0 });
 
-              dataBehavior.once('fetched', function() {
+              dataBehavior.once('fetched', function(result) {
+                expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
                 expect(dataBehavior.data.toJSON()).toEqual({ id: 1000000, count: 0 });
 
-                dataBehavior.once('fetched', function() {
+                dataBehavior.once('fetched', function(result) {
+                  expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
                   expect(dataBehavior.data.toJSON()).toEqual({ id: 10000000, count: 0 });
                   done();
                 });
@@ -1836,5 +1892,63 @@ dataBehavior.trigger(\'this-event\');\n\
 
     viewWithBehavior._idFromView = 10;
     idContainer1.trigger('arbitraryContextEvent');
+  });
+
+  it('will trigger the fetched event with { status: failed } when the /ids endpoint returns a failed status code:\n\
+ids = {\n\
+  property: \'viewState:testId2\'\n\
+}\n\
+', function(done) {
+    $.mockjax.clear(this.routes['/myModel/ids|post']);
+    $.mockjax(MOCKJAX_ROUTE_WITH_IDS_ERROR);
+
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.ids = {
+      property: 'viewState:testId2'
+    };
+    var ViewWithBehavior = TorsoView.extend({
+      initialize: function() {
+        this.set('testId2', 5);
+      },
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.FAILURE);
+      expect(result.response.failedOnIds).toBeUndefined();
+      expect(result.response.responseText).toEqual(MOCKJAX_ERROR_RESPONSE_TEXT);
+      expect(dataBehavior.data.toJSON().length).toEqual(0);
+      done();
+    });
+    viewWithBehavior.set('testId2', 10);
+  });
+
+  it('will trigger the fetched event with { status: failed } when the endpoint to retrieve ids returns a failed status code:\n\
+ids = function() {\n\
+  return $.post("/error");\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.ids = function() {
+      return $.post('/error');
+    };
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.once('fetched', function(result) {
+      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.FAILURE);
+      expect(result.response.failedOnIds).toBe(true);
+      expect(result.response.responseText).toEqual('An error occurred');
+      expect(dataBehavior.data.toJSON().length).toEqual(0);
+      done();
+    });
+    viewWithBehavior.set('testId2', 10);
   });
 });

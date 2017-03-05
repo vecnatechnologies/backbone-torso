@@ -104,7 +104,8 @@ var ArticleAndPostsView = Torso.View.extend({
 9. [Update Events Configuration](#update-events-configuration)
 10. [Events listened to](#events-listened-to)
 11. [Events emitted](#events-emitted)
-12. [Description of all Options](#description-of-all-options)
+12. [Error Handling](#error-handling)
+13. [Description of all Options](#description-of-all-options)
 
 ## Background
 Retrieving data using Torso caches (Collections) and private collections involves a 2 step process:
@@ -736,8 +737,35 @@ The Data Behavior listens to the following events on the idContainer.  It ignore
 
 ## Events emitted
 * All events from the private collection are proxied to the .data property of the data behavior.  This includes any change events of models contained in the collection.  This does NOT include arbitrary events triggered on the individual models of the collection.
-* "fetched" is triggered on both the behavior itself and the .data property of the behavior with a payload containing an object with status "success" or "failed" depending on whether calculating the ids and fetching the objects completed successfully.
 * "fetched:ids" is triggered on both the behavior and the .data property of the behavior when the ids and data is successfully or unsuccessfully retrieved.
+* "fetched" is triggered on both the behavior itself and the .data property of the behavior with a payload containing an object with status "SUCCESS" or "FAILURE" depending on whether calculating the ids and fetching the objects completed successfully.
+Success:
+```Javascript
+successEventPayload = {
+  status: "SUCCESS",
+  response: { ... ajax response from server when fetching objects based on ids ... }
+}
+```
+Failure if retrieving items from the server based on ids failed.
+```Javascript
+idsRetrievalFailure = {
+  status: "FAILURE",
+  response: { ... ajax response from server when fetching objects based on ids ... }
+}
+```
+Failure if retrieving ids from the server failed (if using the functional form of ids and returning a promise):
+```Javascript
+successEventPayload = {
+  status: "SUCCESS",
+  response: {
+    failedOnIds: true, // this is undefined if the ids retrieve successfully, but retrieving items based on ids fails.
+    ... rejected value of the ids promise ... 
+  }
+}
+```
+
+## Error Handling
+* The 'fetched' event that is triggered
 
 ## Description of all Options
 * `cache {Torso.Collection}` - the torso collection that is acting as a cache used to create the private collections.
