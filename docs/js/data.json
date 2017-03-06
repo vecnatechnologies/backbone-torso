@@ -274,7 +274,7 @@
             },
             "tag": "module",
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 728
+            "line": 730
         },
         "Torso": {
             "name": "Torso",
@@ -348,7 +348,7 @@
             "module": "Torso.behaviors.DataBehavior",
             "namespace": "Torso.behaviors.DataBehavior",
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 728,
+            "line": 730,
             "description": "Data object used to create the .data property of the DataBehavior.",
             "is_constructor": 1
         },
@@ -1162,7 +1162,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 669,
+            "line": 670,
             "description": "Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.",
             "itemtype": "method",
             "name": "__fetchFailed",
@@ -1181,7 +1181,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 688,
+            "line": 690,
             "description": "Adds listeners when the view is activated.",
             "itemtype": "method",
             "name": "_activate",
@@ -1193,7 +1193,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 699,
+            "line": 701,
             "description": "Stops listening when the view is deactivated.",
             "itemtype": "method",
             "name": "_deactivate",
@@ -1205,7 +1205,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 710,
+            "line": 712,
             "description": "Default dispose stuff because its not already on behavior.  See https://github.com/vecnatechnologies/backbone-torso/issues/295",
             "itemtype": "method",
             "name": "_dispose",
@@ -1217,7 +1217,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 738,
+            "line": 740,
             "description": "Instantiates the data objects and binds it to this behavior instance.",
             "params": [
                 {
@@ -1244,7 +1244,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 745,
+            "line": 747,
             "description": "The dataBehavior instance that owns this data object.",
             "itemtype": "property",
             "name": "parentBehavior",
@@ -1255,7 +1255,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 750,
+            "line": 752,
             "description": "The private collection that this data object manages.",
             "itemtype": "property",
             "name": "privateCollection",
@@ -1266,7 +1266,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 757,
+            "line": 759,
             "description": "Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.",
             "itemtype": "method",
             "name": "toJSON",
@@ -1280,7 +1280,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 778,
+            "line": 780,
             "description": "Get the full data object contents (either an array of model attributes or a single model attribute based on the\nvalue of propertyName) or the value of a specific property if a single result is expected.\n\nIf returnSingleResult is true then this will return the given property from the model (if that model exists).\nIf returnSingleResult is false then this will return an array containing that property from all of the retrieved models.",
             "itemtype": "method",
             "name": "get",
@@ -1302,7 +1302,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 807,
+            "line": 809,
             "itemtype": "method",
             "name": "getModel",
             "return": {
@@ -1318,7 +1318,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 826,
+            "line": 828,
             "itemtype": "method",
             "name": "getModels",
             "return": {
@@ -1331,7 +1331,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 834,
+            "line": 836,
             "description": "Adds the listeners to the private collection.",
             "itemtype": "method",
             "name": "activate",
@@ -1341,7 +1341,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 842,
+            "line": 844,
             "description": "Removes the listeners on the private collection.",
             "itemtype": "method",
             "name": "deactivate",
@@ -1351,7 +1351,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 850,
+            "line": 852,
             "description": "Dispose of the data events.",
             "class": "Torso.behaviors.DataBehavior.Data",
             "module": "Torso.behaviors.DataBehavior",
@@ -5887,11 +5887,11 @@
         },
         {
             "message": "Missing item type\nInstantiates the data objects and binds it to this behavior instance.",
-            "line": " modules/behaviors/DataBehavior.js:738"
+            "line": " modules/behaviors/DataBehavior.js:740"
         },
         {
             "message": "Missing item type\nDispose of the data events.",
-            "line": " modules/behaviors/DataBehavior.js:850"
+            "line": " modules/behaviors/DataBehavior.js:852"
         },
         {
             "message": "Missing item type\nViewStateCell is a NestedCell that holds view state data and can trigger\nchange events. These changes events will propogate up and trigger on the view\nas well.",

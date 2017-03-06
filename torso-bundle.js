@@ -6225,6 +6225,7 @@
      * @private
      */
     __fetchSuccess: function(response) {
+      this.set('fetchSuccess', true);
       this.trigger('fetched', {
         status: FETCHED_STATUSES.SUCCESS,
         response: response
@@ -6244,6 +6245,7 @@
      * @private
      */
     __fetchFailed: function(response) {
+      this.set('fetchSuccess', false);
       this.trigger('fetched', {
         status: FETCHED_STATUSES.FAILURE,
         response: response
