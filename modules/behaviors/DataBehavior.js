@@ -808,14 +808,20 @@
 
     /**
      * @method getModel
-     * @return {Backbone.Model}
+     * @param modelId {Number|String} The id of the model to get from the collection.
+     * @return {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
      * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
      */
-    getModel: function() {
+    getModel: function(modelId) {
       var privateCollection = this.privateCollection;
-      if (!this.parentBehavior.returnSingleResult) {
+      if (!this.parentBehavior.returnSingleResult && _.isUndefined(modelId)) {
         throw new Error('data.getModel() of a DataBehavior is only valid if the behavior is set to returnSingleResult === true');
       }
+
+      if (!_.isUndefined(modelId)) {
+        return privateCollection.get(modelId);
+      }
+
       if (privateCollection.length === 0) {
         return undefined;
       } else if (privateCollection.length === 1) {
