@@ -94,5 +94,14 @@ module.exports = function() {
     }
   });
 
+  routes['/error|post'] = $.mockjax({
+    url: '/error',
+    type: 'POST',
+    dataType: 'json',
+    responseTime: 100,
+    status: 500,
+    responseText: "An error occurred"
+  });
+
   return routes;
 };

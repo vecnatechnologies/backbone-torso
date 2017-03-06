@@ -44,7 +44,7 @@
     "gulp-wrap": "0.9.0",
     "handlebars": "3.0.0",
     "hbsfy": "^2.6.0",
-    "jasmine": "~2.2.1",
+    "jasmine": "2.5.3",
     "jasmine-core": "^2.4.1",
     "jasmine-reporters": "2.0.2",
     "jasmine-spec-reporter": "2.1.0",

@@ -5590,6 +5590,11 @@
   var PROPERTY_SEPARATOR = '.';
   var CONTAINER_SEPARATOR = ':';
 
+  var FETCHED_STATUSES = {
+    SUCCESS: 'success',
+    FAILURE: 'failed'
+  };
+
   /**
    * Converts string or number values into an array with a single string or number item.
    * If the input is not a string, number or array then undefined is returned.
@@ -5748,6 +5753,12 @@
     data: undefined,
 
     /**
+     * The possible fetched statuses.  This is the status value of the fetched event payload.
+     * @property FETCHED_STATUSES {Object} { SUCCESS: 'SUCCESS', FAILURE: 'FAILURE' }
+     */
+    FETCHED_STATUSES: FETCHED_STATUSES,
+
+    /**
      * @method constructor
      * @override
      * @param behaviorOptions {Object}
@@ -5810,6 +5821,9 @@
       return this.__getIds()
         .then(function(ids) {
           return thisDataBehavior.data.privateCollection.trackAndPull(ids);
+        }, function(errorResponse) {
+          errorResponse.failedOnIds = true;
+          return errorResponse;
         })
         .then(this.__fetchSuccess, this.__fetchFailed);
     },
@@ -5824,6 +5838,9 @@
       return this.__getIds()
         .then(function(ids) {
           return thisDataBehavior.data.privateCollection.trackAndFetch(ids);
+        }, function(errorResponse) {
+          errorResponse.failedOnIds = true;
+          return errorResponse;
         })
         .then(this.__fetchSuccess, this.__fetchFailed);
     },
@@ -6204,11 +6221,19 @@
     /**
      * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
      * @method __fetchSuccess
+     * @param response {Object} the response from the server.
      * @private
      */
-    __fetchSuccess: function() {
-      this.trigger('fetched', { status: 'success' });
-      this.data.trigger('fetched', { status: 'success' });
+    __fetchSuccess: function(response) {
+      this.set('fetchSuccess', true);
+      this.trigger('fetched', {
+        status: FETCHED_STATUSES.SUCCESS,
+        response: response
+      });
+      this.data.trigger('fetched', {
+        status: FETCHED_STATUSES.SUCCESS,
+        response: response
+      });
       this.trigger('fetched:ids');
       this.data.trigger('fetched:ids');
     },
@@ -6216,11 +6241,19 @@
     /**
      * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
      * @method __fetchFailed
+     * @param response {Object} the response from the server.
      * @private
      */
-    __fetchFailed: function() {
-      this.trigger('fetched', { status: 'failed' });
-      this.data.trigger('fetched', { status: 'failed' });
+    __fetchFailed: function(response) {
+      this.set('fetchSuccess', false);
+      this.trigger('fetched', {
+        status: FETCHED_STATUSES.FAILURE,
+        response: response
+      });
+      this.data.trigger('fetched', {
+        status: FETCHED_STATUSES.FAILURE,
+        response: response
+      });
       this.trigger('fetched:ids');
       this.data.trigger('fetched:ids');
     },
@@ -6397,6 +6430,7 @@
   });
 
   DataBehavior.prototype.Data = Data;
+  DataBehavior.FETCHED_STATUSES = FETCHED_STATUSES;
 
   return DataBehavior;
 }));
