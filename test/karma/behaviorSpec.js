@@ -24,6 +24,8 @@ var BehaviorRecordingInitializeArguments = TorsoBehavior.extend({
   }
 });
 
+var EMPTY_BEHAVIOR_ATTRIBUTES = {};
+
 describe('A Torso Behavior', function() {
 
   setupInjectionSite.apply(this);
@@ -42,7 +44,7 @@ describe('A Torso Behavior', function() {
         alias: 'foo',
         view: new TorsoView()
       };
-      this.behavior = new TorsoBehavior(behaviorOptions);
+      this.behavior = new TorsoBehavior(EMPTY_BEHAVIOR_ATTRIBUTES, behaviorOptions);
     });
 
     it('can set and get properties', function() {
@@ -60,19 +62,19 @@ describe('A Torso Behavior', function() {
         alias: 'foo',
         view: new TorsoView()
       };
-      expect(new TorsoBehavior(behaviorOptions)).toBeDefined();
+      expect(new TorsoBehavior(EMPTY_BEHAVIOR_ATTRIBUTES, behaviorOptions)).toBeDefined();
     });
 
     it('throws an error if not instantiated with a view', function() {
       try {
-        new TorsoBehavior({ alias: 'foo' });
+        new TorsoBehavior(EMPTY_BEHAVIOR_ATTRIBUTES, { alias: 'foo' });
         fail('Expected error');
       } catch (e) {}
     });
 
     it('throws an error if not instantiated with an alias', function() {
       try {
-        new TorsoBehavior({ view: new TorsoView() });
+        new TorsoBehavior(EMPTY_BEHAVIOR_ATTRIBUTES, { view: new TorsoView() });
         fail('Expected error');
       } catch (e) {}
     });
@@ -89,9 +91,9 @@ describe('A Torso Behavior', function() {
         view: (new TorsoView())
       };
 
-      var behaviorWithInitialize = new BehaviorWithInitialize(options);
+      var behaviorWithInitialize = new BehaviorWithInitialize(EMPTY_BEHAVIOR_ATTRIBUTES, options);
       expect(behaviorWithInitialize.initializeArguments).toBeDefined();
-      expect(behaviorWithInitialize.initializeArguments[0]).toEqual(options);
+      expect(behaviorWithInitialize.initializeArguments[1]).toEqual(options);
     });
 
     // Don't override constructor in normal usage of Behavior
@@ -108,13 +110,13 @@ describe('A Torso Behavior', function() {
         view: (new TorsoView())
       };
 
-      var behaviorWithConstructor = new BehaviorWithConstructor(options);
-      expect(behaviorWithConstructor.constructorArguments[0]).toBe(options);
+      var behaviorWithConstructor = new BehaviorWithConstructor(EMPTY_BEHAVIOR_ATTRIBUTES, options);
+      expect(behaviorWithConstructor.constructorArguments[1]).toBe(options);
     });
 
     it('will set reference to view', function() {
       var view = new TorsoView();
-      var behaviorCreatedWithView = new TorsoBehavior({ alias: 'foo', view: view});
+      var behaviorCreatedWithView = new TorsoBehavior(EMPTY_BEHAVIOR_ATTRIBUTES, { alias: 'foo', view: view});
       expect(behaviorCreatedWithView.view).toBeDefined();
       expect(behaviorCreatedWithView.view).toEqual(view);
     });
@@ -471,7 +473,7 @@ describe('A Torso Behavior', function() {
 
     var behaviorRecordingInitializeArguments = viewWithBehaviorWithInitialize.getBehavior('behaviorRecordingInitializeArguments');
     expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
-    var recordedBehaviorOptions = behaviorRecordingInitializeArguments.initializeArguments[0];
+    var recordedBehaviorOptions = behaviorRecordingInitializeArguments.initializeArguments[1];
     expect(_.isMatch(recordedBehaviorOptions, {propertyKey: 'propertyValue'})).toBe(true);
   });
 
@@ -489,7 +491,7 @@ describe('A Torso Behavior', function() {
     var viewWithBehavior = new ViewWithBehavior(viewOptions);
     var behaviorRecordingInitializeArguments = viewWithBehavior.getBehavior('behaviorRecordingInitializeArguments');
     expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
-    var recordedViewOptions = behaviorRecordingInitializeArguments.initializeArguments[1];
+    var recordedViewOptions = behaviorRecordingInitializeArguments.initializeArguments[2];
     expect(_.isMatch(recordedViewOptions, viewOptions)).toBe(true);
   });
 
@@ -505,7 +507,7 @@ describe('A Torso Behavior', function() {
       var viewWithSimplifiedBehavior = new ViewWithSimplifiedBehavior(viewOptions);
       var behaviorRecordingInitializeArguments = viewWithSimplifiedBehavior.getBehavior('behaviorRecordingInitializeArguments');
       expect(behaviorRecordingInitializeArguments.initializeArguments).toBeDefined();
-      var recordedViewOptions = behaviorRecordingInitializeArguments.initializeArguments[1];
+      var recordedViewOptions = behaviorRecordingInitializeArguments.initializeArguments[2];
       expect(_.isMatch(recordedViewOptions, viewOptions)).toBe(true);
   });
 

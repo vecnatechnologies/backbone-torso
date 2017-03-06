@@ -52,10 +52,10 @@ commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
 commonJsImportTest('/modules/mixins/loadingMixin', ['jquery']);
 commonJsImportTest('/modules/mixins/cacheMixin', ['underscore', 'jquery']);
 commonJsImportTest('/modules/mixins/pollingMixin', []);
-commonJsImportTest('/modules/Behavior', ['underscore', 'backbone',
-                                         '/modules/mixins/cellMixin', '/modules/Cell']);
-commonJsImportTest('/modules/behaviors/DataBehavior', ['underscore', 'jquery', 'backbone',
-                                                       '/modules/mixins/cellMixin', '/modules/Cell',
+commonJsImportTest('/modules/Behavior', ['underscore', 'backbone', 'backbone-nested',
+                                         '/modules/mixins/cellMixin', '/modules/NestedCell']);
+commonJsImportTest('/modules/behaviors/DataBehavior', ['underscore', 'jquery', 'backbone', 'backbone-nested',
+                                                       '/modules/mixins/cellMixin', '/modules/NestedCell',
                                                        '/modules/Behavior',
                                                        '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin', '/modules/Collection',
                                                        '/modules/Events']);

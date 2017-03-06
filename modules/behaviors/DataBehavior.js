@@ -190,6 +190,7 @@
     /**
      * @method constructor
      * @override
+     * @param [behaviorState] {Object} the initial state of the behavior.
      * @param behaviorOptions {Object}
      *   @param behaviorOptions.cache {Collection} see cache property.
      *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
@@ -199,7 +200,7 @@
      *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see updateEvents property.
      * @param [viewOptions] {Object} options passed to View's initialize
      */
-    constructor: function(behaviorOptions, viewOptions) {
+    constructor: function(behaviorState, behaviorOptions, viewOptions) {
       _.bindAll(this, '__fetchSuccess', '__fetchFailed');
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {

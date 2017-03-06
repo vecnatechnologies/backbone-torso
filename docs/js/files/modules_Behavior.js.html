@@ -108,16 +108,16 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;./Cell&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;./NestedCell&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
     var _ = require(&#x27;underscore&#x27;);
-    var TorsoCell = require(&#x27;./Cell&#x27;);
-    module.exports = factory(_, TorsoCell);
+    var TorsoNestedCell = require(&#x27;./NestedCell&#x27;);
+    module.exports = factory(_, TorsoNestedCell);
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Behavior = factory(root._, root.Torso.Cell);
+    root.Torso.Behavior = factory(root._, root.Torso.NestedCell);
   }
-}(this, function(_, Cell) {
+}(this, function(_, NestedCell) {
   &#x27;use strict&#x27;;
 
   // Map of eventName: lifecycleMethod
@@ -142,7 +142,7 @@
    * @method constructor
    * @author  deena.wang@vecna.com
    */
-  var Behavior = Cell.extend({
+  var Behavior = NestedCell.extend({
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
      * @property alias {String}
@@ -171,12 +171,13 @@
     /**
      * @method constructor
      * @override
+     * @param behaviorAttributes {Object} the initial value of the behavior&#x27;s attributes.
      * @param behaviorOptions {Object}
      *   @param behaviorOptions.view {Backbone.View} that Behavior is attached to
      *   @param behaviorOptions.alias {Backbone.View} the alias for the behavior in this view.
      * @param [viewOptions] {Object} options passed to View&#x27;s initialize
      */
-    constructor: function(behaviorOptions, viewOptions) {
+    constructor: function(behaviorAttributes, behaviorOptions, viewOptions) {
       behaviorOptions = behaviorOptions || {};
       if (!behaviorOptions.view) {
         throw new Error(&#x27;Torso Behavior constructed without behaviorOptions.view&#x27;);
@@ -188,7 +189,7 @@
       this.alias = behaviorOptions.alias;
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.__bindLifecycleMethods();
-      Cell.apply(this, arguments);
+      NestedCell.apply(this, arguments);
       this.__bindEventCallbacks();
     },
 

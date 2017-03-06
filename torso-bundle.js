@@ -1467,16 +1467,16 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', './Cell'], factory);
+    define(['underscore', './NestedCell'], factory);
   } else if (typeof exports === 'object') {
     var _ = require('underscore');
-    var TorsoCell = require('./Cell');
-    module.exports = factory(_, TorsoCell);
+    var TorsoNestedCell = require('./NestedCell');
+    module.exports = factory(_, TorsoNestedCell);
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Behavior = factory(root._, root.Torso.Cell);
+    root.Torso.Behavior = factory(root._, root.Torso.NestedCell);
   }
-}(this, function(_, Cell) {
+}(this, function(_, NestedCell) {
   'use strict';
 
   // Map of eventName: lifecycleMethod
@@ -1501,7 +1501,7 @@
    * @method constructor
    * @author  deena.wang@vecna.com
    */
-  var Behavior = Cell.extend({
+  var Behavior = NestedCell.extend({
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
      * @property alias {String}
@@ -1530,12 +1530,13 @@
     /**
      * @method constructor
      * @override
+     * @param behaviorAttributes {Object} the initial value of the behavior's attributes.
      * @param behaviorOptions {Object}
      *   @param behaviorOptions.view {Backbone.View} that Behavior is attached to
      *   @param behaviorOptions.alias {Backbone.View} the alias for the behavior in this view.
      * @param [viewOptions] {Object} options passed to View's initialize
      */
-    constructor: function(behaviorOptions, viewOptions) {
+    constructor: function(behaviorAttributes, behaviorOptions, viewOptions) {
       behaviorOptions = behaviorOptions || {};
       if (!behaviorOptions.view) {
         throw new Error('Torso Behavior constructed without behaviorOptions.view');
@@ -1547,7 +1548,7 @@
       this.alias = behaviorOptions.alias;
       this.cid = this.cid || _.uniqueId(this.cidPrefix);
       this.__bindLifecycleMethods();
-      Cell.apply(this, arguments);
+      NestedCell.apply(this, arguments);
       this.__bindEventCallbacks();
     },
 
@@ -2380,7 +2381,8 @@
           });
           behaviorOptions.view = view;
           behaviorOptions.alias = alias;
-          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorOptions, viewOptions);
+          var behaviorAttributes = behaviorDefinition.attributes || {};
+          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorAttributes, behaviorOptions, viewOptions);
           // Add the behavior's mixin fields to the view's public API
           if (behaviorInstance.mixin) {
             var mixin = _.result(behaviorInstance, 'mixin');
@@ -5761,6 +5763,7 @@
     /**
      * @method constructor
      * @override
+     * @param [behaviorState] {Object} the initial state of the behavior.
      * @param behaviorOptions {Object}
      *   @param behaviorOptions.cache {Collection} see cache property.
      *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
@@ -5770,7 +5773,7 @@
      *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see updateEvents property.
      * @param [viewOptions] {Object} options passed to View's initialize
      */
-    constructor: function(behaviorOptions, viewOptions) {
+    constructor: function(behaviorState, behaviorOptions, viewOptions) {
       _.bindAll(this, '__fetchSuccess', '__fetchFailed');
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
