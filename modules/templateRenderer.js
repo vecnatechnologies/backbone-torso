@@ -197,18 +197,21 @@
      */
 
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
-      var currentCaret,
-          activeElement;
+      var currentCaret, activeElement,
+          currentNodeContainsActiveElement = false;
       try {
         activeElement = document.activeElement;
       } catch (error) {
         activeElement = null;
       }
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (activeElement && currentNode && $.contains(activeElement, currentNode)) {
+        currentNodeContainsActiveElement = true;
+      }
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },

@@ -156,7 +156,6 @@
      * The item view class definition that will be instantiated for each model in the list.
      * itemView can also be a function that takes a model and returns a view class. This allows
      * for different view classes depending on the model.
-     * NOTE: replacement for deprecated field: childView
      * @property itemView
      * @type View or Function
      */
@@ -176,7 +175,6 @@
     emptyTemplate: null,
     /**
      * (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     * NOTE: replacement for deprecated field: childContainer
      * @property itemContainer
      * @type String
      */
@@ -208,10 +206,6 @@
      *   @param [args.renderWait=0] {Number} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
-     *   @param [args.childView] {String} DEPRECATED - deprecated alias to args.itemView
-     *   @param [args.childContext] {String} DEPRECATED - deprecated alias to args.itemContext
-     *   @param [args.childContainer] {String} DEPRECATED - deprecated alias to args.itemContainer
-     *   @param [args.childModel] {String} DEPRECATED - deprecated alias to args.modelName
      */
     constructor: function(args) {
       View.apply(this, arguments);
@@ -221,17 +215,17 @@
 
       this.template = args.template || this.template;
       this.emptyTemplate = args.emptyTemplate || this.emptyTemplate;
-      this.itemView = args.itemView || this.itemView || args.childView || this.childView;
-      this.itemContainer = args.itemContainer || this.itemContainer || args.childrenContainer || this.childrenContainer;
+      this.itemView = args.itemView || this.itemView;
+      this.itemContainer = args.itemContainer || this.itemContainer;
       if (this.template && !this.itemContainer) {
         throw 'Item container is required when using a template';
       }
       this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this.__itemContext = args.itemContext || this.__itemContext || args.childContext || this.__childContext;
+      this.__itemContext = args.itemContext || this.__itemContext;
       this.__modelToViewMap = {};
       this.__renderWait = args.renderWait || this.__renderWait;
-      this.__modelId = args.modelId || 'cid';
-      this.__modelName = args.modelName || args.childModel || 'model';
+      this.__modelId = args.modelId || this.modelId || 'cid';
+      this.__modelName = args.modelName || this.modelName || 'model';
       this.__orderedModelIdList = [];
       this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
@@ -431,14 +425,6 @@
      */
     getItemViewFromModel: function(model) {
       return model ? this.getTrackedView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
-    },
-
-    /**
-     * Alias method for getItemViewFromModel()
-     * @method getChildViewFromModel
-     */
-    getChildViewFromModel: function() {
-      return this.getItemViewFromModel.apply(this, arguments);
     },
 
     /**

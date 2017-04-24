@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.21</em>
+            <em>API Docs for: 0.7.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -233,6 +233,7 @@
      */
     __bindLifecycleMethods: function() {
       this.listenTo(this.view, &#x27;initialize:complete&#x27;, this.__augmentViewPrepare);
+      this.listenTo(this.view, &#x27;before-dispose-callback&#x27;, this.__dispose);
       _.each(eventMap, function(callback, event) {
         this.listenTo(this.view, event, this[callback]);
       }, this);
@@ -305,6 +306,16 @@
         }
         return _.bind(method, this);
       }, this);
+    },
+
+    /**
+     * Preforms basic cleanup of a behavior before specific cleanup by extensions.
+     * @method __dispose
+     * @private
+     */
+    __dispose: function() {
+      this.stopListening();
+      this.off();
     }
 
   });

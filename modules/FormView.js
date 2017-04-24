@@ -230,6 +230,12 @@
         var attr = $(element).data('model'),
             options = self.__getFieldOptions(attr),
             fieldBinding = self.__generateModelFieldBinding(attr, options);
+
+        //add select options
+        if ($(element).is('select')) {
+          fieldBinding.selectOptions = self.__generateSelectOptions(element, options);
+        }
+
         self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
       });
     },
@@ -247,7 +253,7 @@
     /**
      * @method __generateModelFieldBinding
      * @param field {String} A specific model field
-     * @param options {Object} Additional heavior options for the bindings
+     * @param options {Object} Additional behavior options for the bindings
      * @param [options.modelFormat] {Object} The function called before setting model values
      * @param [options.viewFormat] {Object} The function called before setting view values
      * @private
@@ -269,6 +275,29 @@
           params = _.flatten(params);
           return options.viewFormat ? options.viewFormat.apply(this, params) : value;
         }
+      };
+    },
+
+    /**
+     * @method  __generateSelectOptions
+     * @param element {Element} The select element to generate options for
+     * @param opts {Object} Additional behavior options for the bindings
+     * @param [opts.modelFormat] {Object} The function called before setting model values
+     * @private
+     * @return {<Stickit select options hash>}
+     */
+    __generateSelectOptions: function(element, opts) {
+      var collection = [],
+          options = $(element).children('option');
+
+      _.each(options, function(option) {
+        collection.push({'label': $(option).text(), 'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
+      });
+
+      return {
+        collection: collection,
+        labelPath: 'label',
+        valuePath: 'value'
       };
     }
   });
