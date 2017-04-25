@@ -125,6 +125,7 @@
      */
     __bindLifecycleMethods: function() {
       this.listenTo(this.view, 'initialize:complete', this.__augmentViewPrepare);
+      this.listenTo(this.view, 'before-dispose-callback', this.__dispose);
       _.each(eventMap, function(callback, event) {
         this.listenTo(this.view, event, this[callback]);
       }, this);
@@ -197,6 +198,16 @@
         }
         return _.bind(method, this);
       }, this);
+    },
+
+    /**
+     * Preforms basic cleanup of a behavior before specific cleanup by extensions.
+     * @method __dispose
+     * @private
+     */
+    __dispose: function() {
+      this.stopListening();
+      this.off();
     }
 
   });

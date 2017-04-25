@@ -458,18 +458,21 @@
      */
 
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
-      var currentCaret,
-          activeElement;
+      var currentCaret, activeElement,
+          currentNodeContainsActiveElement = false;
       try {
         activeElement = document.activeElement;
       } catch (error) {
         activeElement = null;
       }
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (activeElement && currentNode && $.contains(activeElement, currentNode)) {
+        currentNodeContainsActiveElement = true;
+      }
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement && this.supportsSelection(activeElement)) {
+      if (currentNodeContainsActiveElement && this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },
@@ -1125,6 +1128,99 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.polling = factory();
+  }
+}(this, function() {
+  /**
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  pollingMixin
+   * @author ariel.wexler@vecna.com
+   */
+  var pollingMixin = {
+    /**
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     */
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
+
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
+        this.__poll();
+      }
+    },
+
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
+    },
+
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
+    },
+
+    //************** Private methods **************//
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
+    }
+  };
+
+  return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('jquery'));
@@ -1221,99 +1317,6 @@
   return loadingMixin;
 }));
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
-  }
-}(this, function() {
-  /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  pollingMixin
-   * @author ariel.wexler@vecna.com
-   */
-  var pollingMixin = {
-    /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
-     */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
-
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.__poll();
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-      }
-    },
-
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
-    },
-
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
-    },
-
-    //************** Private methods **************//
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
-    }
-  };
-
-  return pollingMixin;
-}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin'], factory);
@@ -1592,6 +1595,7 @@
      */
     __bindLifecycleMethods: function() {
       this.listenTo(this.view, 'initialize:complete', this.__augmentViewPrepare);
+      this.listenTo(this.view, 'before-dispose-callback', this.__dispose);
       _.each(eventMap, function(callback, event) {
         this.listenTo(this.view, event, this[callback]);
       }, this);
@@ -1664,6 +1668,16 @@
         }
         return _.bind(method, this);
       }, this);
+    },
+
+    /**
+     * Preforms basic cleanup of a behavior before specific cleanup by extensions.
+     * @method __dispose
+     * @private
+     */
+    __dispose: function() {
+      this.stopListening();
+      this.off();
     }
 
   });
@@ -1809,6 +1823,14 @@
     },
 
     /**
+     * Alias to this.viewState.toJSON()
+     * @method toJSON
+     */
+    toJSON: function() {
+      return this.viewState.toJSON();
+    },
+
+    /**
      * @param alias {String} the name/alias of the behavior
      * @return {Torso.Behavior} the behavior instance if one exists with that alias
      * @method getBehavior
@@ -1853,7 +1875,10 @@
       }
       var view = this;
       this.trigger('render:begin');
-      this.prerender();
+      if (this.prerender() === false) {
+        this.trigger('render:aborted');
+        return $.Deferred().resolve().promise();
+      }
       this.__updateInjectionSiteMap();
       this.trigger('render:before-dom-update');
       this.detachTrackedViews();
@@ -2073,6 +2098,7 @@
       if (this.isAttachedToParent()) {
          wasAttached = this.isAttached();
         // Detach view from DOM
+        this.trigger('before-dom-detach');
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
           this.injectionSite = undefined;
@@ -2409,6 +2435,7 @@
      * @private
      */
     __performPendingAttach: function() {
+      this.trigger('before-dom-attach');
       this.__replaceInjectionSite(this.__pendingAttachInfo.$el, this.__pendingAttachInfo.options);
       delete this.__pendingAttachInfo;
     },
@@ -5038,7 +5065,6 @@
      * The item view class definition that will be instantiated for each model in the list.
      * itemView can also be a function that takes a model and returns a view class. This allows
      * for different view classes depending on the model.
-     * NOTE: replacement for deprecated field: childView
      * @property itemView
      * @type View or Function
      */
@@ -5058,7 +5084,6 @@
     emptyTemplate: null,
     /**
      * (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     * NOTE: replacement for deprecated field: childContainer
      * @property itemContainer
      * @type String
      */
@@ -5090,10 +5115,6 @@
      *   @param [args.renderWait=0] {Number} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
-     *   @param [args.childView] {String} DEPRECATED - deprecated alias to args.itemView
-     *   @param [args.childContext] {String} DEPRECATED - deprecated alias to args.itemContext
-     *   @param [args.childContainer] {String} DEPRECATED - deprecated alias to args.itemContainer
-     *   @param [args.childModel] {String} DEPRECATED - deprecated alias to args.modelName
      */
     constructor: function(args) {
       View.apply(this, arguments);
@@ -5103,17 +5124,17 @@
 
       this.template = args.template || this.template;
       this.emptyTemplate = args.emptyTemplate || this.emptyTemplate;
-      this.itemView = args.itemView || this.itemView || args.childView || this.childView;
-      this.itemContainer = args.itemContainer || this.itemContainer || args.childrenContainer || this.childrenContainer;
+      this.itemView = args.itemView || this.itemView;
+      this.itemContainer = args.itemContainer || this.itemContainer;
       if (this.template && !this.itemContainer) {
         throw 'Item container is required when using a template';
       }
       this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this.__itemContext = args.itemContext || this.__itemContext || args.childContext || this.__childContext;
+      this.__itemContext = args.itemContext || this.__itemContext;
       this.__modelToViewMap = {};
       this.__renderWait = args.renderWait || this.__renderWait;
-      this.__modelId = args.modelId || 'cid';
-      this.__modelName = args.modelName || args.childModel || 'model';
+      this.__modelId = args.modelId || this.modelId || 'cid';
+      this.__modelName = args.modelName || this.modelName || 'model';
       this.__orderedModelIdList = [];
       this.__createItemViews();
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
@@ -5313,14 +5334,6 @@
      */
     getItemViewFromModel: function(model) {
       return model ? this.getTrackedView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
-    },
-
-    /**
-     * Alias method for getItemViewFromModel()
-     * @method getChildViewFromModel
-     */
-    getChildViewFromModel: function() {
-      return this.getItemViewFromModel.apply(this, arguments);
     },
 
     /**
@@ -6676,6 +6689,12 @@
         var attr = $(element).data('model'),
             options = self.__getFieldOptions(attr),
             fieldBinding = self.__generateModelFieldBinding(attr, options);
+
+        //add select options
+        if ($(element).is('select')) {
+          fieldBinding.selectOptions = self.__generateSelectOptions(element, options);
+        }
+
         self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
       });
     },
@@ -6693,7 +6712,7 @@
     /**
      * @method __generateModelFieldBinding
      * @param field {String} A specific model field
-     * @param options {Object} Additional heavior options for the bindings
+     * @param options {Object} Additional behavior options for the bindings
      * @param [options.modelFormat] {Object} The function called before setting model values
      * @param [options.viewFormat] {Object} The function called before setting view values
      * @private
@@ -6715,6 +6734,29 @@
           params = _.flatten(params);
           return options.viewFormat ? options.viewFormat.apply(this, params) : value;
         }
+      };
+    },
+
+    /**
+     * @method  __generateSelectOptions
+     * @param element {Element} The select element to generate options for
+     * @param opts {Object} Additional behavior options for the bindings
+     * @param [opts.modelFormat] {Object} The function called before setting model values
+     * @private
+     * @return {<Stickit select options hash>}
+     */
+    __generateSelectOptions: function(element, opts) {
+      var collection = [],
+          options = $(element).children('option');
+
+      _.each(options, function(option) {
+        collection.push({'label': $(option).text(), 'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
+      });
+
+      return {
+        collection: collection,
+        labelPath: 'label',
+        valuePath: 'value'
       };
     }
   });

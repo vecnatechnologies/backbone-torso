@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.21</em>
+            <em>API Docs for: 0.7.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -305,18 +305,21 @@
      */
 
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
-      var currentCaret,
-          activeElement;
+      var currentCaret, activeElement,
+          currentNodeContainsActiveElement = false;
       try {
         activeElement = document.activeElement;
       } catch (error) {
         activeElement = null;
       }
-      if (activeElement &amp;&amp; this.supportsSelection(activeElement)) {
+      if (activeElement &amp;&amp; currentNode &amp;&amp; $.contains(activeElement, currentNode)) {
+        currentNodeContainsActiveElement = true;
+      }
+      if (currentNodeContainsActiveElement &amp;&amp; this.supportsSelection(activeElement)) {
         currentCaret = this.getCaretPosition(activeElement);
       }
       this.hotswap(currentNode, newNode, ignoreElements);
-      if (activeElement &amp;&amp; this.supportsSelection(activeElement)) {
+      if (currentNodeContainsActiveElement &amp;&amp; this.supportsSelection(activeElement)) {
         this.setCaretPosition(activeElement, currentCaret);
       }
     },

@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.21</em>
+            <em>API Docs for: 0.7.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -221,6 +221,14 @@
     },
 
     /**
+     * Alias to this.viewState.toJSON()
+     * @method toJSON
+     */
+    toJSON: function() {
+      return this.viewState.toJSON();
+    },
+
+    /**
      * @param alias {String} the name/alias of the behavior
      * @return {Torso.Behavior} the behavior instance if one exists with that alias
      * @method getBehavior
@@ -265,7 +273,10 @@
       }
       var view = this;
       this.trigger(&#x27;render:begin&#x27;);
-      this.prerender();
+      if (this.prerender() === false) {
+        this.trigger(&#x27;render:aborted&#x27;);
+        return $.Deferred().resolve().promise();
+      }
       this.__updateInjectionSiteMap();
       this.trigger(&#x27;render:before-dom-update&#x27;);
       this.detachTrackedViews();
@@ -485,6 +496,7 @@
       if (this.isAttachedToParent()) {
          wasAttached = this.isAttached();
         // Detach view from DOM
+        this.trigger(&#x27;before-dom-detach&#x27;);
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
           this.injectionSite = undefined;
@@ -821,6 +833,7 @@
      * @private
      */
     __performPendingAttach: function() {
+      this.trigger(&#x27;before-dom-attach&#x27;);
       this.__replaceInjectionSite(this.__pendingAttachInfo.$el, this.__pendingAttachInfo.options);
       delete this.__pendingAttachInfo;
     },

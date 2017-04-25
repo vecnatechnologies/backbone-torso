@@ -52,10 +52,10 @@
         return;
       } else {
         this.__pollStarted = true;
-        this.__poll();
         this.pollTimeoutId = window.setInterval(function() {
           self.__poll();
         }, this.__pollInterval);
+        this.__poll();
       }
     },
 

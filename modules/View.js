@@ -113,6 +113,14 @@
     },
 
     /**
+     * Alias to this.viewState.toJSON()
+     * @method toJSON
+     */
+    toJSON: function() {
+      return this.viewState.toJSON();
+    },
+
+    /**
      * @param alias {String} the name/alias of the behavior
      * @return {Torso.Behavior} the behavior instance if one exists with that alias
      * @method getBehavior
@@ -157,7 +165,10 @@
       }
       var view = this;
       this.trigger('render:begin');
-      this.prerender();
+      if (this.prerender() === false) {
+        this.trigger('render:aborted');
+        return $.Deferred().resolve().promise();
+      }
       this.__updateInjectionSiteMap();
       this.trigger('render:before-dom-update');
       this.detachTrackedViews();
@@ -377,6 +388,7 @@
       if (this.isAttachedToParent()) {
          wasAttached = this.isAttached();
         // Detach view from DOM
+        this.trigger('before-dom-detach');
         if (this.injectionSite) {
           this.$el.replaceWith(this.injectionSite);
           this.injectionSite = undefined;
@@ -713,6 +725,7 @@
      * @private
      */
     __performPendingAttach: function() {
+      this.trigger('before-dom-attach');
       this.__replaceInjectionSite(this.__pendingAttachInfo.$el, this.__pendingAttachInfo.options);
       delete this.__pendingAttachInfo;
     },

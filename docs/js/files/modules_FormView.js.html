@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.6.21</em>
+            <em>API Docs for: 0.7.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -338,6 +338,12 @@
         var attr = $(element).data(&#x27;model&#x27;),
             options = self.__getFieldOptions(attr),
             fieldBinding = self.__generateModelFieldBinding(attr, options);
+
+        //add select options
+        if ($(element).is(&#x27;select&#x27;)) {
+          fieldBinding.selectOptions = self.__generateSelectOptions(element, options);
+        }
+
         self.bindings[&#x27;[data-model=&quot;&#x27; + attr + &#x27;&quot;]&#x27;] = fieldBinding;
       });
     },
@@ -355,7 +361,7 @@
     /**
      * @method __generateModelFieldBinding
      * @param field {String} A specific model field
-     * @param options {Object} Additional heavior options for the bindings
+     * @param options {Object} Additional behavior options for the bindings
      * @param [options.modelFormat] {Object} The function called before setting model values
      * @param [options.viewFormat] {Object} The function called before setting view values
      * @private
@@ -377,6 +383,29 @@
           params = _.flatten(params);
           return options.viewFormat ? options.viewFormat.apply(this, params) : value;
         }
+      };
+    },
+
+    /**
+     * @method  __generateSelectOptions
+     * @param element {Element} The select element to generate options for
+     * @param opts {Object} Additional behavior options for the bindings
+     * @param [opts.modelFormat] {Object} The function called before setting model values
+     * @private
+     * @return {&lt;Stickit select options hash&gt;}
+     */
+    __generateSelectOptions: function(element, opts) {
+      var collection = [],
+          options = $(element).children(&#x27;option&#x27;);
+
+      _.each(options, function(option) {
+        collection.push({&#x27;label&#x27;: $(option).text(), &#x27;value&#x27;: opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
+      });
+
+      return {
+        collection: collection,
+        labelPath: &#x27;label&#x27;,
+        valuePath: &#x27;value&#x27;
       };
     }
   });
