@@ -221,6 +221,14 @@
     },
 
     /**
+     * Alias to this.viewState.toJSON()
+     * @method toJSON
+     */
+    toJSON: function() {
+      return this.viewState.toJSON();
+    },
+
+    /**
      * @param alias {String} the name/alias of the behavior
      * @return {Torso.Behavior} the behavior instance if one exists with that alias
      * @method getBehavior
