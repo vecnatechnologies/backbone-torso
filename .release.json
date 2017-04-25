@@ -10,7 +10,7 @@
     "tagName": "v%s",
     "tagAnnotation": "Release v%s",
     "buildCommand": false,
-    "changelogCommand": "git log --pretty=format:'* %s (%h)' v[REV_RANGE]",
+    "changelogCommand": "git log --pretty=format:'* %s (%h)' [REV_RANGE]",
     "requireCleanWorkingDir": false,
     "src": {
         "pushRepo": null,
