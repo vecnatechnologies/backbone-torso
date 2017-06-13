@@ -86,7 +86,8 @@ describe('A Form Model during initialization', function() {
     myProfileFormModel = new MyProfileFormModel();
     expect(_.size(myProfileFormModel.getTrackedModels())).toBe(1);
     expect(_.size(myProfileFormModel.getMappings())).toBe(4);
-    myProfileFormModel.setTrackedModel('testModel2', testModel2);
+    myProfileFormModel.trackModel('testModel', testModel);
+    myProfileFormModel.trackModel('testModel2', testModel2);
     expect(_.size(myProfileFormModel.getTrackedModels())).toBe(2);
     expect(_.size(myProfileFormModel.getMappings())).toBe(4);
 
@@ -96,6 +97,9 @@ describe('A Form Model during initialization', function() {
         testModel2: 'baz'
       }
     });
+    expect(_.size(formModel2.getTrackedModels())).toBe(1);
+    expect(_.size(formModel2.getMappings())).toBe(2);
+    formModel2.trackModel('testModel', testModel);
     expect(_.size(formModel2.getTrackedModels())).toBe(1);
     expect(_.size(formModel2.getMappings())).toBe(2);
     formModel2.setTrackedModel('testModel2', testModel2);
@@ -114,8 +118,8 @@ describe('A Form Model during initialization', function() {
     });
     expect(_.size(formModel2.getTrackedModels())).toBe(1);
     expect(_.size(formModel2.getMappings())).toBe(5);
-    formModel2.setTrackedModel('testModel', testModel);
-    formModel2.setTrackedModel('testModel2', testModel2);
+    formModel2.trackModel('testModel', testModel);
+    formModel2.trackModel('testModel2', testModel2);
     expect(formModel2.get('raz')).not.toBeDefined();
     testModel2.set('raz', 4);
     testModel2.set('foo', 123);

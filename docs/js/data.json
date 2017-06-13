@@ -2479,7 +2479,7 @@
         {
             "file": "modules/FormModel.js",
             "line": 254,
-            "description": "Removes all current mappings\nDoes NOT remove current model being tracked. Call this.unsetTrackedModels afterwards if you wish this behavior.",
+            "description": "Removes all current mappings\nDoes NOT remove current model being tracked. Call this.untrackModels afterwards if you wish this behavior.",
             "itemtype": "method",
             "name": "unsetMappings",
             "class": "FormModel",
@@ -2520,9 +2520,20 @@
         {
             "file": "modules/FormModel.js",
             "line": 283,
-            "description": "Update or create a binding between an object model and an alias.",
+            "description": "See {{#crossLink \"FormModel/trackModel:method\"}}.trackModel(){{/crossLink}}",
             "itemtype": "method",
             "name": "setTrackedModel",
+            "deprecated": true,
+            "deprecationMessage": "use .trackModel() instead.",
+            "class": "FormModel",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/FormModel.js",
+            "line": 292,
+            "description": "Update or create a binding between an object model and an alias.",
+            "itemtype": "method",
+            "name": "trackModel",
             "params": [
                 {
                     "name": "alias",
@@ -2547,10 +2558,19 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 310,
+            "line": 319,
+            "description": "See {{#crossLink \"FormModel/trackModels:method\"}}.trackModels(){{/crossLink}}",
+            "deprecated": true,
+            "deprecationMessage": "use .trackModels() instead.",
+            "class": "FormModel",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/FormModel.js",
+            "line": 327,
             "description": "Binds multiple models to their aliases.",
             "itemtype": "method",
-            "name": "setTrackedModels",
+            "name": "trackModels",
             "params": [
                 {
                     "name": "models",
@@ -2570,10 +2590,21 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 322,
-            "description": "Removes the binding between a model alias and a model instance. Effectively stops tracking that model.",
+            "line": 339,
+            "description": "See {{#crossLink \"FormModel/untrackModel:method\"}}.untrackModel(){{/crossLink}}",
             "itemtype": "method",
             "name": "unsetTrackedModel",
+            "deprecated": true,
+            "deprecationMessage": "use .untrackModel() instead.",
+            "class": "FormModel",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/FormModel.js",
+            "line": 348,
+            "description": "Removes the binding between a model alias and a model instance. Effectively stops tracking that model.",
+            "itemtype": "method",
+            "name": "untrackModel",
             "params": [
                 {
                     "name": "aliasOrModel",
@@ -2586,16 +2617,27 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 339,
-            "description": "Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.",
+            "line": 365,
+            "description": "See {{#crossLink \"FormModel/untrackModels:method\"}}.untrackModels(){{/crossLink}}",
             "itemtype": "method",
             "name": "unsetTrackedModels",
+            "deprecated": true,
+            "deprecationMessage": "use .untrackModels() instead.",
             "class": "FormModel",
             "module": "Torso"
         },
         {
             "file": "modules/FormModel.js",
-            "line": 349,
+            "line": 374,
+            "description": "Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.",
+            "itemtype": "method",
+            "name": "untrackModels",
+            "class": "FormModel",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/FormModel.js",
+            "line": 384,
             "description": "Pushes values from this form model back to the object models it is tracking. This includes invoking the push callbacks from\ncomputed values",
             "itemtype": "method",
             "name": "push",
@@ -2604,7 +2646,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 360,
+            "line": 395,
             "description": "Pulls the most recent values of every object model that this form model tracks including computed values\nNOTE: using this method can override user-submitted data from an HTML form. Use caution.",
             "itemtype": "method",
             "name": "pull",
@@ -2613,7 +2655,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 372,
+            "line": 407,
             "description": "If FormModel has a \"url\" property defined, it will invoke a save on the form model, and after successfully\nsaving, will perform a push.\nIf no \"url\" property is defined then the following behavior is used:\nPushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.\nNOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise\nwith a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}",
             "params": [
                 {
@@ -2647,7 +2689,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 431,
+            "line": 466,
             "itemtype": "method",
             "name": "isTrackingAnyObjectModel",
             "return": {
@@ -2658,7 +2700,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 439,
+            "line": 474,
             "itemtype": "method",
             "name": "isUpdating",
             "return": {
@@ -2669,7 +2711,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 447,
+            "line": 482,
             "description": "Will add listeners that will automatically pull new updates from this form's object models.",
             "params": [
                 {
@@ -2687,7 +2729,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 461,
+            "line": 496,
             "description": "This will stop the form model from listening to its object models.",
             "itemtype": "method",
             "name": "stopUpdating",
@@ -2696,7 +2738,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 472,
+            "line": 507,
             "description": "If updating, it will reset the updating events to match the current mappings.",
             "itemtype": "method",
             "name": "resetUpdating",
@@ -2705,7 +2747,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 483,
+            "line": 518,
             "params": [
                 {
                     "name": "model",
@@ -2736,7 +2778,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 509,
+            "line": 544,
             "return": {
                 "description": "an array of the object models that have been updated since the last pull from this form model",
                 "type": "Array"
@@ -2748,7 +2790,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 524,
+            "line": 559,
             "description": "Sets up a listener to update the form model if the model's field (or any field) changes.",
             "params": [
                 {
@@ -2772,7 +2814,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 547,
+            "line": 582,
             "description": "Sets up a listener on one (or all) of the fields that is needed to update a computed value",
             "params": [
                 {
@@ -2801,7 +2843,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 570,
+            "line": 605,
             "description": "Returns the models that a currently being tracked that are part of a computed mapping\nIf there is a missing model (a model alias is referenced but no model instance is bound to that alias), then it will return undefined.",
             "itemtype": "method",
             "name": "__getComputedModels",
@@ -2823,7 +2865,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 593,
+            "line": 628,
             "description": "Returns the aliases/names of models referenced in the computed mapping with the given alias",
             "itemtype": "method",
             "name": "__getModelAliases",
@@ -2845,7 +2887,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 614,
+            "line": 649,
             "description": "Repackages a computed mapping to be easier consumed by methods wanting the model mappings tied to the model instances.\nReturns a list of objects that contain the model instance and the mapping for that model.",
             "itemtype": "method",
             "name": "__getComputedModelConfigs",
@@ -2865,7 +2907,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 636,
+            "line": 671,
             "description": "Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.",
             "params": [
                 {
@@ -2901,7 +2943,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 716,
+            "line": 751,
             "description": "Pulls in new information from tracked models using the mapping defined by the given alias.\nThis works for both model mappings and computed value mappings",
             "itemtype": "method",
             "name": "__pull",
@@ -2919,7 +2961,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 743,
+            "line": 778,
             "description": "Pushes form model information to tracked models using the mapping defined by the given alias.\nThis works for both model mappings and computed value mappings",
             "itemtype": "method",
             "name": "__push",
@@ -2937,7 +2979,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 773,
+            "line": 808,
             "description": "Updates a single attribute in this form model.\nNOTE: requires the context of this function to be:\n{\n formModel: <this form model>,\n field: <the field being updated>\n}\nNOT the form model itself like if you called this.__updateFormField.",
             "access": "private",
             "tagname": "",
@@ -2948,7 +2990,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 789,
+            "line": 824,
             "description": "NOTE: When looking to update the form model manually, call this.pull().\nUpdates this form model with the changed attributes of a given object model",
             "params": [
                 {
@@ -2966,7 +3008,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 803,
+            "line": 838,
             "description": "Updates the form model's snapshot of the model's attributes to use later",
             "params": [
                 {
@@ -2991,7 +3033,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 824,
+            "line": 859,
             "description": "Create a hash value of a simple object",
             "params": [
                 {
@@ -3012,7 +3054,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 835,
+            "line": 870,
             "description": "Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.",
             "itemtype": "method",
             "name": "__findAlias",
@@ -3034,7 +3076,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 856,
+            "line": 891,
             "params": [
                 {
                     "name": "model",
@@ -3055,7 +3097,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 867,
+            "line": 902,
             "return": {
                 "description": "a map of model's cid to the hash value of the model making sure to only use the tracked fields",
                 "type": "Object"
@@ -3069,7 +3111,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 880,
+            "line": 915,
             "description": "Deep clones the attributes. There should be no functions in the attributes",
             "params": [
                 {
@@ -3090,7 +3132,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 899,
+            "line": 934,
             "description": "Attaches listeners to the tracked object models with callbacks that will copy new properties into this form model.",
             "access": "private",
             "tagname": "",
@@ -3101,7 +3143,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 935,
+            "line": 970,
             "description": "Copies fields from one backbone model to another. Is useful during a pull or push to/from Object models. The values will\nbe deep cloned from the origin to the destination.",
             "params": [
                 {
@@ -3130,7 +3172,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 960,
+            "line": 995,
             "description": "Sets the mapping using the form model's default mapping or the options.mappings if available.\nAlso sets the tracked models if the form model's default models or the options.models is provided.",
             "itemtype": "method",
             "name": "__initMappings",
@@ -3149,7 +3191,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 979,
+            "line": 1014,
             "description": "Returns a map where the keys are the fields that are being tracked on tracked model and values are\nthe with current values of those fields.",
             "params": [
                 {
@@ -3171,7 +3213,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 1016,
+            "line": 1051,
             "description": "Returns a useful data structure that binds a tracked model to the fields being tracked on a mapping.",
             "itemtype": "method",
             "name": "__createModelConfig",
@@ -3197,7 +3239,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 1036,
+            "line": 1071,
             "description": "Returns an array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,\nincluding model mappings inside computed mappings. There will be a model config for each tracked model on a computed mapping\nmeaning there can be multiple model configs for the same tracked model.",
             "itemtype": "method",
             "name": "__getAllModelConfigs",
@@ -3212,7 +3254,7 @@
         },
         {
             "file": "modules/FormModel.js",
-            "line": 1063,
+            "line": 1098,
             "description": "A wrapper function that can invoke the pull callback on a computed mapping during an event callback.\nBecause an event callback predetermines the argument list, this method assumes the necessary computed configuration is\nbound as the part of the function context.\nWhen invoking the pull callback, it will pass in a object map from model alias to shallow copy of the tracked fields the\ncomputed value uses. It is NOT just the model, but a  copy of its attributes - feel free to change the properties.\nExample:\nfooBar: {\n  myModel: 'foo bar',\n  pull: function(models) {\n    console.log(models.myModel.foo, models.myModel.bar)\n  }\n}\nIf any model mapping is tracking all fields by passing true as its config, a copy of all the attributes for that model will be provided.",
             "params": [
                 {
@@ -5965,6 +6007,10 @@
         {
             "message": "Missing item type\nDispose of the data events.",
             "line": " modules/behaviors/DataBehavior.js:859"
+        },
+        {
+            "message": "Missing item type\nSee {{#crossLink \"FormModel/trackModels:method\"}}.trackModels(){{/crossLink}}",
+            "line": " modules/FormModel.js:319"
         },
         {
             "message": "Missing item type\nViewStateCell is a NestedCell that holds view state data and can trigger\nchange events. These changes events will propogate up and trigger on the view\nas well.",

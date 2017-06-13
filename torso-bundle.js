@@ -3989,9 +3989,9 @@
       this.__currentMappings[alias] = config;
       if (models) {
         if (computed) {
-          this.setTrackedModels(models, copy);
+          this.trackModels(models, copy);
         } else {
-          this.setTrackedModel(alias, models, copy);
+          this.trackModel(alias, models, copy);
         }
       }
     },
@@ -4020,7 +4020,7 @@
         this.setMapping(alias, mapping);
       }, this);
       if (models) {
-        this.setTrackedModels(models, copy);
+        this.trackModels(models, copy);
       }
     },
 
@@ -4039,13 +4039,13 @@
       }
       var model = this.getTrackedModel(alias);
       if (removeModelIfUntracked && model && _.isEmpty(this.__getTrackedModelFields(model))) {
-        this.unsetTrackedModel(model);
+        this.untrackModel(model);
       }
     },
 
     /**
      * Removes all current mappings
-     * Does NOT remove current model being tracked. Call this.unsetTrackedModels afterwards if you wish this behavior.
+     * Does NOT remove current model being tracked. Call this.untrackModels afterwards if you wish this behavior.
      * @method unsetMappings
      */
     unsetMappings: function() {
@@ -4073,13 +4073,22 @@
     },
 
     /**
-     * Update or create a binding between an object model and an alias.
+     * See {{#crossLink "FormModel/trackModel:method"}}.trackModel(){{/crossLink}}
      * @method setTrackedModel
+     * @deprecated use .trackModel() instead.
+     */
+    setTrackedModel: function() {
+      this.trackModel.apply(this, arguments);
+    },
+
+    /**
+     * Update or create a binding between an object model and an alias.
+     * @method trackModel
      * @param alias {String} the alias/name to bind to.
      * @param model {Backbone Model instance} the model to be bound. Mappings referencing this alias will start applying to this model.
      * @param [copy=false] {Boolean} if true, the form model will perform a pull on any mappings using this alias.
      */
-    setTrackedModel: function(alias, model, copy) {
+    trackModel: function(alias, model, copy) {
       this.__currentObjectModels[alias] = model;
       this.__updateCache(model);
       this.resetUpdating();
@@ -4100,24 +4109,41 @@
     },
 
     /**
+     * See {{#crossLink "FormModel/trackModels:method"}}.trackModels(){{/crossLink}}
+     * @deprecated use .trackModels() instead.
+     */
+    setTrackedModels: function() {
+      this.trackModels.apply(this, arguments);
+    },
+
+    /**
      * Binds multiple models to their aliases.
-     * @method setTrackedModels
+     * @method trackModels
      * @param models {Map from String to Backbone Model instances} A map from alias/name to model to be bound to that alias.
      * @param [copy=false] {Boolean} if true, the form model will perform a pull on any mapping using these models.
      */
-    setTrackedModels: function(models, copy) {
+    trackModels: function(models, copy) {
       _.each(models, function(instance, alias) {
-        this.setTrackedModel(alias, instance, copy);
+        this.trackModel(alias, instance, copy);
       }, this);
     },
 
     /**
-     * Removes the binding between a model alias and a model instance. Effectively stops tracking that model.
+     * See {{#crossLink "FormModel/untrackModel:method"}}.untrackModel(){{/crossLink}}
      * @method unsetTrackedModel
+     * @deprecated use .untrackModel() instead.
+     */
+    unsetTrackedModel: function() {
+      this.untrackModel.apply(this, arguments);
+    },
+
+    /**
+     * Removes the binding between a model alias and a model instance. Effectively stops tracking that model.
+     * @method untrackModel
      * @param aliasOrModel {String or Backbone Model instance} If a string is given, it will unset the model using that alias. If a model instance
      *   is given, it will unbind whatever alias is currently bound to it.
      */
-    unsetTrackedModel: function(aliasOrModel) {
+    untrackModel: function(aliasOrModel) {
       var model,
         alias = this.__findAlias(aliasOrModel);
       if (alias) {
@@ -4129,10 +4155,19 @@
     },
 
     /**
-     * Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.
+     * See {{#crossLink "FormModel/untrackModels:method"}}.untrackModels(){{/crossLink}}
      * @method unsetTrackedModels
+     * @deprecated use .untrackModels() instead.
      */
     unsetTrackedModels: function() {
+      this.untrackModels.apply(this, arguments);
+    },
+
+    /**
+     * Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.
+     * @method untrackModels
+     */
+    untrackModels: function() {
       this.__currentObjectModels = [];
       this.__updateCache();
       this.resetUpdating();
