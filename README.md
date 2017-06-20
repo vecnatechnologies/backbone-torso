@@ -27,9 +27,7 @@ More documentation to come on the other Torso modules.
 Besides the guidelines and modules, there is a [documentation](/docs/DOCUMENTATION.md) page that touches on every module of Torso but at a higher level than the tonicdev pages. Also, a list of the added modules and their API is found [here](/docs/API.md).
 
 ### Play with Torso Live:
-Check out a basic RequireBin setup [here](http://requirebin.com/?gist=889b60ab18d9194ccca7) using Torso.
-
-You can also look at a torso application setup [here](https://cdn.rawgit.com/vecnatechnologies/backbone-torso/master/demo/dist/index.html). It's extremely basic, but if you inspect the source code, you'll see a standard torso application setup with detailed comments.
+You can look at a torso application setup [here](https://cdn.rawgit.com/vecnatechnologies/backbone-torso/master/demo/dist/index.html). It's extremely basic, but if you inspect the source code, you'll see a standard torso application setup with detailed comments.
 
 
 ### Getting started  
@@ -74,7 +72,7 @@ Torso.FormView.extend({
   initialize: function(personModel) {
     this.personModel = personModel;
     // The form view's model can act as the mediator between the html form and another model.
-    this.model.addModel({model: this.personModel, fields: ['name']});
+    this.model.setMapping('person', 'name', this.personModel);
   },
 
   submit: function() {
@@ -106,6 +104,7 @@ Torso.View.extend({
       return {
         text: 'You wrote: ' + this.$el.find('.my-input').val()
       };
+      // If you used a form model, you could do: this.model.get('field-name') instead of grabbing from the dom
     },
     to: 'input-feedback'
   }]
@@ -128,9 +127,9 @@ Torso.View.extend({
 
   initialize: function() {
     this.model = new Torso.Model({name: 'Bob'});
-    this.viewState.set('color', 'blue');
-    // because viewState is a cell you can also do:
-    // this.listenTo(this.viewState, 'change:color', this.render);
+    this.set('color', 'blue');
+    // because view has a cell built in, you can also do:
+    // this.on('change:color', this.render);
   },
 
   prepare: function() {
