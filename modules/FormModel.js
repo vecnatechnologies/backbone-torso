@@ -47,10 +47,20 @@
      * @type Object
      **/
     /**
+     * Map from aliases (either model names or computed value names) to mappings.
+     * Please refer to the documentation on the constructor about the form and options for this field.
      * @property mapping
      * @type Object
      **/
     mapping: undefined,
+
+    /**
+     * Map from model aliases to model instances.
+     * Please refer to the documentation on the constructor about the form and options for this field.
+     * @property models
+     * @type Object
+     **/
+    models: undefined,
 
     /**
      * Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models
@@ -948,19 +958,21 @@
     },
 
     /**
-     * Sets the mapping using the form model's default mapping or the options mappings if available.
-     * Also sets the tracked models if options.models is provided.
+     * Sets the mapping using the form model's default mapping or the options.mappings if available.
+     * Also sets the tracked models if the form model's default models or the options.models is provided.
      * @method __initMappings
      * @param [options] {Object} See initialize options: 'mapping' and 'models'.
      * @private
      */
     __initMappings: function(options) {
       var mapping,
+        models,
         defaultMapping = _.result(this, 'mapping'),
-        optionsMapping = options.mapping;
+        defaultModels = _.result(this, 'models');
       mapping = options.mapping || defaultMapping;
+      models = options.models || defaultModels;
       if (mapping) {
-        this.setMappings(mapping, options.models);
+        this.setMappings(mapping, models);
       }
     },
 

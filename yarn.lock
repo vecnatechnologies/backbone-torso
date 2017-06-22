@@ -249,7 +249,13 @@ backbone.stickit@0.9.2:
     backbone ">=1.0.0"
     underscore ">=1.4.2"
 
-backbone@1.2.3, backbone@>=0.9.2, backbone@>=1.0.0:
+backbone@1.2.3:
+  version "1.2.3"
+  resolved "http://nexus.crl.vecna.com:8081/nexus/content/groups/npm/backbone/-/backbone-1.2.3.tgz#c22cfd07fc86ebbeae61d18929ed115e999d65b9"
+  dependencies:
+    underscore ">=1.7.0"
+
+backbone@>=0.9.2, backbone@>=1.0.0:
   version "1.3.3"
   resolved "http://nexus.crl.vecna.com:8081/nexus/content/groups/npm/backbone/-/backbone-1.3.3.tgz#4cc80ea7cb1631ac474889ce40f2f8bc683b2999"
   dependencies:
@@ -2392,17 +2398,9 @@ jasmine-terminal-reporter@^0.9.1:
   version "0.9.1"
   resolved "http://nexus.crl.vecna.com:8081/nexus/content/groups/npm/jasmine-terminal-reporter/-/jasmine-terminal-reporter-0.9.1.tgz#5bbc56289164c8796461d30b64c56689bda96f89"
 
-jasmine@2.5.3:
+jasmine@2.5.3, jasmine@^2.1.0:
   version "2.5.3"
   resolved "http://nexus.crl.vecna.com:8081/nexus/content/groups/npm/jasmine/-/jasmine-2.5.3.tgz#5441f254e1fc2269deb1dfd93e0e57d565ff4d22"
-  dependencies:
-    exit "^0.1.2"
-    glob "^7.0.6"
-    jasmine-core "~2.5.2"
-
-jasmine@^2.1.0:
-  version "2.5.2"
-  resolved "http://nexus.crl.vecna.com:8081/nexus/content/groups/npm/jasmine/-/jasmine-2.5.2.tgz#6283cef7085c095cc25d651e954df004f7e3e421"
   dependencies:
     exit "^0.1.2"
     glob "^7.0.6"
@@ -4298,7 +4296,7 @@ unc-path-regex@^0.1.0:
   version "0.1.2"
   resolved "http://nexus.crl.vecna.com:8081/nexus/content/groups/npm/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
 
-underscore@1.8.3, underscore@>=1.4.2, underscore@>=1.5.0, underscore@>=1.8.3:
+underscore@1.8.3, underscore@>=1.4.2, underscore@>=1.5.0, underscore@>=1.7.0, underscore@>=1.8.3:
   version "1.8.3"
   resolved "http://nexus.crl.vecna.com:8081/nexus/content/groups/npm/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
 
