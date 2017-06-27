@@ -3307,7 +3307,17 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 62,
+            "line": 61,
+            "description": "The class to be used when instantiating the form model",
+            "itemtype": "property",
+            "name": "FormModelClass",
+            "type": "Torso.FormModel class extension",
+            "class": "FormView",
+            "module": "Torso"
+        },
+        {
+            "file": "modules/FormView.js",
+            "line": 67,
             "description": "Constructor the form view object.",
             "itemtype": "method",
             "name": "constructor",
@@ -3319,8 +3329,16 @@
                     "props": [
                         {
                             "name": "model",
-                            "description": "- requires a form model for binding",
-                            "type": "Torso.FormModel"
+                            "description": "- a form model for binding that defaults to class-level\n                                                                   model or instantiates a FormModelClass",
+                            "type": "Torso.FormModel",
+                            "optional": true,
+                            "optdefault": "new FormModelClass()"
+                        },
+                        {
+                            "name": "FormModelClass",
+                            "description": "- the class that will be used as the FormModel. Defaults to a class-level\n                                                     definition or Torso.FormModel if none is provided",
+                            "optional": true,
+                            "optdefault": "Torso.FormModel"
                         },
                         {
                             "name": "template",
@@ -3354,7 +3372,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 94,
+            "line": 103,
             "description": "Prepare the formview's default render context",
             "itemtype": "method",
             "name": "prepare",
@@ -3367,7 +3385,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 110,
+            "line": 119,
             "description": "Override the delegate events and wrap our custom additions",
             "itemtype": "method",
             "name": "delegateEvents",
@@ -3376,7 +3394,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 121,
+            "line": 130,
             "description": "Resets the form model with the passed in model. Stops listening to current form model\nand sets up listeners on the new one.",
             "itemtype": "method",
             "name": "resetModelListeners",
@@ -3399,7 +3417,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 137,
+            "line": 146,
             "description": "Default method called on validation success.",
             "itemtype": "method",
             "name": "valid",
@@ -3408,7 +3426,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 146,
+            "line": 155,
             "description": "Default method called on validation failure.",
             "itemtype": "method",
             "name": "valid",
@@ -3417,7 +3435,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 155,
+            "line": 164,
             "description": "Deactivate callback that removes bindings and other resources\nthat shouldn't exist in a dactivated state",
             "itemtype": "method",
             "name": "_deactivate",
@@ -3426,7 +3444,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 166,
+            "line": 175,
             "description": "For use in a feedback's \"then\" callback\nChecks to see if the form model's field is valid. If the field is invalid, it adds the class.\nIf the field is invalid, it removes the class. When an array is passed in for the fieldName,\nit will validate all the fields together as if they were one (any failure counts as a total failure,\nand all fields need to be valid for success).",
             "params": [
                 {
@@ -3455,7 +3473,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 191,
+            "line": 200,
             "description": "For use in a feedback's \"then\" callback\nChecks to see if the form model's field is valid. If the field is invalid, it sets the text.\nIf the field is invalid, it removes the text. When an array is passed in for the fieldName,\nit will validate all the fields together as if they were one (any failure counts as a total failure,\nand all fields need to be valid for success).",
             "params": [
                 {
@@ -3484,7 +3502,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 218,
+            "line": 227,
             "description": "Selects all data-model references in this view's DOM, and creates stickit bindings",
             "itemtype": "method",
             "name": "__generateStickitBindings",
@@ -3495,7 +3513,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 243,
+            "line": 252,
             "itemtype": "method",
             "name": "__getFieldOptions",
             "params": [
@@ -3514,7 +3532,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 253,
+            "line": 262,
             "itemtype": "method",
             "name": "__generateModelFieldBinding",
             "params": [
@@ -3554,7 +3572,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 281,
+            "line": 290,
             "itemtype": "method",
             "name": "__generateSelectOptions",
             "params": [
@@ -3855,7 +3873,7 @@
         {
             "file": "modules/ListView.js",
             "line": 240,
-            "description": "Sets the collection from which this view generates item views.\nThis method will attach all necessary event listeners to the new collection to auto-generate item views\nand has the option of removing listeners on a previous collection.",
+            "description": "Sets the collection from which this view generates item views.\nThis method will attach all necessary event listeners to the new collection to auto-generate item views\nand has the option of removing listeners on a previous collection. It will immediately update child\nviews and re-render if it is necessary - this behavior can be prevented with preventUpdate argument",
             "itemtype": "method",
             "name": "setCollection",
             "params": [
@@ -3863,6 +3881,11 @@
                     "name": "collection",
                     "description": "the new collection that this list view should use.",
                     "type": "Backbone.Collection instance"
+                },
+                {
+                    "name": "preventUpdate",
+                    "description": "if true, the list view will not update the child views nor rerender.",
+                    "type": "Boolean"
                 }
             ],
             "class": "ListView",
@@ -3870,7 +3893,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 262,
+            "line": 268,
             "description": "Override of View.__updateDOM\nBuilds a single DOM fragment from the item views and attaches it at once.",
             "itemtype": "method",
             "name": "__updateDOM",
@@ -3879,7 +3902,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 285,
+            "line": 291,
             "description": "Completes each item view's lifecycle of being attached to a parent.\nBecause the item views are attached in a non-standard way, it's important to make sure\nthat the item views are in the appropriate state after being attached as one fragment.",
             "itemtype": "method",
             "name": "__cleanupItemViewsAfterAttachedToParent",
@@ -3890,7 +3913,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 307,
+            "line": 313,
             "description": "Loops through children views and renders them",
             "itemtype": "method",
             "name": "renderChildViews",
@@ -3899,7 +3922,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 317,
+            "line": 323,
             "description": "Takes existing item views and moves them into correct order defined by\nthis.modelsToRender(). NOTE: As this method doesn't generate or remove views,\nthis method takes advantage of jquery's ability to move elements already attached to the DOM.",
             "itemtype": "method",
             "name": "reorder",
@@ -3908,7 +3931,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 367,
+            "line": 373,
             "description": "Override if you want a different context for your empty template. Defaults to this.prepare()",
             "itemtype": "method",
             "name": "prepareEmpty",
@@ -3920,7 +3943,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 376,
+            "line": 382,
             "description": "Returns an array of which models should be rendered.\nBy default, all models in the input collection will be\nshown.  Extensions of this class may override this\nmethod to apply collection filters.",
             "itemtype": "method",
             "name": "modelsToRender",
@@ -3929,7 +3952,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 387,
+            "line": 393,
             "description": "Builds any new views, removes stale ones, and re-renders",
             "itemtype": "method",
             "name": "update",
@@ -3938,7 +3961,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 420,
+            "line": 426,
             "description": "Returns the view that corresponds to the model if one exists",
             "params": [
                 {
@@ -3957,7 +3980,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 430,
+            "line": 436,
             "return": {
                 "description": "returns true if there exists any generated item views",
                 "type": "Boolean"
@@ -3969,7 +3992,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 438,
+            "line": 444,
             "return": {
                 "description": "Returns unordered list of views generated by this list view",
                 "type": "Array of views"
@@ -3981,7 +4004,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 450,
+            "line": 456,
             "description": "Creates all needed item views that don't exist from modelsToRender()",
             "itemtype": "method",
             "name": "__createItemViews",
@@ -3996,7 +4019,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 471,
+            "line": 477,
             "description": "Creates an item view and stores a reference to it",
             "itemtype": "method",
             "name": "__createItemView",
@@ -4024,7 +4047,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 496,
+            "line": 502,
             "description": "Gets all item views that have models that are no longer tracked by modelsToRender",
             "itemtype": "method",
             "name": "__getStaleItemViews",
@@ -4039,7 +4062,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 520,
+            "line": 526,
             "description": "Removes the item views that no longer have models returned by modelsToRender()",
             "itemtype": "method",
             "name": "__removeStaleItemViews",
@@ -4058,7 +4081,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 538,
+            "line": 544,
             "description": "Creates a DOM fragment with each item view appended in the order defined by\nmodelsToRender(). This will clear the List View's DOM and invoke the necessary\ndetach, register and render logic on each item view.",
             "return": {
                 "description": "a DOM fragment with item view elements appended"
@@ -4072,7 +4095,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 569,
+            "line": 575,
             "description": "Attempts to insert new views and remove stale views individually and correctly reorder all views in an\nattempt to be faster then a full view re-render",
             "itemtype": "method",
             "name": "__updateByAddingRemoving",
@@ -4098,7 +4121,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 620,
+            "line": 626,
             "description": "Updates the internal list of model ids that correspond to the models used for the current\nlist of item views. The order is the same order of the item views.",
             "itemtype": "method",
             "name": "__updateOrderedModelIdList",
@@ -4117,7 +4140,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 631,
+            "line": 637,
             "description": "Method to generate arguments when creating an item view. Override this method\nto change the arguments for a given item view.\nThe format of the subview's arguments is:\n{\n  context: {\n    ... inherited from parent ...\n  },\n  <modelName>: <modelObject>,\n  listView: the parent list view\n}",
             "itemtype": "method",
             "name": "__generateItemViewArgs",
@@ -4137,7 +4160,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 656,
+            "line": 662,
             "description": "Alias method for __generateItemViewArgs()",
             "itemtype": "method",
             "name": "__generateChildArgs",
@@ -4146,7 +4169,7 @@
         },
         {
             "file": "modules/ListView.js",
-            "line": 664,
+            "line": 670,
             "itemtype": "method",
             "name": "__getViewIdFromModelId",
             "access": "private",

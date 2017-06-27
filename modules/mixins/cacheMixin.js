@@ -355,7 +355,7 @@
             setOptions: _.extend({remove: true}, options)
           });
         } else {
-          return base.prototype.fetch.apply(this, options);
+          return base.prototype.fetch.call(this, options);
         }
       };
 
