@@ -78,44 +78,47 @@ describe('A Form Model during initialization', function() {
               models.testModel.set('color', this.get('primary') + ' ' + this.get('secondary'));
             }
           }
+        },
+        models: {
+          testModel: testModel
         }
       });
     myProfileFormModel = new MyProfileFormModel();
-    expect(_.size(myProfileFormModel.getTrackedModels())).toBe(0);
+    expect(_.size(myProfileFormModel.getTrackedModels())).toBe(1);
     expect(_.size(myProfileFormModel.getMappings())).toBe(4);
-    myProfileFormModel.setTrackedModel('testModel', testModel);
     myProfileFormModel.setTrackedModel('testModel2', testModel2);
     expect(_.size(myProfileFormModel.getTrackedModels())).toBe(2);
     expect(_.size(myProfileFormModel.getMappings())).toBe(4);
 
     formModel2 = new MyProfileFormModel({}, {
       mapping: {
-        testModel: 'foo'
+        testModel: 'foo',
+        testModel2: 'baz'
       }
     });
-    expect(_.size(formModel2.getTrackedModels())).toBe(0);
-    expect(_.size(formModel2.getMappings())).toBe(1);
-    formModel2.setTrackedModel('testModel', testModel);
     expect(_.size(formModel2.getTrackedModels())).toBe(1);
-    expect(_.size(formModel2.getMappings())).toBe(1);
+    expect(_.size(formModel2.getMappings())).toBe(2);
+    formModel2.setTrackedModel('testModel2', testModel2);
+    expect(_.size(formModel2.getTrackedModels())).toBe(2);
+    expect(_.size(formModel2.getMappings())).toBe(2);
 
     formModel2 = new MyProfileFormModel({}, {
       mapping: _.extend({}, MyProfileFormModel.prototype.mapping, {
         test: {
-          testModel: 'raz',
+          testModel2: 'raz',
           pull: function(models) {
-            this.set('raz', models.testModel.raz + 1);
+            this.set('raz', models.testModel2.raz + 1);
           }
         }
       })
     });
-    expect(_.size(formModel2.getTrackedModels())).toBe(0);
+    expect(_.size(formModel2.getTrackedModels())).toBe(1);
     expect(_.size(formModel2.getMappings())).toBe(5);
     formModel2.setTrackedModel('testModel', testModel);
     formModel2.setTrackedModel('testModel2', testModel2);
     expect(formModel2.get('raz')).not.toBeDefined();
-    testModel.set('raz', 4);
-    testModel.set('foo', 123);
+    testModel2.set('raz', 4);
+    testModel2.set('foo', 123);
     formModel2.pull();
     expect(formModel2.get('raz')).toBe(5);
     expect(formModel2.get('foo')).toBe(123);
