@@ -923,7 +923,7 @@
             setOptions: _.extend({remove: true}, options)
           });
         } else {
-          return base.prototype.fetch.apply(this, options);
+          return base.prototype.fetch.call(this, options);
         }
       };
 
@@ -1079,6 +1079,99 @@
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.polling = factory();
+  }
+}(this, function() {
+  /**
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  pollingMixin
+   * @author ariel.wexler@vecna.com
+   */
+  var pollingMixin = {
+    /**
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     */
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
+
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
+        this.__poll();
+      }
+    },
+
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
+    },
+
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
+    },
+
+    //************** Private methods **************//
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
+    }
+  };
+
+  return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
     root.Torso.Mixins.cell = factory();
   }
 }(this, function() {
@@ -1226,99 +1319,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
-  }
-}(this, function() {
-  /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  pollingMixin
-   * @author ariel.wexler@vecna.com
-   */
-  var pollingMixin = {
-    /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
-     */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
-
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-        this.__poll();
-      }
-    },
-
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
-    },
-
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
-    },
-
-    //************** Private methods **************//
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
-    }
-  };
-
-  return pollingMixin;
-}));
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
@@ -1393,31 +1393,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1440,6 +1415,31 @@
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
 }));
 
 (function(root, factory) {
@@ -5152,7 +5152,7 @@
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
       if (collection) {
-        this.setCollection(collection);
+        this.setCollection(collection, true);
       }
 
       this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
@@ -5161,12 +5161,14 @@
     /**
      * Sets the collection from which this view generates item views.
      * This method will attach all necessary event listeners to the new collection to auto-generate item views
-     * and has the option of removing listeners on a previous collection.
+     * and has the option of removing listeners on a previous collection. It will immediately update child
+     * views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument
      *
      * @method setCollection
      * @param collection {Backbone.Collection instance} the new collection that this list view should use.
+     * @param preventUpdate {Boolean} if true, the list view will not update the child views nor rerender.
      */
-    setCollection: function(collection) {
+    setCollection: function(collection, preventUpdate) {
       this.stopListening(this.collection, 'remove', removeItemView);
       this.stopListening(this.collection, 'add', addItemView);
       this.stopListening(this.collection, 'sort', this.reorder);
@@ -5178,6 +5180,10 @@
       this.listenTo(this.collection, 'add', addItemView);
       this.listenTo(this.collection, 'sort', this.reorder);
       this.listenTo(this.collection, 'reset', this.update);
+
+      if (!preventUpdate) {
+        this.update();
+      }
     },
 
     /**
@@ -6529,12 +6535,20 @@
      * @property bindings
      * @type Object
      **/
+    /**
+     * The class to be used when instantiating the form model
+     * @property FormModelClass
+     * @type Torso.FormModel class extension
+     **/
 
     /**
      * Constructor the form view object.
      * @method constructor
      * @param args {Object} - options argument
-     * @param args.model       {Torso.FormModel} - requires a form model for binding
+     * @param [args.model=new FormModelClass()] {Torso.FormModel} - a form model for binding that defaults to class-level
+                                                                    model or instantiates a FormModelClass
+     * @param [args.FormModelClass=Torso.FormModel] - the class that will be used as the FormModel. Defaults to a class-level
+                                                      definition or Torso.FormModel if none is provided
      * @param [args.template]  {HTML Template} - overrides the template used by this view
      * @param [args.events]    {Events Hash} - merge + override the events hash used by this view
      * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
@@ -6544,7 +6558,8 @@
       args = args || {};
 
       /* Listen to model validation callbacks */
-      this.model = args.model || this.model || (new FormModel());
+      var FormModelClass = args.FormModelClass || this.FormModelClass || FormModel;
+      this.model = args.model || this.model || (new FormModelClass());
 
       /* Override template */
       this.template = args.template || this.template;

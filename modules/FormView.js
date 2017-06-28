@@ -58,12 +58,20 @@
      * @property bindings
      * @type Object
      **/
+    /**
+     * The class to be used when instantiating the form model
+     * @property FormModelClass
+     * @type Torso.FormModel class extension
+     **/
 
     /**
      * Constructor the form view object.
      * @method constructor
      * @param args {Object} - options argument
-     * @param args.model       {Torso.FormModel} - requires a form model for binding
+     * @param [args.model=new FormModelClass()] {Torso.FormModel} - a form model for binding that defaults to class-level
+                                                                    model or instantiates a FormModelClass
+     * @param [args.FormModelClass=Torso.FormModel] - the class that will be used as the FormModel. Defaults to a class-level
+                                                      definition or Torso.FormModel if none is provided
      * @param [args.template]  {HTML Template} - overrides the template used by this view
      * @param [args.events]    {Events Hash} - merge + override the events hash used by this view
      * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
@@ -73,7 +81,8 @@
       args = args || {};
 
       /* Listen to model validation callbacks */
-      this.model = args.model || this.model || (new FormModel());
+      var FormModelClass = args.FormModelClass || this.FormModelClass || FormModel;
+      this.model = args.model || this.model || (new FormModelClass());
 
       /* Override template */
       this.template = args.template || this.template;

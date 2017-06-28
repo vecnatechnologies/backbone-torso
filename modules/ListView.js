@@ -231,7 +231,7 @@
       this.__delayedRender = aggregateRenders(this.__renderWait, this);
 
       if (collection) {
-        this.setCollection(collection);
+        this.setCollection(collection, true);
       }
 
       this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
@@ -240,12 +240,14 @@
     /**
      * Sets the collection from which this view generates item views.
      * This method will attach all necessary event listeners to the new collection to auto-generate item views
-     * and has the option of removing listeners on a previous collection.
+     * and has the option of removing listeners on a previous collection. It will immediately update child
+     * views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument
      *
      * @method setCollection
      * @param collection {Backbone.Collection instance} the new collection that this list view should use.
+     * @param preventUpdate {Boolean} if true, the list view will not update the child views nor rerender.
      */
-    setCollection: function(collection) {
+    setCollection: function(collection, preventUpdate) {
       this.stopListening(this.collection, 'remove', removeItemView);
       this.stopListening(this.collection, 'add', addItemView);
       this.stopListening(this.collection, 'sort', this.reorder);
@@ -257,6 +259,10 @@
       this.listenTo(this.collection, 'add', addItemView);
       this.listenTo(this.collection, 'sort', this.reorder);
       this.listenTo(this.collection, 'reset', this.update);
+
+      if (!preventUpdate) {
+        this.update();
+      }
     },
 
     /**
