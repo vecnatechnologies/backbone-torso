@@ -131,6 +131,42 @@ describe('A Torso Data Behavior', function() {
       }
     });
 
+    it('defaults renderOnFetch to false', function() {
+      var defaultBehaviorConfigurationRenderOnFetchUndefined = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfigurationRenderOnFetchUndefined.renderOnFetch;
+      var ViewWithDataBehaviorRenderOnFetchUndefined = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationRenderOnFetchUndefined
+        }
+      });
+      var viewWithDataBehaviorRenderOnFetchUndefined = new ViewWithDataBehaviorRenderOnFetchUndefined();
+      expect(viewWithDataBehaviorRenderOnFetchUndefined.getBehavior('dataBehavior').renderOnFetch).toBe(false);
+    });
+
+    it('can set renderOnFetch to false', function() {
+      var defaultBehaviorConfigurationRenderOnFetchFalse = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationRenderOnFetchFalse.renderOnFetch = false;
+      var ViewWithDataBehaviorRenderOnFetchFalse = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationRenderOnFetchFalse
+        }
+      });
+      var viewWithDataBehaviorRenderOnFetchFalse = new ViewWithDataBehaviorRenderOnFetchFalse();
+      expect(viewWithDataBehaviorRenderOnFetchFalse.getBehavior('dataBehavior').renderOnFetch).toBe(false);
+    });
+
+    it('can set renderOnFetch to true', function() {
+      var defaultBehaviorConfigurationRenderOnFetchTrue = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationRenderOnFetchTrue.renderOnFetch = true;
+      var ViewWithDataBehaviorRenderOnFetchTrue = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationRenderOnFetchTrue
+        }
+      });
+      var viewWithDataBehaviorRenderOnFetchTrue = new ViewWithDataBehaviorRenderOnFetchTrue();
+      expect(viewWithDataBehaviorRenderOnFetchTrue.getBehavior('dataBehavior').renderOnFetch).toBe(true);
+    });
+
     it('defaults returnSingleResult to false', function() {
       var defaultBehaviorConfigurationReturnSingleResultUndefined = getBasicBehaviorConfiguration();
       delete defaultBehaviorConfigurationReturnSingleResultUndefined.returnSingleResult;
@@ -1001,6 +1037,159 @@ ids = {\n\
         .then(function() {
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialValue', count: 0 }]);
           done();
+        });
+    });
+
+    it('will not re-render the view when the "fetched" event is triggered on the behavior if renderOnFetch is not set', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = '_someIds';
+      delete defaultBehaviorConfiguration.renderOnFetch;
+      var ViewWithBehaviorAndRenderCount = TorsoView.extend({
+        __renderCount: 0,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        },
+        render: function() {
+          this.__renderCount = 0;
+          return TorsoView.prototype.render.apply(this, arguments);
+        }
+      });
+      var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
+      var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
+      expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(0);
+      dataBehavior.trigger('fetched');
+      expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(0);
+    });
+
+    it('will not re-render the view when the "fetched" event is triggered on the behavior if renderOnFetch is false', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = '_someIds';
+      defaultBehaviorConfiguration.renderOnFetch = false;
+      var ViewWithBehaviorAndRenderCount = TorsoView.extend({
+        __renderCount: 0,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        },
+        render: function() {
+          this.__renderCount = 0;
+          return TorsoView.prototype.render.apply(this, arguments);
+        }
+      });
+      var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
+      var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
+      expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(0);
+      dataBehavior.trigger('fetched');
+      expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(0);
+    });
+
+    it('will not re-render the view when the "fetched" event is triggered on the behavior if renderOnFetch is true', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = '_someIds';
+      defaultBehaviorConfiguration.renderOnFetch = true;
+      var ViewWithBehaviorAndRenderCount = TorsoView.extend({
+        __renderCount: 0,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        },
+        render: function() {
+          this.__renderCount++;
+          return TorsoView.prototype.render.apply(this, arguments);
+        }
+      });
+      var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
+      var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
+      expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(0);
+      dataBehavior.trigger('fetched');
+      expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(1);
+    });
+
+    it('will not re-render the view if renderOnFetch is not set', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.renderOnFetch;
+      defaultBehaviorConfiguration.ids = { property: 'id' };
+      var ViewWithBehaviorAndRenderCount = TorsoView.extend({
+        __renderCount: 0,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        },
+        render: function() {
+          this.__renderCount++;
+          return TorsoView.prototype.render.apply(this, arguments);
+        }
+      });
+      var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
+      var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
+      var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.data.toJSON()).toEqual([]);
+          expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(expectedRenderCount);
+          dataBehavior.on('fetched', function() {
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+            expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(expectedRenderCount);
+            done();
+          });
+          viewWithBehaviorAndRenderCount.set('id', 'newId');
+        });
+    });
+
+    it('will not re-render the view if renderOnFetch is set to false', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.renderOnFetch = false;
+      defaultBehaviorConfiguration.ids = { property: 'id' };
+      var ViewWithBehaviorAndRenderCount = TorsoView.extend({
+        __renderCount: 0,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        },
+        render: function() {
+          this.__renderCount++;
+          return TorsoView.prototype.render.apply(this, arguments);
+        }
+      });
+      var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
+      var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
+      var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.data.toJSON()).toEqual([]);
+          expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(expectedRenderCount);
+          dataBehavior.on('fetched', function() {
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+            expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(expectedRenderCount);
+            done();
+          });
+          viewWithBehaviorAndRenderCount.set('id', 'newId');
+        });
+    });
+
+    it('will re-render the view if renderOnFetch is set to true', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.renderOnFetch = true;
+      defaultBehaviorConfiguration.ids = { property: 'id' };
+      var ViewWithBehaviorAndRenderCount = TorsoView.extend({
+        __renderCount: 0,
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        },
+        render: function() {
+          this.__renderCount++;
+          return TorsoView.prototype.render.apply(this, arguments);
+        }
+      });
+      var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
+      var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
+      var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.data.toJSON()).toEqual([]);
+          expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
+          dataBehavior.on('fetched', function() {
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+            expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
+            done();
+          });
+          viewWithBehaviorAndRenderCount.set('id', 'newId');
         });
     });
 

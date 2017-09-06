@@ -5733,6 +5733,15 @@
     cache: undefined,
 
     /**
+     * Adds a listener on the Behavior for the `fetched` event that triggers a render on the view.
+     * true - A listener is added to the behavior that re-renders the view when a 'fetched' event is triggered.
+     * false (default) - no listeners are added.
+     * @property renderOnFetch {Boolean}
+     * @default false
+     */
+    renderOnFetch: false,
+
+    /**
      * Determines the result of `view.getBehavior('thisBehaviorAlias').toJSON()`.
      * true - a single model result is returned.
      * false (default) - an array of model results are returned.
@@ -5832,6 +5841,7 @@
      * @param [behaviorState] {Object} the initial state of the behavior.
      * @param behaviorOptions {Object}
      *   @param behaviorOptions.cache {Collection} see cache property.
+     *   @param [behaviorOptions.renderOnFetch=false] {Boolean} see renderOnFetch property.
      *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
      *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see alwaysFetch property.
      *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see id property.
@@ -5845,7 +5855,7 @@
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
       });
-      _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
+      _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'renderOnFetch', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
 
       this.__validateCache();
       this.__normalizeAndValidateIds();
@@ -5864,6 +5874,12 @@
       this.listenTo(this.view, 'initialize:complete', this.listenToIdsPropertyChangeEvent);
       this.listenTo(this.view, 'initialize:complete', this._delegateUpdateEvents);
       this.listenTo(this.view, 'initialize:complete', this.retrieve);
+      // This allows 'renderOnFetch' to be changed at runtime after the constructor is executed.
+      this.on('fetched', function() {
+        if (this.renderOnFetch) {
+          this.view.render();
+        }
+      });
     },
 
     /**
