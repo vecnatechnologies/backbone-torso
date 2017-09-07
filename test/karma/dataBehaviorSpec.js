@@ -167,6 +167,42 @@ describe('A Torso Data Behavior', function() {
       expect(viewWithDataBehaviorRenderOnFetchTrue.getBehavior('dataBehavior').renderOnFetch).toBe(true);
     });
 
+    it('defaults skipInitialLoad to false', function() {
+      var defaultBehaviorConfigurationSkipInitialLoadUndefined = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfigurationSkipInitialLoadUndefined.skipInitialLoad;
+      var ViewWithDataBehaviorSkipInitialLoadUndefined = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSkipInitialLoadUndefined
+        }
+      });
+      var viewWithDataBehaviorSkipInitialLoadUndefined = new ViewWithDataBehaviorSkipInitialLoadUndefined();
+      expect(viewWithDataBehaviorSkipInitialLoadUndefined.getBehavior('dataBehavior').skipInitialLoad).toBe(false);
+    });
+
+    it('can set skipInitialLoad to false', function() {
+      var defaultBehaviorConfigurationSkipInitialLoadFalse = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSkipInitialLoadFalse.skipInitialLoad = false;
+      var ViewWithDataBehaviorSkipInitialLoadFalse = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSkipInitialLoadFalse
+        }
+      });
+      var viewWithDataBehaviorSkipInitialLoadFalse = new ViewWithDataBehaviorSkipInitialLoadFalse();
+      expect(viewWithDataBehaviorSkipInitialLoadFalse.getBehavior('dataBehavior').skipInitialLoad).toBe(false);
+    });
+
+    it('can set skipInitialLoad to true', function() {
+      var defaultBehaviorConfigurationSkipInitialLoadTrue = getBasicBehaviorConfiguration();
+      defaultBehaviorConfigurationSkipInitialLoadTrue.skipInitialLoad = true;
+      var ViewWithDataBehaviorSkipInitialLoadTrue = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfigurationSkipInitialLoadTrue
+        }
+      });
+      var viewWithDataBehaviorSkipInitialLoadTrue = new ViewWithDataBehaviorSkipInitialLoadTrue();
+      expect(viewWithDataBehaviorSkipInitialLoadTrue.getBehavior('dataBehavior').skipInitialLoad).toBe(true);
+    });
+
     it('defaults returnSingleResult to false', function() {
       var defaultBehaviorConfigurationReturnSingleResultUndefined = getBasicBehaviorConfiguration();
       delete defaultBehaviorConfigurationReturnSingleResultUndefined.returnSingleResult;
@@ -1656,6 +1692,45 @@ ids = {\n\
             done();
           });
       });
+    });
+
+    it('will initially load the data behavior when the view completes initialization if skipInitialLoad is not set', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.skipInitialLoad;
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      expect(dataBehavior.isLoading()).toBe(true);
+    });
+
+    it('will initially load the data behavior when the view completes initialization if skipInitialLoad is set to false', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.skipInitialLoad = false;
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      expect(dataBehavior.isLoading()).toBe(true);
+    });
+
+    it('will skip the initial data behavior load when the view completes initialization if skipInitialLoad is set to true', function() {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.skipInitialLoad = true;
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      expect(dataBehavior.isLoading()).toBe(false);
     });
 
     it('will re-fetch the ids and data when the ids idContainer triggers a change event for the ids property', function(done) {

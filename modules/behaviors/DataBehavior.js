@@ -103,6 +103,15 @@
     renderOnFetch: false,
 
     /**
+     * Skip triggering a load of this data behavior when the view completes initializing.
+     * true - no load after the view is initialized.
+     * false (default) - trigger a .retrieve() on this data behavior when the view completes initialization.
+     * @property skipInitialLoad {Boolean}
+     * @default false
+     */
+    skipInitialLoad: false,
+
+    /**
      * Determines the result of `view.getBehavior('thisBehaviorAlias').toJSON()`.
      * true - a single model result is returned.
      * false (default) - an array of model results are returned.
@@ -203,6 +212,7 @@
      * @param behaviorOptions {Object}
      *   @param behaviorOptions.cache {Collection} see cache property.
      *   @param [behaviorOptions.renderOnFetch=false] {Boolean} see renderOnFetch property.
+     *   @param [behaviorOptions.skipInitialLoad=false] {Boolean} see skipInitialLoad property.
      *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
      *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see alwaysFetch property.
      *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see id property.
@@ -216,7 +226,7 @@
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
       });
-      _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'renderOnFetch', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
+      _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'renderOnFetch', 'skipInitialLoad', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
 
       this.__validateCache();
       this.__normalizeAndValidateIds();
@@ -236,7 +246,10 @@
       this.on('id-container-updated', this.retrieve);
       this.listenTo(this.view, 'initialize:complete', this.listenToIdsPropertyChangeEvent);
       this.listenTo(this.view, 'initialize:complete', this._delegateUpdateEvents);
-      this.listenTo(this.view, 'initialize:complete', this.retrieve);
+      if (!this.skipInitialLoad) {
+        this.listenTo(this.view, 'initialize:complete', this.retrieve);
+      }
+
       // This allows 'renderOnFetch' to be changed at runtime after the constructor is executed.
       this.on('fetched', function() {
         if (this.renderOnFetch) {
