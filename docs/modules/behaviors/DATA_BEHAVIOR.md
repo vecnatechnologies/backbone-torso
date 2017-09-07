@@ -106,6 +106,7 @@ var ArticleAndPostsView = Torso.View.extend({
 11. [Events emitted](#events-emitted)
 12. [Error Handling](#error-handling)
 13. [Description of all Options](#description-of-all-options)
+14. [Description of all Public Methods](#description-of-all-public-methods)
 
 ## Background
 Retrieving data using Torso caches (Collections) and private collections involves a 2 step process:
@@ -547,12 +548,24 @@ Note: the idAttribute can be defined on the underlying Model and everything shou
 
 ## Accessing data from template
 The view will automatically add the data from the behavior to the result of the view's prepare method.
+It will also add the loading statuses of the behavior:
+```JavaScript
+{
+  loading: true, // true if either ids or objects are being loaded.
+  loadingIds: true, // true if ids are being loaded.
+  loadingObjects: true, // true if objects are being loaded.
+  data: ...
+}
+```
 
 Result of prepare() of ArticleWithPostsView after data has been loaded.
 ```JavaScript
 {
   ...,
   article: {
+    loading: false,
+    loadingIds: false,
+    loadingObjects: false,
     data: {
       id: 1234,
       title: 'some article title',
@@ -560,6 +573,9 @@ Result of prepare() of ArticleWithPostsView after data has been loaded.
     }
   },
   posts: {
+    loading: false,
+    loadingIds: false,
+    loadingObjects: false,
     data: [{
       id: 'yesterday-by-the-river',
       title: 'Yesterday by the River',
@@ -808,4 +824,23 @@ successEventPayload = {
   * "behaviors.behaviorAlias:[event name]" - arbitrary event triggered by another behavior on this view.
   * "behaviors.behaviorAlias.[property name]:[event name]" - arbitrary event triggered by another behavior's property on this view.
   * "behaviors.behaviorAlias.data:[event name]" - arbitrary event triggered by another behavior's data property on this view (specific example of `behaviorAlias.[property name]:[event name]`).
+<<<<<<< HEAD
   * { '[event name]': < object (or function returning an object) that the event is triggered on > } - arbitrary "event" triggered on the supplied object.
+=======
+  * { '[event name]': < object (or function returning an object) that the event is triggered on > } - arbitrary "event" triggered on the supplied object.
+
+## Description of all Public Methods
+`[data].` means that the same method is also aliased on the data object and can be access edither from the data behavior directly or from the `data` property of the data behavior.
+* `{Boolean} [data].isLoading()` - Determine if the behavior is loading objects or ids.
+  * Returns true if the behavior is loading ids or objects, false otherwise.
+* `{Boolean} [data].isLoadingIds()` - Determine if the behavior is loading ids.
+  * Returns true if the behavior is loading ids, false otherwise.
+* `{Boolean} [data].isLoadingObjects()` - Determine if the behavior is loading objects.
+  * Returns true if the behavior is loading objects, false otherwise.
+* `{jQuery.Promise} .retrieve()` - Retrieves the ids for this data object and passes them off to the private collection to track and then does a pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
+  * Returns the promise from the collection's fetch or pull methods.
+* `{jQuery.Promise} .pull()` - Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
+  * Returns the promise from the collection's trackAndPull() method.
+* `{jQuery.Promise} .fetch()` - Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
+  * Returns the promise from the collection's trackAndFetch() method.
+>>>>>>>  #307 - Expose loading data loading info

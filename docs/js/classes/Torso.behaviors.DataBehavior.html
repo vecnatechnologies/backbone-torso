@@ -141,6 +141,10 @@ This behavior also manages dependencies between data and other objects to allow 
 
                     <ul class="index-list methods">
                             <li class="index-item method private">
+                                <a href="#method___completeLoadingIds">__completeLoadingIds</a>
+
+                            </li>
+                            <li class="index-item method private">
                                 <a href="#method___fetchFailed">__fetchFailed</a>
 
                             </li>
@@ -202,6 +206,18 @@ This behavior also manages dependencies between data and other objects to allow 
                             </li>
                             <li class="index-item method">
                                 <a href="#method_fetch">fetch</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_isLoading">isLoading</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_isLoadingIds">isLoadingIds</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_isLoadingObjects">isLoadingObjects</a>
 
                             </li>
                             <li class="index-item method">
@@ -272,6 +288,39 @@ This behavior also manages dependencies between data and other objects to allow 
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method___completeLoadingIds" class="method item private">
+    <h3 class="name"><code>__completeLoadingIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l582"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:582</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Sets the loading ids property to false (loading completed).</p>
+
+    </div>
+
+
+
+
+</div>
 <div id="method___fetchFailed" class="method item private">
     <h3 class="name"><code>__fetchFailed</code></h3>
 
@@ -295,7 +344,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l687"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:687</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l733"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:733</code></a>
         </p>
 
 
@@ -351,7 +400,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l667"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:667</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l713"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:713</code></a>
         </p>
 
 
@@ -404,7 +453,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l502"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:502</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l537"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:537</code></a>
         </p>
 
 
@@ -446,7 +495,7 @@ or rejects with the error message.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l416"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:416</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l466"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:466</code></a>
         </p>
 
 
@@ -481,42 +530,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l431"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:431</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Validates that the ids property is valid and if not throws an error describing why its not valid.
-A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
-This is done as part of validation because we first validate that both are not set.</p>
-
-    </div>
-
-
-
-
-</div>
-<div id="method___normalizeAndValidateIds" class="method item private">
-    <h3 class="name"><code>__normalizeAndValidateIds</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-        <span class="flag private">private</span>
-
-
-
-
-
-    <div class="meta">
-                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
-                <p>
-                Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l489"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:489</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l524"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:524</code></a>
         </p>
 
 
@@ -525,6 +539,41 @@ This is done as part of validation because we first validate that both are not s
 
     <div class="description">
         <p>Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___normalizeAndValidateIds" class="method item private">
+    <h3 class="name"><code>__normalizeAndValidateIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l451"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:451</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the ids property is valid and if not throws an error describing why its not valid.
+A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
+This is done as part of validation because we first validate that both are not set.</p>
 
     </div>
 
@@ -549,7 +598,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l465"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:465</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l500"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:500</code></a>
         </p>
 
 
@@ -585,7 +634,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l545"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:545</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l591"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:591</code></a>
         </p>
 
 
@@ -627,7 +676,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l402"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:402</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l437"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:437</code></a>
         </p>
 
 
@@ -660,7 +709,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l707"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:707</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l753"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:753</code></a>
         </p>
 
 
@@ -693,7 +742,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l718"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:718</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l764"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:764</code></a>
         </p>
 
 
@@ -726,7 +775,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l337"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:337</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l372"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:372</code></a>
         </p>
 
 
@@ -759,7 +808,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l729"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:729</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l775"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:775</code></a>
         </p>
 
 
@@ -792,7 +841,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l350"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:350</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l385"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:385</code></a>
         </p>
 
 
@@ -988,7 +1037,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l277"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:277</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l279"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:279</code></a>
         </p>
 
 
@@ -1013,6 +1062,141 @@ This is done as part of validation because we first validate that both are not s
 
 
 </div>
+<div id="method_isLoading" class="method item">
+    <h3 class="name"><code>isLoading</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l310"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:310</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Determine if the behavior is loading objects or ids.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
+                    <p>true - the behavior is currently loading objects or ids.
+false - the behavior is not currently loading objects or ids.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_isLoadingIds" class="method item">
+    <h3 class="name"><code>isLoadingIds</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l320"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:320</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Determine if the behavior is loading ids.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
+                    <p>true - the behavior is currently loading ids.
+false - the behavior is not currently loading ids.</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_isLoadingObjects" class="method item">
+    <h3 class="name"><code>isLoadingObjects</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l330"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:330</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Determine if the behavior is loading objects.</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
+                    <p>true - the behavior is currently loading objects.
+false - the behavior is not currently loading objects.</p>
+
+            </div>
+        </div>
+
+
+</div>
 <div id="method_listenToIdsPropertyChangeEvent" class="method item">
     <h3 class="name"><code>listenToIdsPropertyChangeEvent</code></h3>
 
@@ -1029,7 +1213,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l305"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:305</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l340"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:340</code></a>
         </p>
 
 
@@ -1061,7 +1245,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l294"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:294</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l296"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:296</code></a>
         </p>
 
 
@@ -1096,7 +1280,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l260"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:260</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l262"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:262</code></a>
         </p>
 
 
@@ -1140,7 +1324,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l246"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:246</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l248"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:248</code></a>
         </p>
 
 
@@ -1182,7 +1366,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l324"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:324</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l359"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:359</code></a>
         </p>
 
 
