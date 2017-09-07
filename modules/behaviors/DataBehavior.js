@@ -211,7 +211,7 @@
      * @param [viewOptions] {Object} options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
-      _.bindAll(this, '__fetchSuccess', '__fetchFailed');
+      _.bindAll(this, '__fetchSuccess', '__fetchFailed', '__completeLoadingIds');
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
@@ -229,6 +229,8 @@
       });
 
       Behavior.apply(this, arguments);
+
+      this.set('loadingIds', 0);
 
       this.on('id-container-updated', this.listenToIdsPropertyChangeEvent);
       this.on('id-container-updated', this.retrieve);
@@ -299,7 +301,40 @@
     prepare: function() {
       var behaviorContext = Behavior.prototype.prepare.apply(this) || {};
       behaviorContext.data = this.data.toJSON();
+      behaviorContext.loading = this.isLoading();
+      behaviorContext.loadingIds = this.isLoadingIds();
+      behaviorContext.loadingObjects = this.isLoadingObjects();
       return behaviorContext;
+    },
+
+    /**
+     * Determine if the behavior is loading objects or ids.
+     * @method isLoading
+     * @return {Boolean} true - the behavior is currently loading objects or ids.
+     *                   false - the behavior is not currently loading objects or ids.
+     */
+    isLoading: function() {
+      return this.isLoadingIds() || this.isLoadingObjects();
+    },
+
+    /**
+     * Determine if the behavior is loading ids.
+     * @method isLoadingIds
+     * @return {Boolean} true - the behavior is currently loading ids.
+     *                   false - the behavior is not currently loading ids.
+     */
+    isLoadingIds: function() {
+      return this.get('loadingIds') > 0;
+    },
+
+    /**
+     * Determine if the behavior is loading objects.
+     * @method isLoadingObjects
+     * @return {Boolean} true - the behavior is currently loading objects.
+     *                   false - the behavior is not currently loading objects.
+     */
+    isLoadingObjects: function() {
+      return this.data.privateCollection.isLoading();
     },
 
     /**
@@ -506,6 +541,7 @@
      * @private
      */
     __getIds: function() {
+      this.set('loadingIds', this.get('loadingIds') + 1);
       this.__validateIds(); // validate ids enforces a fast-fail that guarantees that one of the if statements below will work.
 
       var idsDeferred = $.Deferred();
@@ -539,7 +575,17 @@
 
         idsDeferred.resolve(normalizedIds || []);
       }
-      return idsDeferred.promise();
+      return idsDeferred.promise()
+        .always(this.__completeLoadingIds);
+    },
+
+    /**
+     * Sets the loading ids property to false (loading completed).
+     * @method __completeLoadingIds
+     * @private
+     */
+    __completeLoadingIds: function() {
+      this.set('loadingIds', this.get('loadingIds') - 1);
     },
 
     /**
@@ -771,6 +817,36 @@
        * @property privateCollection {Collection}
        */
       this.privateCollection = options.privateCollection;
+    },
+
+    /**
+     * Determine if behavior is loading ids or objects.
+     * @method isLoading
+     * @return {Boolean} true - the behavior is loading objects or ids.
+     *                   false - the behavior is not loading objects or ids.
+     */
+    isLoading: function() {
+      return this.parentBehavior.isLoading();
+    },
+
+    /**
+     * Determine if the behavior is loading ids.
+     * @method isLoadingIds
+     * @return {Boolean} true - the behavior is currently loading ids.
+     *                   false - the behavior is not currently loading ids.
+     */
+    isLoadingIds: function() {
+      return this.parentBehavior.isLoadingIds();
+    },
+
+    /**
+     * Determine if the behavior is loading objects.
+     * @method isLoadingObjects
+     * @return {Boolean} true - the behavior is currently loading objects.
+     *                   false - the behavior is not currently loading objects.
+     */
+    isLoadingObjects: function() {
+      return this.parentBehavior.isLoadingObjects();
     },
 
     /**

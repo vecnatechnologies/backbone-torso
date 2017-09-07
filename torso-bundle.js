@@ -1157,12 +1157,14 @@
         base.call(this, args);
         this.loadedOnceDeferred = new $.Deferred();
         this.loadedOnce = false;
+        this.loadingCount = 0;
+        // Keeping loading boolean since it is technically public and may be in use.
         this.loading = false;
       },
 
       /**
        * @method hasLoadedOnce
-       * @return true if this model/collection has ever loaded from a fetch call
+       * @return {Boolean} true if this model/collection has ever loaded from a fetch call
        */
       hasLoadedOnce: function() {
         return this.loadedOnce;
@@ -1170,7 +1172,7 @@
 
       /**
        * @method isLoading
-       * @return true if this model/collection is currently loading new values from the server
+       * @return {Boolean} true if this model/collection is currently loading new values from the server
        */
       isLoading: function() {
         return this.loading;
@@ -1178,7 +1180,7 @@
 
       /**
        * @method getLoadedOncePromise
-       * @return a promise that will resolve when the model/collection has loaded for the first time
+       * @return {Promise} a promise that will resolve when the model/collection has loaded for the first time
        */
       getLoadedOncePromise: function() {
         return this.loadedOnceDeferred.promise();
@@ -1200,10 +1202,11 @@
        * @method __loadWrapper
        * @param fetchMethod {Function} - the method to invoke a fetch
        * @param options {Object} - the object to hold the options needed by the fetchMethod
-       * @return a promise when the fetch method has completed and the events have been triggered
+       * @return {Promise} a promise when the fetch method has completed and the events have been triggered
        */
       __loadWrapper: function(fetchMethod, options) {
         var object = this;
+        this.loadingCount++;
         this.loading = true;
         this.trigger('load-begin');
         return $.when(fetchMethod.call(object, options)).always(function() {
@@ -1211,7 +1214,11 @@
             object.loadedOnce = true;
             object.loadedOnceDeferred.resolve();
           }
-          object.loading = false;
+          object.loadingCount--;
+          if (object.loadingCount <= 0) {
+            object.loadingCount = 0; // prevent going negative.
+            object.loading = false;
+          }
         }).done(function(data, textStatus, jqXHR) {
           object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
         }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -5850,7 +5857,7 @@
      * @param [viewOptions] {Object} options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
-      _.bindAll(this, '__fetchSuccess', '__fetchFailed');
+      _.bindAll(this, '__fetchSuccess', '__fetchFailed', '__completeLoadingIds');
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
@@ -5868,6 +5875,8 @@
       });
 
       Behavior.apply(this, arguments);
+
+      this.set('loadingIds', 0);
 
       this.on('id-container-updated', this.listenToIdsPropertyChangeEvent);
       this.on('id-container-updated', this.retrieve);
@@ -5938,7 +5947,40 @@
     prepare: function() {
       var behaviorContext = Behavior.prototype.prepare.apply(this) || {};
       behaviorContext.data = this.data.toJSON();
+      behaviorContext.loading = this.isLoading();
+      behaviorContext.loadingIds = this.isLoadingIds();
+      behaviorContext.loadingObjects = this.isLoadingObjects();
       return behaviorContext;
+    },
+
+    /**
+     * Determine if the behavior is loading objects or ids.
+     * @method isLoading
+     * @return {Boolean} true - the behavior is currently loading objects or ids.
+     *                   false - the behavior is not currently loading objects or ids.
+     */
+    isLoading: function() {
+      return this.isLoadingIds() || this.isLoadingObjects();
+    },
+
+    /**
+     * Determine if the behavior is loading ids.
+     * @method isLoadingIds
+     * @return {Boolean} true - the behavior is currently loading ids.
+     *                   false - the behavior is not currently loading ids.
+     */
+    isLoadingIds: function() {
+      return this.get('loadingIds') > 0;
+    },
+
+    /**
+     * Determine if the behavior is loading objects.
+     * @method isLoadingObjects
+     * @return {Boolean} true - the behavior is currently loading objects.
+     *                   false - the behavior is not currently loading objects.
+     */
+    isLoadingObjects: function() {
+      return this.data.privateCollection.isLoading();
     },
 
     /**
@@ -6145,6 +6187,7 @@
      * @private
      */
     __getIds: function() {
+      this.set('loadingIds', this.get('loadingIds') + 1);
       this.__validateIds(); // validate ids enforces a fast-fail that guarantees that one of the if statements below will work.
 
       var idsDeferred = $.Deferred();
@@ -6178,7 +6221,17 @@
 
         idsDeferred.resolve(normalizedIds || []);
       }
-      return idsDeferred.promise();
+      return idsDeferred.promise()
+        .always(this.__completeLoadingIds);
+    },
+
+    /**
+     * Sets the loading ids property to false (loading completed).
+     * @method __completeLoadingIds
+     * @private
+     */
+    __completeLoadingIds: function() {
+      this.set('loadingIds', this.get('loadingIds') - 1);
     },
 
     /**
@@ -6410,6 +6463,36 @@
        * @property privateCollection {Collection}
        */
       this.privateCollection = options.privateCollection;
+    },
+
+    /**
+     * Determine if behavior is loading ids or objects.
+     * @method isLoading
+     * @return {Boolean} true - the behavior is loading objects or ids.
+     *                   false - the behavior is not loading objects or ids.
+     */
+    isLoading: function() {
+      return this.parentBehavior.isLoading();
+    },
+
+    /**
+     * Determine if the behavior is loading ids.
+     * @method isLoadingIds
+     * @return {Boolean} true - the behavior is currently loading ids.
+     *                   false - the behavior is not currently loading ids.
+     */
+    isLoadingIds: function() {
+      return this.parentBehavior.isLoadingIds();
+    },
+
+    /**
+     * Determine if the behavior is loading objects.
+     * @method isLoadingObjects
+     * @return {Boolean} true - the behavior is currently loading objects.
+     *                   false - the behavior is not currently loading objects.
+     */
+    isLoadingObjects: function() {
+      return this.parentBehavior.isLoadingObjects();
     },
 
     /**

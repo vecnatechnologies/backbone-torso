@@ -29,12 +29,14 @@
         base.call(this, args);
         this.loadedOnceDeferred = new $.Deferred();
         this.loadedOnce = false;
+        this.loadingCount = 0;
+        // Keeping loading boolean since it is technically public and may be in use.
         this.loading = false;
       },
 
       /**
        * @method hasLoadedOnce
-       * @return true if this model/collection has ever loaded from a fetch call
+       * @return {Boolean} true if this model/collection has ever loaded from a fetch call
        */
       hasLoadedOnce: function() {
         return this.loadedOnce;
@@ -42,7 +44,7 @@
 
       /**
        * @method isLoading
-       * @return true if this model/collection is currently loading new values from the server
+       * @return {Boolean} true if this model/collection is currently loading new values from the server
        */
       isLoading: function() {
         return this.loading;
@@ -50,7 +52,7 @@
 
       /**
        * @method getLoadedOncePromise
-       * @return a promise that will resolve when the model/collection has loaded for the first time
+       * @return {Promise} a promise that will resolve when the model/collection has loaded for the first time
        */
       getLoadedOncePromise: function() {
         return this.loadedOnceDeferred.promise();
@@ -72,10 +74,11 @@
        * @method __loadWrapper
        * @param fetchMethod {Function} - the method to invoke a fetch
        * @param options {Object} - the object to hold the options needed by the fetchMethod
-       * @return a promise when the fetch method has completed and the events have been triggered
+       * @return {Promise} a promise when the fetch method has completed and the events have been triggered
        */
       __loadWrapper: function(fetchMethod, options) {
         var object = this;
+        this.loadingCount++;
         this.loading = true;
         this.trigger('load-begin');
         return $.when(fetchMethod.call(object, options)).always(function() {
@@ -83,7 +86,11 @@
             object.loadedOnce = true;
             object.loadedOnceDeferred.resolve();
           }
-          object.loading = false;
+          object.loadingCount--;
+          if (object.loadingCount <= 0) {
+            object.loadingCount = 0; // prevent going negative.
+            object.loading = false;
+          }
         }).done(function(data, textStatus, jqXHR) {
           object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
         }).fail(function(jqXHR, textStatus, errorThrown) {

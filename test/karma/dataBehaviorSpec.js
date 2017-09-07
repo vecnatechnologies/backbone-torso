@@ -1193,6 +1193,471 @@ ids = {\n\
         });
     });
 
+    it('exposes loading property on the data behavior\'s private collection', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(dataBehavior.data.privateCollection.loading).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(dataBehavior.data.privateCollection.loading).toBe(false);
+      });
+
+      // Wait for initial load to complete before testing.
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(dataBehavior.data.privateCollection.loading).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('exposes isLoading() method on the data behavior\'s private collection', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(dataBehavior.data.privateCollection.isLoading()).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(dataBehavior.data.privateCollection.isLoading()).toBe(false);
+      });
+
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(dataBehavior.data.privateCollection.isLoading()).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('exposes isLoading() method on the data behavior\'s data attribute', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(dataBehavior.data.isLoading()).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(dataBehavior.data.isLoading()).toBe(false);
+      });
+
+      // Wait for initial load to complete before testing.
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(dataBehavior.data.isLoading()).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('exposes isLoading() method on the data behavior', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      expect(dataBehavior.isLoading()).toBe(true);
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(dataBehavior.isLoading()).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(dataBehavior.isLoading()).toBe(false);
+      });
+
+      // Wait for initial load to complete before testing.
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(dataBehavior.isLoading()).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('exposes isLoadingIds() that tracks the time it takes to load the ids', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
+        var thisBehavior = this;
+        expect(thisBehavior.isLoadingIds()).toBe(true);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          expect(thisBehavior.isLoadingIds()).toBe(true);
+          deferred.resolve([1]);
+        }, 1);
+        expect(thisBehavior.isLoadingIds()).toBe(true);
+        return deferred.promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+
+      // Wait for initial load to complete before doing our actual test.
+      dataBehavior.data.once('load-complete', function() {
+        expect(dataBehavior.isLoadingIds()).toBe(false);
+
+        dataBehavior.data.on('load-begin', function() {
+          expect(dataBehavior.isLoadingIds()).toBe(false);
+        });
+
+        dataBehavior.data.on('load-complete', function() {
+          expect(dataBehavior.isLoadingIds()).toBe(false);
+        });
+
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(dataBehavior.isLoadingIds()).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('and isLoadingIds() remains true when there are simultaneous requests for ids and one completes', function(done) {
+      var retrieveIdsStarted = 0;
+      var retrieveIdsCompleted = 0;
+
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+
+      defaultBehaviorConfiguration.ids = function() {
+        retrieveIdsStarted++;
+        var thisBehavior = this;
+        expect(thisBehavior.isLoadingIds()).toBe(true);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          expect(thisBehavior.isLoadingIds()).toBe(true);
+          retrieveIdsCompleted++;
+          deferred.resolve([1]);
+        }, 1);
+        expect(thisBehavior.isLoadingIds()).toBe(true);
+        return deferred.promise();
+      };
+
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+
+      dataBehavior.data.on('load-begin', function() {
+        var hasIdsLoading = retrieveIdsStarted > retrieveIdsCompleted;
+        expect(dataBehavior.isLoadingIds()).toBe(hasIdsLoading);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        var hasIdsLoading = retrieveIdsStarted > retrieveIdsCompleted;
+        expect(dataBehavior.isLoadingIds()).toBe(hasIdsLoading);
+      });
+
+      dataBehavior.retrieve()
+        .then(function () {
+          var hasIdsLoading = retrieveIdsStarted > retrieveIdsCompleted;
+          expect(dataBehavior.isLoadingIds()).toBe(hasIdsLoading);
+        });
+
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.isLoadingIds()).toBe(false);
+          expect(retrieveIdsStarted).toBe(retrieveIdsCompleted);
+          done();
+        });
+    });
+
+    it('exposes isLoadingObjects() that tracks the time it takes to load the objects based on ids', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
+        var thisBehavior = this;
+        expect(thisBehavior.isLoadingObjects()).toBe(false);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          expect(thisBehavior.isLoadingObjects()).toBe(false);
+          deferred.resolve([1]);
+        }, 1);
+        expect(thisBehavior.isLoadingObjects()).toBe(false);
+        return deferred.promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(dataBehavior.isLoadingObjects()).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(dataBehavior.isLoadingObjects()).toBe(false);
+      });
+
+      // Wait for initial load to complete before testing.
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(dataBehavior.isLoadingObjects()).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('and isLoadingObjects() remains true when there are simultaneous requests for objects and one completes', function(done) {
+      var retrieveObjectsStarted = 0;
+      var retrieveObjectsCompleted = 0;
+
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+
+      defaultBehaviorConfiguration.ids = function() {
+        var thisBehavior = this;
+        var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+        expect(thisBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+          expect(thisBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+          deferred.resolve([1]);
+        }, 1);
+        var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+        expect(thisBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+        return deferred.promise();
+      };
+
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      // Account for the initial loading of the data behavior when the view is instantiated.
+      if (dataBehavior.isLoadingObjects()) {
+        retrieveObjectsStarted++;
+      }
+
+      dataBehavior.data.on('load-begin', function() {
+        retrieveObjectsStarted++;
+        expect(dataBehavior.isLoadingObjects()).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        retrieveObjectsCompleted++;
+        var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+        window.console.log('retrieveObjectsStarted', retrieveObjectsStarted, 'retrieveObjectsCompleted', retrieveObjectsCompleted, 'isLoadingObjects()', dataBehavior.isLoadingObjects());
+        expect(dataBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+      });
+
+      dataBehavior.retrieve()
+        .then(function () {
+          var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+          expect(dataBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+        });
+
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.isLoadingObjects()).toBe(false);
+          expect(retrieveObjectsStarted).toBe(retrieveObjectsCompleted);
+          done();
+        });
+    });
+
+    it('exposes isLoading() that tracks the time it takes to load the ids and the objects based on ids', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
+        var thisBehavior = this;
+        expect(thisBehavior.isLoading()).toBe(true);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          expect(thisBehavior.isLoading()).toBe(true);
+          deferred.resolve([1]);
+        }, 1);
+        expect(thisBehavior.isLoading()).toBe(true);
+        return deferred.promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      // Initializing the view triggers the behavior to start pulling ids which is async due to the ids method above.
+      expect(dataBehavior.isLoading()).toBe(true);
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(dataBehavior.isLoading()).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(dataBehavior.isLoading()).toBe(false);
+      });
+
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(dataBehavior.isLoading()).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('exposes loading of ids to the template\'s context', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
+        var thisView = this.view;
+        expect(thisView.prepare().dataBehavior.loadingIds).toBe(true);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          expect(thisView.prepare().dataBehavior.loadingIds).toBe(true);
+          deferred.resolve([1]);
+        }, 1);
+        expect(thisView.prepare().dataBehavior.loadingIds).toBe(true);
+        return deferred.promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      // Initializing the view triggers the behavior to start pulling ids which is async due to the ids method above.
+      expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(true);
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
+      });
+
+      // Need to make sure the initial load triggered when the view is initialized is complete before listening and
+      // triggering the retrieve we want to test.
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.data.on('load-complete', function() {
+          expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
+        });
+
+        dataBehavior.retrieve()
+          .then(function() {
+            expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('exposes loading of objects to the template\'s context', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
+        var thisView = this.view;
+        expect(thisView.prepare().dataBehavior.loadingObjects).toBe(false);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          expect(thisView.prepare().dataBehavior.loadingObjects).toBe(false);
+          deferred.resolve([1]);
+        }, 1);
+        expect(thisView.prepare().dataBehavior.loadingObjects).toBe(false);
+        return deferred.promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      // Initializing the view triggers the behavior to start pulling ids which is async due to the ids method above.
+      expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(false);
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(false);
+      });
+
+      // Need to make sure the initial load triggered when the view is initialized is complete before listening and
+      // triggering the retrieve we want to test.
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function() {
+            expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(false);
+            done();
+          });
+      });
+    });
+
+    it('exposes loading of either ids or objects to the template\'s context', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      defaultBehaviorConfiguration.ids = function() {
+        var thisView = this.view;
+        expect(thisView.prepare().dataBehavior.loading).toBe(true);
+        var deferred = $.Deferred();
+        window.setTimeout(function() {
+          expect(thisView.prepare().dataBehavior.loading).toBe(true);
+          deferred.resolve([1]);
+        }, 1);
+        expect(thisView.prepare().dataBehavior.loading).toBe(true);
+        return deferred.promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+
+      dataBehavior.data.on('load-begin', function() {
+        expect(viewWithBehavior.prepare().dataBehavior.loading).toBe(true);
+      });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(viewWithBehavior.prepare().dataBehavior.loading).toBe(false);
+      });
+
+      dataBehavior.data.once('load-complete', function() {
+        dataBehavior.retrieve()
+          .then(function () {
+            expect(viewWithBehavior.prepare().dataBehavior.loading).toBe(false);
+            done();
+          });
+      });
+    });
+
     it('will re-fetch the ids and data when the ids idContainer triggers a change event for the ids property', function(done) {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
       var idContainerModel = new TorsoNestedModel();
