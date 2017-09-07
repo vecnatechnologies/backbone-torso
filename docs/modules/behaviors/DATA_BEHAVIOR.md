@@ -786,6 +786,7 @@ successEventPayload = {
 ## Description of all Options
 * `cache {Torso.Collection}` - the torso collection that is acting as a cache used to create the private collections.
 * `[renderOnFetch=false] {Boolean}` true - view will re-render when a `fetched` event is received from the behavior (listener is added to the behavior).  false - view will not trigger a render when fetch completes. 
+* `[skipInitialLoad=false] {Boolean}` true - skip the load triggered by the view completing initialization, false - trigger a `.retrieve()` on the data behavior when the view completes initialization.
 * `[returnSingleResult=false] {Boolean}` true - a single model result is expected, false - a collection result is expected.
 * `[alwaysFetch=false] {Boolean}` true - if it should use fetch() instead of pull() on the private collection.  false if it should use pull() instead.  True will query the server more often, but will provide more up-to-date data.  False will only query the server if the model hasn't already been retrieved.
 * `id or ids {String | Number | String[] | Number[] | Object | Function}` - duck-typed property that identifies the ids to use.
@@ -824,9 +825,6 @@ successEventPayload = {
   * "behaviors.behaviorAlias:[event name]" - arbitrary event triggered by another behavior on this view.
   * "behaviors.behaviorAlias.[property name]:[event name]" - arbitrary event triggered by another behavior's property on this view.
   * "behaviors.behaviorAlias.data:[event name]" - arbitrary event triggered by another behavior's data property on this view (specific example of `behaviorAlias.[property name]:[event name]`).
-<<<<<<< HEAD
-  * { '[event name]': < object (or function returning an object) that the event is triggered on > } - arbitrary "event" triggered on the supplied object.
-=======
   * { '[event name]': < object (or function returning an object) that the event is triggered on > } - arbitrary "event" triggered on the supplied object.
 
 ## Description of all Public Methods
@@ -843,4 +841,3 @@ successEventPayload = {
   * Returns the promise from the collection's trackAndPull() method.
 * `{jQuery.Promise} .fetch()` - Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
   * Returns the promise from the collection's trackAndFetch() method.
->>>>>>>  #307 - Expose loading data loading info
