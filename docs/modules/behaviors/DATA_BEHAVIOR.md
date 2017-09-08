@@ -812,20 +812,20 @@ successEventPayload = {
     }
     ```
 * `updateEvents {String | Object | Array}` - cause this behavior to re-calculate its ids and refetch them from the server if the given events are triggered (space separated if string, single item is equivalent to array of single item).
-  * [event name] below can be a change:<propertyName> event.
-  * [property name] below is can be a nested property of the base object.  Does not use .get('[property name]'), rather uses the direct fields of the object.
-  * "view:[event name]" - arbitrary event triggered on the view.
-  * "view.[property name]:[event name]" - arbitrary event triggered on the view's property.
-  * "viewState:[event name]" - arbitrary event triggered on the viewState.
-  * "model:[event name]" - arbitrary even triggered on the view's model.
-  * "model.[property name]:[event name]" - arbitrary even triggered on the view's model's property.
-  * "this:[event name]" - arbitrary event triggered by this behavior.
-  * "this.[property name]:[event name]" - arbitrary event triggered by this behavior's property.
-  * "this.data:[event name]" - arbitrary event triggered by this behavior's data property (specific example of `this.[property name]:[event name]`).
-  * "behaviors.behaviorAlias:[event name]" - arbitrary event triggered by another behavior on this view.
-  * "behaviors.behaviorAlias.[property name]:[event name]" - arbitrary event triggered by another behavior's property on this view.
-  * "behaviors.behaviorAlias.data:[event name]" - arbitrary event triggered by another behavior's data property on this view (specific example of `behaviorAlias.[property name]:[event name]`).
-  * { '[event name]': < object (or function returning an object) that the event is triggered on > } - arbitrary "event" triggered on the supplied object.
+  * `[event name]` below can be a change:<propertyName> event.
+  * `[property name]` below is can be a nested property of the base object.  Does not use .get('[property name]'), rather uses the direct fields of the object.
+  * `"view:[event name]"` - arbitrary event triggered on the view.
+  * `"view.[property name]:[event name]"` - arbitrary event triggered on the view's property.
+  * `"viewState:[event name]"` - arbitrary event triggered on the viewState.
+  * `"model:[event name]"` - arbitrary even triggered on the view's model.
+  * `"model.[property name]:[event name]"` - arbitrary even triggered on the view's model's property.
+  * `"this:[event name]"` - arbitrary event triggered by this behavior.
+  * `"this.[property name]:[event name]"` - arbitrary event triggered by this behavior's property.
+  * `"this.data:[event name]" - arbitrary event triggered by this behavior's data property (specific example of `this.[property name]:[event name]`).
+  * `"behaviors.behaviorAlias:[event name]"` - arbitrary event triggered by another behavior on this view.
+  * `"behaviors.behaviorAlias.[property name]:[event name]"` - arbitrary event triggered by another behavior's property on this view.
+  * `"behaviors.behaviorAlias.data:[event name]"` - arbitrary event triggered by another behavior's data property on this view (specific example of `behaviorAlias.[property name]:[event name]`).
+  * `{ '[event name]': < object (or function returning an object) that the event is triggered on > }` - arbitrary "event" triggered on the supplied object.  When the '[event name]' is triggered on the `_.result(< object >)` (the supplied object or on the object returned by the supplied function) then it will be considered an update and the ids will be recalculated.
 
 ## Description of all Public Methods
 `[data].` means that the same method is also aliased on the data object and can be access edither from the data behavior directly or from the `data` property of the data behavior.
