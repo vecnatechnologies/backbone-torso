@@ -358,6 +358,62 @@ id = function() {\n\
         });
     });
 
+    it('can specify null id from an async call:\n\
+id = function() {\n\
+  return $.Deferred().resolve(null).promise();\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.ids;
+      // Has to happen via function because if ids and id is not set then it fails to be constructed.
+      defaultBehaviorConfiguration.id = function() {
+        return $.Deferred().resolve(null).promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify undefined id:\n\
+id = function() {\n\
+  return $.Deferred().resolve(undefined).promise();\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.ids;
+      // Has to happen via function because if ids and id is not set then it fails to be constructed.
+      defaultBehaviorConfiguration.id = function() {
+        return $.Deferred().resolve(undefined).promise();
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
     it('can specify a single numeric value for id:\n\
 id = 1\n\
 ', function(done) {

@@ -6214,7 +6214,14 @@
         if (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
         } else if (ids && _.isFunction(ids.then)) {
-          idsDeferred = ids.then(normalizeIds);
+          idsDeferred = ids
+            .then(normalizeIds)
+            .then(function(processedIds) {
+              if (_.isUndefined(processedIds) || _.isNull(processedIds)) {
+                processedIds = [];
+              }
+              return processedIds;
+            });
         } else {
           idsDeferred.resolve([]);
         }
