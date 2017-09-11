@@ -1158,7 +1158,7 @@
         this.loadedOnceDeferred = new $.Deferred();
         this.loadedOnce = false;
         this.loadingCount = 0;
-        // Keeping loading boolean since it is technically public and may be in use.
+        // Loading is a convenience flag that is the equivalent of loadingCount > 0
         this.loading = false;
       },
 
@@ -6213,7 +6213,7 @@
         normalizedIds = normalizeIds(ids);
         if (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
-        } else if (!_.isUndefined(ids) && _.isFunction(ids.then)) {
+        } else if (ids && _.isFunction(ids.then)) {
           idsDeferred = ids.then(normalizeIds);
         } else {
           idsDeferred.resolve([]);

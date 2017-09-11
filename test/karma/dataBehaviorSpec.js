@@ -302,6 +302,62 @@ describe('A Torso Data Behavior', function() {
       expect(testPrivateCollectionView.testPrivateCollection).toBeDefined();
     });
 
+    it('can specify null id:\n\
+id = function() {\n\
+  return null;\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.ids;
+      // Has to happen via function because if ids and id is not set then it fails to be constructed.
+      defaultBehaviorConfiguration.id = function() {
+        return null;
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
+    it('can specify undefined id:\n\
+id = function() {\n\
+  return undefined;\n\
+}\n\
+', function(done) {
+      var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+      delete defaultBehaviorConfiguration.ids;
+      // Has to happen via function because if ids and id is not set then it fails to be constructed.
+      defaultBehaviorConfiguration.id = function() {
+        return undefined;
+      };
+      var ViewWithBehavior = TorsoView.extend({
+        behaviors: {
+          dataBehavior: defaultBehaviorConfiguration
+        }
+      });
+      var viewWithBehavior = new ViewWithBehavior();
+      var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+      dataBehavior.__getIds()
+        .then(function(ids) {
+          expect(ids).toEqual([]);
+          done();
+        }, function(error) {
+          fail(error);
+          done();
+        });
+    });
+
     it('can specify a single numeric value for id:\n\
 id = 1\n\
 ', function(done) {
