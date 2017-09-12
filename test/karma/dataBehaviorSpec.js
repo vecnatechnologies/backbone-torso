@@ -708,7 +708,7 @@ ids = {}\n\
       }
     });
 
-    it('can reference a idContainer that does not exist and will return an empty array of ids:\n\
+    it('can reference an idContainer that does not exist and will return an empty array of ids:\n\
 ids = {\n\
   property: \'type\',\n\
   idContainer: function() {\n\
@@ -1188,9 +1188,8 @@ ids = {\n\
         });
     });
 
-    it('will not re-render the view when the "fetched" event is triggered on the behavior if renderOnFetch is not set', function() {
+    it('will not re-render the view when the "fetched" event is triggered on behavior.data if renderOnFetch is not set', function() {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      defaultBehaviorConfiguration.ids = '_someIds';
       delete defaultBehaviorConfiguration.renderOnFetch;
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
@@ -1213,9 +1212,8 @@ ids = {\n\
       expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(0);
     });
 
-    it('will not re-render the view when the "fetched" event is triggered on the behavior if renderOnFetch is false', function() {
+    it('will not re-render the view when the "fetched" event is triggered on behavior.data if renderOnFetch is false', function() {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      defaultBehaviorConfiguration.ids = '_someIds';
       defaultBehaviorConfiguration.renderOnFetch = false;
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
@@ -1238,9 +1236,8 @@ ids = {\n\
       expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(0);
     });
 
-    it('will not re-render the view when the "fetched" event is triggered on the behavior if renderOnFetch is true', function() {
+    it('will re-render the view when the "fetched" event is triggered on behavior.data if renderOnFetch is true', function() {
       var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
-      defaultBehaviorConfiguration.ids = '_someIds';
       defaultBehaviorConfiguration.renderOnFetch = true;
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
@@ -1269,6 +1266,9 @@ ids = {\n\
       defaultBehaviorConfiguration.ids = { property: 'id' };
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
+        initialize: function() {
+          this.set('id', 'oldId')
+        },
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
         },
@@ -1286,7 +1286,7 @@ ids = {\n\
       var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
       dataBehavior.retrieve()
         .then(function() {
-          expect(dataBehavior.data.toJSON()).toEqual([]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'oldId', count: 0 }]);
           expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(expectedRenderCount);
           dataBehavior.on('fetched', function() {
             expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
@@ -1303,6 +1303,9 @@ ids = {\n\
       defaultBehaviorConfiguration.ids = { property: 'id' };
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
+        initialize: function() {
+          this.set('id', 'oldId')
+        },
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
         },
@@ -1320,7 +1323,7 @@ ids = {\n\
       var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
       dataBehavior.retrieve()
         .then(function() {
-          expect(dataBehavior.data.toJSON()).toEqual([]);
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'oldId', count: 0 }]);
           expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(expectedRenderCount);
           dataBehavior.on('fetched', function() {
             expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
@@ -1337,6 +1340,9 @@ ids = {\n\
       defaultBehaviorConfiguration.ids = { property: 'id' };
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
+        initialize: function() {
+          this.set('id', 'oldId')
+        },
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
         },
@@ -1351,18 +1357,21 @@ ids = {\n\
       });
       var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
       var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
-      var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
-      dataBehavior.retrieve()
-        .then(function() {
-          expect(dataBehavior.data.toJSON()).toEqual([]);
-          expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
-          dataBehavior.on('fetched', function() {
-            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+      // Wait for the initial render from initializing the view before testing.
+      dataBehavior.once('fetched', function() {
+        var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
+        dataBehavior.retrieve()
+          .then(function() {
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'oldId', count: 0 }]);
             expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
-            done();
+            dataBehavior.on('fetched', function() {
+              expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
+              expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
+              done();
+            });
+            viewWithBehaviorAndRenderCount.set('id', 'newId');
           });
-          viewWithBehaviorAndRenderCount.set('id', 'newId');
-        });
+      });
     });
 
     it('exposes loading property on the data behavior\'s private collection', function(done) {
@@ -1650,7 +1659,6 @@ ids = {\n\
       dataBehavior.data.on('load-complete', function() {
         retrieveObjectsCompleted++;
         var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
-        window.console.log('retrieveObjectsStarted', retrieveObjectsStarted, 'retrieveObjectsCompleted', retrieveObjectsCompleted, 'isLoadingObjects()', dataBehavior.isLoadingObjects());
         expect(dataBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
       });
 
@@ -2346,7 +2354,7 @@ dataBehavior.data.privateCollection.models[0].set(\'otherIds\', [20, 30, 40]);\n
       viewWithBehavior.set('idFromView', 10);
     });
 
-    it('will re-fetch when the id property on another data behavior changes to an empty value:\n\
+    it('will not re-fetch when the id property on another data behavior changes to an empty value:\n\
 ids = {\n\
   property: \'behaviors.dataBehavior.data:otherIds\'\n\
 }\n\
@@ -2905,5 +2913,171 @@ ids = function() {\n\
       done();
     });
     viewWithBehavior.set('testId2', 10);
+  });
+
+  it('can specify a function that returns an ids value that says it should skip retrieving objects for both fetch and pull:\n\
+ids = function() {\n\
+  return { skipObjectRetrieval: true };\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.ids = function() {
+      return { skipObjectRetrieval: true };
+    };
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.data.privateCollection.on('load-begin', function() {
+      fail('Data objects should not be fetched if ids is always an empty array.');
+      done();
+    });
+    dataBehavior.on('fetched', function() {
+      fail('Data objects should not be fetched if ids returns "{ skipObjectRetrieval: true }".');
+      done();
+    });
+    dataBehavior.fetch()
+      .then(function(response) {
+        expect(response).toEqual({ skipObjectRetrieval: true });
+        dataBehavior.pull()
+          .then(function(response) {
+            expect(response).toEqual({ skipObjectRetrieval: true });
+            done();
+          }, function(error) {
+            fail(error);
+            done();
+          });
+      }, function(error) {
+        fail(error);
+        done();
+      });
+  });
+
+  it('can specify a function that returns a promise of ids value that says it should skip retrieving objects for both fetch and pull:\n\
+ids = function() {\n\
+  var deferred = $.Deferred();\n\
+  window.setTimeout(function() {\n\
+    deferred.resolve({ skipObjectRetrieval: true });\n\
+  }, 1);\n\
+  return deferred.promise();\n\
+}\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.ids = function() {
+      var deferred = $.Deferred();
+      window.setTimeout(function() {
+        deferred.resolve({ skipObjectRetrieval: true });
+      }, 1);
+      return deferred.promise();
+    };
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.data.privateCollection.on('load-begin', function() {
+      fail('Data objects should not be fetched if ids is always an empty array.');
+      done();
+    });
+    dataBehavior.on('fetched', function() {
+      fail('Data objects should not be fetched if ids returns "{ skipObjectRetrieval: true }".');
+      done();
+    });
+    dataBehavior.fetch()
+      .then(function(response) {
+        expect(response).toEqual({ skipObjectRetrieval: true });
+        dataBehavior.pull()
+          .then(function(response) {
+            expect(response).toEqual({ skipObjectRetrieval: true });
+            done();
+          }, function(error) {
+            fail(error);
+            done();
+          });
+      }, function(error) {
+        fail(error);
+        done();
+      });
+  });
+
+  it('can specify an id value that says it should skip retrieving objects for both fetch and pull:\n\
+ids = { property: \'ids\' }\n\
+where view.ids = { skipObjectRetrieval: true }\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.ids = { property: 'ids' };
+    var ViewWithBehavior = TorsoView.extend({
+      ids: { skipObjectRetrieval: true },
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.data.privateCollection.on('load-begin', function() {
+      fail('Data objects should not be fetched if ids is always an empty array.');
+      done();
+    });
+    dataBehavior.on('fetched', function() {
+      fail('Data objects should not be fetched if ids returns "{ skipObjectRetrieval: true }".');
+      done();
+    });
+    dataBehavior.fetch()
+      .then(function(response) {
+        expect(response).toEqual({ skipObjectRetrieval: true });
+        dataBehavior.pull()
+          .then(function(response) {
+            expect(response).toEqual({ skipObjectRetrieval: true });
+            done();
+          }, function(error) {
+            fail(error);
+            done();
+          });
+      }, function(error) {
+        fail(error);
+        done();
+      });
+  });
+
+  it('will not fetch objects or trigger a "fetched" event if ids is an empty array and is updated to an empty array or value for both fetch and pull:\n\
+ids = []\n\
+', function(done) {
+    var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
+    defaultBehaviorConfiguration.ids = [];
+    var ViewWithBehavior = TorsoView.extend({
+      behaviors: {
+        dataBehavior: defaultBehaviorConfiguration
+      }
+    });
+    var viewWithBehavior = new ViewWithBehavior();
+    var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
+    dataBehavior.data.privateCollection.on('load-begin', function() {
+      fail('Data objects should not be fetched if ids is always an empty array.');
+      done();
+    });
+    dataBehavior.on('fetched', function() {
+      fail('Data objects should not be fetched if ids is always an empty array.');
+      done();
+    });
+    dataBehavior.fetch()
+      .then(function(response) {
+        expect(response).toEqual({ skipObjectRetrieval: true });
+        dataBehavior.pull()
+          .then(function(response) {
+            expect(response).toEqual({ skipObjectRetrieval: true });
+            done();
+          }, function(error) {
+            fail(error);
+            done();
+          });
+      }, function(error) {
+        fail(error);
+        done();
+      });
   });
 });
