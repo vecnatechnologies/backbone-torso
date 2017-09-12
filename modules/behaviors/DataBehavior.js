@@ -567,7 +567,7 @@
         normalizedIds = normalizeIds(ids);
         if (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
-        } else if (!_.isUndefined(ids) && _.isFunction(ids.then)) {
+        } else if (ids && _.isFunction(ids.then)) {
           idsDeferred = ids.then(normalizeIds);
         } else {
           idsDeferred.resolve([]);
