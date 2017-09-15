@@ -701,6 +701,7 @@
      *     will be thrown.
      *   * 'model' and 'view' are reserved field names and cannot be reused.
      *
+     * @method __getPrepareFieldsContext
      * @return {Object} context composed of { modelName: model.toJSON() } for every model identified.
      * @private
      */
@@ -742,7 +743,7 @@
 
           if (prepareFieldValue && _.isFunction(prepareFieldValue.toJSON)) {
             prepareFieldsContext[prepareFieldName] = prepareFieldValue.toJSON();
-          } else if (!prepareFieldIsSimpleString && prepareFieldValueIsDefinedOnView) {
+          } else if (!prepareFieldIsSimpleString || prepareFieldValueIsDefinedOnView) {
             prepareFieldsContext[prepareFieldName] = prepareFieldValue;
           }
         }

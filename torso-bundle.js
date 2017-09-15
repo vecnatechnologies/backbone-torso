@@ -2418,6 +2418,7 @@
      *     will be thrown.
      *   * 'model' and 'view' are reserved field names and cannot be reused.
      *
+     * @method __getPrepareFieldsContext
      * @return {Object} context composed of { modelName: model.toJSON() } for every model identified.
      * @private
      */
@@ -2459,7 +2460,7 @@
 
           if (prepareFieldValue && _.isFunction(prepareFieldValue.toJSON)) {
             prepareFieldsContext[prepareFieldName] = prepareFieldValue.toJSON();
-          } else if (!prepareFieldIsSimpleString && prepareFieldValueIsDefinedOnView) {
+          } else if (!prepareFieldIsSimpleString || prepareFieldValueIsDefinedOnView) {
             prepareFieldsContext[prepareFieldName] = prepareFieldValue;
           }
         }
@@ -6476,12 +6477,13 @@
      * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
      * @method __fetchSuccess
      * @param response {Object} the response from the server.
-     *   @param [response.skipObjectRetrieval=false] {Object} set this value if retrieving the objects based on ids should be skipped.
+     *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
+     *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
      * @private
      */
     __fetchSuccess: function(response) {
       this.set('fetchSuccess', true);
-      if (!response || !response.skipObjectRetrieval) {
+      if (this.__shouldTriggerFetchedEvent(response)) {
         this.trigger('fetched', {
           status: FETCHED_STATUSES.SUCCESS,
           response: response
@@ -6500,12 +6502,13 @@
      * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
      * @method __fetchFailed
      * @param response {Object} the response from the server.
-     *   @param [response.skipObjectRetrieval=false] {Object} set this value if retrieving the objects based on ids should be skipped.
+     *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
+     *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
      * @private
      */
     __fetchFailed: function(response) {
       this.set('fetchSuccess', false);
-      if (!response || !response.skipObjectRetrieval) {
+      if (this.__shouldTriggerFetchedEvent(response)) {
         this.trigger('fetched', {
           status: FETCHED_STATUSES.FAILURE,
           response: response
@@ -6514,6 +6517,9 @@
           status: FETCHED_STATUSES.FAILURE,
           response: response
         });
+        if (response.emptyIds) {
+          this.__firstEmptyFetchedTriggered = true;
+        }
       }
       this.trigger('fetched:ids');
       this.data.trigger('fetched:ids');
@@ -6521,16 +6527,29 @@
     },
 
     /**
+     * Determines if the 'fetched' event should be triggered in the __fetchFailed or __fetchSuccess methods.
+     * @param response {Object} to use to determine if the fetched event should be triggered.
+     *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
+     *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
+     * @return {Boolean} true if the fetched event should be triggered, false otherwise.
+     * @private
+     */
+    __shouldTriggerFetchedEvent: function(response) {
+      return !response || !response.skipObjectRetrieval || response.forceFetchedEvent;
+    },
+
+    /**
      * Skip retrieving objects if new ids list is empty and existing ids list is empty.
      * @method __skipRetrieveOnEmptyTrackedIdsAndNewIds
      * @param idsResult {Array|Object}
-     * @return {Array|Object} either the original idsResult or { skipObjectRetrieval: true } if both the ids retrieved and
-     *                        the current ids are empty.
+     * @return {Array|Object} either the original idsResult
+     *                        or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
+     *                        and the current ids are empty.
      * @private
      */
     __skipRetrieveOnEmptyTrackedIdsAndNewIds: function(idsResult) {
       if (_.isEmpty(idsResult) && _.isEmpty(this.data.privateCollection.getTrackedIds())) {
-        return { skipObjectRetrieval: true };
+        return { skipObjectRetrieval: true, forceFetchedEvent: true };
       } else {
         return idsResult;
       }

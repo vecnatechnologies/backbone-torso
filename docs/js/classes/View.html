@@ -182,6 +182,10 @@
 
                             </li>
                             <li class="index-item method private">
+                                <a href="#method___getPrepareFieldsContext">__getPrepareFieldsContext</a>
+
+                            </li>
+                            <li class="index-item method private">
                                 <a href="#method___getTrackedViewsHash">__getTrackedViewsHash</a>
 
                             </li>
@@ -441,7 +445,7 @@ See Torso.templateRenderer#render for params</a>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l824"><code>modules&#x2F;View.js:824</code></a>
+        <a href="../files/modules_View.js.html#l825"><code>modules&#x2F;View.js:825</code></a>
         </p>
 
 
@@ -522,7 +526,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l809"><code>modules&#x2F;View.js:809</code></a>
+        <a href="../files/modules_View.js.html#l810"><code>modules&#x2F;View.js:810</code></a>
         </p>
 
 
@@ -597,7 +601,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1142"><code>modules&#x2F;View.js:1142</code></a>
+        <a href="../files/modules_View.js.html#l1143"><code>modules&#x2F;View.js:1143</code></a>
         </p>
 
 
@@ -630,7 +634,7 @@ Finds all feedback zones that match the &quot;to&quot; field, and binds the &quo
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1082"><code>modules&#x2F;View.js:1082</code></a>
+        <a href="../files/modules_View.js.html#l1083"><code>modules&#x2F;View.js:1083</code></a>
         </p>
 
 
@@ -678,7 +682,7 @@ Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'})
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1387"><code>modules&#x2F;View.js:1387</code></a>
+        <a href="../files/modules_View.js.html#l1388"><code>modules&#x2F;View.js:1388</code></a>
         </p>
 
 
@@ -749,7 +753,7 @@ foo[][] -&gt; ['foo[0][0]', foo[1][0]']</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1251"><code>modules&#x2F;View.js:1251</code></a>
+        <a href="../files/modules_View.js.html#l1252"><code>modules&#x2F;View.js:1252</code></a>
         </p>
 
 
@@ -851,7 +855,7 @@ foo[][] -&gt; ['foo[0][0]', foo[1][0]']</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1297"><code>modules&#x2F;View.js:1297</code></a>
+        <a href="../files/modules_View.js.html#l1298"><code>modules&#x2F;View.js:1298</code></a>
         </p>
 
 
@@ -920,7 +924,7 @@ if the appropriate element exist on the page</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1337"><code>modules&#x2F;View.js:1337</code></a>
+        <a href="../files/modules_View.js.html#l1338"><code>modules&#x2F;View.js:1338</code></a>
         </p>
 
 
@@ -963,7 +967,7 @@ This does not handle or return any &quot;open&quot; array notations: []</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1274"><code>modules&#x2F;View.js:1274</code></a>
+        <a href="../files/modules_View.js.html#l1275"><code>modules&#x2F;View.js:1275</code></a>
         </p>
 
 
@@ -1031,7 +1035,7 @@ If dest is: my-feedback-foo[x][y] then it will find all elements that match: dat
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1004"><code>modules&#x2F;View.js:1004</code></a>
+        <a href="../files/modules_View.js.html#l1005"><code>modules&#x2F;View.js:1005</code></a>
         </p>
 
 
@@ -1074,6 +1078,77 @@ When used with the render method, it will return the view at a injections site b
 
 
 </div>
+<div id="method___getPrepareFieldsContext" class="method item private">
+    <h3 class="name"><code>__getPrepareFieldsContext</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_View.js.html#l672"><code>modules&#x2F;View.js:672</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Parses the combined arrays from the defaultPrepareFields array and the prepareFields array (or function
+returning an array).</p>
+<p>The default prepared fields are: [ { name: 'view', value: 'viewState' }, 'model' ]</p>
+<p>Prepared fields can be defined in a couple of ways:
+preparedFields = [
+'model',
+{ name: 'app', value: someGlobalCell },
+'a value that does not exist on the view',
+{ name: 'view', value: 'viewState' },
+{ name: 'patientId', value: '_patientId' },
+'objectWithoutToJSON'
+]</p>
+<p>Will result in the following context (where this === this view and it assumes all the properties on the view
+that are referenced are defined):
+{
+model: this.model.toJSON(),
+app: someGlobalCell.toJSON(),
+view: this.viewState.toJSON(),
+patientId: this._patientId,
+objectWithoutToJSON: this.objectWithoutToJSON
+}</p>
+<p>Things to be careful of:</p>
+<ul>
+<li>If the view already has a field named 'someGlobalCell' then the property on the view will be used instead of the global value.</li>
+<li>if the prepared field item is not a string or object containing 'name' and 'value' properties, then an exception
+will be thrown.</li>
+<li>'model' and 'view' are reserved field names and cannot be reused.</li>
+</ul>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
+                    <p>context composed of { modelName: model.toJSON() } for every model identified.</p>
+
+            </div>
+        </div>
+
+
+</div>
 <div id="method___getTrackedViewsHash" class="method item private">
     <h3 class="name"><code>__getTrackedViewsHash</code></h3>
 
@@ -1099,7 +1174,7 @@ When used with the render method, it will return the view at a injections site b
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l962"><code>modules&#x2F;View.js:962</code></a>
+        <a href="../files/modules_View.js.html#l963"><code>modules&#x2F;View.js:963</code></a>
         </p>
 
 
@@ -1183,7 +1258,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l753"><code>modules&#x2F;View.js:753</code></a>
+        <a href="../files/modules_View.js.html#l754"><code>modules&#x2F;View.js:754</code></a>
         </p>
 
 
@@ -1215,7 +1290,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1045"><code>modules&#x2F;View.js:1045</code></a>
+        <a href="../files/modules_View.js.html#l1046"><code>modules&#x2F;View.js:1046</code></a>
         </p>
 
 
@@ -1246,7 +1321,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1064"><code>modules&#x2F;View.js:1064</code></a>
+        <a href="../files/modules_View.js.html#l1065"><code>modules&#x2F;View.js:1065</code></a>
         </p>
 
 
@@ -1278,7 +1353,7 @@ which are disposed when the parent is disposed.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l797"><code>modules&#x2F;View.js:797</code></a>
+        <a href="../files/modules_View.js.html#l798"><code>modules&#x2F;View.js:798</code></a>
         </p>
 
 
@@ -1329,7 +1404,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l901"><code>modules&#x2F;View.js:901</code></a>
+        <a href="../files/modules_View.js.html#l902"><code>modules&#x2F;View.js:902</code></a>
         </p>
 
 
@@ -1443,7 +1518,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1129"><code>modules&#x2F;View.js:1129</code></a>
+        <a href="../files/modules_View.js.html#l1130"><code>modules&#x2F;View.js:1130</code></a>
         </p>
 
 
@@ -1512,7 +1587,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1028"><code>modules&#x2F;View.js:1028</code></a>
+        <a href="../files/modules_View.js.html#l1029"><code>modules&#x2F;View.js:1029</code></a>
         </p>
 
 
@@ -1597,7 +1672,7 @@ with the view's element after the view has generated its DOM.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1356"><code>modules&#x2F;View.js:1356</code></a>
+        <a href="../files/modules_View.js.html#l1357"><code>modules&#x2F;View.js:1357</code></a>
         </p>
 
 
@@ -1630,7 +1705,7 @@ Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1369"><code>modules&#x2F;View.js:1369</code></a>
+        <a href="../files/modules_View.js.html#l1370"><code>modules&#x2F;View.js:1370</code></a>
         </p>
 
 
@@ -1663,7 +1738,7 @@ Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l989"><code>modules&#x2F;View.js:989</code></a>
+        <a href="../files/modules_View.js.html#l990"><code>modules&#x2F;View.js:990</code></a>
         </p>
 
 
@@ -2450,7 +2525,7 @@ recursively removing views from the hierarchy.</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l839"><code>modules&#x2F;View.js:839</code></a>
+        <a href="../files/modules_View.js.html#l840"><code>modules&#x2F;View.js:840</code></a>
         </p>
 
 
@@ -3584,7 +3659,7 @@ If you are trying to transition in a tracked view, consider using this.transitio
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l936"><code>modules&#x2F;View.js:936</code></a>
+        <a href="../files/modules_View.js.html#l937"><code>modules&#x2F;View.js:937</code></a>
         </p>
 
 
@@ -3705,7 +3780,7 @@ This method is invoked on the parent view to attach a tracked view where the tra
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l850"><code>modules&#x2F;View.js:850</code></a>
+        <a href="../files/modules_View.js.html#l851"><code>modules&#x2F;View.js:851</code></a>
         </p>
 
 

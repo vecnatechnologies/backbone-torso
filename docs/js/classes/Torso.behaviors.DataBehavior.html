@@ -352,7 +352,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l777"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:777</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l778"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:778</code></a>
         </p>
 
 
@@ -381,11 +381,22 @@ This behavior also manages dependencies between data and other objects to allow 
                         <ul class="params-list">
                             <li class="param">
                                     <code class="param-name optional">[skipObjectRetrieval=false]</code>
-                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>set this value if retrieving the objects based on ids should be skipped.</p>
+                                    <p>if we retrieved objects, then trigger fetch event.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[forceFetchedEvent=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>if true then trigger fetch no matter what.</p>
 
                                 </div>
 
@@ -450,11 +461,22 @@ This behavior also manages dependencies between data and other objects to allow 
                         <ul class="params-list">
                             <li class="param">
                                     <code class="param-name optional">[skipObjectRetrieval=false]</code>
-                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
                                     <span class="flag optional" title="This parameter is optional.">optional</span>
 
                                 <div class="param-description">
-                                    <p>set this value if retrieving the objects based on ids should be skipped.</p>
+                                    <p>if we retrieved objects, then trigger fetch event.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[forceFetchedEvent=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>if true then trigger fetch no matter what.</p>
 
                                 </div>
 
@@ -720,7 +742,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l801"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:801</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l818"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:818</code></a>
         </p>
 
 
@@ -754,8 +776,9 @@ This is done as part of validation because we first validate that both are not s
 
             <div class="returns-description">
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
-                    <p>either the original idsResult or { skipObjectRetrieval: true } if both the ids retrieved and
-the current ids are empty.</p>
+                    <p>either the original idsResult
+or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
+and the current ids are empty.</p>
 
             </div>
         </div>
@@ -812,7 +835,7 @@ the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l817"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:817</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l835"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:835</code></a>
         </p>
 
 
@@ -845,7 +868,7 @@ the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l828"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:828</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l846"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:846</code></a>
         </p>
 
 
@@ -911,7 +934,7 @@ the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l839"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:839</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l857"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:857</code></a>
         </p>
 
 
