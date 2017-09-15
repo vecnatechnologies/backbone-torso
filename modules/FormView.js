@@ -108,12 +108,10 @@
      *         {Object.success} A boolean value of true if validation has succeeded
      */
     prepare: function() {
-      return {
-        model: this.model.toJSON(),
-        view: this.viewState.toJSON(),
-        formErrors: (_.size(this._errors) !== 0) ? this._errors : null,
-        formSuccess: this._success
-      };
+      var templateContext = View.prototype.prepare.apply(this);
+      templateContext.formErrors = (_.size(this._errors) !== 0) ? this._errors : null;
+      templateContext.formSuccess = this._success;
+      return templateContext;
     },
 
     /**

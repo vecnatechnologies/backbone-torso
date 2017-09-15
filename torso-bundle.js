@@ -1768,6 +1768,7 @@
     feedbackCell: null,
     behaviors: null,
     templateRendererOptions: undefined,
+    prepareFields: null,
     __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
@@ -1849,21 +1850,15 @@
     },
 
     /**
+     * prepareFields can be used to augment the default render method contents.
+     * See __getPrepareFieldsContext() for more details on how to configure them.
+     *
      * @return {Object} context for a render method. Defaults to:
      *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
      * @method prepare
      */
     prepare: function() {
-      if (this.model) {
-        return {
-          model: this.model.toJSON(),
-          view: this.viewState.toJSON()
-        };
-      } else {
-        return {
-          view: this.viewState.toJSON()
-        };
-      }
+      return this.__getPrepareFieldsContext();
     },
 
     /**
@@ -2390,6 +2385,87 @@
     },
 
     //************** Private methods **************//
+
+    /**
+     * Parses the combined arrays from the defaultPrepareFields array and the prepareFields array (or function
+     * returning an array).
+     *
+     * The default prepared fields are: [ { name: 'view', value: 'viewState' }, 'model' ]
+     *
+     * Prepared fields can be defined in a couple of ways:
+     *   preparedFields = [
+     *     'model',
+     *     { name: 'app', value: someGlobalCell },
+     *     'a value that does not exist on the view',
+     *     { name: 'view', value: 'viewState' },
+     *     { name: 'patientId', value: '_patientId' },
+     *     'objectWithoutToJSON'
+     *   ]
+     *
+     * Will result in the following context (where this === this view and it assumes all the properties on the view
+     * that are referenced are defined):
+     *   {
+     *     model: this.model.toJSON(),
+     *     app: someGlobalCell.toJSON(),
+     *     view: this.viewState.toJSON(),
+     *     patientId: this._patientId,
+     *     objectWithoutToJSON: this.objectWithoutToJSON
+     *   }
+     *
+     * Things to be careful of:
+     *   * If the view already has a field named 'someGlobalCell' then the property on the view will be used instead of the global value.
+     *   * if the prepared field item is not a string or object containing 'name' and 'value' properties, then an exception
+     *     will be thrown.
+     *   * 'model' and 'view' are reserved field names and cannot be reused.
+     *
+     * @return {Object} context composed of { modelName: model.toJSON() } for every model identified.
+     * @private
+     */
+    __getPrepareFieldsContext: function() {
+      var prepareFieldsContext = {};
+      var prepareFields = _.result(this, 'prepareFields');
+      var defaultPrepareFields = [ { name: 'view', value: 'viewState' }, 'model' ];
+      prepareFields = _.union(prepareFields, defaultPrepareFields);
+      if (prepareFields && prepareFields.length > 0) {
+        for (var fieldIndex = 0; fieldIndex < prepareFields.length; fieldIndex++) {
+          var prepareField = prepareFields[fieldIndex];
+          var prepareFieldIsSimpleString = _.isString(prepareField);
+
+          var prepareFieldName = prepareField;
+          var prepareFieldValue = prepareField;
+
+          if (!prepareFieldIsSimpleString) {
+            if (!_.isString(prepareField.name)) {
+              throw "prepareFields items need to either be a string or define a .name property that is a simple string to use for the key in the template context.";
+            }
+
+            if (_.isUndefined(prepareField.value)) {
+              throw "prepareFields items need a value property if it is not a string.";
+            }
+
+            prepareFieldName = prepareField.name;
+            prepareFieldValue = prepareField.value;
+          }
+          if (!_.isUndefined(prepareFieldsContext[prepareFieldName])) {
+            throw "duplicate prepareFields name (" + prepareFieldName + ").  Note 'view' and 'model' are reserved names.";
+          }
+
+          // Note _.result() also returns undefined if the 2nd argument is not a string.
+          var prepareFieldValueFromView = _.result(this, prepareFieldValue);
+          var prepareFieldValueIsDefinedOnView = !_.isUndefined(prepareFieldValueFromView);
+          if (prepareFieldValueIsDefinedOnView) {
+            prepareFieldValue = prepareFieldValueFromView;
+          }
+
+          if (prepareFieldValue && _.isFunction(prepareFieldValue.toJSON)) {
+            prepareFieldsContext[prepareFieldName] = prepareFieldValue.toJSON();
+          } else if (!prepareFieldIsSimpleString && prepareFieldValueIsDefinedOnView) {
+            prepareFieldsContext[prepareFieldName] = prepareFieldValue;
+          }
+        }
+      }
+      return prepareFieldsContext;
+    },
 
     /**
      * Initializes the behaviors
@@ -6783,12 +6859,10 @@
      *         {Object.success} A boolean value of true if validation has succeeded
      */
     prepare: function() {
-      return {
-        model: this.model.toJSON(),
-        view: this.viewState.toJSON(),
-        formErrors: (_.size(this._errors) !== 0) ? this._errors : null,
-        formSuccess: this._success
-      };
+      var templateContext = View.prototype.prepare.apply(this);
+      templateContext.formErrors = (_.size(this._errors) !== 0) ? this._errors : null;
+      templateContext.formSuccess = this._success;
+      return templateContext;
     },
 
     /**
