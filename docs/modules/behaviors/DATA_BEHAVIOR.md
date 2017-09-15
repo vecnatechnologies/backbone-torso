@@ -810,6 +810,9 @@ successEventPayload = {
       if (... not enough info to generate criteria ...) {
         return { skipObjectRetrieval: true };
       }
+      if (... not enough info to generate criteria but you still want to trigger a 'fetched' event ...) {
+        return { skipObjectRetrieval: true, forceFetchedEvent: true };
+      }
       var critera = { ... some criteria ... };
       return cache.fetchIdsByCriteria(criteria);
     }

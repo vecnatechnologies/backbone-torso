@@ -3044,7 +3044,7 @@ where view.ids = { skipObjectRetrieval: true }\n\
       });
   });
 
-  it('will not fetch objects or trigger a "fetched" event if ids is an empty array and is updated to an empty array or value for both fetch and pull:\n\
+  it('will not fetch objects if ids is an empty array and is updated to an empty array or value for both fetch and pull:\n\
 ids = []\n\
 ', function(done) {
     var defaultBehaviorConfiguration = getBasicBehaviorConfiguration();
@@ -3060,16 +3060,12 @@ ids = []\n\
       fail('Data objects should not be fetched if ids is always an empty array.');
       done();
     });
-    dataBehavior.on('fetched', function() {
-      fail('Data objects should not be fetched if ids is always an empty array.');
-      done();
-    });
     dataBehavior.fetch()
       .then(function(response) {
-        expect(response).toEqual({ skipObjectRetrieval: true });
+        expect(response).toEqual({ skipObjectRetrieval: true, forceFetchedEvent: true });
         dataBehavior.pull()
           .then(function(response) {
-            expect(response).toEqual({ skipObjectRetrieval: true });
+            expect(response).toEqual({ skipObjectRetrieval: true, forceFetchedEvent: true });
             done();
           }, function(error) {
             fail(error);
