@@ -360,7 +360,9 @@
 
       // This allows &#x27;renderOnFetch&#x27; to be changed at runtime after the constructor is executed.
       this.on(&#x27;fetched&#x27;, function() {
-        if (this.renderOnFetch) {
+        // If a view isn&#x27;t active then it shouldn&#x27;t be rendering.
+        // When a view is attached it is rendered anyway.
+        if (this.renderOnFetch &amp;&amp; this.view.isActive() &amp;&amp; this.view.isAttached()) {
           this.view.render();
         }
       });

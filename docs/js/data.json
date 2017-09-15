@@ -274,7 +274,7 @@
             },
             "tag": "module",
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 813
+            "line": 815
         },
         "Torso": {
             "name": "Torso",
@@ -348,7 +348,7 @@
             "module": "Torso.behaviors.DataBehavior",
             "namespace": "Torso.behaviors.DataBehavior",
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 813,
+            "line": 815,
             "description": "Data object used to create the .data property of the DataBehavior.",
             "is_constructor": 1
         },
@@ -909,7 +909,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 261,
+            "line": 263,
             "description": "Retrieves the ids for this data object and passes them off to the private collection to track and then does a\npull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).",
             "itemtype": "method",
             "name": "retrieve",
@@ -923,7 +923,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 275,
+            "line": 277,
             "description": "Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.",
             "itemtype": "method",
             "name": "pull",
@@ -937,7 +937,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 292,
+            "line": 294,
             "description": "Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.",
             "itemtype": "method",
             "name": "fetch",
@@ -951,7 +951,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 309,
+            "line": 311,
             "description": "Adds the toJSON of the data represented by this behavior to the context.",
             "itemtype": "method",
             "name": "prepare",
@@ -962,7 +962,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 323,
+            "line": 325,
             "description": "Determine if the behavior is loading objects or ids.",
             "itemtype": "method",
             "name": "isLoading",
@@ -976,7 +976,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 333,
+            "line": 335,
             "description": "Determine if the behavior is loading ids.",
             "itemtype": "method",
             "name": "isLoadingIds",
@@ -990,7 +990,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 343,
+            "line": 345,
             "description": "Determine if the behavior is loading objects.",
             "itemtype": "method",
             "name": "isLoadingObjects",
@@ -1004,7 +1004,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 353,
+            "line": 355,
             "description": "Listens for the change event on the ids property and, if triggered, re-fetches the data based on the new ids.",
             "itemtype": "method",
             "name": "listenToIdsPropertyChangeEvent",
@@ -1014,7 +1014,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 372,
+            "line": 374,
             "description": "Removes the listener added by listenToIdsPropertyChangeEvent().",
             "itemtype": "method",
             "name": "stopListeningToIdsPropertyChangeEvent",
@@ -1024,7 +1024,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 385,
+            "line": 387,
             "description": "Removes existing listeners and adds new ones for all of the updateEvents configured.",
             "itemtype": "method",
             "name": "_delegateUpdateEvents",
@@ -1036,7 +1036,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 398,
+            "line": 400,
             "description": "Removes existing event listeners.",
             "itemtype": "method",
             "name": "_undelegateEvents",
@@ -1048,7 +1048,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 410,
+            "line": 412,
             "description": "Parses this.updateEvents configuration.",
             "return": {
                 "description": "]} an array of objects with the event name and idContainer included.",
@@ -1062,7 +1062,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 421,
+            "line": 423,
             "description": "Parses an individual event configuration.\nNote: events defined using objects can have more than one event defined w/in the object.",
             "params": [
                 {
@@ -1083,7 +1083,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 450,
+            "line": 452,
             "description": "Validates that the cache property is valid and if not throws an error describing why its not valid.",
             "itemtype": "method",
             "name": "__validateCache",
@@ -1095,7 +1095,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 464,
+            "line": 466,
             "description": "Validates that the ids property is valid and if not throws an error describing why its not valid.\nA side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.\nThis is done as part of validation because we first validate that both are not set.",
             "itemtype": "method",
             "name": "__normalizeAndValidateIds",
@@ -1107,7 +1107,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 479,
+            "line": 481,
             "description": "Validates that the ids property is valid and if not throws an error describing why its not valid.\nA side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.\nThis is done as part of validation because we first validate that both are not set.",
             "itemtype": "method",
             "name": "__normalizeAndValidateIds",
@@ -1119,7 +1119,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 513,
+            "line": 515,
             "description": "Validates that the updateEvents property is valid and if not throws an error describing why its not valid.",
             "itemtype": "method",
             "name": "__normalizeAndValidateUpdateEvents",
@@ -1131,7 +1131,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 537,
+            "line": 539,
             "description": "Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.",
             "itemtype": "method",
             "name": "__normalizeAndValidateIds",
@@ -1143,7 +1143,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 550,
+            "line": 552,
             "itemtype": "method",
             "name": "__getIds",
             "return": {
@@ -1158,7 +1158,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 602,
+            "line": 604,
             "description": "Sets the loading ids property to false (loading completed).",
             "itemtype": "method",
             "name": "__completeLoadingIds",
@@ -1170,7 +1170,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 611,
+            "line": 613,
             "description": "Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.",
             "itemtype": "method",
             "name": "__parseIdsPropertyNameAndIdContainer",
@@ -1186,7 +1186,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 643,
+            "line": 645,
             "description": "Parses the idContainer property of ids.",
             "return": {
                 "description": "the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).",
@@ -1200,7 +1200,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 664,
+            "line": 666,
             "description": "Parses a string that contains a container and details for that container (event name or property name).\nStrings are expected to be of the form '<some container path>:<detail>'.",
             "params": [
                 {
@@ -1220,7 +1220,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 711,
+            "line": 713,
             "description": "Parse a string type update event.\nContext Key (first part of the string up to the first ':') can be one of the following:\n  this (maps to the behavior),\n  view or empty (maps to the behavior's view),\n  viewState (maps to the behavior's view's viewState),\n  model (maps to the behavior's view's model),\n  <*> any others are assumed to be the names of behaviors on this behavior's view.",
             "params": [
                 {
@@ -1241,7 +1241,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 733,
+            "line": 735,
             "description": "Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.",
             "itemtype": "method",
             "name": "__fetchSuccess",
@@ -1260,7 +1260,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 753,
+            "line": 755,
             "description": "Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.",
             "itemtype": "method",
             "name": "__fetchFailed",
@@ -1279,7 +1279,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 773,
+            "line": 775,
             "description": "Adds listeners when the view is activated.",
             "itemtype": "method",
             "name": "_activate",
@@ -1291,7 +1291,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 784,
+            "line": 786,
             "description": "Stops listening when the view is deactivated.",
             "itemtype": "method",
             "name": "_deactivate",
@@ -1303,7 +1303,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 795,
+            "line": 797,
             "description": "Default dispose stuff because its not already on behavior.  See https://github.com/vecnatechnologies/backbone-torso/issues/295",
             "itemtype": "method",
             "name": "_dispose",
@@ -1315,7 +1315,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 823,
+            "line": 825,
             "description": "Instantiates the data objects and binds it to this behavior instance.",
             "params": [
                 {
@@ -1342,7 +1342,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 830,
+            "line": 832,
             "description": "The dataBehavior instance that owns this data object.",
             "itemtype": "property",
             "name": "parentBehavior",
@@ -1353,7 +1353,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 835,
+            "line": 837,
             "description": "The private collection that this data object manages.",
             "itemtype": "property",
             "name": "privateCollection",
@@ -1364,7 +1364,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 842,
+            "line": 844,
             "description": "Determine if behavior is loading ids or objects.",
             "itemtype": "method",
             "name": "isLoading",
@@ -1378,7 +1378,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 852,
+            "line": 854,
             "description": "Determine if the behavior is loading ids.",
             "itemtype": "method",
             "name": "isLoadingIds",
@@ -1392,7 +1392,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 862,
+            "line": 864,
             "description": "Determine if the behavior is loading objects.",
             "itemtype": "method",
             "name": "isLoadingObjects",
@@ -1406,7 +1406,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 872,
+            "line": 874,
             "description": "Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.",
             "itemtype": "method",
             "name": "toJSON",
@@ -1420,7 +1420,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 893,
+            "line": 895,
             "description": "Get the full data object contents (either an array of model attributes or a single model attribute based on the\nvalue of propertyName) or the value of a specific property if a single result is expected.\n\nIf returnSingleResult is true then this will return the given property from the model (if that model exists).\nIf returnSingleResult is false then this will return an array containing that property from all of the retrieved models.",
             "itemtype": "method",
             "name": "get",
@@ -1442,7 +1442,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 922,
+            "line": 924,
             "itemtype": "method",
             "name": "getModel",
             "params": [
@@ -1465,7 +1465,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 947,
+            "line": 949,
             "itemtype": "method",
             "name": "getModels",
             "return": {
@@ -1478,7 +1478,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 955,
+            "line": 957,
             "description": "Adds the listeners to the private collection.",
             "itemtype": "method",
             "name": "activate",
@@ -1488,7 +1488,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 963,
+            "line": 965,
             "description": "Removes the listeners on the private collection.",
             "itemtype": "method",
             "name": "deactivate",
@@ -1498,7 +1498,7 @@
         },
         {
             "file": "modules/behaviors/DataBehavior.js",
-            "line": 971,
+            "line": 973,
             "description": "Dispose of the data events.",
             "class": "Torso.behaviors.DataBehavior.Data",
             "module": "Torso.behaviors.DataBehavior",
@@ -6096,7 +6096,7 @@
         },
         {
             "message": "unknown tag: override",
-            "line": " modules/behaviors/DataBehavior.js:309"
+            "line": " modules/behaviors/DataBehavior.js:311"
         },
         {
             "message": "unknown tag: override",
@@ -6120,31 +6120,31 @@
         },
         {
             "message": "Missing item type\nParses this.updateEvents configuration.",
-            "line": " modules/behaviors/DataBehavior.js:410"
+            "line": " modules/behaviors/DataBehavior.js:412"
         },
         {
             "message": "Missing item type\nParses an individual event configuration.\nNote: events defined using objects can have more than one event defined w/in the object.",
-            "line": " modules/behaviors/DataBehavior.js:421"
+            "line": " modules/behaviors/DataBehavior.js:423"
         },
         {
             "message": "Missing item type\nParses the idContainer property of ids.",
-            "line": " modules/behaviors/DataBehavior.js:643"
+            "line": " modules/behaviors/DataBehavior.js:645"
         },
         {
             "message": "Missing item type\nParses a string that contains a container and details for that container (event name or property name).\nStrings are expected to be of the form '<some container path>:<detail>'.",
-            "line": " modules/behaviors/DataBehavior.js:664"
+            "line": " modules/behaviors/DataBehavior.js:666"
         },
         {
             "message": "Missing item type\nParse a string type update event.\nContext Key (first part of the string up to the first ':') can be one of the following:\n  this (maps to the behavior),\n  view or empty (maps to the behavior's view),\n  viewState (maps to the behavior's view's viewState),\n  model (maps to the behavior's view's model),\n  <*> any others are assumed to be the names of behaviors on this behavior's view.",
-            "line": " modules/behaviors/DataBehavior.js:711"
+            "line": " modules/behaviors/DataBehavior.js:713"
         },
         {
             "message": "Missing item type\nInstantiates the data objects and binds it to this behavior instance.",
-            "line": " modules/behaviors/DataBehavior.js:823"
+            "line": " modules/behaviors/DataBehavior.js:825"
         },
         {
             "message": "Missing item type\nDispose of the data events.",
-            "line": " modules/behaviors/DataBehavior.js:971"
+            "line": " modules/behaviors/DataBehavior.js:973"
         },
         {
             "message": "Missing item type\nSee {{#crossLink \"FormModel/trackModels:method\"}}.trackModels(){{/crossLink}}",

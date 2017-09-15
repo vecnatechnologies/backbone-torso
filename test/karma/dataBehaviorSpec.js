@@ -1197,6 +1197,10 @@ ids = {\n\
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
         },
+        // hack because isAttached() doesn't work in tests.
+        isAttached: function() {
+          return true;
+        },
         render: function() {
           this.__renderCount = 0;
           return TorsoView.prototype.render.apply(this, arguments);
@@ -1217,6 +1221,10 @@ ids = {\n\
         __renderCount: 0,
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
+        },
+        // hack because isAttached() doesn't work in tests.
+        isAttached: function() {
+          return true;
         },
         render: function() {
           this.__renderCount = 0;
@@ -1239,6 +1247,10 @@ ids = {\n\
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
         },
+        // hack because isAttached() doesn't work in tests.
+        isAttached: function() {
+          return true;
+        },
         render: function() {
           this.__renderCount++;
           return TorsoView.prototype.render.apply(this, arguments);
@@ -1259,6 +1271,10 @@ ids = {\n\
         __renderCount: 0,
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
+        },
+        // hack because isAttached() doesn't work in tests.
+        isAttached: function() {
+          return true;
         },
         render: function() {
           this.__renderCount++;
@@ -1290,6 +1306,10 @@ ids = {\n\
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
         },
+        // hack because isAttached() doesn't work in tests.
+        isAttached: function() {
+          return true;
+        },
         render: function() {
           this.__renderCount++;
           return TorsoView.prototype.render.apply(this, arguments);
@@ -1319,6 +1339,10 @@ ids = {\n\
         __renderCount: 0,
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
+        },
+        // hack because isAttached() doesn't work in tests.
+        isAttached: function() {
+          return true;
         },
         render: function() {
           this.__renderCount++;
