@@ -802,11 +802,14 @@ successEventPayload = {
       * { property: 'behaviors.demographics.data:appointments' }
       * { property: 'id', idContainer: userService }
       * { property: 'username', idContainer: function() { application.getCurrentUser() } }
-  * If id(s) is a `function(cache)` - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive) to track with the private collection.  Cache is passed in as the first argument so that the behavior can be defined and the cache can be overridden later.  "this" is the behavior (from which you can get the view if needed).  What was criteria should use this instead:
+  * If id(s) is a `function(cache)` - expected to return the id(s) (either array, jquery deferred that resolves to the id(s), a single primitive, or an object) to track with the private collection.  If an object is returned it is checked for the `.skipObjectRetrieval` property.  If this property is truthy then fetching objects by ids is skipped for this id retrieval.  This is a good way for a function that calculates ids to let the system know that it doesn't have enough information to determine the ids so the current data behavior state shouldn't change.  Cache is passed in as the first argument so that the behavior can be defined and the cache can be overridden later.  "this" is the behavior (from which you can get the view if needed).  What was criteria should use this instead:
     ```JavaScript
     function(cache) {
       var thisBehaviorInstance = this;
       var view = this.view;
+      if (... not enough info to generate criteria ...) {
+        return { skipObjectRetrieval: true };
+      }
       var critera = { ... some criteria ... };
       return cache.fetchIdsByCriteria(criteria);
     }
@@ -836,8 +839,8 @@ successEventPayload = {
 * `{Boolean} [data].isLoadingObjects()` - Determine if the behavior is loading objects.
   * Returns true if the behavior is loading objects, false otherwise.
 * `{jQuery.Promise} .retrieve()` - Retrieves the ids for this data object and passes them off to the private collection to track and then does a pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
-  * Returns the promise from the collection's fetch or pull methods.
-* `{jQuery.Promise} .pull()` - Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
-  * Returns the promise from the collection's trackAndPull() method.
-* `{jQuery.Promise} .fetch()` - Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
-  * Returns the promise from the collection's trackAndFetch() method.
+  * Returns the promise from the collection's `.trackAndPull()` or `.trackAndFetch()` methods or `{ skipObjectRetrieval: true }` if `.trackAndPull()` or `.trackAndFetch()` was skipped.
+* `{jQuery.Promise} .pull()` - Retrieves the ids for this data object and passes them off to the private collection's `.trackAndPull()` method.
+  * Returns the promise from the collection's `.trackAndPull()` method or `{ skipObjectRetrieval: true }` if `.trackAndPull()` was skipped.
+* `{jQuery.Promise} .fetch()` - Retrieves the ids for this data object and passes them off to the private collection's `.trackAndFetch()` method.
+  * Returns the promise from the collection's `.trackAndFetch()` method or `{ skipObjectRetrieval: true }` if `.trackAndFetch()` was skipped.

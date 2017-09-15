@@ -134,10 +134,11 @@
 
   /**
    * Converts string or number values into an array with a single string or number item.
-   * If the input is not a string, number or array then undefined is returned.
+   * If the input is not a string, number, array, or info about the ids then undefined is returned.
    * This is a private helper method used internally by this behavior and is not exposed in any way.
-   * @param ids {String|Number|String[]|Number[]} the ids to convert.
-   * @return {String[]|Number[]} an array of strings or numbers.
+   * @param ids {String|Number|String[]|Number[]|Object} the ids to convert.
+   *   @param [ids.skipObjectRetrieval] {Boolean} set if this is a meta-info object about the ids.
+   * @return {String[]|Number[]|Object} an array of strings or numbers.
    * @private
    */
   function normalizeIds(ids) {
@@ -149,7 +150,21 @@
     } else if (_.isString(ids) || _.isNumber(ids)) {
       // individual id - convert to array for consistency.
       return [ids];
+    } else if (ids &amp;&amp; ids.skipObjectRetrieval) {
+      return ids;
     }
+  }
+
+  /**
+   * Converts any undefined or null values to an empty array.  All other values are left unchanged.
+   * @param valueToConvert the value to check for null or undefined.
+   * @return {Array|*} either the original value or [] if the valueToConvert is null or undefined.
+   */
+  function undefinedOrNullToEmptyArray(valueToConvert) {
+    if (_.isUndefined(valueToConvert) || _.isNull(valueToConvert)) {
+      valueToConvert = [];
+    }
+    return valueToConvert;
   }
 
   /**
@@ -329,7 +344,7 @@
      * @param [viewOptions] {Object} options passed to View&#x27;s initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
-      _.bindAll(this, &#x27;__fetchSuccess&#x27;, &#x27;__fetchFailed&#x27;, &#x27;__completeLoadingIds&#x27;);
+      _.bindAll(this, &#x27;__skipRetrieveOnEmptyTrackedIdsAndNewIds&#x27;, &#x27;__completeLoadingIds&#x27;, &#x27;__fetchSuccess&#x27;, &#x27;__fetchFailed&#x27;);
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
@@ -390,8 +405,12 @@
     pull: function() {
       var thisDataBehavior = this;
       return this.__getIds()
-        .then(function(ids) {
-          return thisDataBehavior.data.privateCollection.trackAndPull(ids);
+        .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(function(idsResult) {
+          if (idsResult &amp;&amp; !idsResult.skipObjectRetrieval) {
+            return thisDataBehavior.data.privateCollection.trackAndPull(idsResult);
+          }
+          return idsResult;
         }, function(errorResponse) {
           errorResponse.failedOnIds = true;
           return errorResponse;
@@ -407,8 +426,12 @@
     fetch: function() {
       var thisDataBehavior = this;
       return this.__getIds()
-        .then(function(ids) {
-          return thisDataBehavior.data.privateCollection.trackAndFetch(ids);
+        .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(function(idsResult) {
+          if (idsResult &amp;&amp; !idsResult.skipObjectRetrieval) {
+            return thisDataBehavior.data.privateCollection.trackAndFetch(idsResult);
+          }
+          return idsResult;
         }, function(errorResponse) {
           errorResponse.failedOnIds = true;
           return errorResponse;
@@ -659,8 +682,9 @@
 
     /**
      * @method __getIds
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the ids to track in the private collection
+     * @return {$.Deferred.Promise} A jquery deferred promise that resolves to the ids to track in the private collection
      *                              or rejects with the error message.
+     *                              It can also return an object that prevents object retrieval ({ skipObjectRetrieval: true }).
      * @private
      */
     __getIds: function() {
@@ -678,14 +702,7 @@
         if (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
         } else if (ids &amp;&amp; _.isFunction(ids.then)) {
-          idsDeferred = ids
-            .then(normalizeIds)
-            .then(function(processedIds) {
-              if (_.isUndefined(processedIds) || _.isNull(processedIds)) {
-                processedIds = [];
-              }
-              return processedIds;
-            });
+          idsDeferred = ids.then(normalizeIds);
         } else {
           idsDeferred.resolve([]);
         }
@@ -703,9 +720,10 @@
         }
         normalizedIds = normalizeIds(ids);
 
-        idsDeferred.resolve(normalizedIds || []);
+        idsDeferred.resolve(normalizedIds);
       }
       return idsDeferred.promise()
+        .then(undefinedOrNullToEmptyArray)
         .always(this.__completeLoadingIds);
     },
 
@@ -844,40 +862,64 @@
      * Triggers a &#x27;fetched&#x27; event with the payload { status: &#x27;success&#x27; } when the fetch completes successfully.
      * @method __fetchSuccess
      * @param response {Object} the response from the server.
+     *   @param [response.skipObjectRetrieval=false] {Object} set this value if retrieving the objects based on ids should be skipped.
      * @private
      */
     __fetchSuccess: function(response) {
       this.set(&#x27;fetchSuccess&#x27;, true);
-      this.trigger(&#x27;fetched&#x27;, {
-        status: FETCHED_STATUSES.SUCCESS,
-        response: response
-      });
-      this.data.trigger(&#x27;fetched&#x27;, {
-        status: FETCHED_STATUSES.SUCCESS,
-        response: response
-      });
+      if (!response || !response.skipObjectRetrieval) {
+        this.trigger(&#x27;fetched&#x27;, {
+          status: FETCHED_STATUSES.SUCCESS,
+          response: response
+        });
+        this.data.trigger(&#x27;fetched&#x27;, {
+          status: FETCHED_STATUSES.SUCCESS,
+          response: response
+        });
+      }
       this.trigger(&#x27;fetched:ids&#x27;);
       this.data.trigger(&#x27;fetched:ids&#x27;);
+      return response;
     },
 
     /**
      * Triggers a &#x27;fetched&#x27; event with the payload { status: &#x27;failed&#x27; } when the fetch fails.
      * @method __fetchFailed
      * @param response {Object} the response from the server.
+     *   @param [response.skipObjectRetrieval=false] {Object} set this value if retrieving the objects based on ids should be skipped.
      * @private
      */
     __fetchFailed: function(response) {
       this.set(&#x27;fetchSuccess&#x27;, false);
-      this.trigger(&#x27;fetched&#x27;, {
-        status: FETCHED_STATUSES.FAILURE,
-        response: response
-      });
-      this.data.trigger(&#x27;fetched&#x27;, {
-        status: FETCHED_STATUSES.FAILURE,
-        response: response
-      });
+      if (!response || !response.skipObjectRetrieval) {
+        this.trigger(&#x27;fetched&#x27;, {
+          status: FETCHED_STATUSES.FAILURE,
+          response: response
+        });
+        this.data.trigger(&#x27;fetched&#x27;, {
+          status: FETCHED_STATUSES.FAILURE,
+          response: response
+        });
+      }
       this.trigger(&#x27;fetched:ids&#x27;);
       this.data.trigger(&#x27;fetched:ids&#x27;);
+      return response;
+    },
+
+    /**
+     * Skip retrieving objects if new ids list is empty and existing ids list is empty.
+     * @method __skipRetrieveOnEmptyTrackedIdsAndNewIds
+     * @param idsResult {Array|Object}
+     * @return {Array|Object} either the original idsResult or { skipObjectRetrieval: true } if both the ids retrieved and
+     *                        the current ids are empty.
+     * @private
+     */
+    __skipRetrieveOnEmptyTrackedIdsAndNewIds: function(idsResult) {
+      if (_.isEmpty(idsResult) &amp;&amp; _.isEmpty(this.data.privateCollection.getTrackedIds())) {
+        return { skipObjectRetrieval: true };
+      } else {
+        return idsResult;
+      }
     },
 
     /**
