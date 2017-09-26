@@ -183,6 +183,16 @@
     },
 
     /**
+     * Renders the view only if it is active and part of the DOM.
+     * @method renderIfAttached
+     */
+    renderIfAttached: function() {
+      if (this.isActive() && this.isAttached()) {
+        this.render();
+      }
+    },
+
+    /**
      * Hook during render that is invoked before any DOM rendering is performed.
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);
      * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
