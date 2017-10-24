@@ -1695,28 +1695,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['./Cell'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('./Cell'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root.Torso.Cell);
-  }
-}(this, function(Cell) {
-  'use strict';
-  /**
-   * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @author kent.willis@vecna.com
-   */
-  var ServiceCell = Cell.extend({ });
-
-  return ServiceCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
@@ -1831,6 +1809,22 @@
     },
 
     /**
+     * Alias to this.viewState.has()
+     * @method has
+     */
+    has: function() {
+      return this.viewState.has.apply(this.viewState, arguments);
+    },
+
+    /**
+     * Alias to this.viewState.unset()
+     * @method unset
+     */
+    unset: function() {
+      return this.viewState.unset.apply(this.viewState, arguments);
+    },
+
+    /**
      * Alias to this.viewState.toJSON()
      * @method toJSON
      */
@@ -1859,6 +1853,16 @@
      */
     prepare: function() {
       return this.__getPrepareFieldsContext();
+    },
+
+    /**
+     * Augments the context with custom content.
+     * @param context {Object} the context you can modify
+     * @return {Object} [Optional] If you return an object, it will be merged with the context
+     * @method _prepare
+     */
+    _prepare: function(context) {
+      // no changes by default
     },
 
     /**
@@ -2412,6 +2416,8 @@
      *     objectWithoutToJSON: this.objectWithoutToJSON
      *   }
      *
+     * Note: alternatively, you can define your prepareFields as an object that will be mapped to an array of { name: key, value: value }
+     *
      * Things to be careful of:
      *   * If the view already has a field named 'someGlobalCell' then the property on the view will be used instead of the global value.
      *   * if the prepared field item is not a string or object containing 'name' and 'value' properties, then an exception
@@ -2425,6 +2431,12 @@
     __getPrepareFieldsContext: function() {
       var prepareFieldsContext = {};
       var prepareFields = _.result(this, 'prepareFields');
+      if (prepareFields && _.isObject(prepareFields) && !_.isArray(prepareFields)) {
+        var keys = _.keys(prepareFields);
+        prepareFields = _.map(keys, function(key) {
+          return { name: key, value: prepareFields[key] };
+        });
+      }
       var defaultPrepareFields = [ { name: 'view', value: 'viewState' }, 'model' ];
       prepareFields = _.union(prepareFields, defaultPrepareFields);
       if (prepareFields && prepareFields.length > 0) {
@@ -2465,7 +2477,13 @@
           }
         }
       }
-      return prepareFieldsContext;
+      var context = this._prepare(prepareFieldsContext);
+      if (_.isUndefined(context)) {
+        context = prepareFieldsContext;
+      } else {
+        context = _.extend(prepareFieldsContext, context);
+      }
+      return context;
     },
 
     /**
@@ -3137,6 +3155,28 @@
   });
 
   return View;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['./Cell'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('./Cell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.ServiceCell = factory(root.Torso.Cell);
+  }
+}(this, function(Cell) {
+  'use strict';
+  /**
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
+   * @module    Torso
+   * @class  ServiceCell
+   * @author kent.willis@vecna.com
+   */
+  var ServiceCell = Cell.extend({ });
+
+  return ServiceCell;
 }));
 
 (function(root, factory) {
