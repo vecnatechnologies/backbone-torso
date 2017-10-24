@@ -161,11 +161,13 @@
     },
 
     /**
-     * Augments the prepare method with content.
-     * Must return an object to extend the base prepare or it will be ignored.
+     * Augments the context with custom content.
+     * @param context {Object} the context you can modify
      * @method _prepare
      */
-    _prepare: _.noop,
+    _prepare: function(context) {
+      // no changes by default
+    },
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
@@ -731,10 +733,7 @@
      * @private
      */
     __getPrepareFieldsContext: function() {
-      var prepareFieldsContext = _.result(this, '_prepare') || {};
-      if (!_.isObject(prepareFieldsContext) || _.isArray(prepareFieldsContext)) {
-        prepareFieldsContext = {};
-      }
+      var prepareFieldsContext = {};
       var prepareFields = _.result(this, 'prepareFields');
       if (prepareFields && _.isObject(prepareFields) && !_.isArray(prepareFields)) {
         var keys = _.keys(prepareFields);
@@ -782,6 +781,7 @@
           }
         }
       }
+      this._prepare(prepareFieldsContext);
       return prepareFieldsContext;
     },
 
