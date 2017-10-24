@@ -1400,6 +1400,31 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1422,31 +1447,6 @@
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
 }));
 
 (function(root, factory) {
@@ -1878,11 +1878,13 @@
     },
 
     /**
-     * Augments the prepare method with content.
-     * Must return an object to extend the base prepare or it will be ignored.
+     * Augments the context with custom content.
+     * @param context {Object} the context you can modify
      * @method _prepare
      */
-    _prepare: _.noop,
+    _prepare: function(context) {
+      // no changes by default
+    },
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
@@ -2448,10 +2450,7 @@
      * @private
      */
     __getPrepareFieldsContext: function() {
-      var prepareFieldsContext = _.result(this, '_prepare') || {};
-      if (!_.isObject(prepareFieldsContext) || _.isArray(prepareFieldsContext)) {
-        prepareFieldsContext = {};
-      }
+      var prepareFieldsContext = {};
       var prepareFields = _.result(this, 'prepareFields');
       if (prepareFields && _.isObject(prepareFields) && !_.isArray(prepareFields)) {
         var keys = _.keys(prepareFields);
@@ -2499,6 +2498,7 @@
           }
         }
       }
+      this._prepare(prepareFieldsContext);
       return prepareFieldsContext;
     },
 
