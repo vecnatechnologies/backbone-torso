@@ -72,21 +72,6 @@ describe('A View', function() {
       expect(context.foo).toBe(555);
       expect(context.bar).toBe(true);
     });
-
-    it('can return an overriding context', function() {
-      var PrepareView = TorsoView.extend({
-        prepareFields: [
-          {name: 'foo', value: 555}
-        ],
-
-        _prepare: function(context) {
-          context.foo = 123;
-        }
-      });
-      var prepareView = new PrepareView();
-      var context = prepareView.prepare();
-      expect(context.foo).toBe(123);
-    });
   });
 
   describe('when using prepareFields', function() {
