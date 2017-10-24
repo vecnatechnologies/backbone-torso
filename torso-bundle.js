@@ -1400,31 +1400,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
-
-  return Model;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1447,6 +1422,31 @@
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Model
+   * @module    Torso
+   * @class     Model
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var Model = Backbone.Model.extend({});
+  _.extend(Model.prototype, pollingMixin);
+
+  return Model;
 }));
 
 (function(root, factory) {
@@ -1831,6 +1831,22 @@
     },
 
     /**
+     * Alias to this.viewState.has()
+     * @method has
+     */
+    has: function() {
+      return this.viewState.has.apply(this.viewState, arguments);
+    },
+
+    /**
+     * Alias to this.viewState.unset()
+     * @method unset
+     */
+    unset: function() {
+      return this.viewState.unset.apply(this.viewState, arguments);
+    },
+
+    /**
      * Alias to this.viewState.toJSON()
      * @method toJSON
      */
@@ -1860,6 +1876,13 @@
     prepare: function() {
       return this.__getPrepareFieldsContext();
     },
+
+    /**
+     * Augments the prepare method with content.
+     * Must return an object to extend the base prepare or it will be ignored.
+     * @method _prepare
+     */
+    _prepare: _.noop,
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
@@ -2412,6 +2435,8 @@
      *     objectWithoutToJSON: this.objectWithoutToJSON
      *   }
      *
+     * Note: alternatively, you can define your prepareFields as an object that will be mapped to an array of { name: key, value: value }
+     *
      * Things to be careful of:
      *   * If the view already has a field named 'someGlobalCell' then the property on the view will be used instead of the global value.
      *   * if the prepared field item is not a string or object containing 'name' and 'value' properties, then an exception
@@ -2423,8 +2448,17 @@
      * @private
      */
     __getPrepareFieldsContext: function() {
-      var prepareFieldsContext = {};
+      var prepareFieldsContext = _.result(this, '_prepare') || {};
+      if (!_.isObject(prepareFieldsContext) || _.isArray(prepareFieldsContext)) {
+        prepareFieldsContext = {};
+      }
       var prepareFields = _.result(this, 'prepareFields');
+      if (prepareFields && _.isObject(prepareFields) && !_.isArray(prepareFields)) {
+        var keys = _.keys(prepareFields);
+        prepareFields = _.map(keys, function(key) {
+          return { name: key, value: prepareFields[key] };
+        });
+      }
       var defaultPrepareFields = [ { name: 'view', value: 'viewState' }, 'model' ];
       prepareFields = _.union(prepareFields, defaultPrepareFields);
       if (prepareFields && prepareFields.length > 0) {

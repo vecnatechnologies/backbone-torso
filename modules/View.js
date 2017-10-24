@@ -737,8 +737,8 @@
       }
       var prepareFields = _.result(this, 'prepareFields');
       if (prepareFields && _.isObject(prepareFields) && !_.isArray(prepareFields)) {
-        let keys = _.keys(prepareFields);
-        prepareFields = _.map(keys, (key) => {
+        var keys = _.keys(prepareFields);
+        prepareFields = _.map(keys, function(key) {
           return { name: key, value: prepareFields[key] };
         });
       }
