@@ -783,7 +783,9 @@
         }
       }
       var context = this._prepare(prepareFieldsContext);
-      if (!_.isUndefined(context)) {
+      if (_.isUndefined(context)) {
+        context = prepareFieldsContext;
+      } else {
         context = _.extend(prepareFieldsContext, context);
       }
       return context;
