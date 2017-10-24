@@ -54,6 +54,11 @@ describe('A View', function() {
 
     it('can return an overriding context', function() {
       var PrepareView = TorsoView.extend({
+        prepareFields: [
+          {name: 'foo', value: 111},
+          {name: 'bar', value: true}
+        ],
+
         _prepare: function(context) {
           return {
             view: 123,
@@ -65,13 +70,14 @@ describe('A View', function() {
       var context = prepareView.prepare();
       expect(context.view).toBe(123);
       expect(context.foo).toBe(555);
+      expect(context.bar).toBe(true);
     });
 
     it('can return an overriding context', function() {
       var PrepareView = TorsoView.extend({
-        initialize: function() {
-          this.set('foo', 444);
-        },
+        prepareFields: [
+          {name: 'foo', value: 555}
+        ],
 
         _prepare: function(context) {
           context.foo = 123;
