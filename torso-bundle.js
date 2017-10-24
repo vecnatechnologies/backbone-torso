@@ -57,6 +57,28 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define([], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory();
@@ -201,28 +223,6 @@
       }
     });
   };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
 }));
 
 (function(root, factory) {
@@ -1079,53 +1079,91 @@
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cell = factory();
+    root.Torso.Mixins.polling = factory();
   }
 }(this, function() {
-  'use strict';
   /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
    * @namespace Torso.Mixins
-   * @class  cellMixin
-   * @author kent.willis@vecna.com
+   * @class  pollingMixin
+   * @author ariel.wexler@vecna.com
    */
-  return {
+  var pollingMixin = {
     /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
      */
-    isModelCompatible: false,
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
 
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
+        this.__poll();
       }
     },
 
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
     },
 
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
     },
 
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
+    //************** Private methods **************//
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
     }
   };
-}));
 
+  return pollingMixin;
+}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -1239,91 +1277,53 @@
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
+    root.Torso.Mixins.cell = factory();
   }
 }(this, function() {
+  'use strict';
   /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
    * @namespace Torso.Mixins
-   * @class  pollingMixin
-   * @author ariel.wexler@vecna.com
+   * @class  cellMixin
+   * @author kent.willis@vecna.com
    */
-  var pollingMixin = {
+  return {
     /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
      */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
+    isModelCompatible: false,
 
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-        this.__poll();
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
       }
     },
 
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
     },
 
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
     },
 
-    //************** Private methods **************//
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
     }
   };
-
-  return pollingMixin;
 }));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin'], factory);
@@ -1880,6 +1880,7 @@
     /**
      * Augments the context with custom content.
      * @param context {Object} the context you can modify
+     * @return {Object} [Optional] If you return an object, it will be merged with the context
      * @method _prepare
      */
     _prepare: function(context) {
@@ -2498,8 +2499,11 @@
           }
         }
       }
-      this._prepare(prepareFieldsContext);
-      return prepareFieldsContext;
+      var context = this._prepare(prepareFieldsContext);
+      if (!_.isUndefined(context)) {
+        context = _.extend(prepareFieldsContext, context);
+      }
+      return context;
     },
 
     /**

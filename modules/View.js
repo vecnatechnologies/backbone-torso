@@ -163,6 +163,7 @@
     /**
      * Augments the context with custom content.
      * @param context {Object} the context you can modify
+     * @return {Object} [Optional] If you return an object, it will be merged with the context
      * @method _prepare
      */
     _prepare: function(context) {
@@ -781,8 +782,11 @@
           }
         }
       }
-      this._prepare(prepareFieldsContext);
-      return prepareFieldsContext;
+      var context = this._prepare(prepareFieldsContext);
+      if (!_.isUndefined(context)) {
+        context = _.extend(prepareFieldsContext, context);
+      }
+      return context;
     },
 
     /**
