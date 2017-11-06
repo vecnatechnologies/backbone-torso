@@ -6,12 +6,12 @@ var ChildView = TorsoView.extend({
   className: 'child'
 });
 
-describe('A View when using viewMap', function() {
+describe('A View when using injectionSites', function() {
 
   it('can add child view to injection site directly', function() {
     var child = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: child
       },
       template: '<div inject="foo"></div>'
@@ -24,7 +24,7 @@ describe('A View when using viewMap', function() {
   it('can add child view to injection site by name', function() {
     var child = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: 'childView'
       },
       template: '<div inject="foo"></div>',
@@ -40,7 +40,7 @@ describe('A View when using viewMap', function() {
   it('can add child view to injection site by config', function() {
     var child = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: {
           view: child
         }
@@ -55,7 +55,7 @@ describe('A View when using viewMap', function() {
   it('can add child view to injection site by function', function() {
     var child = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: function () {
           return child;
         }
@@ -70,7 +70,7 @@ describe('A View when using viewMap', function() {
   it('can add child view to injection site by function with proper context', function() {
     var child = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: function () {
           return this.childView;
         }
@@ -89,7 +89,7 @@ describe('A View when using viewMap', function() {
     var fooView = new ChildView();
     var barView = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: fooView,
         bar: barView
       },
@@ -104,7 +104,7 @@ describe('A View when using viewMap', function() {
     var fooView = new ChildView();
     var barView = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: fooView
       },
       template: '<div inject="foo"></div><div inject="bar"></div>',
@@ -120,7 +120,7 @@ describe('A View when using viewMap', function() {
   it('can pass in options', function() {
     var fooView = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: {
           view: fooView,
           options: { shared: true }
@@ -137,7 +137,7 @@ describe('A View when using viewMap', function() {
   it('can use a function to create config', function() {
     var fooView = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: function() {
           return {
             view: function() {
@@ -161,7 +161,7 @@ describe('A View when using viewMap', function() {
   it('can add hide views using set(\'hide:...\')', function() {
     var child = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: child
       },
       template: '<div inject="foo"></div>'
@@ -180,7 +180,7 @@ describe('A View when using viewMap', function() {
   it('can rerender when using set(\'hide:...\')', function() {
     var child = new ChildView();
     var ParentView = TorsoView.extend({
-      viewMap: {
+      injectionSites: {
         foo: child
       },
       template: '<div inject="foo"></div>'

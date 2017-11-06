@@ -55,7 +55,7 @@
     behaviors: null,
     templateRendererOptions: undefined,
     prepareFields: null,
-    viewMap: null,
+    injectionSites: null,
     __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
@@ -195,9 +195,8 @@
         return $.Deferred().resolve().promise();
       }
       this.__updateInjectionSiteMap();
-      this.trigger('render:before-detach-views');
-      this.detachTrackedViews();
       this.trigger('render:before-dom-update');
+      this.detachTrackedViews();
       this.updateDOM();
       if (this.__pendingAttachInfo) {
         this.__performPendingAttach();
@@ -207,7 +206,7 @@
       this.trigger('render:after-delegate-events');
       this.unregisterTrackedViews({ shared: true });
       this.trigger('render:before-attach-tracked-views');
-      this.__attachViewsFromViewMap();
+      this.__attachViewsFromInjectionSites();
       var promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
@@ -705,8 +704,8 @@
     //************** Private methods **************//
 
     /**
-     * Attaches views using this.viewMap. The API for viewMap looks like:
-     * viewMap: {
+     * Attaches views using this.injectionSites. The API for injectionSites looks like:
+     * injectionSites: {
      *   foo: fooView,  // foo is injectionSite, fooView is the view
          bar: 'barView',  // bar is injectionSite, 'barView' is a field on the view (view.barView)
          baz: function() {  // baz is injectionSite
@@ -720,11 +719,11 @@
      * To create dynamic show/hide logic, perform the logic in a function that returns the correct view, or you can
      * call this.set('hide:foo', true) or this.set('hide:foo', false)
      * @private
-     * @method __attachViewsFromViewMap
+     * @method __attachViewsFromInjectionSites
      */
-    __attachViewsFromViewMap: function() {
-      var viewMap = _.result(this, 'viewMap');
-      _.each(viewMap, function(config, injectionSiteName) {
+    __attachViewsFromInjectionSites: function() {
+      var injectionSites = _.result(this, 'injectionSites');
+      _.each(injectionSites, function(config, injectionSiteName) {
         if (!this.get('hide:' + injectionSiteName)) {
           var options = {};
           var trackedView;
@@ -740,10 +739,10 @@
           if (!trackedView) {
             if (_.isString(config)) {
               trackedView = _.result(this, config);
-            } else if (_.isFunction(config)) {
-              trackedView = config.call(this);
             } else if (config instanceof Backbone.View) {
               trackedView = config;
+            } else if (_.isFunction(config)) {
+              trackedView = config.call(this);
             }
           }
           if (trackedView) {
