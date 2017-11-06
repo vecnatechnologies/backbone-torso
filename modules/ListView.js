@@ -233,7 +233,6 @@
       if (collection) {
         this.setCollection(collection, true);
       }
-
       this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
     },
 
@@ -559,7 +558,7 @@
         if (itemView) {
           // detach to be safe, but during a render, the item views will already be detached.
           itemView.detach();
-          this.registerTrackedView(itemView);
+          this.registerTrackedView(itemView, { shared: false });
           itemView.attachTo(null, {
             replaceMethod: function($el) {
               injectionFragment.appendChild($el[0]);

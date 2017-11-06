@@ -31,6 +31,9 @@
       if (name === 'change' || name.indexOf('change:') === 0) {
         View.prototype.trigger.apply(this.view, arguments);
       }
+      if (name.indexOf('change:hide:') === 0) {
+        this.view.render();
+      }
       NestedCell.prototype.trigger.apply(this, arguments);
     }
   });
@@ -52,6 +55,7 @@
     behaviors: null,
     templateRendererOptions: undefined,
     prepareFields: null,
+    injectionSites: null,
     __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
@@ -200,11 +204,15 @@
       this.trigger('render:after-dom-update');
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
+      this.unregisterTrackedViews({ shared: true });
       this.trigger('render:before-attach-tracked-views');
+      this.__attachViewsFromInjectionSites();
       var promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
         view.trigger('render:complete');
+        view.__injectionSiteMap = {};
+        view.__lastTrackedViews = {};
       });
     },
 
@@ -696,6 +704,55 @@
     //************** Private methods **************//
 
     /**
+     * Attaches views using this.injectionSites. The API for injectionSites looks like:
+     * injectionSites: {
+     *   foo: fooView,  // foo is injectionSite, fooView is the view
+         bar: 'barView',  // bar is injectionSite, 'barView' is a field on the view (view.barView)
+         baz: function() {  // baz is injectionSite
+           return this.bazView;  // the context 'this' is the view
+         },
+         taz: {  // if you want to pass in options, use a config object with 'view' and 'options'
+           view: (same as the three above: direct reference, string of view field, or function that return view),
+           options: {} // optional options
+         } 
+     * }
+     * To create dynamic show/hide logic, perform the logic in a function that returns the correct view, or you can
+     * call this.set('hide:foo', true) or this.set('hide:foo', false)
+     * @private
+     * @method __attachViewsFromInjectionSites
+     */
+    __attachViewsFromInjectionSites: function() {
+      var injectionSites = _.result(this, 'injectionSites');
+      _.each(injectionSites, function(config, injectionSiteName) {
+        if (!this.get('hide:' + injectionSiteName)) {
+          var options = {};
+          var trackedView;
+          if (_.isFunction(config)) {
+            config = config.call(this);
+          }
+          if (config instanceof Backbone.View) {
+            trackedView = config;
+          } else if (_.isObject(config)) {
+            options = config.options;
+            config = config.view;
+          }
+          if (!trackedView) {
+            if (_.isString(config)) {
+              trackedView = _.result(this, config);
+            } else if (config instanceof Backbone.View) {
+              trackedView = config;
+            } else if (_.isFunction(config)) {
+              trackedView = config.call(this);
+            }
+          }
+          if (trackedView) {
+            this.attachView(injectionSiteName, trackedView, options);
+          }
+        }
+      }, this);
+    },
+
+    /**
      * Parses the combined arrays from the defaultPrepareFields array and the prepareFields array (or function
      * returning an array).
      *
@@ -919,7 +976,7 @@
       // find previous view that used this injection site.
       previousView = options.previousView;
       if (!previousView) {
-        previousView = this.__getLastTrackedViewAtInjectionSite(injectionSiteName);
+        previousView = this.__injectionSiteMap[injectionSiteName];
       }
       _.defaults(options, {
         parentView: this,
@@ -1035,35 +1092,13 @@
     __updateInjectionSiteMap: function() {
       var parentView = this;
       this.__injectionSiteMap = {};
+      this.__lastTrackedViews = {};
       _.each(this.getTrackedViews(), function(view) {
         if (view.isAttachedToParent() && view.injectionSite) {
           parentView.__injectionSiteMap[view.injectionSite.attr('inject')] = view;
         }
+        parentView.__lastTrackedViews[view.cid] = view;
       });
-    },
-
-    /**
-     * Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).
-     * When used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.
-     * @private
-     * @method __getLastTrackedViewAtInjectionSite
-     * @param injectionSiteName {String} the injection site name - the value of the "inject" attribute on the element used as an injection target for tracked views.
-     * @return {View} the previous view at that site. Undefined if no view was at that injection site before.
-     */
-    __getLastTrackedViewAtInjectionSite: function(injectionSiteName) {
-      // check to see if a view was cached before a render
-      var previousView = this.__injectionSiteMap[injectionSiteName];
-      if (previousView) {
-        // make sure previous view is still tracked
-        previousView = _.contains(this.getTrackedViews(), previousView) ? previousView : undefined;
-      } else {
-        // if not, see if a view is currently in the injection site.
-        var matchingViews = this.getTrackedViews().filter(function(view) {
-          return view.injectionSite && view.injectionSite.attr('inject') == injectionSiteName;
-        });
-        previousView = _.first(matchingViews);
-      }
-      return previousView;
     },
 
     /**
