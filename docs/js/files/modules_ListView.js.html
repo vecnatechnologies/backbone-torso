@@ -341,7 +341,6 @@
       if (collection) {
         this.setCollection(collection, true);
       }
-      this.on(&#x27;render:before-attach-tracked-views&#x27;, this.__retrackItemViews);
       this.on(&#x27;render:after-dom-update&#x27;, this.__cleanupItemViewsAfterAttachedToParent);
     },
 
@@ -560,20 +559,6 @@
     },
 
     //************** Private methods **************//
-
-    /**
-     * Tracks saved item views
-     * @method __retrackItemViews
-     */
-    __retrackItemViews: function() {
-      var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
-      _.each(orderedViewIds, function(viewId) {
-        var itemView = this.__lastTrackedViews[viewId];
-        if (itemView) {
-          this.registerTrackedView(itemView, { shared: false });
-        }
-      }, this);
-    },
 
     /**
      * Creates all needed item views that don&#x27;t exist from modelsToRender()
