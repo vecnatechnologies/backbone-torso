@@ -1073,6 +1073,61 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cell = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellMixin
+   * @author kent.willis@vecna.com
+   */
+  return {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('jquery'));
@@ -1174,61 +1229,6 @@
   };
 
   return loadingMixin;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cell = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellMixin
-   * @author kent.willis@vecna.com
-   */
-  return {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
 }));
 
 (function(root, factory) {
@@ -1425,32 +1425,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
-  }
-}(this, function(_, Backbone, pollingMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedModel = Backbone.NestedModel.extend({});
-  _.extend(NestedModel.prototype, pollingMixin);
-
-  return NestedModel;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
@@ -1473,6 +1447,32 @@
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone-nested');
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+  }
+}(this, function(_, Backbone, pollingMixin) {
+  'use strict';
+
+  /**
+   * Generic Nested Model
+   * @module    Torso
+   * @class     NestedModel
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  var NestedModel = Backbone.NestedModel.extend({});
+  _.extend(NestedModel.prototype, pollingMixin);
+
+  return NestedModel;
 }));
 
 (function(root, factory) {
@@ -1748,6 +1748,9 @@
       if (name === 'change' || name.indexOf('change:') === 0) {
         View.prototype.trigger.apply(this.view, arguments);
       }
+      if (name.indexOf('change:hide:') === 0) {
+        this.view.render();
+      }
       NestedCell.prototype.trigger.apply(this, arguments);
     }
   });
@@ -1769,6 +1772,7 @@
     behaviors: null,
     templateRendererOptions: undefined,
     prepareFields: null,
+    viewMap: null,
     __behaviorInstances: null,
     __childViews: null,
     __sharedViews: null,
@@ -1908,8 +1912,9 @@
         return $.Deferred().resolve().promise();
       }
       this.__updateInjectionSiteMap();
-      this.trigger('render:before-dom-update');
+      this.trigger('render:before-detach-views');
       this.detachTrackedViews();
+      this.trigger('render:before-dom-update');
       this.updateDOM();
       if (this.__pendingAttachInfo) {
         this.__performPendingAttach();
@@ -1917,11 +1922,15 @@
       this.trigger('render:after-dom-update');
       this.delegateEvents();
       this.trigger('render:after-delegate-events');
+      this.unregisterTrackedViews({ shared: true });
       this.trigger('render:before-attach-tracked-views');
+      this.__attachViewsFromViewMap();
       var promises = this.attachTrackedViews();
       return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
         view.trigger('render:complete');
+        view.__injectionSiteMap = {};
+        view.__lastTrackedViews = {};
       });
     },
 
@@ -2413,6 +2422,55 @@
     //************** Private methods **************//
 
     /**
+     * Attaches views using this.viewMap. The API for viewMap looks like:
+     * viewMap: {
+     *   foo: fooView,  // foo is injectionSite, fooView is the view
+         bar: 'barView',  // bar is injectionSite, 'barView' is a field on the view (view.barView)
+         baz: function() {  // baz is injectionSite
+           return this.bazView;  // the context 'this' is the view
+         },
+         taz: {  // if you want to pass in options, use a config object with 'view' and 'options'
+           view: (same as the three above: direct reference, string of view field, or function that return view),
+           options: {} // optional options
+         } 
+     * }
+     * To create dynamic show/hide logic, perform the logic in a function that returns the correct view, or you can
+     * call this.set('hide:foo', true) or this.set('hide:foo', false)
+     * @private
+     * @method __attachViewsFromViewMap
+     */
+    __attachViewsFromViewMap: function() {
+      var viewMap = _.result(this, 'viewMap');
+      _.each(viewMap, function(config, injectionSiteName) {
+        if (!this.get('hide:' + injectionSiteName)) {
+          var options = {};
+          var trackedView;
+          if (_.isFunction(config)) {
+            config = config.call(this);
+          }
+          if (config instanceof Backbone.View) {
+            trackedView = config;
+          } else if (_.isObject(config)) {
+            options = config.options;
+            config = config.view;
+          }
+          if (!trackedView) {
+            if (_.isString(config)) {
+              trackedView = _.result(this, config);
+            } else if (_.isFunction(config)) {
+              trackedView = config.call(this);
+            } else if (config instanceof Backbone.View) {
+              trackedView = config;
+            }
+          }
+          if (trackedView) {
+            this.attachView(injectionSiteName, trackedView, options);
+          }
+        }
+      }, this);
+    },
+
+    /**
      * Parses the combined arrays from the defaultPrepareFields array and the prepareFields array (or function
      * returning an array).
      *
@@ -2636,7 +2694,7 @@
       // find previous view that used this injection site.
       previousView = options.previousView;
       if (!previousView) {
-        previousView = this.__getLastTrackedViewAtInjectionSite(injectionSiteName);
+        previousView = this.__injectionSiteMap[injectionSiteName];
       }
       _.defaults(options, {
         parentView: this,
@@ -2752,35 +2810,13 @@
     __updateInjectionSiteMap: function() {
       var parentView = this;
       this.__injectionSiteMap = {};
+      this.__lastTrackedViews = {};
       _.each(this.getTrackedViews(), function(view) {
         if (view.isAttachedToParent() && view.injectionSite) {
           parentView.__injectionSiteMap[view.injectionSite.attr('inject')] = view;
         }
+        parentView.__lastTrackedViews[view.cid] = view;
       });
-    },
-
-    /**
-     * Finds the last view at a given injection site. The view returned must be currently tracked by this view (the parent view).
-     * When used with the render method, it will return the view at a injections site before the render logic detaches all tracked views.
-     * @private
-     * @method __getLastTrackedViewAtInjectionSite
-     * @param injectionSiteName {String} the injection site name - the value of the "inject" attribute on the element used as an injection target for tracked views.
-     * @return {View} the previous view at that site. Undefined if no view was at that injection site before.
-     */
-    __getLastTrackedViewAtInjectionSite: function(injectionSiteName) {
-      // check to see if a view was cached before a render
-      var previousView = this.__injectionSiteMap[injectionSiteName];
-      if (previousView) {
-        // make sure previous view is still tracked
-        previousView = _.contains(this.getTrackedViews(), previousView) ? previousView : undefined;
-      } else {
-        // if not, see if a view is currently in the injection site.
-        var matchingViews = this.getTrackedViews().filter(function(view) {
-          return view.injectionSite && view.injectionSite.attr('inject') == injectionSiteName;
-        });
-        previousView = _.first(matchingViews);
-      }
-      return previousView;
     },
 
     /**
@@ -5313,7 +5349,7 @@
       if (collection) {
         this.setCollection(collection, true);
       }
-
+      this.on('render:before-attach-tracked-views', this.__retrackItemViews);
       this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
     },
 
@@ -5534,6 +5570,20 @@
     //************** Private methods **************//
 
     /**
+     * Tracks saved item views
+     * @method __retrackItemViews
+     */
+    __retrackItemViews: function() {
+      var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
+      _.each(orderedViewIds, function(viewId) {
+        var itemView = this.__lastTrackedViews[viewId];
+        if (itemView) {
+          this.registerTrackedView(itemView, { shared: false });
+        }
+      }, this);
+    },
+
+    /**
      * Creates all needed item views that don't exist from modelsToRender()
      * @method __createItemViews
      * @private
@@ -5639,7 +5689,7 @@
         if (itemView) {
           // detach to be safe, but during a render, the item views will already be detached.
           itemView.detach();
-          this.registerTrackedView(itemView);
+          this.registerTrackedView(itemView, { shared: false });
           itemView.attachTo(null, {
             replaceMethod: function($el) {
               injectionFragment.appendChild($el[0]);

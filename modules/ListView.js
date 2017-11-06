@@ -233,7 +233,7 @@
       if (collection) {
         this.setCollection(collection, true);
       }
-
+      this.on('render:before-attach-tracked-views', this.__retrackItemViews);
       this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
     },
 
@@ -454,6 +454,20 @@
     //************** Private methods **************//
 
     /**
+     * Tracks saved item views
+     * @method __retrackItemViews
+     */
+    __retrackItemViews: function() {
+      var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
+      _.each(orderedViewIds, function(viewId) {
+        var itemView = this.__lastTrackedViews[viewId];
+        if (itemView) {
+          this.registerTrackedView(itemView, { shared: false });
+        }
+      }, this);
+    },
+
+    /**
      * Creates all needed item views that don't exist from modelsToRender()
      * @method __createItemViews
      * @private
@@ -559,7 +573,7 @@
         if (itemView) {
           // detach to be safe, but during a render, the item views will already be detached.
           itemView.detach();
-          this.registerTrackedView(itemView);
+          this.registerTrackedView(itemView, { shared: false });
           itemView.attachTo(null, {
             replaceMethod: function($el) {
               injectionFragment.appendChild($el[0]);
