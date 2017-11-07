@@ -822,7 +822,7 @@
          taz: {  // if you want to pass in options, use a config object with &#x27;view&#x27; and &#x27;options&#x27;
            view: (same as the three above: direct reference, string of view field, or function that return view),
            options: {} // optional options
-         } 
+         }
      * }
      * To create dynamic show/hide logic, perform the logic in a function that returns the correct view, or you can
      * call this.set(&#x27;hide:foo&#x27;, true) or this.set(&#x27;hide:foo&#x27;, false)
@@ -873,6 +873,7 @@
      *     &#x27;a value that does not exist on the view&#x27;,
      *     { name: &#x27;view&#x27;, value: &#x27;viewState&#x27; },
      *     { name: &#x27;patientId&#x27;, value: &#x27;_patientId&#x27; },
+     *     { name: &#x27;calculatedValue&#x27;, value: function() { return &#x27;calculated: &#x27; + this.viewProperty },
      *     &#x27;objectWithoutToJSON&#x27;
      *   ]
      *
@@ -883,6 +884,7 @@
      *     app: someGlobalCell.toJSON(),
      *     view: this.viewState.toJSON(),
      *     patientId: this._patientId,
+     *     calculatedValue: &#x27;calculated: &#x27; + this.viewProperty,
      *     objectWithoutToJSON: this.objectWithoutToJSON
      *   }
      *
@@ -933,11 +935,16 @@
             throw &quot;duplicate prepareFields name (&quot; + prepareFieldName + &quot;).  Note &#x27;view&#x27; and &#x27;model&#x27; are reserved names.&quot;;
           }
 
-          // Note _.result() also returns undefined if the 2nd argument is not a string.
-          var prepareFieldValueFromView = _.result(this, prepareFieldValue);
-          var prepareFieldValueIsDefinedOnView = !_.isUndefined(prepareFieldValueFromView);
-          if (prepareFieldValueIsDefinedOnView) {
-            prepareFieldValue = prepareFieldValueFromView;
+          var prepareFieldValueIsDefinedOnView = false;
+          if (_.isFunction(prepareFieldValue)) {
+            prepareFieldValue = prepareFieldValue.call(this);
+          } else {
+            // Note _.result() also returns undefined if the 2nd argument is not a string.
+            var prepareFieldValueFromView = _.result(this, prepareFieldValue);
+            prepareFieldValueIsDefinedOnView = !_.isUndefined(prepareFieldValueFromView);
+            if (prepareFieldValueIsDefinedOnView) {
+              prepareFieldValue = prepareFieldValueFromView;
+            }
           }
 
           if (prepareFieldValue &amp;&amp; _.isFunction(prepareFieldValue.toJSON)) {
