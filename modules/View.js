@@ -714,7 +714,7 @@
          taz: {  // if you want to pass in options, use a config object with 'view' and 'options'
            view: (same as the three above: direct reference, string of view field, or function that return view),
            options: {} // optional options
-         } 
+         }
      * }
      * To create dynamic show/hide logic, perform the logic in a function that returns the correct view, or you can
      * call this.set('hide:foo', true) or this.set('hide:foo', false)
@@ -765,6 +765,7 @@
      *     'a value that does not exist on the view',
      *     { name: 'view', value: 'viewState' },
      *     { name: 'patientId', value: '_patientId' },
+     *     { name: 'calculatedValue', value: function() { return 'calculated: ' + this.viewProperty },
      *     'objectWithoutToJSON'
      *   ]
      *
@@ -775,6 +776,7 @@
      *     app: someGlobalCell.toJSON(),
      *     view: this.viewState.toJSON(),
      *     patientId: this._patientId,
+     *     calculatedValue: 'calculated: ' + this.viewProperty,
      *     objectWithoutToJSON: this.objectWithoutToJSON
      *   }
      *
@@ -825,11 +827,16 @@
             throw "duplicate prepareFields name (" + prepareFieldName + ").  Note 'view' and 'model' are reserved names.";
           }
 
-          // Note _.result() also returns undefined if the 2nd argument is not a string.
-          var prepareFieldValueFromView = _.result(this, prepareFieldValue);
-          var prepareFieldValueIsDefinedOnView = !_.isUndefined(prepareFieldValueFromView);
-          if (prepareFieldValueIsDefinedOnView) {
-            prepareFieldValue = prepareFieldValueFromView;
+          var prepareFieldValueIsDefinedOnView = false;
+          if (_.isFunction(prepareFieldValue)) {
+            prepareFieldValue = prepareFieldValue.call(this);
+          } else {
+            // Note _.result() also returns undefined if the 2nd argument is not a string.
+            var prepareFieldValueFromView = _.result(this, prepareFieldValue);
+            prepareFieldValueIsDefinedOnView = !_.isUndefined(prepareFieldValueFromView);
+            if (prepareFieldValueIsDefinedOnView) {
+              prepareFieldValue = prepareFieldValueFromView;
+            }
           }
 
           if (prepareFieldValue && _.isFunction(prepareFieldValue.toJSON)) {
