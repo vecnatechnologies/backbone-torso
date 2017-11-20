@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.3</em>
+            <em>API Docs for: 0.8.4</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -1565,7 +1565,7 @@
      */
     __substituteIndicesUsingMap : function(dest, indexMap) {
       var newIndex;
-      return dest.replace(/\[.?\]/g, function(arrayNotation) {
+      return dest.replace(/\[[^\]]*\]/g, function(arrayNotation) {
         if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
           return arrayNotation;
         } else {
@@ -1587,21 +1587,26 @@
      * @return {Array&lt;String&gt;} The fully expanded subattribute names
      */
     __generateSubAttributes: function(attr, model) {
-      var i, attrName, remainder, subAttrs, values,
-        firstBracket = attr.indexOf(&#x27;[]&#x27;);
+      var firstBracket = attr.indexOf(&#x27;[]&#x27;);
       if (firstBracket === -1) {
         return [attr];
       } else {
-        attrName = attr.substring(0, firstBracket);
-        remainder = attr.substring(firstBracket + 2);
-        subAttrs = [];
-        values = model.get(attrName);
+        var attrName = attr.substring(0, firstBracket);
+        var remainder = attr.substring(firstBracket + 2);
+        var subAttrs = [];
+        var values = model.get(attrName);
         if (!values) {
           return [attr];
         }
-        for (i = 0 ; i &lt; values.length; i++) {
-          subAttrs.push(this.__generateSubAttributes(attrName + &#x27;[&#x27; + i + &#x27;]&#x27; + remainder, model));
+        var indexes;
+        if (_.isArray(values)) {
+          indexes = _.range(values.length);
+        } else {
+          indexes = _.keys(values);
         }
+        _.each(indexes, function(index) {
+          subAttrs.push(this.__generateSubAttributes(attrName + &#x27;[&#x27; + index + &#x27;]&#x27; + remainder, model));
+        }, this);
         return subAttrs;
       }
     }
@@ -1611,7 +1616,6 @@
 
   return View;
 }));
-
     </pre>
 </div>
                     </div>

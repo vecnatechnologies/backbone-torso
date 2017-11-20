@@ -568,6 +568,259 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cell = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellMixin
+   * @author kent.willis@vecna.com
+   */
+  return {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('jquery'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.loading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+  }
+}(this, function($) {
+  /**
+   * Loading logic.
+   *
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  loadingMixin
+   * @author kent.willis@vecna.com
+   */
+  var loadingMixin = function(base) {
+
+    return {
+      /**
+       * Adds the loading mixin
+       * @method constructor
+       * @param args {Object} the arguments to the base constructor method
+       */
+      constructor: function(args) {
+        base.call(this, args);
+        this.loadedOnceDeferred = new $.Deferred();
+        this.loadedOnce = false;
+        this.loadingCount = 0;
+        // Loading is a convenience flag that is the equivalent of loadingCount > 0
+        this.loading = false;
+      },
+
+      /**
+       * @method hasLoadedOnce
+       * @return {Boolean} true if this model/collection has ever loaded from a fetch call
+       */
+      hasLoadedOnce: function() {
+        return this.loadedOnce;
+      },
+
+      /**
+       * @method isLoading
+       * @return {Boolean} true if this model/collection is currently loading new values from the server
+       */
+      isLoading: function() {
+        return this.loading;
+      },
+
+      /**
+       * @method getLoadedOncePromise
+       * @return {Promise} a promise that will resolve when the model/collection has loaded for the first time
+       */
+      getLoadedOncePromise: function() {
+        return this.loadedOnceDeferred.promise();
+      },
+
+      /**
+       * Wraps the base fetch in a wrapper that manages loaded states
+       * @method fetch
+       * @param options {Object} - the object to hold the options needed by the base fetch method
+       * @return {Promise} The loadWrapper promise
+       */
+      fetch: function(options) {
+        return this.__loadWrapper(base.prototype.fetch, options);
+      },
+
+      /**
+       * Base load function that will trigger a "load-begin" and a "load-complete" as
+       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       * @method __loadWrapper
+       * @param fetchMethod {Function} - the method to invoke a fetch
+       * @param options {Object} - the object to hold the options needed by the fetchMethod
+       * @return {Promise} a promise when the fetch method has completed and the events have been triggered
+       */
+      __loadWrapper: function(fetchMethod, options) {
+        var object = this;
+        this.loadingCount++;
+        this.loading = true;
+        this.trigger('load-begin');
+        return $.when(fetchMethod.call(object, options)).always(function() {
+          if (!object.loadedOnce) {
+            object.loadedOnce = true;
+            object.loadedOnceDeferred.resolve();
+          }
+          object.loadingCount--;
+          if (object.loadingCount <= 0) {
+            object.loadingCount = 0; // prevent going negative.
+            object.loading = false;
+          }
+        }).done(function(data, textStatus, jqXHR) {
+          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
+        });
+      }
+    };
+  };
+
+  return loadingMixin;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.polling = factory();
+  }
+}(this, function() {
+  /**
+   * Periodic Polling Object to be mixed into Backbone Collections and Models.
+   *
+   * The polling functionality should only be used for collections and for models that are not
+   * part of any collections. It should not be used for a model that is a part of a collection.
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  pollingMixin
+   * @author ariel.wexler@vecna.com
+   */
+  var pollingMixin = {
+    /**
+     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     */
+    pollTimeoutId: undefined,
+    __pollStarted: false,
+    __pollInterval: 5000,
+
+    /**
+     * Returns true if the poll is active
+     * @method isPolling
+     */
+    isPolling: function() {
+      return this.__pollStarted;
+    },
+
+    /**
+     * Starts polling Model/Collection by calling fetch every pollInterval.
+     * Note: Each Model/Collection will only allow a singleton of polling to occur so
+     * as not to have duplicate threads updating Model/Collection.
+     * @method startPolling
+     * @param  pollInterval {Integer} interval between each poll in ms.
+     */
+    startPolling: function(pollInterval) {
+      var self = this;
+      if (pollInterval) {
+        this.__pollInterval = pollInterval;
+      }
+      // have only 1 poll going at a time
+      if (this.__pollStarted) {
+        return;
+      } else {
+        this.__pollStarted = true;
+        this.pollTimeoutId = window.setInterval(function() {
+          self.__poll();
+        }, this.__pollInterval);
+        this.__poll();
+      }
+    },
+
+    /**
+     * Stops polling Model and clears all Timeouts.
+     * @method  stopPolling
+     */
+    stopPolling: function() {
+      window.clearInterval(this.pollTimeoutId);
+      this.__pollStarted = false;
+    },
+
+    /**
+     * By default, the polled fetching operation is routed directly
+     * to backbone's fetch all.
+     * @method polledFetch
+     */
+    polledFetch: function() {
+      this.fetch();
+    },
+
+    //************** Private methods **************//
+
+    /**
+     * Private function to recursively call itself and poll for db updates.
+     * @private
+     * @method __poll
+     */
+    __poll: function() {
+      this.polledFetch();
+    }
+  };
+
+  return pollingMixin;
+}));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'jquery'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('jquery'));
@@ -1071,259 +1324,6 @@
   return mixin;
 }));
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cell = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellMixin
-   * @author kent.willis@vecna.com
-   */
-  return {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.loading = factory((root.jQuery || root.Zepto || root.ender || root.$));
-  }
-}(this, function($) {
-  /**
-   * Loading logic.
-   *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  loadingMixin
-   * @author kent.willis@vecna.com
-   */
-  var loadingMixin = function(base) {
-
-    return {
-      /**
-       * Adds the loading mixin
-       * @method constructor
-       * @param args {Object} the arguments to the base constructor method
-       */
-      constructor: function(args) {
-        base.call(this, args);
-        this.loadedOnceDeferred = new $.Deferred();
-        this.loadedOnce = false;
-        this.loadingCount = 0;
-        // Loading is a convenience flag that is the equivalent of loadingCount > 0
-        this.loading = false;
-      },
-
-      /**
-       * @method hasLoadedOnce
-       * @return {Boolean} true if this model/collection has ever loaded from a fetch call
-       */
-      hasLoadedOnce: function() {
-        return this.loadedOnce;
-      },
-
-      /**
-       * @method isLoading
-       * @return {Boolean} true if this model/collection is currently loading new values from the server
-       */
-      isLoading: function() {
-        return this.loading;
-      },
-
-      /**
-       * @method getLoadedOncePromise
-       * @return {Promise} a promise that will resolve when the model/collection has loaded for the first time
-       */
-      getLoadedOncePromise: function() {
-        return this.loadedOnceDeferred.promise();
-      },
-
-      /**
-       * Wraps the base fetch in a wrapper that manages loaded states
-       * @method fetch
-       * @param options {Object} - the object to hold the options needed by the base fetch method
-       * @return {Promise} The loadWrapper promise
-       */
-      fetch: function(options) {
-        return this.__loadWrapper(base.prototype.fetch, options);
-      },
-
-      /**
-       * Base load function that will trigger a "load-begin" and a "load-complete" as
-       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       * @method __loadWrapper
-       * @param fetchMethod {Function} - the method to invoke a fetch
-       * @param options {Object} - the object to hold the options needed by the fetchMethod
-       * @return {Promise} a promise when the fetch method has completed and the events have been triggered
-       */
-      __loadWrapper: function(fetchMethod, options) {
-        var object = this;
-        this.loadingCount++;
-        this.loading = true;
-        this.trigger('load-begin');
-        return $.when(fetchMethod.call(object, options)).always(function() {
-          if (!object.loadedOnce) {
-            object.loadedOnce = true;
-            object.loadedOnceDeferred.resolve();
-          }
-          object.loadingCount--;
-          if (object.loadingCount <= 0) {
-            object.loadingCount = 0; // prevent going negative.
-            object.loading = false;
-          }
-        }).done(function(data, textStatus, jqXHR) {
-          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
-        });
-      }
-    };
-  };
-
-  return loadingMixin;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.polling = factory();
-  }
-}(this, function() {
-  /**
-   * Periodic Polling Object to be mixed into Backbone Collections and Models.
-   *
-   * The polling functionality should only be used for collections and for models that are not
-   * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  pollingMixin
-   * @author ariel.wexler@vecna.com
-   */
-  var pollingMixin = {
-    /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
-     */
-    pollTimeoutId: undefined,
-    __pollStarted: false,
-    __pollInterval: 5000,
-
-    /**
-     * Returns true if the poll is active
-     * @method isPolling
-     */
-    isPolling: function() {
-      return this.__pollStarted;
-    },
-
-    /**
-     * Starts polling Model/Collection by calling fetch every pollInterval.
-     * Note: Each Model/Collection will only allow a singleton of polling to occur so
-     * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
-     */
-    startPolling: function(pollInterval) {
-      var self = this;
-      if (pollInterval) {
-        this.__pollInterval = pollInterval;
-      }
-      // have only 1 poll going at a time
-      if (this.__pollStarted) {
-        return;
-      } else {
-        this.__pollStarted = true;
-        this.pollTimeoutId = window.setInterval(function() {
-          self.__poll();
-        }, this.__pollInterval);
-        this.__poll();
-      }
-    },
-
-    /**
-     * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
-     */
-    stopPolling: function() {
-      window.clearInterval(this.pollTimeoutId);
-      this.__pollStarted = false;
-    },
-
-    /**
-     * By default, the polled fetching operation is routed directly
-     * to backbone's fetch all.
-     * @method polledFetch
-     */
-    polledFetch: function() {
-      this.fetch();
-    },
-
-    //************** Private methods **************//
-
-    /**
-     * Private function to recursively call itself and poll for db updates.
-     * @private
-     * @method __poll
-     */
-    __poll: function() {
-      this.polledFetch();
-    }
-  };
-
-  return pollingMixin;
-}));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/cellMixin'], factory);
@@ -3174,7 +3174,7 @@
      */
     __substituteIndicesUsingMap : function(dest, indexMap) {
       var newIndex;
-      return dest.replace(/\[.?\]/g, function(arrayNotation) {
+      return dest.replace(/\[[^\]]*\]/g, function(arrayNotation) {
         if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
           return arrayNotation;
         } else {
@@ -3196,21 +3196,26 @@
      * @return {Array<String>} The fully expanded subattribute names
      */
     __generateSubAttributes: function(attr, model) {
-      var i, attrName, remainder, subAttrs, values,
-        firstBracket = attr.indexOf('[]');
+      var firstBracket = attr.indexOf('[]');
       if (firstBracket === -1) {
         return [attr];
       } else {
-        attrName = attr.substring(0, firstBracket);
-        remainder = attr.substring(firstBracket + 2);
-        subAttrs = [];
-        values = model.get(attrName);
+        var attrName = attr.substring(0, firstBracket);
+        var remainder = attr.substring(firstBracket + 2);
+        var subAttrs = [];
+        var values = model.get(attrName);
         if (!values) {
           return [attr];
         }
-        for (i = 0 ; i < values.length; i++) {
-          subAttrs.push(this.__generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
+        var indexes;
+        if (_.isArray(values)) {
+          indexes = _.range(values.length);
+        } else {
+          indexes = _.keys(values);
         }
+        _.each(indexes, function(index) {
+          subAttrs.push(this.__generateSubAttributes(attrName + '[' + index + ']' + remainder, model));
+        }, this);
         return subAttrs;
       }
     }
@@ -3220,7 +3225,6 @@
 
   return View;
 }));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', './NestedModel'], factory);

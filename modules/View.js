@@ -1457,7 +1457,7 @@
      */
     __substituteIndicesUsingMap : function(dest, indexMap) {
       var newIndex;
-      return dest.replace(/\[.?\]/g, function(arrayNotation) {
+      return dest.replace(/\[[^\]]*\]/g, function(arrayNotation) {
         if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
           return arrayNotation;
         } else {
@@ -1479,21 +1479,26 @@
      * @return {Array<String>} The fully expanded subattribute names
      */
     __generateSubAttributes: function(attr, model) {
-      var i, attrName, remainder, subAttrs, values,
-        firstBracket = attr.indexOf('[]');
+      var firstBracket = attr.indexOf('[]');
       if (firstBracket === -1) {
         return [attr];
       } else {
-        attrName = attr.substring(0, firstBracket);
-        remainder = attr.substring(firstBracket + 2);
-        subAttrs = [];
-        values = model.get(attrName);
+        var attrName = attr.substring(0, firstBracket);
+        var remainder = attr.substring(firstBracket + 2);
+        var subAttrs = [];
+        var values = model.get(attrName);
         if (!values) {
           return [attr];
         }
-        for (i = 0 ; i < values.length; i++) {
-          subAttrs.push(this.__generateSubAttributes(attrName + '[' + i + ']' + remainder, model));
+        var indexes;
+        if (_.isArray(values)) {
+          indexes = _.range(values.length);
+        } else {
+          indexes = _.keys(values);
         }
+        _.each(indexes, function(index) {
+          subAttrs.push(this.__generateSubAttributes(attrName + '[' + index + ']' + remainder, model));
+        }, this);
         return subAttrs;
       }
     }
