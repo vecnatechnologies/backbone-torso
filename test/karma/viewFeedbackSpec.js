@@ -122,4 +122,88 @@ describe('A View', function() {
       expect(this.listenToFeedbackView.change).toBe(1);
     });
   });
+
+  describe('that uses array notation (single-character, such as "x") on "when"s', function() {
+    beforeEach(function() {
+      this.arrayFeedbackView = new feedbackViews.ArrayXFeedbackView();
+      this.arrayFeedbackView.attachTo(this.$app);
+    });
+
+    afterEach(function() {
+      this.arrayFeedbackView.reset();
+    });
+
+    it('can invoke the then when @foo[x] changes', function() {
+      this.arrayFeedbackView.model.set('foo', [1, 2]);
+      this.arrayFeedbackView.render();
+      expect(this.arrayFeedbackView.change).toBe(0);
+      this.arrayFeedbackView.$el.find('[data-model="foo[0]"]').change();
+      expect(this.arrayFeedbackView.change).toBe(1);
+      expect(this.arrayFeedbackView.indexMap.x).toBe(0);
+      this.arrayFeedbackView.resetIndexMap();
+      this.arrayFeedbackView.$el.find('[data-model="foo[0]"]').change();
+      expect(this.arrayFeedbackView.change).toBe(2);
+      expect(this.arrayFeedbackView.indexMap.x).toBe(0);
+      this.arrayFeedbackView.resetIndexMap();
+      this.arrayFeedbackView.$el.find('[data-model="foo[1]"]').change();
+      expect(this.arrayFeedbackView.change).toBe(3);
+      expect(this.arrayFeedbackView.indexMap.x).toBe(1);
+    });
+  });
+
+  describe('that uses array notation (mutli-character, such as "bar") on "when"s', function() {
+    beforeEach(function() {
+      this.arrayFeedbackView = new feedbackViews.ArrayBarFeedbackView();
+      this.arrayFeedbackView.attachTo(this.$app);
+    });
+
+    afterEach(function() {
+      this.arrayFeedbackView.reset();
+    });
+
+    it('can invoke the then when @foo[bar] changes', function() {
+      this.arrayFeedbackView.model.set('foo', ['abc', 'def']);
+      this.arrayFeedbackView.render();
+      expect(this.arrayFeedbackView.change).toBe(0);
+      this.arrayFeedbackView.$el.find('[data-model="foo[0]"]').change();
+      expect(this.arrayFeedbackView.change).toBe(1);
+      expect(this.arrayFeedbackView.indexMap.bar).toBe(0);
+      this.arrayFeedbackView.resetIndexMap();
+      this.arrayFeedbackView.$el.find('[data-model="foo[0]"]').change();
+      expect(this.arrayFeedbackView.change).toBe(2);
+      expect(this.arrayFeedbackView.indexMap.bar).toBe(0);
+      this.arrayFeedbackView.resetIndexMap();
+      this.arrayFeedbackView.$el.find('[data-model="foo[1]"]').change();
+      expect(this.arrayFeedbackView.change).toBe(3);
+      expect(this.arrayFeedbackView.indexMap.bar).toBe(1);
+    });
+  });
+
+  describe('that uses object notation on "when"s', function() {
+    beforeEach(function() {
+      this.objectFeedbackView = new feedbackViews.ObjectFeedbackView();
+      this.objectFeedbackView.attachTo(this.$app);
+    });
+
+    afterEach(function() {
+      this.objectFeedbackView.reset();
+    });
+
+    it('can invoke the then when @foo[bar] changes', function() {
+      this.objectFeedbackView.model.set('foo', {'abc': 1, 'def': 2});
+      this.objectFeedbackView.render();
+      expect(this.objectFeedbackView.change).toBe(0);
+      this.objectFeedbackView.$el.find('[data-model="foo[abc]"]').change();
+      expect(this.objectFeedbackView.change).toBe(1);
+      expect(this.objectFeedbackView.indexMap.bar).toBe('abc');
+      this.objectFeedbackView.resetIndexMap();
+      this.objectFeedbackView.$el.find('[data-model="foo[abc]"]').change();
+      expect(this.objectFeedbackView.change).toBe(2);
+      expect(this.objectFeedbackView.indexMap.bar).toBe('abc');
+      this.objectFeedbackView.resetIndexMap();
+      this.objectFeedbackView.$el.find('[data-model="foo[def]"]').change();
+      expect(this.objectFeedbackView.change).toBe(3);
+      expect(this.objectFeedbackView.indexMap.bar).toBe('def');
+    });
+  });
 });

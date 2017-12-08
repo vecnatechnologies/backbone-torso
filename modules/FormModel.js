@@ -1145,7 +1145,7 @@
                 modelCopy[field] = formModel.__cloneVal(model.get(field));
               });
             } else {
-              modelCopy = formModel.__cloneVal(modelConfig.model.attributes);
+              modelCopy = formModel.__cloneVal(model.attributes);
             }
             models[modelAlias] = modelCopy;
           }
