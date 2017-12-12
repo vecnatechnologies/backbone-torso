@@ -1452,6 +1452,8 @@
     /**
      * Takes a map from variable name to value to be replaced and processes a string with them.
      * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+     * Also supports objects:
+     * Example: foo.bar and {bar: someString} will return as foo.someString
      * @private
      * @method __substituteIndicesUsingMap
      */
@@ -1462,7 +1464,11 @@
           return arrayNotation;
         } else {
           newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
-          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          if (_.isString(newIndex)) {
+            return '.' + newIndex;
+          } else {
+            return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          }
         }
       });
     },
@@ -1473,6 +1479,7 @@
      *    foo[] -> ['foo[0]', 'foo[1]'].
      * Will also perform nested arrays:
      *    foo[][] -> ['foo[0][0]', foo[1][0]']
+     * Supports both foo[x] and foo.bar
      * @method __generateSubAttributes
      * @private
      * @param {String} attr The name of the attribute to expand according to the bound model
@@ -1497,7 +1504,11 @@
           indexes = _.keys(values);
         }
         _.each(indexes, function(index) {
-          subAttrs.push(this.__generateSubAttributes(attrName + '[' + index + ']' + remainder, model));
+          var indexToken = '[' + index + ']';
+          if (_.isString(index)) {
+            indexToken = '.' + index;
+          }
+          subAttrs.push(this.__generateSubAttributes(attrName + indexToken + remainder, model));
         }, this);
         return subAttrs;
       }

@@ -197,7 +197,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_handlebarsUtils.js.html#l41"><code>modules&#x2F;handlebarsUtils.js:41</code></a>
+        <a href="../files/modules_handlebarsUtils.js.html#l46"><code>modules&#x2F;handlebarsUtils.js:46</code></a>
         </p>
 
 
@@ -206,7 +206,13 @@
 
     <div class="description">
         <p>Usage: {{bindModel 'fieldName' value='suffix'}}
-Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name-suffix&quot; data-model=&quot;fieldName&quot; data-feedback=&quot;firstName&quot;</p>
+Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name&quot; data-model=&quot;fieldName&quot; data-feedback=&quot;fieldName&quot; value=&quot;demo&quot;
+Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}
+Generates: data-model=&quot;fieldName[123].sub&quot; data-feedback=&quot;fieldName[123].sub&quot; name=&quot;field-name-123_sub&quot;
+id=&quot;field-name-123_sub-demo&quot; value=&quot;demo&quot;
+Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}
+Generates: data-model=&quot;fieldName.abc.sub&quot; data-feedback=&quot;fieldName[abc].sub&quot; name=&quot;field-name_abc_sub&quot;
+id=&quot;field-name_abc_sub-demo&quot; value=&quot;demo&quot;</p>
 
     </div>
 
@@ -288,7 +294,7 @@ Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name-suffix&quot; d
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_handlebarsUtils.js.html#l109"><code>modules&#x2F;handlebarsUtils.js:109</code></a>
+        <a href="../files/modules_handlebarsUtils.js.html#l132"><code>modules&#x2F;handlebarsUtils.js:132</code></a>
         </p>
 
 
@@ -296,7 +302,9 @@ Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name-suffix&quot; d
     </div>
 
     <div class="description">
-        
+        <p>Usage: {{feedback 'fieldName[x].sub'}}
+Generates: field-name[x]_sub</p>
+
     </div>
 
         <div class="params">
@@ -356,7 +364,7 @@ Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name-suffix&quot; d
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_handlebarsUtils.js.html#l54"><code>modules&#x2F;handlebarsUtils.js:54</code></a>
+        <a href="../files/modules_handlebarsUtils.js.html#l65"><code>modules&#x2F;handlebarsUtils.js:65</code></a>
         </p>
 
 
@@ -365,7 +373,11 @@ Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name-suffix&quot; d
 
     <div class="description">
         <p>Usage: {{feedback 'fieldName'}}
-Generates: data-feedback=&quot;firstName&quot;</p>
+Generates: data-feedback=&quot;fieldName&quot;
+Usage: {{feedback 'fieldName[x].sub' value='demo' x=123}}
+Generates: data-feedback=&quot;fieldName[123].sub&quot;
+Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+Generates: data-feedback=&quot;fieldName[abc].sub&quot;</p>
 
     </div>
 
@@ -437,7 +449,7 @@ Generates: data-feedback=&quot;firstName&quot;</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_handlebarsUtils.js.html#l66"><code>modules&#x2F;handlebarsUtils.js:66</code></a>
+        <a href="../files/modules_handlebarsUtils.js.html#l82"><code>modules&#x2F;handlebarsUtils.js:82</code></a>
         </p>
 
 
@@ -446,7 +458,9 @@ Generates: data-feedback=&quot;firstName&quot;</p>
 
     <div class="description">
         <p>Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
-Generates: id=&quot;first-name-123_sub-demo&quot; for=&quot;first-name-123_sub&quot; value=&quot;demo&quot;</p>
+Generates: id=&quot;field-name-123_sub-demo&quot; for=&quot;field-name-123_sub-demo&quot; value=&quot;demo&quot;
+Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+Generates: id=&quot;field-name_abc_sub-demo&quot; for=&quot;field-name_abc_sub-demo&quot; value=&quot;demo&quot;</p>
 
     </div>
 
@@ -483,6 +497,18 @@ Generates: id=&quot;first-name-123_sub-demo&quot; for=&quot;first-name-123_sub&q
 
                                 <div class="param-description">
                                     <p>The value tacked on to the end of the field string (useful for radio and checkbox)</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[noValueAttr]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>when options.noValueAttr is set to true,
+then it will not generate the &quot;value&quot; attribute in the DOM.</p>
 
                                 </div>
 
@@ -543,7 +569,11 @@ Generates: id=&quot;first-name-123_sub-demo&quot; for=&quot;first-name-123_sub&q
 
     <div class="description">
         <p>Usage: {{labelFor 'fieldName' value=&quot;suffix&quot;}}
-Generates: for=&quot;field-name-suffix&quot;</p>
+Generates: for=&quot;field-name-suffix&quot;
+Usage: {{labelFor 'fieldName[x].sub' value=&quot;demo&quot; x=123}}
+Generates: for=&quot;field-name-123_sub-demo&quot;
+Usage: {{labelFor 'fieldName[bar].sub' value=&quot;demo&quot; bar=&quot;abc&quot;}}
+Generates: for=&quot;field-name_abc_sub-demo&quot;</p>
 
     </div>
 
@@ -611,6 +641,9 @@ Generates: for=&quot;field-name-suffix&quot;</p>
                 <li class="arg">
                         <code>indexMap</code>
                 </li>
+                <li class="arg">
+                        <code>options</code>
+                </li>
             </ul><span class="paren">)</span>
         </div>
 
@@ -627,7 +660,7 @@ Generates: for=&quot;field-name-suffix&quot;</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_handlebarsUtils.js.html#l128"><code>modules&#x2F;handlebarsUtils.js:128</code></a>
+        <a href="../files/modules_handlebarsUtils.js.html#l153"><code>modules&#x2F;handlebarsUtils.js:153</code></a>
         </p>
 
 
@@ -635,8 +668,10 @@ Generates: for=&quot;field-name-suffix&quot;</p>
     </div>
 
     <div class="description">
-        <p>Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});
-Generates: 'test[123]-thisIsRegular-y'</p>
+        <p>Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');
+Generates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'
+if options.forceArrayNotation is set then:
+Generates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'</p>
 
     </div>
 
@@ -665,6 +700,30 @@ Generates: 'test[123]-thisIsRegular-y'</p>
 
                     </div>
 
+                </li>
+                <li class="param">
+                        <code class="param-name">options</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        <p>named parameters</p>
+
+                    </div>
+
+                        <ul class="params-list">
+                            <li class="param">
+                                    <code class="param-name optional">[forceArrayNotation=false]  Force the usage of []</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>insetad of . for string values.</p>
+
+                                </div>
+
+                            </li>
+                        </ul>
                 </li>
             </ul>
         </div>

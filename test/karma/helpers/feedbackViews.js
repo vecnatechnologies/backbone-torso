@@ -205,7 +205,7 @@ var ObjectFeedbackView = TorsoFormView.extend({
     }
   ],
 
-  template: '<input name="foo[abc]" data-model="foo[abc]" data-feedback="foo[abc]" /><input name="foo[def]" data-model="foo[def]" data-feedback="foo[def]" />',
+  template: '<input name="foo[abc]" data-model="foo.abc" data-feedback="foo[abc]" /><input name="foo[def]" data-model="foo.def" data-feedback="foo[def]" />',
 
   initialize: function() {
     this.reset();

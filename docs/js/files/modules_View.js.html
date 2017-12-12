@@ -1560,6 +1560,8 @@
     /**
      * Takes a map from variable name to value to be replaced and processes a string with them.
      * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+     * Also supports objects:
+     * Example: foo.bar and {bar: someString} will return as foo.someString
      * @private
      * @method __substituteIndicesUsingMap
      */
@@ -1570,7 +1572,11 @@
           return arrayNotation;
         } else {
           newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
-          return &#x27;[&#x27; + (newIndex === undefined ? &#x27;&#x27; : newIndex) + &#x27;]&#x27;;
+          if (_.isString(newIndex)) {
+            return &#x27;.&#x27; + newIndex;
+          } else {
+            return &#x27;[&#x27; + (newIndex === undefined ? &#x27;&#x27; : newIndex) + &#x27;]&#x27;;
+          }
         }
       });
     },
@@ -1581,6 +1587,7 @@
      *    foo[] -&gt; [&#x27;foo[0]&#x27;, &#x27;foo[1]&#x27;].
      * Will also perform nested arrays:
      *    foo[][] -&gt; [&#x27;foo[0][0]&#x27;, foo[1][0]&#x27;]
+     * Supports both foo[x] and foo.bar
      * @method __generateSubAttributes
      * @private
      * @param {String} attr The name of the attribute to expand according to the bound model
@@ -1605,7 +1612,11 @@
           indexes = _.keys(values);
         }
         _.each(indexes, function(index) {
-          subAttrs.push(this.__generateSubAttributes(attrName + &#x27;[&#x27; + index + &#x27;]&#x27; + remainder, model));
+          var indexToken = &#x27;[&#x27; + index + &#x27;]&#x27;;
+          if (_.isString(index)) {
+            indexToken = &#x27;.&#x27; + index;
+          }
+          subAttrs.push(this.__generateSubAttributes(attrName + indexToken + remainder, model));
         }, this);
         return subAttrs;
       }

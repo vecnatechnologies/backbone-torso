@@ -739,7 +739,7 @@ Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'})
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_View.js.html#l1470"><code>modules&#x2F;View.js:1470</code></a>
+        <a href="../files/modules_View.js.html#l1476"><code>modules&#x2F;View.js:1476</code></a>
         </p>
 
 
@@ -751,7 +751,8 @@ Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'})
 the &quot;open&quot; array notation:
 foo[] -&gt; ['foo[0]', 'foo[1]'].
 Will also perform nested arrays:
-foo[][] -&gt; ['foo[0][0]', foo[1][0]']</p>
+foo[][] -&gt; ['foo[0][0]', foo[1][0]']
+Supports both foo[x] and foo.bar</p>
 
     </div>
 
@@ -1706,7 +1707,9 @@ Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]</p>
 
     <div class="description">
         <p>Takes a map from variable name to value to be replaced and processes a string with them.
-Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]</p>
+Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+Also supports objects:
+Example: foo.bar and {bar: someString} will return as foo.someString</p>
 
     </div>
 
