@@ -193,15 +193,15 @@ describe('A View', function() {
       this.objectFeedbackView.model.set('foo', {'abc': 1, 'def': 2});
       this.objectFeedbackView.render();
       expect(this.objectFeedbackView.change).toBe(0);
-      this.objectFeedbackView.$el.find('[data-model="foo[abc]"]').change();
+      this.objectFeedbackView.$el.find('[data-model="foo.abc"]').change();
       expect(this.objectFeedbackView.change).toBe(1);
       expect(this.objectFeedbackView.indexMap.bar).toBe('abc');
       this.objectFeedbackView.resetIndexMap();
-      this.objectFeedbackView.$el.find('[data-model="foo[abc]"]').change();
+      this.objectFeedbackView.$el.find('[data-model="foo.abc"]').change();
       expect(this.objectFeedbackView.change).toBe(2);
       expect(this.objectFeedbackView.indexMap.bar).toBe('abc');
       this.objectFeedbackView.resetIndexMap();
-      this.objectFeedbackView.$el.find('[data-model="foo[def]"]').change();
+      this.objectFeedbackView.$el.find('[data-model="foo.def"]').change();
       expect(this.objectFeedbackView.change).toBe(3);
       expect(this.objectFeedbackView.indexMap.bar).toBe('def');
     });

@@ -5807,7 +5807,7 @@
         {
             "file": "modules/View.js",
             "line": 1452,
-            "description": "Takes a map from variable name to value to be replaced and processes a string with them.\nExample: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]",
+            "description": "Takes a map from variable name to value to be replaced and processes a string with them.\nExample: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]\nAlso supports objects:\nExample: foo.bar and {bar: someString} will return as foo.someString",
             "access": "private",
             "tagname": "",
             "itemtype": "method",
@@ -5817,8 +5817,8 @@
         },
         {
             "file": "modules/View.js",
-            "line": 1470,
-            "description": "Generates an array of all the possible field accessors and their indices when using\nthe \"open\" array notation:\n   foo[] -> ['foo[0]', 'foo[1]'].\nWill also perform nested arrays:\n   foo[][] -> ['foo[0][0]', foo[1][0]']",
+            "line": 1476,
+            "description": "Generates an array of all the possible field accessors and their indices when using\nthe \"open\" array notation:\n   foo[] -> ['foo[0]', 'foo[1]'].\nWill also perform nested arrays:\n   foo[][] -> ['foo[0][0]', foo[1][0]']\nSupports both foo[x] and foo.bar",
             "itemtype": "method",
             "name": "__generateSubAttributes",
             "access": "private",
@@ -5840,7 +5840,7 @@
         {
             "file": "modules/handlebarsUtils.js",
             "line": 28,
-            "description": "Usage: {{labelFor 'fieldName' value=\"suffix\"}}\nGenerates: for=\"field-name-suffix\"",
+            "description": "Usage: {{labelFor 'fieldName' value=\"suffix\"}}\nGenerates: for=\"field-name-suffix\"\nUsage: {{labelFor 'fieldName[x].sub' value=\"demo\" x=123}}\nGenerates: for=\"field-name-123_sub-demo\"\nUsage: {{labelFor 'fieldName[bar].sub' value=\"demo\" bar=\"abc\"}}\nGenerates: for=\"field-name_abc_sub-demo\"",
             "itemtype": "method",
             "name": "Handlebars.helpers.labelFor",
             "params": [
@@ -5871,8 +5871,8 @@
         },
         {
             "file": "modules/handlebarsUtils.js",
-            "line": 41,
-            "description": "Usage: {{bindModel 'fieldName' value='suffix'}}\nGenerates: id=\"field-name-suffix\" name=\"field-name-suffix\" data-model=\"fieldName\" data-feedback=\"firstName\"",
+            "line": 46,
+            "description": "Usage: {{bindModel 'fieldName' value='suffix'}}\nGenerates: id=\"field-name-suffix\" name=\"field-name\" data-model=\"fieldName\" data-feedback=\"fieldName\" value=\"demo\"\nUsage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}\nGenerates: data-model=\"fieldName[123].sub\" data-feedback=\"fieldName[123].sub\" name=\"field-name-123_sub\"\n           id=\"field-name-123_sub-demo\" value=\"demo\"\nUsage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}\nGenerates: data-model=\"fieldName.abc.sub\" data-feedback=\"fieldName[abc].sub\" name=\"field-name_abc_sub\"\n                 id=\"field-name_abc_sub-demo\" value=\"demo\"",
             "itemtype": "method",
             "name": "Handlebars.helpers.bindModel",
             "params": [
@@ -5905,8 +5905,8 @@
         },
         {
             "file": "modules/handlebarsUtils.js",
-            "line": 54,
-            "description": "Usage: {{feedback 'fieldName'}}\nGenerates: data-feedback=\"firstName\"",
+            "line": 65,
+            "description": "Usage: {{feedback 'fieldName'}}\nGenerates: data-feedback=\"fieldName\"\nUsage: {{feedback 'fieldName[x].sub' value='demo' x=123}}\nGenerates: data-feedback=\"fieldName[123].sub\"\nUsage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}\nGenerates: data-feedback=\"fieldName[abc].sub\"",
             "itemtype": "method",
             "name": "Handlebars.helpers.feedback",
             "params": [
@@ -5931,8 +5931,8 @@
         },
         {
             "file": "modules/handlebarsUtils.js",
-            "line": 66,
-            "description": "Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}\nGenerates: id=\"first-name-123_sub-demo\" for=\"first-name-123_sub\" value=\"demo\"",
+            "line": 82,
+            "description": "Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}\nGenerates: id=\"field-name-123_sub-demo\" for=\"field-name-123_sub-demo\" value=\"demo\"\nUsage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}\nGenerates: id=\"field-name_abc_sub-demo\" for=\"field-name_abc_sub-demo\" value=\"demo\"",
             "itemtype": "method",
             "name": "Handlebars.helpers.formAttr",
             "params": [
@@ -5951,6 +5951,12 @@
                             "description": "The value tacked on to the end of the field string (useful for radio and checkbox)",
                             "type": "String",
                             "optional": true
+                        },
+                        {
+                            "name": "noValueAttr",
+                            "description": "when options.noValueAttr is set to true,\n                                             then it will not generate the \"value\" attribute in the DOM.",
+                            "type": "Boolean",
+                            "optional": true
                         }
                     ]
                 }
@@ -5965,7 +5971,8 @@
         },
         {
             "file": "modules/handlebarsUtils.js",
-            "line": 109,
+            "line": 132,
+            "description": "Usage: {{feedback 'fieldName[x].sub'}}\nGenerates: field-name[x]_sub",
             "itemtype": "method",
             "name": "Handlebars.helpers.dasherize",
             "params": [
@@ -5985,8 +5992,8 @@
         },
         {
             "file": "modules/handlebarsUtils.js",
-            "line": 128,
-            "description": "Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});\nGenerates: 'test[123]-thisIsRegular-y'",
+            "line": 153,
+            "description": "Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');\nGenerates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'\nif options.forceArrayNotation is set then:\nGenerates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'",
             "itemtype": "method",
             "name": "injectFieldIndices",
             "params": [
@@ -5999,6 +6006,20 @@
                     "name": "indexMap",
                     "description": "A map of variables",
                     "type": "Object"
+                },
+                {
+                    "name": "options",
+                    "description": "named parameters",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "forceArrayNotation",
+                            "description": "insetad of . for string values.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false]  Force the usage of ["
+                        }
+                    ]
                 }
             ],
             "return": {
