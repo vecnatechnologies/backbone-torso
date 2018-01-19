@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var Backbone = require('backbone');
 var TorsoBehavior = require('./../../modules/Behavior');
 var TorsoView = require('./../../modules/View');
 
@@ -710,11 +711,11 @@ describe('A Torso Behavior', function() {
       expect(methodsCalled[1]).toBe('view:_deactivate');
     });
 
-    it('_dispose before view._dispose', function() {
-      var methodsCalled = [];
+    it('dispose is called when view is disposed', function() {
       var BehaviorTrackingDispose = TorsoBehavior.extend({
-        _dispose: function() {
-          methodsCalled.push('behavior:_dispose');
+        constructor: function() {
+          spyOn(this, 'dispose').and.callThrough();
+          TorsoBehavior.prototype.constructor.apply(this, arguments);
         }
       });
       var ViewTrackingDispose = TorsoView.extend({
@@ -723,16 +724,113 @@ describe('A Torso Behavior', function() {
             behavior: BehaviorTrackingDispose
           }
         },
-        _dispose: function() {
-          methodsCalled.push('view:_dispose');
+        constructor: function() {
+          spyOn(this, 'dispose').and.callThrough();
+          TorsoView.prototype.constructor.apply(this, arguments);
         }
+      });
+      var viewTrackingDispose = new ViewTrackingDispose();
+      var behaviorTrackingDispose = viewTrackingDispose.getBehavior('behaviorTrackingDispose');
+      expect(behaviorTrackingDispose.dispose).not.toHaveBeenCalled();
+
+      viewTrackingDispose.dispose();
+
+      expect(behaviorTrackingDispose.dispose).toHaveBeenCalled();
+    });
+
+    it('calls _dispose when dispose is called', function() {
+      var BehaviorTrackingDispose = TorsoBehavior.extend({
+        constructor: function() {
+          spyOn(this, '_dispose').and.callThrough();
+          TorsoBehavior.prototype.constructor.apply(this, arguments);
+        }
+      });
+      var behaviorTrackingDispose = new BehaviorTrackingDispose(null, {
+        alias: 'trackingDispose',
+        view: new TorsoView()
+      });
+      expect(behaviorTrackingDispose._dispose).not.toHaveBeenCalled();
+
+      behaviorTrackingDispose.dispose();
+
+      expect(behaviorTrackingDispose._dispose).toHaveBeenCalled();
+    });
+
+    it('stops listening to events when dispose is called', function() {
+      var eventName = 'some.event';
+      var BehaviorTrackingDispose = TorsoBehavior.extend({
+        initialize: function() {
+          TorsoBehavior.prototype.initialize.apply(this, arguments);
+          this.on(eventName, this._eventHandler);
+        },
+        _eventHandler: jasmine.createSpy('behavior-event-handler')
+      });
+      var behaviorTrackingDispose = new BehaviorTrackingDispose(null, {
+        alias: 'trackingDispose',
+        view: new TorsoView()
+      });
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+      behaviorTrackingDispose.trigger(eventName);
+      expect(behaviorTrackingDispose._eventHandler).toHaveBeenCalled();
+      behaviorTrackingDispose._eventHandler.calls.reset();
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+
+      behaviorTrackingDispose.dispose();
+
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+      behaviorTrackingDispose.trigger(eventName);
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+    });
+
+    it('stops listening to events on other object when dispose is called', function() {
+      var eventName = 'some.event';
+      var eventSource = _.extend({}, Backbone.Events);
+      var BehaviorTrackingDispose = TorsoBehavior.extend({
+        initialize: function() {
+          TorsoBehavior.prototype.initialize.apply(this, arguments);
+          this.listenTo(eventSource, eventName, this._eventHandler);
+        },
+        _eventHandler: jasmine.createSpy('behavior-event-handler')
+      });
+      var behaviorTrackingDispose = new BehaviorTrackingDispose(null, {
+        alias: 'trackingDispose',
+        view: new TorsoView()
+      });
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+      eventSource.trigger(eventName);
+      expect(behaviorTrackingDispose._eventHandler).toHaveBeenCalled();
+      behaviorTrackingDispose._eventHandler.calls.reset();
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+
+      behaviorTrackingDispose.dispose();
+
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+      eventSource.trigger(eventName);
+      expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
+    });
+
+    it('_dispose before view._dispose', function() {
+      var BehaviorTrackingDispose = TorsoBehavior.extend({
+        _dispose: jasmine.createSpy('behavior._dispose')
+      });
+      var ViewTrackingDispose = TorsoView.extend({
+        behaviors: {
+          behaviorTrackingDispose: {
+            behavior: BehaviorTrackingDispose
+          }
+        },
+        _dispose: jasmine.createSpy('view._dispose')
       });
 
       var viewTrackingDispose = new ViewTrackingDispose();
+      var behaviorTrackingDispose = viewTrackingDispose.getBehavior('behaviorTrackingDispose');
+      expect(viewTrackingDispose._dispose).not.toHaveBeenCalled();
+      expect(behaviorTrackingDispose._dispose).not.toHaveBeenCalled();
+
       viewTrackingDispose.dispose();
 
-      expect(methodsCalled[0]).toBe('behavior:_dispose');
-      expect(methodsCalled[1]).toBe('view:_dispose');
+      expect(viewTrackingDispose._dispose).toHaveBeenCalled();
+      expect(behaviorTrackingDispose._dispose).toHaveBeenCalled();
     });
 
     it('if view has multiple behaviors, lifecycle methods run in order of behavior definition', function() {
