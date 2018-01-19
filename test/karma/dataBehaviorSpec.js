@@ -58,6 +58,14 @@ var ViewWithDataBehavior = TorsoView.extend({
     dataBehavior: getBasicBehaviorConfiguration()
   }
 });
+function getBasicBehaviorInstance() {
+  return new TorsoDataBehavior(null, {
+    alias: 'basicBehavior',
+    view: new TorsoView(),
+    cache: new TorsoTestCacheCollection(),
+    ids: [1, 2]
+  });
+}
 
 describe('A Torso Data Behavior', function() {
 
@@ -3075,5 +3083,51 @@ ids = []\n\
         fail(error);
         done();
       });
+  });
+
+  it('will resolve the retrieveOncePromise if the fetch status is already successful', function(done) {
+    var behavior = getBasicBehaviorInstance();
+    behavior.set('fetchSuccess', true);
+
+    behavior.retrieveOncePromise()
+      .then(_.noop, function() {
+        fail('the promise should be resolved, not rejected')
+      })
+      .then(done, done);
+  });
+
+  it('will reject the retrieveOncePromise if the fetch status is already failed', function(done) {
+    var behavior = getBasicBehaviorInstance();
+    behavior.set('fetchSuccess', false);
+
+    behavior.retrieveOncePromise()
+      .then(function() {
+        fail('the promise should be rejected, not resolved')
+      })
+      .then(done, done);
+  });
+
+  it('will resolve the retrieveOncePromise when the fetch completes successfully', function(done) {
+    var behavior = getBasicBehaviorInstance();
+
+    behavior.retrieveOncePromise()
+      .then(_.noop, function() {
+        fail('the promise should be resolved, not rejected')
+      })
+      .then(done, done);
+
+    behavior.__fetchSuccess();
+  });
+
+  it('will reject the retrieveOncePromise when the fetch fails', function(done) {
+    var behavior = getBasicBehaviorInstance();
+
+    behavior.retrieveOncePromise()
+      .then(function() {
+        fail('the promise should be rejected, not resolved')
+      })
+      .then(done, done);
+
+    behavior.__fetchFailed();
   });
 });
