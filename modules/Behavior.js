@@ -18,7 +18,7 @@
     'before-detached-callback':  '_detached',
     'before-activate-callback': '_activate',
     'before-deactivate-callback': '_deactivate',
-    'before-dispose-callback': '_dispose',
+    'before-dispose-callback': 'dispose',
     'render:before-attach-tracked-views': 'attachTrackedViews',
     'render:begin': 'prerender',
     'render:complete': 'postrender',
@@ -125,7 +125,7 @@
      */
     __bindLifecycleMethods: function() {
       this.listenTo(this.view, 'initialize:complete', this.__augmentViewPrepare);
-      this.listenTo(this.view, 'before-dispose-callback', this.__dispose);
+      this.listenTo(this.view, 'before-dispose-callback', this.dispose);
       _.each(eventMap, function(callback, event) {
         this.listenTo(this.view, event, this[callback]);
       }, this);
@@ -201,15 +201,36 @@
     },
 
     /**
-     * Preforms basic cleanup of a behavior before specific cleanup by extensions.
-     * @method __dispose
-     * @private
+     * Removes all listeners, stops listening to events.
+     * After dispose is called, the behavior can be safely garbage collected.
+     * Called when the owning view is disposed.
+     * @method _dispose
      */
-    __dispose: function() {
+    dispose: function() {
+      this.trigger('before-dispose-callback');
+      this._dispose();
+
       this.stopListening();
       this.off();
-    }
 
+      this.__isDisposed = true;
+    },
+
+    /**
+     * Method to be invoked when dispose is called. By default calling dispose will remove the
+     * view's on's and listenTo's.
+     * Override this method to destruct any extra
+     * @method _dispose
+     */
+    _dispose: _.noop,
+
+    /**
+     * @return {Boolean} true if the view was disposed
+     * @method isDisposed
+     */
+    isDisposed: function() {
+      return this.__isDisposed;
+    }
   });
 
   return Behavior;
