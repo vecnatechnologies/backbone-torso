@@ -903,6 +903,7 @@
      * @private
      */
     _dispose: function() {
+      Behavior.prototype._dispose.apply(this, arguments);
       this.data.dispose();
     }
   });

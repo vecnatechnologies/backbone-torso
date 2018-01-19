@@ -3136,7 +3136,7 @@ ids = []\n\
     spyOn(behavior.data.privateCollection, 'dispose');
 
     expect(behavior.data.privateCollection.dispose).not.toHaveBeenCalled();
-    behavior.dispose();
+    behavior.view.dispose();
 
     expect(behavior.data.privateCollection.dispose).toHaveBeenCalled();
   });

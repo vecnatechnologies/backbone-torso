@@ -18,7 +18,7 @@
     'before-detached-callback':  '_detached',
     'before-activate-callback': '_activate',
     'before-deactivate-callback': '_deactivate',
-    'before-dispose-callback': 'dispose',
+    'before-dispose-callback': '_dispose',
     'render:before-attach-tracked-views': 'attachTrackedViews',
     'render:begin': 'prerender',
     'render:complete': 'postrender',
@@ -125,7 +125,7 @@
      */
     __bindLifecycleMethods: function() {
       this.listenTo(this.view, 'initialize:complete', this.__augmentViewPrepare);
-      this.listenTo(this.view, 'before-dispose-callback', this.dispose);
+      this.listenTo(this.view, 'before-dispose-callback', this.__dispose);
       _.each(eventMap, function(callback, event) {
         this.listenTo(this.view, event, this[callback]);
       }, this);
@@ -204,12 +204,10 @@
      * Removes all listeners, stops listening to events.
      * After dispose is called, the behavior can be safely garbage collected.
      * Called when the owning view is disposed.
-     * @method _dispose
+     * @method __dispose
      */
-    dispose: function() {
+    __dispose: function() {
       this.trigger('before-dispose-callback');
-      this._dispose();
-
       this.stopListening();
       this.off();
 

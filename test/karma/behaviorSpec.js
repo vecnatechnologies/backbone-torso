@@ -711,10 +711,10 @@ describe('A Torso Behavior', function() {
       expect(methodsCalled[1]).toBe('view:_deactivate');
     });
 
-    it('dispose is called when view is disposed', function() {
+    it('_dispose and __dispose are called when view is disposed', function() {
       var BehaviorTrackingDispose = TorsoBehavior.extend({
         constructor: function() {
-          spyOn(this, 'dispose').and.callThrough();
+          spyOn(this, '__dispose').and.callThrough();
           TorsoBehavior.prototype.constructor.apply(this, arguments);
         }
       });
@@ -723,27 +723,20 @@ describe('A Torso Behavior', function() {
           behaviorTrackingDispose: {
             behavior: BehaviorTrackingDispose
           }
-        },
-        constructor: function() {
-          spyOn(this, 'dispose').and.callThrough();
-          TorsoView.prototype.constructor.apply(this, arguments);
         }
       });
       var viewTrackingDispose = new ViewTrackingDispose();
       var behaviorTrackingDispose = viewTrackingDispose.getBehavior('behaviorTrackingDispose');
-      expect(behaviorTrackingDispose.dispose).not.toHaveBeenCalled();
+      expect(behaviorTrackingDispose.__dispose).not.toHaveBeenCalled();
 
       viewTrackingDispose.dispose();
 
-      expect(behaviorTrackingDispose.dispose).toHaveBeenCalled();
+      expect(behaviorTrackingDispose.__dispose).toHaveBeenCalled();
     });
 
     it('calls _dispose when dispose is called', function() {
       var BehaviorTrackingDispose = TorsoBehavior.extend({
-        constructor: function() {
-          spyOn(this, '_dispose').and.callThrough();
-          TorsoBehavior.prototype.constructor.apply(this, arguments);
-        }
+        _dispose: jasmine.createSpy('behavior._dispose')
       });
       var behaviorTrackingDispose = new BehaviorTrackingDispose(null, {
         alias: 'trackingDispose',
@@ -751,7 +744,7 @@ describe('A Torso Behavior', function() {
       });
       expect(behaviorTrackingDispose._dispose).not.toHaveBeenCalled();
 
-      behaviorTrackingDispose.dispose();
+      behaviorTrackingDispose.view.dispose();
 
       expect(behaviorTrackingDispose._dispose).toHaveBeenCalled();
     });
@@ -775,7 +768,7 @@ describe('A Torso Behavior', function() {
       behaviorTrackingDispose._eventHandler.calls.reset();
       expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
 
-      behaviorTrackingDispose.dispose();
+      behaviorTrackingDispose.view.dispose();
 
       expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
       behaviorTrackingDispose.trigger(eventName);
@@ -802,7 +795,7 @@ describe('A Torso Behavior', function() {
       behaviorTrackingDispose._eventHandler.calls.reset();
       expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
 
-      behaviorTrackingDispose.dispose();
+      behaviorTrackingDispose.view.dispose();
 
       expect(behaviorTrackingDispose._eventHandler).not.toHaveBeenCalled();
       eventSource.trigger(eventName);
