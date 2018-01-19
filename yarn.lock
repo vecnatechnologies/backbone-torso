@@ -211,7 +211,7 @@ async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
 
-async@^1.2.1:
+async@^1.2.1, async@^1.4.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
@@ -1917,15 +1917,6 @@ gulplog@^1.0.0:
   dependencies:
     glogg "^1.0.0"
 
-handlebars@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-3.0.0.tgz#7f4e537f4dd6992869d66c01b7505eba3561a5d5"
-  dependencies:
-    optimist "^0.6.1"
-    source-map "^0.1.40"
-  optionalDependencies:
-    uglify-js "~2.3"
-
 handlebars@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-2.0.0.tgz#6e9d7f8514a3467fa5e9f82cc158ecfc1d5ac76f"
@@ -1933,6 +1924,16 @@ handlebars@^2.0.0:
     optimist "~0.3"
   optionalDependencies:
     uglify-js "~2.3"
+
+handlebars@^4.0.0:
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.0.11.tgz#630a35dfe0294bc281edae6ffc5d329fc7982dcc"
+  dependencies:
+    async "^1.4.0"
+    optimist "^0.6.1"
+    source-map "^0.4.4"
+  optionalDependencies:
+    uglify-js "^2.6"
 
 har-schema@^1.0.5:
   version "1.0.5"
@@ -3871,9 +3872,15 @@ source-map@0.X, "source-map@>= 0.1.2", source-map@^0.5.1, source-map@^0.5.3, sou
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
 
-source-map@^0.1.38, source-map@^0.1.40, source-map@~0.1.25, source-map@~0.1.27, source-map@~0.1.7:
+source-map@^0.1.38, source-map@~0.1.25, source-map@~0.1.27, source-map@~0.1.7:
   version "0.1.43"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.1.43.tgz#c24bc146ca517c1471f5dacbe2571b2b7f9e3346"
+  dependencies:
+    amdefine ">=0.0.4"
+
+source-map@^0.4.4:
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.4.4.tgz#eba4f5da9c0dc999de68032d8b4f76173652036b"
   dependencies:
     amdefine ">=0.0.4"
 
@@ -4178,6 +4185,15 @@ uglify-js@2.6.4:
     source-map "~0.5.1"
     uglify-to-browserify "~1.0.0"
     yargs "~3.10.0"
+
+uglify-js@^2.6:
+  version "2.8.29"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
+  dependencies:
+    source-map "~0.5.1"
+    yargs "~3.10.0"
+  optionalDependencies:
+    uglify-to-browserify "~1.0.0"
 
 uglify-js@~2.3:
   version "2.3.6"
