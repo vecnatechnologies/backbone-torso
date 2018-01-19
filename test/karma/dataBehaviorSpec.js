@@ -3123,11 +3123,21 @@ ids = []\n\
     var behavior = getBasicBehaviorInstance();
 
     behavior.retrieveOncePromise()
-      .then(function() {
+      .then(function () {
         fail('the promise should be rejected, not resolved')
       })
       .then(done, done);
 
     behavior.__fetchFailed();
+  });
+
+  it('will dispose of the private collection of the data behavior when the data behavior is disposed', function() {
+    var behavior = getBasicBehaviorInstance();
+    spyOn(behavior.data.privateCollection, 'dispose');
+
+    expect(behavior.data.privateCollection.dispose).not.toHaveBeenCalled();
+    behavior.dispose();
+
+    expect(behavior.data.privateCollection.dispose).toHaveBeenCalled();
   });
 });

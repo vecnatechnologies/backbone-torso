@@ -904,9 +904,6 @@
      */
     _dispose: function() {
       this.data.dispose();
-
-      this.off();
-      this.stopListening();
     }
   });
 
@@ -1079,6 +1076,7 @@
     dispose: function() {
       this.off();
       this.stopListening();
+      this.privateCollection.dispose();
     }
   });
 
