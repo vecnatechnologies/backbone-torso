@@ -201,15 +201,34 @@
     },
 
     /**
-     * Preforms basic cleanup of a behavior before specific cleanup by extensions.
+     * Removes all listeners, stops listening to events.
+     * After dispose is called, the behavior can be safely garbage collected.
+     * Called when the owning view is disposed.
      * @method __dispose
-     * @private
      */
     __dispose: function() {
+      this.trigger('before-dispose-callback');
       this.stopListening();
       this.off();
-    }
 
+      this.__isDisposed = true;
+    },
+
+    /**
+     * Method to be invoked when dispose is called. By default calling dispose will remove the
+     * behavior's on's and listenTo's.
+     * Override this method to destruct any extra
+     * @method _dispose
+     */
+    _dispose: _.noop,
+
+    /**
+     * @return {Boolean} true if the view was disposed
+     * @method isDisposed
+     */
+    isDisposed: function() {
+      return this.__isDisposed;
+    }
   });
 
   return Behavior;
