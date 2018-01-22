@@ -216,7 +216,7 @@
 
     /**
      * Method to be invoked when dispose is called. By default calling dispose will remove the
-     * view's on's and listenTo's.
+     * behavior's on's and listenTo's.
      * Override this method to destruct any extra
      * @method _dispose
      */

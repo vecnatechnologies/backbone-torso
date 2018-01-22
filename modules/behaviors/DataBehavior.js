@@ -273,6 +273,7 @@
           this.view.render();
         }
       });
+      this.listenTo(this.view, 'before-dispose-callback', this.data.dispose);
     },
 
     /**
@@ -895,16 +896,6 @@
       this.stopListeningToIdsPropertyChangeEvent();
       this._undelegateUpdateEvents();
       this.data.deactivate();
-    },
-
-    /**
-     * Default dispose stuff because its not already on behavior.  See https://github.com/vecnatechnologies/backbone-torso/issues/295
-     * @method _dispose
-     * @private
-     */
-    _dispose: function() {
-      Behavior.prototype._dispose.apply(this, arguments);
-      this.data.dispose();
     }
   });
 
@@ -940,6 +931,8 @@
        * @property privateCollection {Collection}
        */
       this.privateCollection = options.privateCollection;
+
+      _.bindAll(this, 'dispose');
     },
 
     /**
