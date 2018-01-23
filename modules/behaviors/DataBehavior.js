@@ -236,7 +236,7 @@
      * @param [viewOptions] {Object} options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
-      _.bindAll(this, '__skipRetrieveOnEmptyTrackedIdsAndNewIds', '__completeLoadingIds', '__fetchSuccess', '__fetchFailed');
+      _.bindAll(this, '__skipRetrieveOnEmptyTrackedIdsAndNewIds', '__completeLoadingIds', '__fetchSuccess', '__fetchFailed', '__abortIfDisposed');
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
@@ -299,6 +299,7 @@
       var thisDataBehavior = this;
       return this.__getIds()
         .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(this.__abortIfDisposed)
         .then(function(idsResult) {
           if (idsResult && !idsResult.skipObjectRetrieval) {
             return thisDataBehavior.data.privateCollection.trackAndPull(idsResult);
@@ -320,6 +321,7 @@
       var thisDataBehavior = this;
       return this.__getIds()
         .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(this.__abortIfDisposed)
         .then(function(idsResult) {
           if (idsResult && !idsResult.skipObjectRetrieval) {
             return thisDataBehavior.data.privateCollection.trackAndFetch(idsResult);
@@ -789,6 +791,23 @@
           eventName: parsedIdContainerDetails.detail
         };
       }
+    },
+
+    /**
+     * Rejects the promise chain if this behavior is already disposed.
+     * @return {jQuery.Promise} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @private
+     */
+    __abortIfDisposed: function() {
+      var resultDeferred = $.Deferred();
+      if (this.isDisposed()) {
+        var rejectArguments = Array.prototype.slice.call(arguments);
+        rejectArguments.push('Data Behavior disposed, aborting.');
+        resultDeferred.reject.apply(resultDeferred, rejectArguments);
+      } else {
+        resultDeferred.resolve.apply(resultDeferred, arguments);
+      }
+      return resultDeferred.promise();
     },
 
     /**

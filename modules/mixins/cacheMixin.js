@@ -316,7 +316,9 @@
 
         // Push cached models to the respective requester
         privateCollection = collection.knownPrivateCollections[guid];
-        privateCollection.set(models, {remove: false});
+        if (privateCollection) {
+          privateCollection.set(models, {remove: false});
+        }
 
         // Create a new request list
         for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
@@ -410,7 +412,9 @@
                 }
                 privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
                 // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
-                privateCollection.set(models, {remove: false});
+                if (privateCollection) {
+                  privateCollection.set(models, {remove: false});
+                }
               }
             });
         }, options)

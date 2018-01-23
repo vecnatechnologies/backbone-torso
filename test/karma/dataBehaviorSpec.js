@@ -3140,4 +3140,50 @@ ids = []\n\
 
     expect(behavior.data.privateCollection.dispose).toHaveBeenCalled();
   });
+
+  it('will abort tracking ids for pull if the behavior is already disposed', function(done) {
+    var behavior = getBasicBehaviorInstance();
+
+    behavior.view.dispose();
+
+    expect(behavior.get('fetchSuccess')).toBeUndefined();
+
+    behavior.pull()
+      .then(function() {
+        fail('behavior is disposed and pull should fail')
+      }, function() {
+        expect(behavior.get('fetchSuccess')).toBe(false);
+      })
+      .then(done, done);
+  });
+
+  it('will abort tracking ids for fetch if the behavior is already disposed', function(done) {
+    var behavior = getBasicBehaviorInstance();
+
+    behavior.view.dispose();
+
+    expect(behavior.get('fetchSuccess')).toBeUndefined();
+    behavior.fetch()
+      .then(function() {
+        fail('behavior is disposed and fetch should fail')
+      }, function() {
+        expect(behavior.get('fetchSuccess')).toBe(false);
+      })
+      .then(done, done);
+  });
+
+  it('will abort tracking ids for retrieve if the behavior is already disposed', function(done) {
+    var behavior = getBasicBehaviorInstance();
+
+    behavior.view.dispose();
+
+    expect(behavior.get('fetchSuccess')).toBeUndefined();
+    behavior.retrieve()
+      .then(function() {
+        fail('behavior is disposed and retrieve should fail')
+      }, function() {
+        expect(behavior.get('fetchSuccess')).toBe(false);
+      })
+      .then(done, done);
+  });
 });
