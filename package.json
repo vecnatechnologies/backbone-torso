@@ -11,7 +11,7 @@
     "test": "npm run test-func && npm run test-import",
     "test-func": "karma start",
     "watch:test-func": "npm run test-func -- karma.conf.dev.js --debug",
-    "test-import": "gulp test-import",
+    "test-import": "gulp test-vendor-globals && gulp test-vendor-commonJs",
     "doc": "mkdir docs/js -p && yuidoc",
     "doc:dev": "mkdir docs/js -p && yuidoc --server",
     "watch-import": "gulp watch-import & npm run doc:dev",
