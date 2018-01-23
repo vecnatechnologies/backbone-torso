@@ -344,7 +344,7 @@
      * @param [viewOptions] {Object} options passed to View&#x27;s initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
-      _.bindAll(this, &#x27;__skipRetrieveOnEmptyTrackedIdsAndNewIds&#x27;, &#x27;__completeLoadingIds&#x27;, &#x27;__fetchSuccess&#x27;, &#x27;__fetchFailed&#x27;);
+      _.bindAll(this, &#x27;__skipRetrieveOnEmptyTrackedIdsAndNewIds&#x27;, &#x27;__completeLoadingIds&#x27;, &#x27;__fetchSuccess&#x27;, &#x27;__fetchFailed&#x27;, &#x27;__abortIfDisposed&#x27;);
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
@@ -381,6 +381,7 @@
           this.view.render();
         }
       });
+      this.listenTo(this.view, &#x27;before-dispose-callback&#x27;, this.data.dispose);
     },
 
     /**
@@ -406,6 +407,7 @@
       var thisDataBehavior = this;
       return this.__getIds()
         .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(this.__abortIfDisposed)
         .then(function(idsResult) {
           if (idsResult &amp;&amp; !idsResult.skipObjectRetrieval) {
             return thisDataBehavior.data.privateCollection.trackAndPull(idsResult);
@@ -427,6 +429,7 @@
       var thisDataBehavior = this;
       return this.__getIds()
         .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(this.__abortIfDisposed)
         .then(function(idsResult) {
           if (idsResult &amp;&amp; !idsResult.skipObjectRetrieval) {
             return thisDataBehavior.data.privateCollection.trackAndFetch(idsResult);
@@ -513,6 +516,46 @@
         delete this.__currentContextWithListener;
         delete this.__currentContextEventName;
       }
+    },
+
+    /**
+     * This is a good way to have something be called after at least one retrieve (pull or fetch) has completed.
+     * This is especially useful if you don&#x27;t care if the fetch has already happen you just want to do something once
+     * the data is loaded.
+     *
+     * This can also be done purely by listening for the &#x27;fetched&#x27; event, but you might miss the event if it is fired
+     * before you start listening.  This gives a structure for handling that case so that your methods are called
+     * if the event is fired and if it is not fired.
+     *
+     * This also gives the ability to distinguish between a successful and failed fetch easily using the promises
+     * resolve/reject handlers.
+     *
+     * Usage:
+     *
+     * someDataBehavior.retrieveOncePromise()
+     *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
+     *
+     * @method retrieveOncePromise
+     * @return {jQuery.Promise} that resolves when the data is successfully fetched and rejects when the fetch fails.
+     */
+    retrieveOncePromise: function() {
+      var retrieveOnceDeferred = $.Deferred();
+      var demographicsFetchSuccess = this.get(&#x27;fetchSuccess&#x27;);
+      if (demographicsFetchSuccess) {
+        retrieveOnceDeferred.resolve();
+      } else if (demographicsFetchSuccess === false) {
+        retrieveOnceDeferred.reject();
+      } else {
+        this.once(&#x27;fetched&#x27;, function() {
+          var demographicsFetchSuccess = this.get(&#x27;fetchSuccess&#x27;);
+          if (demographicsFetchSuccess) {
+            retrieveOnceDeferred.resolve();
+          } else {
+            retrieveOnceDeferred.reject();
+          }
+        });
+      }
+      return retrieveOnceDeferred.promise();
     },
 
     /**
@@ -859,6 +902,23 @@
     },
 
     /**
+     * Rejects the promise chain if this behavior is already disposed.
+     * @return {jQuery.Promise} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @private
+     */
+    __abortIfDisposed: function() {
+      var resultDeferred = $.Deferred();
+      if (this.isDisposed()) {
+        var rejectArguments = Array.prototype.slice.call(arguments);
+        rejectArguments.push(&#x27;Data Behavior disposed, aborting.&#x27;);
+        resultDeferred.reject.apply(resultDeferred, rejectArguments);
+      } else {
+        resultDeferred.resolve.apply(resultDeferred, arguments);
+      }
+      return resultDeferred.promise();
+    },
+
+    /**
      * Triggers a &#x27;fetched&#x27; event with the payload { status: &#x27;success&#x27; } when the fetch completes successfully.
      * @method __fetchSuccess
      * @param response {Object} the response from the server.
@@ -868,6 +928,7 @@
      */
     __fetchSuccess: function(response) {
       this.set(&#x27;fetchSuccess&#x27;, true);
+      this.set(&#x27;fetchedOnce&#x27;, true);
       if (this.__shouldTriggerFetchedEvent(response)) {
         this.trigger(&#x27;fetched&#x27;, {
           status: FETCHED_STATUSES.SUCCESS,
@@ -886,13 +947,15 @@
     /**
      * Triggers a &#x27;fetched&#x27; event with the payload { status: &#x27;failed&#x27; } when the fetch fails.
      * @method __fetchFailed
-     * @param response {Object} the response from the server.
+     * @param [response] {Object} the response from the server.
      *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
      *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
+     *   @param [response.emptyIds=false] {Boolean} true if were are no ids retrieved.  False otherwise.
      * @private
      */
     __fetchFailed: function(response) {
       this.set(&#x27;fetchSuccess&#x27;, false);
+      this.set(&#x27;fetchedOnce&#x27;, true);
       if (this.__shouldTriggerFetchedEvent(response)) {
         this.trigger(&#x27;fetched&#x27;, {
           status: FETCHED_STATUSES.FAILURE,
@@ -902,7 +965,7 @@
           status: FETCHED_STATUSES.FAILURE,
           response: response
         });
-        if (response.emptyIds) {
+        if (response &amp;&amp; response.emptyIds) {
           this.__firstEmptyFetchedTriggered = true;
         }
       }
@@ -960,18 +1023,6 @@
       this.stopListeningToIdsPropertyChangeEvent();
       this._undelegateUpdateEvents();
       this.data.deactivate();
-    },
-
-    /**
-     * Default dispose stuff because its not already on behavior.  See https://github.com/vecnatechnologies/backbone-torso/issues/295
-     * @method _dispose
-     * @private
-     */
-    _dispose: function() {
-      this.data.dispose();
-
-      this.off();
-      this.stopListening();
     }
   });
 
@@ -1007,6 +1058,8 @@
        * @property privateCollection {Collection}
        */
       this.privateCollection = options.privateCollection;
+
+      _.bindAll(this, &#x27;dispose&#x27;);
     },
 
     /**
@@ -1144,6 +1197,7 @@
     dispose: function() {
       this.off();
       this.stopListening();
+      this.privateCollection.dispose();
     }
   });
 
