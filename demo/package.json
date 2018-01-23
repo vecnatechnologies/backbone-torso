@@ -9,7 +9,7 @@
     "quick-sip": "0.1.3",
     "aliasify": "^1.7.2",
     "hbsfy": "^2.2.1",
-    "handlebars": "3.0.0"
+    "handlebars": "^4.0.0"
   },
   "aliasify": {
     "aliases": {
