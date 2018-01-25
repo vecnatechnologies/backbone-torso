@@ -7142,10 +7142,10 @@
     /**
      * Deactivate callback that removes bindings and other resources
      * that shouldn't exist in a dactivated state
-     * @method _deactivate
+     * @method deactivate
      */
-    _deactivate: function() {
-      View.prototype._deactivate.call(this);
+    deactivate: function() {
+      View.prototype.deactivate.call(this);
       // No detach callback... Deactivate will have to do as it is called by detach
       this.unstickit();
     },
