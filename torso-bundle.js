@@ -2304,6 +2304,10 @@
         this.viewState.off();
         this.viewState.stopListening();
       }
+      if (this.feedbackCell) {
+        this.feedbackCell.off();
+        this.feedbackCell.stopListening();
+      }
       // Delete the dom references
       delete this.$el;
       delete this.el;
