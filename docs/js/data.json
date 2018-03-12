@@ -1862,7 +1862,22 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 195,
+            "line": 190,
+            "description": "In addition to removing the model from the collection also remove it from the list of tracked ids.",
+            "params": [
+                {
+                    "name": "modelIdentifier",
+                    "description": "same duck-typing as Backbone.Collection.get():\n                             by id, cid, model object with id or cid properties,\n                             or an attributes object that is transformed through modelId",
+                    "type": "*"
+                }
+            ],
+            "class": "Torso.Mixins.cacheMixin",
+            "module": "Torso",
+            "namespace": "Torso.Mixins"
+        },
+        {
+            "file": "modules/mixins/cacheMixin.js",
+            "line": 211,
             "description": "Adds functions to manage state of requesters",
             "itemtype": "method",
             "name": "cacheMixin",
@@ -1879,7 +1894,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 204,
+            "line": 220,
             "access": "private",
             "tagname": "",
             "itemtype": "method",
@@ -1902,7 +1917,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 219,
+            "line": 235,
             "itemtype": "method",
             "name": "cacheMixin.getRequesterIds",
             "params": [
@@ -1922,7 +1937,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 228,
+            "line": 244,
             "itemtype": "method",
             "name": "cacheMixin.getRequesterIdsAsDictionary\nThis method is used for quick look up of a certain id within the list of requested ids",
             "params": [
@@ -1942,7 +1957,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 238,
+            "line": 254,
             "itemtype": "method",
             "name": "cacheMixin.removeRequester\nRemoves a requester from this cache. No longer receives updates",
             "params": [
@@ -1958,7 +1973,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 248,
+            "line": 264,
             "description": "NOTE: this methods returns only the guids for requester collections that are currently tracking ids\nTODO: should this return just the knownPrivateCollections",
             "itemtype": "method",
             "name": "cacheMixin.getRequesters",
@@ -1972,7 +1987,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 258,
+            "line": 274,
             "description": "Return the list of Ids requested by this collection",
             "itemtype": "method",
             "name": "cacheMixin.getAllRequestedIds",
@@ -1986,7 +2001,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 267,
+            "line": 283,
             "description": "Used to return a collection of desired models given the requester object.\nBinds a custom \"resized\" event to the private collections.\nOverrides the fetch method to call the parent collection's fetchByIds method.\nOverrides the registerIds method to redirect to its parent collection.",
             "itemtype": "method",
             "name": "cacheMixin.createPrivateCollection",
@@ -2007,7 +2022,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 285,
+            "line": 301,
             "description": "Registers a list of Ids that a particular object cares about and pushes\nany cached models its way.\n\nThis method intelligently updates the \"_requestedIds\" field to contain all unique\nrequests for Ids to be fetched.  Furthermore, the \"polledFetch\" method\nis overriden such that it no longer routes through Backbone's fetch all,\nbut rather a custom \"fetchByIds\" method.",
             "itemtype": "method",
             "name": "cacheMixin.registerIds",
@@ -2029,7 +2044,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 347,
+            "line": 363,
             "description": "Overrides the base fetch call if this.fetchUsingTrackedIds is true\nCalling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise\nit will pass through to the default fetch.",
             "itemtype": "method",
             "name": "fetch",
@@ -2039,7 +2054,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 364,
+            "line": 380,
             "description": "A custom fetch operation to only fetch the requested Ids.",
             "itemtype": "method",
             "name": "cacheMixin.fetchByIds",
@@ -2075,7 +2090,7 @@
         },
         {
             "file": "modules/mixins/cacheMixin.js",
-            "line": 462,
+            "line": 478,
             "description": "The constructor constructor / initialize method for collections.\nAllocate new memory for the local references if they\nwere null when this method was called.",
             "params": [
                 {
@@ -6380,6 +6395,10 @@
         {
             "message": "Missing item type\nDispose of the data events.",
             "line": " modules/behaviors/DataBehavior.js:1086"
+        },
+        {
+            "message": "Missing item type\nIn addition to removing the model from the collection also remove it from the list of tracked ids.",
+            "line": " modules/mixins/cacheMixin.js:190"
         },
         {
             "message": "Missing item type\nSee {{#crossLink \"FormModel/trackModels:method\"}}.trackModels(){{/crossLink}}",
