@@ -185,6 +185,22 @@
            */
           requesterDispose: function() {
             parentInstance.removeRequester(ownerKey);
+          },
+
+          /**
+           * In addition to removing the model from the collection also remove it from the list of tracked ids.
+           * @param modelIdentifier {*} same duck-typing as Backbone.Collection.get():
+           *                              by id, cid, model object with id or cid properties,
+           *                              or an attributes object that is transformed through modelId
+           */
+          remove: function(modelIdentifier) {
+            var model = this.get(modelIdentifier);
+            parentClass.remove.apply(this, arguments);
+            if (model) {
+              var trackedIdsWithoutModel = this.getTrackedIds();
+              trackedIdsWithoutModel = _.without(trackedIdsWithoutModel, model.id);
+              this.trackIds(trackedIdsWithoutModel);
+            }
           }
         };
 
