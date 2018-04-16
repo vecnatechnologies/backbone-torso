@@ -1,14 +1,17 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.cache = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management

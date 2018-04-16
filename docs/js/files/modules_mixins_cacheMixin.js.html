@@ -108,15 +108,18 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;jquery&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.cache = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management

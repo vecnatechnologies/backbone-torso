@@ -294,16 +294,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.templateRenderer = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Utils.templateRenderer = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Changes DOM Nodes that are different, and leaves others untouched.
@@ -601,15 +603,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.cache = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -1181,15 +1186,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
+    define(['backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
+    module.exports = factory(require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.loading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.loading = factory(root.Backbone);
   }
-}(this, function($) {
+}(this, function(Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Loading logic.
    *
@@ -1789,15 +1797,17 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
   }
-}(this, function(_, $, Backbone, templateRenderer, Cell, NestedCell) {
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
@@ -4049,15 +4059,17 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './NestedModel', './validation'], factory);
+    define(['underscore', 'Backbone', './NestedModel', './validation'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./NestedModel'), require('./validation'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./NestedModel'), require('./validation'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormModel = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.NestedModel, root.Torso.validation);
+    root.Torso.FormModel = factory(root._, root.Backbone, root.Torso.NestedModel, root.Torso.validation);
   }
-}(this, function(_, $, NestedModel, validation) {
+}(this, function(_, Backbone, NestedModel, validation) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form Model
@@ -5213,17 +5225,19 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './templateRenderer'], factory);
+    define(['underscore', 'backbone', './View', './templateRenderer'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./templateRenderer'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.ListView = factory(root._, root.$, root.Torso.View, root.Torso.Utils.templateRenderer);
+    root.Torso.ListView = factory(root._, root.Backbone, root.Torso.View, root.Torso.Utils.templateRenderer);
   }
-}(this, function(_, $, View, templateRenderer) {
+}(this, function(_, Backbone, View, templateRenderer) {
   'use strict';
 
     var removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
+
+    var $ = Backbone.$;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
@@ -5893,21 +5907,23 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', '../Behavior', '../Collection', '../Events'], factory);
+    define(['underscore', 'backbone', '../Behavior', '../Collection', '../Events'], factory);
   } else if (typeof exports === 'object') {
     var _ = require('underscore');
-    var $ = require('jquery');
+    var Backbone = require('backbone');
     var Behavior = require('../Behavior');
     var Collection = require('../Collection');
     var Events = require('../Events');
-    module.exports = factory(_, $, Behavior, Collection, Events);
+    module.exports = factory(_, Backbone, Behavior, Collection, Events);
   } else {
     root.Torso = root.Torso || {};
     root.Torso.behaviors = root.Torso.behaviors || {};
-    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
+    root.Torso.behaviors.DataBehavior = factory(root._, root.Backbone, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
   }
-}(this, function(_, $, Behavior, Collection, Events) {
+}(this, function(_, Backbone, Behavior, Collection, Events) {
   'use strict';
+
+  var $ = Backbone.$;
 
   var PROPERTY_SEPARATOR = '.';
   var CONTAINER_SEPARATOR = ':';
@@ -6995,16 +7011,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
+    define(['underscore', 'Backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
   } else if (typeof exports === 'object') {
     require('backbone.stickit');
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./FormModel'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./FormModel'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
+    root.Torso.FormView = factory(root._, root.Backbone, root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
   }
-}(this, function(_, $, View, FormModel, Cell) {
+}(this, function(_, Backbone, View, FormModel, Cell) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form View

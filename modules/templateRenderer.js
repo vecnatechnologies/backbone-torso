@@ -1,15 +1,17 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.templateRenderer = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Utils.templateRenderer = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Changes DOM Nodes that are different, and leaves others untouched.
