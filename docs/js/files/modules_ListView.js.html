@@ -108,17 +108,19 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;, &#x27;./View&#x27;, &#x27;./templateRenderer&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./View&#x27;, &#x27;./templateRenderer&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;jquery&#x27;), require(&#x27;./View&#x27;), require(&#x27;./templateRenderer&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./View&#x27;), require(&#x27;./templateRenderer&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.ListView = factory(root._, root.$, root.Torso.View, root.Torso.Utils.templateRenderer);
+    root.Torso.ListView = factory(root._, root.Backbone, root.Torso.View, root.Torso.Utils.templateRenderer);
   }
-}(this, function(_, $, View, templateRenderer) {
+}(this, function(_, Backbone, View, templateRenderer) {
   &#x27;use strict&#x27;;
 
     var removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
+
+    var $ = Backbone.$;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render

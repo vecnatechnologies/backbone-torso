@@ -1,14 +1,16 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
   }
-}(this, function(_, $, Backbone, templateRenderer, Cell, NestedCell) {
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger

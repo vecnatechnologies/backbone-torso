@@ -108,15 +108,17 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;, &#x27;backbone&#x27;, &#x27;./templateRenderer&#x27;, &#x27;./Cell&#x27;, &#x27;./NestedCell&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./templateRenderer&#x27;, &#x27;./Cell&#x27;, &#x27;./NestedCell&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;jquery&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./templateRenderer&#x27;), require(&#x27;./Cell&#x27;), require(&#x27;./NestedCell&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./templateRenderer&#x27;), require(&#x27;./Cell&#x27;), require(&#x27;./NestedCell&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
   }
-}(this, function(_, $, Backbone, templateRenderer, Cell, NestedCell) {
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell) {
   &#x27;use strict&#x27;;
+
+  var $ = Backbone.$;
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger

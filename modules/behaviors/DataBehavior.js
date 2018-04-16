@@ -1,20 +1,22 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', '../Behavior', '../Collection', '../Events'], factory);
+    define(['underscore', 'backbone', '../Behavior', '../Collection', '../Events'], factory);
   } else if (typeof exports === 'object') {
     var _ = require('underscore');
-    var $ = require('jquery');
+    var Backbone = require('backbone');
     var Behavior = require('../Behavior');
     var Collection = require('../Collection');
     var Events = require('../Events');
-    module.exports = factory(_, $, Behavior, Collection, Events);
+    module.exports = factory(_, Backbone, Behavior, Collection, Events);
   } else {
     root.Torso = root.Torso || {};
     root.Torso.behaviors = root.Torso.behaviors || {};
-    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
+    root.Torso.behaviors.DataBehavior = factory(root._, root.Backbone, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
   }
-}(this, function(_, $, Behavior, Collection, Events) {
+}(this, function(_, Backbone, Behavior, Collection, Events) {
   'use strict';
+
+  var $ = Backbone.$;
 
   var PROPERTY_SEPARATOR = '.';
   var CONTAINER_SEPARATOR = ':';

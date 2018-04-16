@@ -1,14 +1,17 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
+    define(['backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
+    module.exports = factory(require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.loading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.loading = factory(root.Backbone);
   }
-}(this, function($) {
+}(this, function(Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Loading logic.
    *

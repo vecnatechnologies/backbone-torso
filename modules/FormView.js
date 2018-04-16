@@ -1,16 +1,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
+    define(['underscore', 'Backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
   } else if (typeof exports === 'object') {
     require('backbone.stickit');
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./FormModel'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./FormModel'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
+    root.Torso.FormView = factory(root._, root.Backbone, root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
   }
-}(this, function(_, $, View, FormModel, Cell) {
+}(this, function(_, Backbone, View, FormModel, Cell) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form View

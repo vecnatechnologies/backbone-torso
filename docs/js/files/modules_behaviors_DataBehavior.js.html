@@ -108,21 +108,23 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;, &#x27;../Behavior&#x27;, &#x27;../Collection&#x27;, &#x27;../Events&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;../Behavior&#x27;, &#x27;../Collection&#x27;, &#x27;../Events&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
     var _ = require(&#x27;underscore&#x27;);
-    var $ = require(&#x27;jquery&#x27;);
+    var Backbone = require(&#x27;backbone&#x27;);
     var Behavior = require(&#x27;../Behavior&#x27;);
     var Collection = require(&#x27;../Collection&#x27;);
     var Events = require(&#x27;../Events&#x27;);
-    module.exports = factory(_, $, Behavior, Collection, Events);
+    module.exports = factory(_, Backbone, Behavior, Collection, Events);
   } else {
     root.Torso = root.Torso || {};
     root.Torso.behaviors = root.Torso.behaviors || {};
-    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
+    root.Torso.behaviors.DataBehavior = factory(root._, root.Backbone, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
   }
-}(this, function(_, $, Behavior, Collection, Events) {
+}(this, function(_, Backbone, Behavior, Collection, Events) {
   &#x27;use strict&#x27;;
+
+  var $ = Backbone.$;
 
   var PROPERTY_SEPARATOR = &#x27;.&#x27;;
   var CONTAINER_SEPARATOR = &#x27;:&#x27;;
