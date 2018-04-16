@@ -1,6 +1,6 @@
 var _ = require('underscore');
 jQuery = $ = require('jquery');
-require('jquery-mockjax');
+require('jquery-mockjax')($, window);
 
 module.exports = function() {
   var routes = {};
