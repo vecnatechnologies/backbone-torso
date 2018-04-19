@@ -1,7 +1,7 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'Backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
+    define(['underscore', 'backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
   } else if (typeof exports === 'object') {
     require('backbone.stickit');
     module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./FormModel'), require('./Cell'));
