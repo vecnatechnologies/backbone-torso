@@ -1,6 +1,6 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'Backbone', './NestedModel', './validation'], factory);
+    define(['underscore', 'backbone', './NestedModel', './validation'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('backbone'), require('./NestedModel'), require('./validation'));
   } else {
