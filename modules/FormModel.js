@@ -1,14 +1,16 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './NestedModel', './validation'], factory);
+    define(['underscore', 'backbone', './NestedModel', './validation'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./NestedModel'), require('./validation'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./NestedModel'), require('./validation'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormModel = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.NestedModel, root.Torso.validation);
+    root.Torso.FormModel = factory(root._, root.Backbone, root.Torso.NestedModel, root.Torso.validation);
   }
-}(this, function(_, $, NestedModel, validation) {
+}(this, function(_, Backbone, NestedModel, validation) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form Model

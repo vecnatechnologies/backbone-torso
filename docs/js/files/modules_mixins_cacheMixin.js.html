@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.6</em>
+            <em>API Docs for: 0.8.12</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -108,15 +108,18 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;jquery&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.cache = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -293,6 +296,22 @@
            */
           requesterDispose: function() {
             parentInstance.removeRequester(ownerKey);
+          },
+
+          /**
+           * In addition to removing the model from the collection also remove it from the list of tracked ids.
+           * @param modelIdentifier {*} same duck-typing as Backbone.Collection.get():
+           *                              by id, cid, model object with id or cid properties,
+           *                              or an attributes object that is transformed through modelId
+           */
+          remove: function(modelIdentifier) {
+            var model = this.get(modelIdentifier);
+            parentClass.remove.apply(this, arguments);
+            if (model) {
+              var trackedIdsWithoutModel = this.getTrackedIds();
+              trackedIdsWithoutModel = _.without(trackedIdsWithoutModel, model.id);
+              this.trackIds(trackedIdsWithoutModel);
+            }
           }
         };
 
@@ -424,7 +443,9 @@
 
         // Push cached models to the respective requester
         privateCollection = collection.knownPrivateCollections[guid];
-        privateCollection.set(models, {remove: false});
+        if (privateCollection) {
+          privateCollection.set(models, {remove: false});
+        }
 
         // Create a new request list
         for (requesterIdx = 0; requesterIdx &lt; requesterLength; requesterIdx++) {
@@ -518,7 +539,9 @@
                 }
                 privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
                 // a fetch by the parent will not remove a model in a requester collection that wasn&#x27;t fetched with this call
-                privateCollection.set(models, {remove: false});
+                if (privateCollection) {
+                  privateCollection.set(models, {remove: false});
+                }
               }
             });
         }, options)

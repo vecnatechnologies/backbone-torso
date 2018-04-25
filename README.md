@@ -43,6 +43,13 @@ Torso has a [yeoman](http://www.yeoman.io) [torso generator](https://github.com/
 > cd path/to/project
 > yo torso `<name of project>`
 
+#### How to bring Torso in
+`let Torso = require('backbone-torso');`
+
+Remember that Backbone.$ needs to be set. Torso relies on Backbone.$ being set as well.
+
+`require('backbone').$ = require('jquery');`
+
 #### What's in it?  
 The yeoman generator will have created a simple application. You can open the browser at `localhost:3000` if gulp watch is on or open `file:///<path to project>/dist/index.html` to see the "hello world". Try adding another perspective view by using `yo torso:pod demo` and adding an entry in the router. Now, you should be able to switch between "web pages" by adding and removing "#demo" from the url.
 

@@ -57,15 +57,15 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
+    define(['underscore'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory();
+    module.exports = factory(require('underscore'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.handlebarsUtils = factory();
+    root.Torso.Utils.handlebarsUtils = factory(root._);
   }
-}(this, function() {
+}(this, function(_) {
   'use strict';
 
   return function(Handlebars) {
@@ -85,6 +85,10 @@
     /**
      * Usage: {{labelFor 'fieldName' value="suffix"}}
      * Generates: for="field-name-suffix"
+     * Usage: {{labelFor 'fieldName[x].sub' value="demo" x=123}}
+     * Generates: for="field-name-123_sub-demo"
+     * Usage: {{labelFor 'fieldName[bar].sub' value="demo" bar="abc"}}
+     * Generates: for="field-name_abc_sub-demo"
      * @method Handlebars.helpers.labelFor
      * @param field {String} The field name to convert to a compliant "for" attribute
      * @param options {<Handlebars context>} Always passed in as final argument
@@ -92,12 +96,19 @@
      * @return {String} Compliant HTML generating the "for" attribute
      */
     Handlebars.registerHelper('labelFor', function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
       return Handlebars.helpers.formAttr(field, 'for', options);
     });
 
     /**
      * Usage: {{bindModel 'fieldName' value='suffix'}}
-     * Generates: id="field-name-suffix" name="field-name-suffix" data-model="fieldName" data-feedback="firstName"
+     * Generates: id="field-name-suffix" name="field-name" data-model="fieldName" data-feedback="fieldName" value="demo"
+     * Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub"
+     *            id="field-name-123_sub-demo" value="demo"
+     * Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}
+     * Generates: data-model="fieldName.abc.sub" data-feedback="fieldName[abc].sub" name="field-name_abc_sub"
+                  id="field-name_abc_sub-demo" value="demo"
      * @method Handlebars.helpers.bindModel
      * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
      * @param options {<Handlebars context>} Always passed in as final argument
@@ -110,60 +121,74 @@
 
     /**
      * Usage: {{feedback 'fieldName'}}
-     * Generates: data-feedback="firstName"
+     * Generates: data-feedback="fieldName"
+     * Usage: {{feedback 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-feedback="fieldName[123].sub"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: data-feedback="fieldName[abc].sub"
      * @method Handlebars.helpers.feedback
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {<Handlebars context>} Always passed in as final argument
      * @return {String} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('feedback', function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
       return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
     });
 
     /**
      * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
-     * Generates: id="first-name-123_sub-demo" for="first-name-123_sub" value="demo"
+     * Generates: id="field-name-123_sub-demo" for="field-name-123_sub-demo" value="demo"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: id="field-name_abc_sub-demo" for="field-name_abc_sub-demo" value="demo"
      * @method Handlebars.helpers.formAttr
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {<Handlebars context>} Always passed in as final argument
      * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param [options.noValueAttr] {Boolean} when options.noValueAttr is set to true,
+                                              then it will not generate the "value" attribute in the DOM.
      * @return {String} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('formAttr', function(field, attrs, options) {
       var i, attrName,
         value = (options.hash ? options.hash.value : undefined),
         res = Handlebars.helpers.injectFieldIndices(field, options.hash),
+        resWithArrayNotation = Handlebars.helpers.injectFieldIndices(field, options.hash, { forceArrayNotation: true }),
         attributes = '';
       attrs = attrs.split(',');
       for (i = 0; i < attrs.length; i++) {
         attrName = attrs[i].trim();
+        var attrEnd = (i === attrs.length - 1) ? '"' : '" ';
         if (attrName === FEEDBACK_KEY) {
-          attributes += 'data-feedback="' + res + '" ';
+          // Feedback needs to always use array notation because of the way it finds the element (by stripping [] contents).
+          attributes += 'data-feedback="' + resWithArrayNotation + attrEnd;
         } else if (attrName === MODEL_KEY) {
-          attributes += 'data-model="' + res + '" ';
+          attributes += 'data-model="' + res + attrEnd;
         } else if (attrName === 'name') {
-          attributes += 'name="' + Handlebars.helpers.dasherize(res) + '" ';
+          attributes += 'name="' + Handlebars.helpers.dasherize(res) + attrEnd;
         } else if (attrName === 'id') {
           attributes += 'id="' + Handlebars.helpers.dasherize(res);
           if (value !== undefined) {
             attributes += '-' + value;
           }
-          attributes += '" ';
+          attributes += attrEnd;
         } else if (attrName === 'for') {
           attributes += 'for="' + Handlebars.helpers.dasherize(res);
           if (value !== undefined) {
             attributes += '-' + value;
           }
-          attributes += '" ';
+          attributes += attrEnd;
         }
       }
-      if (value !== undefined) {
-        attributes += 'value="' + value +'"';
+      if (value !== undefined && !options.noValueAttr) {
+        attributes += ' value="' + value + '"';
       }
       return new Handlebars.SafeString(attributes);
     });
 
     /**
+     * Usage: {{feedback 'fieldName[x].sub'}}
+     * Generates: field-name[x]_sub
      * @method Handlebars.helpers.dasherize
      * @param str {String} The input string to make HTML compliant (convert to dashes)
      * @return {String} HTML complicant / dasherized string
@@ -183,18 +208,27 @@
     });
 
     /**
-     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});
-     * Generates: 'test[123]-thisIsRegular-y'
+     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'
+     * if options.forceArrayNotation is set then:
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'
      * @method injectFieldIndices
      * @param field {String} The field name
      * @param indexMap {Object} A map of variables
+     * @param options {Object} named parameters
+     *   @param [options.forceArrayNotation=false] {Boolean} Force the usage of [] insetad of . for string values.
      * @return {String} the field string with array variables substituted
      */
-    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap) {
+    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap, options) {
       if (indexMap) {
         return field.replace(/\[.+?\]/g, function(m) {
           var newIndex = indexMap[m.substring(1, m.length - 1)];
-          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          var indexToken = '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          var forceArrayNotation = options && options.forceArrayNotation;
+          if (_.isString(newIndex) && !forceArrayNotation) {
+            indexToken = '.' + newIndex;
+          }
+          return indexToken;
         });
       } else {
         return field;
@@ -202,7 +236,6 @@
     });
   };
 }));
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
@@ -261,16 +294,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.templateRenderer = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Utils.templateRenderer = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Changes DOM Nodes that are different, and leaves others untouched.
@@ -568,15 +603,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.cache = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -753,6 +791,22 @@
            */
           requesterDispose: function() {
             parentInstance.removeRequester(ownerKey);
+          },
+
+          /**
+           * In addition to removing the model from the collection also remove it from the list of tracked ids.
+           * @param modelIdentifier {*} same duck-typing as Backbone.Collection.get():
+           *                              by id, cid, model object with id or cid properties,
+           *                              or an attributes object that is transformed through modelId
+           */
+          remove: function(modelIdentifier) {
+            var model = this.get(modelIdentifier);
+            parentClass.remove.apply(this, arguments);
+            if (model) {
+              var trackedIdsWithoutModel = this.getTrackedIds();
+              trackedIdsWithoutModel = _.without(trackedIdsWithoutModel, model.id);
+              this.trackIds(trackedIdsWithoutModel);
+            }
           }
         };
 
@@ -884,7 +938,9 @@
 
         // Push cached models to the respective requester
         privateCollection = collection.knownPrivateCollections[guid];
-        privateCollection.set(models, {remove: false});
+        if (privateCollection) {
+          privateCollection.set(models, {remove: false});
+        }
 
         // Create a new request list
         for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
@@ -978,7 +1034,9 @@
                 }
                 privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
                 // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
-                privateCollection.set(models, {remove: false});
+                if (privateCollection) {
+                  privateCollection.set(models, {remove: false});
+                }
               }
             });
         }, options)
@@ -1128,15 +1186,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
+    define(['backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'));
+    module.exports = factory(require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.loading = factory((root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.loading = factory(root.Backbone);
   }
-}(this, function($) {
+}(this, function(Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Loading logic.
    *
@@ -1678,15 +1739,34 @@
     },
 
     /**
-     * Preforms basic cleanup of a behavior before specific cleanup by extensions.
+     * Removes all listeners, stops listening to events.
+     * After dispose is called, the behavior can be safely garbage collected.
+     * Called when the owning view is disposed.
      * @method __dispose
-     * @private
      */
     __dispose: function() {
+      this.trigger('before-dispose-callback');
       this.stopListening();
       this.off();
-    }
 
+      this.__isDisposed = true;
+    },
+
+    /**
+     * Method to be invoked when dispose is called. By default calling dispose will remove the
+     * behavior's on's and listenTo's.
+     * Override this method to destruct any extra
+     * @method _dispose
+     */
+    _dispose: _.noop,
+
+    /**
+     * @return {Boolean} true if the view was disposed
+     * @method isDisposed
+     */
+    isDisposed: function() {
+      return this.__isDisposed;
+    }
   });
 
   return Behavior;
@@ -1717,15 +1797,17 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
   }
-}(this, function(_, $, Backbone, templateRenderer, Cell, NestedCell) {
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
@@ -2247,6 +2329,10 @@
       if (this.viewState) {
         this.viewState.off();
         this.viewState.stopListening();
+      }
+      if (this.feedbackCell) {
+        this.feedbackCell.off();
+        this.feedbackCell.stopListening();
       }
       // Delete the dom references
       delete this.$el;
@@ -3169,6 +3255,8 @@
     /**
      * Takes a map from variable name to value to be replaced and processes a string with them.
      * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+     * Also supports objects:
+     * Example: foo.bar and {bar: someString} will return as foo.someString
      * @private
      * @method __substituteIndicesUsingMap
      */
@@ -3179,7 +3267,11 @@
           return arrayNotation;
         } else {
           newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
-          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          if (_.isString(newIndex)) {
+            return '.' + newIndex;
+          } else {
+            return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          }
         }
       });
     },
@@ -3190,6 +3282,7 @@
      *    foo[] -> ['foo[0]', 'foo[1]'].
      * Will also perform nested arrays:
      *    foo[][] -> ['foo[0][0]', foo[1][0]']
+     * Supports both foo[x] and foo.bar
      * @method __generateSubAttributes
      * @private
      * @param {String} attr The name of the attribute to expand according to the bound model
@@ -3214,7 +3307,11 @@
           indexes = _.keys(values);
         }
         _.each(indexes, function(index) {
-          subAttrs.push(this.__generateSubAttributes(attrName + '[' + index + ']' + remainder, model));
+          var indexToken = '[' + index + ']';
+          if (_.isString(index)) {
+            indexToken = '.' + index;
+          }
+          subAttrs.push(this.__generateSubAttributes(attrName + indexToken + remainder, model));
         }, this);
         return subAttrs;
       }
@@ -3962,15 +4059,17 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './NestedModel', './validation'], factory);
+    define(['underscore', 'backbone', './NestedModel', './validation'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./NestedModel'), require('./validation'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./NestedModel'), require('./validation'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormModel = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.NestedModel, root.Torso.validation);
+    root.Torso.FormModel = factory(root._, root.Backbone, root.Torso.NestedModel, root.Torso.validation);
   }
-}(this, function(_, $, NestedModel, validation) {
+}(this, function(_, Backbone, NestedModel, validation) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form Model
@@ -5126,17 +5225,19 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './templateRenderer'], factory);
+    define(['underscore', 'backbone', './View', './templateRenderer'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./templateRenderer'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.ListView = factory(root._, root.$, root.Torso.View, root.Torso.Utils.templateRenderer);
+    root.Torso.ListView = factory(root._, root.Backbone, root.Torso.View, root.Torso.Utils.templateRenderer);
   }
-}(this, function(_, $, View, templateRenderer) {
+}(this, function(_, Backbone, View, templateRenderer) {
   'use strict';
 
     var removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
+
+    var $ = Backbone.$;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
@@ -5520,26 +5621,24 @@
      * @method update
      */
     update: function() {
-      var view = this,
-        renderNeeded = false,
-        oldViews = this.getItemViews(),
-        newViews = this.__createItemViews(),
-        staleViews = this.__getStaleItemViews(),
-        sizeOfOldViews = _.size(oldViews),
-        sizeOfNewViews = _.size(newViews),
-        sizeOfStaleViews = _.size(staleViews),
-        sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews,
-        changes = sizeOfNewViews + sizeOfStaleViews,
-        percentChange = changes / Math.max(sizeOfFinalViews, 1),
-        fromEmptyToNotEmpty = !sizeOfOldViews && sizeOfNewViews,
-        fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews,
-        threshold = this.updateThreshold || 0.5,
-        signficantChanges = percentChange >= threshold;
+      var oldViews = this.getItemViews();
+      var newViews = this.__createItemViews();
+      var staleViews = this.__getStaleItemViews();
+      var sizeOfOldViews = _.size(oldViews);
+      var sizeOfNewViews = _.size(newViews);
+      var sizeOfStaleViews = _.size(staleViews);
+      var sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews;
+      var changes = sizeOfNewViews + sizeOfStaleViews;
+      var percentChange = changes / Math.max(sizeOfFinalViews, 1);
+      var fromEmptyToNotEmpty = !sizeOfOldViews && sizeOfNewViews;
+      var fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews;
+      var threshold = this.updateThreshold || 0.5;
+      var signficantChanges = percentChange >= threshold;
       if (changes <= 0) {
         return this.reorder();
       }
       // A switch from empty to not empty or vise versa, needs a new render
-      renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
+      var renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
       if (renderNeeded) {
         this.__removeStaleItemViews(staleViews);
         this.__delayedRender();
@@ -5808,21 +5907,23 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', '../Behavior', '../Collection', '../Events'], factory);
+    define(['underscore', 'backbone', '../Behavior', '../Collection', '../Events'], factory);
   } else if (typeof exports === 'object') {
     var _ = require('underscore');
-    var $ = require('jquery');
+    var Backbone = require('backbone');
     var Behavior = require('../Behavior');
     var Collection = require('../Collection');
     var Events = require('../Events');
-    module.exports = factory(_, $, Behavior, Collection, Events);
+    module.exports = factory(_, Backbone, Behavior, Collection, Events);
   } else {
     root.Torso = root.Torso || {};
     root.Torso.behaviors = root.Torso.behaviors || {};
-    root.Torso.behaviors.DataBehavior = factory(root._, root.$, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
+    root.Torso.behaviors.DataBehavior = factory(root._, root.Backbone, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
   }
-}(this, function(_, $, Behavior, Collection, Events) {
+}(this, function(_, Backbone, Behavior, Collection, Events) {
   'use strict';
+
+  var $ = Backbone.$;
 
   var PROPERTY_SEPARATOR = '.';
   var CONTAINER_SEPARATOR = ':';
@@ -6044,7 +6145,7 @@
      * @param [viewOptions] {Object} options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
-      _.bindAll(this, '__skipRetrieveOnEmptyTrackedIdsAndNewIds', '__completeLoadingIds', '__fetchSuccess', '__fetchFailed');
+      _.bindAll(this, '__skipRetrieveOnEmptyTrackedIdsAndNewIds', '__completeLoadingIds', '__fetchSuccess', '__fetchFailed', '__abortIfDisposed');
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
         alwaysFetch: false
@@ -6081,6 +6182,7 @@
           this.view.render();
         }
       });
+      this.listenTo(this.view, 'before-dispose-callback', this.data.dispose);
     },
 
     /**
@@ -6106,6 +6208,7 @@
       var thisDataBehavior = this;
       return this.__getIds()
         .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(this.__abortIfDisposed)
         .then(function(idsResult) {
           if (idsResult && !idsResult.skipObjectRetrieval) {
             return thisDataBehavior.data.privateCollection.trackAndPull(idsResult);
@@ -6127,6 +6230,7 @@
       var thisDataBehavior = this;
       return this.__getIds()
         .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(this.__abortIfDisposed)
         .then(function(idsResult) {
           if (idsResult && !idsResult.skipObjectRetrieval) {
             return thisDataBehavior.data.privateCollection.trackAndFetch(idsResult);
@@ -6213,6 +6317,46 @@
         delete this.__currentContextWithListener;
         delete this.__currentContextEventName;
       }
+    },
+
+    /**
+     * This is a good way to have something be called after at least one retrieve (pull or fetch) has completed.
+     * This is especially useful if you don't care if the fetch has already happen you just want to do something once
+     * the data is loaded.
+     *
+     * This can also be done purely by listening for the 'fetched' event, but you might miss the event if it is fired
+     * before you start listening.  This gives a structure for handling that case so that your methods are called
+     * if the event is fired and if it is not fired.
+     *
+     * This also gives the ability to distinguish between a successful and failed fetch easily using the promises
+     * resolve/reject handlers.
+     *
+     * Usage:
+     *
+     * someDataBehavior.retrieveOncePromise()
+     *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
+     *
+     * @method retrieveOncePromise
+     * @return {jQuery.Promise} that resolves when the data is successfully fetched and rejects when the fetch fails.
+     */
+    retrieveOncePromise: function() {
+      var retrieveOnceDeferred = $.Deferred();
+      var demographicsFetchSuccess = this.get('fetchSuccess');
+      if (demographicsFetchSuccess) {
+        retrieveOnceDeferred.resolve();
+      } else if (demographicsFetchSuccess === false) {
+        retrieveOnceDeferred.reject();
+      } else {
+        this.once('fetched', function() {
+          var demographicsFetchSuccess = this.get('fetchSuccess');
+          if (demographicsFetchSuccess) {
+            retrieveOnceDeferred.resolve();
+          } else {
+            retrieveOnceDeferred.reject();
+          }
+        });
+      }
+      return retrieveOnceDeferred.promise();
     },
 
     /**
@@ -6559,6 +6703,23 @@
     },
 
     /**
+     * Rejects the promise chain if this behavior is already disposed.
+     * @return {jQuery.Promise} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @private
+     */
+    __abortIfDisposed: function() {
+      var resultDeferred = $.Deferred();
+      if (this.isDisposed()) {
+        var rejectArguments = Array.prototype.slice.call(arguments);
+        rejectArguments.push('Data Behavior disposed, aborting.');
+        resultDeferred.reject.apply(resultDeferred, rejectArguments);
+      } else {
+        resultDeferred.resolve.apply(resultDeferred, arguments);
+      }
+      return resultDeferred.promise();
+    },
+
+    /**
      * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
      * @method __fetchSuccess
      * @param response {Object} the response from the server.
@@ -6568,6 +6729,7 @@
      */
     __fetchSuccess: function(response) {
       this.set('fetchSuccess', true);
+      this.set('fetchedOnce', true);
       if (this.__shouldTriggerFetchedEvent(response)) {
         this.trigger('fetched', {
           status: FETCHED_STATUSES.SUCCESS,
@@ -6586,13 +6748,15 @@
     /**
      * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
      * @method __fetchFailed
-     * @param response {Object} the response from the server.
+     * @param [response] {Object} the response from the server.
      *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
      *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
+     *   @param [response.emptyIds=false] {Boolean} true if were are no ids retrieved.  False otherwise.
      * @private
      */
     __fetchFailed: function(response) {
       this.set('fetchSuccess', false);
+      this.set('fetchedOnce', true);
       if (this.__shouldTriggerFetchedEvent(response)) {
         this.trigger('fetched', {
           status: FETCHED_STATUSES.FAILURE,
@@ -6602,7 +6766,7 @@
           status: FETCHED_STATUSES.FAILURE,
           response: response
         });
-        if (response.emptyIds) {
+        if (response && response.emptyIds) {
           this.__firstEmptyFetchedTriggered = true;
         }
       }
@@ -6660,18 +6824,6 @@
       this.stopListeningToIdsPropertyChangeEvent();
       this._undelegateUpdateEvents();
       this.data.deactivate();
-    },
-
-    /**
-     * Default dispose stuff because its not already on behavior.  See https://github.com/vecnatechnologies/backbone-torso/issues/295
-     * @method _dispose
-     * @private
-     */
-    _dispose: function() {
-      this.data.dispose();
-
-      this.off();
-      this.stopListening();
     }
   });
 
@@ -6707,6 +6859,8 @@
        * @property privateCollection {Collection}
        */
       this.privateCollection = options.privateCollection;
+
+      _.bindAll(this, 'dispose');
     },
 
     /**
@@ -6844,6 +6998,7 @@
     dispose: function() {
       this.off();
       this.stopListening();
+      this.privateCollection.dispose();
     }
   });
 
@@ -6856,16 +7011,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
+    define(['underscore', 'backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
   } else if (typeof exports === 'object') {
     require('backbone.stickit');
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./FormModel'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./FormModel'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
+    root.Torso.FormView = factory(root._, root.Backbone, root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
   }
-}(this, function(_, $, View, FormModel, Cell) {
+}(this, function(_, Backbone, View, FormModel, Cell) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form View
@@ -7017,10 +7174,10 @@
     /**
      * Deactivate callback that removes bindings and other resources
      * that shouldn't exist in a dactivated state
-     * @method _deactivate
+     * @method deactivate
      */
-    _deactivate: function() {
-      View.prototype._deactivate.call(this);
+    deactivate: function() {
+      View.prototype.deactivate.call(this);
       // No detach callback... Deactivate will have to do as it is called by detach
       this.unstickit();
     },

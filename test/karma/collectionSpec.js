@@ -415,6 +415,68 @@ describe('A Torso Collection', function() {
     });
   });
 
+  describe('can have a requester collections remove models', function() {
+    beforeEach(function() {
+      var MyModel = Model.extend({});
+      var MyCollection = Collection.extend({url: '/myModel', model: MyModel});
+      var cache = new MyCollection();
+      this.requester = cache.createPrivateCollection(1);
+      this.modelInCollection = new MyModel({ id: '1' });
+      this.modelNotInCollection = new MyModel({ id: '2' });
+      this.requester.addModelAndTrack(this.modelInCollection);
+      expect(this.requester.get(this.modelInCollection.id)).toBe(this.modelInCollection);
+      expect(this.requester.getTrackedIds()).toContain(this.modelInCollection.id);
+      expect(this.requester.get(this.modelNotInCollection.id)).toBeUndefined();
+      expect(this.requester.getTrackedIds()).not.toContain(this.modelNotInCollection.id);
+    });
+
+    it('that are null without an error', function() {
+      this.requester.remove(null);
+      this.requester.remove({ cid: null });
+      this.requester.remove({ id: null });
+    });
+
+    it('by model object and their ids will be untracked', function() {
+      this.requester.remove(this.modelInCollection);
+      this.requester.remove(this.modelNotInCollection); // does not fail when removing model that is not in collection.
+
+      expect(this.requester.get(this.modelInCollection)).toBeUndefined();
+      expect(this.requester.getTrackedIds()).not.toContain(this.modelInCollection.id);
+    });
+
+    it('by id and their ids will be untracked', function() {
+      this.requester.remove(this.modelInCollection.id);
+      this.requester.remove(this.modelNotInCollection.id); // does not fail when removing model that is not in collection.
+
+      expect(this.requester.get(this.modelInCollection)).toBeUndefined();
+      expect(this.requester.getTrackedIds()).not.toContain(this.modelInCollection.id);
+    });
+
+    it('by cid and their ids will be untracked', function() {
+      this.requester.remove(this.modelInCollection.cid);
+      this.requester.remove(this.modelNotInCollection.cid); // does not fail when removing model that is not in collection.
+
+      expect(this.requester.get(this.modelInCollection)).toBeUndefined();
+      expect(this.requester.getTrackedIds()).not.toContain(this.modelInCollection.id);
+    });
+
+    it('by object with cid property and their ids will be untracked', function() {
+      this.requester.remove({ cid: this.modelInCollection.cid });
+      this.requester.remove({ cid: this.modelNotInCollection.cid }); // does not fail when removing model that is not in collection.
+
+      expect(this.requester.get(this.modelInCollection)).toBeUndefined();
+      expect(this.requester.getTrackedIds()).not.toContain(this.modelInCollection.id);
+    });
+
+    it('by object with an id property and their ids will be untracked', function() {
+      this.requester.remove({ id: this.modelInCollection.id });
+      this.requester.remove({ id: this.modelNotInCollection.id }); // does not fail when removing model that is not in collection.
+
+      expect(this.requester.get(this.modelInCollection)).toBeUndefined();
+      expect(this.requester.getTrackedIds()).not.toContain(this.modelInCollection.id);
+    });
+  });
+
   xit('can track ids that are longs/ints', function(done) {
     //TODO this doesn't work. Id's come back as strings.
     var MyModel = Model.extend({});

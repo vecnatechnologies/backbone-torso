@@ -1,16 +1,18 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
+    define(['underscore', 'backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
   } else if (typeof exports === 'object') {
     require('backbone.stickit');
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./FormModel'), require('./Cell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./FormModel'), require('./Cell'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
+    root.Torso.FormView = factory(root._, root.Backbone, root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
   }
-}(this, function(_, $, View, FormModel, Cell) {
+}(this, function(_, Backbone, View, FormModel, Cell) {
   'use strict';
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form View
@@ -162,10 +164,10 @@
     /**
      * Deactivate callback that removes bindings and other resources
      * that shouldn't exist in a dactivated state
-     * @method _deactivate
+     * @method deactivate
      */
-    _deactivate: function() {
-      View.prototype._deactivate.call(this);
+    deactivate: function() {
+      View.prototype.deactivate.call(this);
       // No detach callback... Deactivate will have to do as it is called by detach
       this.unstickit();
     },

@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.6</em>
+            <em>API Docs for: 0.8.12</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -109,16 +109,18 @@
 
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;, &#x27;./View&#x27;, &#x27;./FormModel&#x27;, &#x27;./Cell&#x27;, &#x27;backbone.stickit&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./View&#x27;, &#x27;./FormModel&#x27;, &#x27;./Cell&#x27;, &#x27;backbone.stickit&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
     require(&#x27;backbone.stickit&#x27;);
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;jquery&#x27;), require(&#x27;./View&#x27;), require(&#x27;./FormModel&#x27;), require(&#x27;./Cell&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./View&#x27;), require(&#x27;./FormModel&#x27;), require(&#x27;./Cell&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.FormView = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$), root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
+    root.Torso.FormView = factory(root._, root.Backbone, root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
   }
-}(this, function(_, $, View, FormModel, Cell) {
+}(this, function(_, Backbone, View, FormModel, Cell) {
   &#x27;use strict&#x27;;
+
+  var $ = Backbone.$;
 
   /**
    * Generic Form View
@@ -270,10 +272,10 @@
     /**
      * Deactivate callback that removes bindings and other resources
      * that shouldn&#x27;t exist in a dactivated state
-     * @method _deactivate
+     * @method deactivate
      */
-    _deactivate: function() {
-      View.prototype._deactivate.call(this);
+    deactivate: function() {
+      View.prototype.deactivate.call(this);
       // No detach callback... Deactivate will have to do as it is called by detach
       this.unstickit();
     },

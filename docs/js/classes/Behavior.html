@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.6</em>
+            <em>API Docs for: 0.8.12</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -153,7 +153,7 @@
                                 <a href="#method___bindLifecycleMethods">__bindLifecycleMethods</a>
 
                             </li>
-                            <li class="index-item method private">
+                            <li class="index-item method">
                                 <a href="#method___dispose">__dispose</a>
 
                             </li>
@@ -166,7 +166,15 @@
 
                             </li>
                             <li class="index-item method">
+                                <a href="#method__dispose">_dispose</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_constructor">constructor</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_isDisposed">isDisposed</a>
 
                             </li>
                             <li class="index-item method">
@@ -366,14 +374,13 @@ Behavior's event handlers fire on view events but are run in the context of the 
 
 
 </div>
-<div id="method___dispose" class="method item private">
+<div id="method___dispose" class="method item">
     <h3 class="name"><code>__dispose</code></h3>
 
         <span class="paren">()</span>
 
 
 
-        <span class="flag private">private</span>
 
 
 
@@ -390,7 +397,9 @@ Behavior's event handlers fire on view events but are run in the context of the 
     </div>
 
     <div class="description">
-        <p>Preforms basic cleanup of a behavior before specific cleanup by extensions.</p>
+        <p>Removes all listeners, stops listening to events.
+After dispose is called, the behavior can be safely garbage collected.
+Called when the owning view is disposed.</p>
 
     </div>
 
@@ -536,6 +545,39 @@ Behavior's event handlers fire on view events but are run in the context of the 
 
 
 </div>
+<div id="method__dispose" class="method item">
+    <h3 class="name"><code>_dispose</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_Behavior.js.html#l217"><code>modules&#x2F;Behavior.js:217</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Method to be invoked when dispose is called. By default calling dispose will remove the
+behavior's on's and listenTo's.
+Override this method to destruct any extra</p>
+
+    </div>
+
+
+
+
+</div>
 <div id="method_constructor" class="method item">
     <h3 class="name"><code>constructor</code></h3>
 
@@ -636,6 +678,48 @@ Behavior's event handlers fire on view events but are run in the context of the 
             </ul>
         </div>
 
+
+
+</div>
+<div id="method_isDisposed" class="method item">
+    <h3 class="name"><code>isDisposed</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_Behavior.js.html#l225"><code>modules&#x2F;Behavior.js:225</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
+                    <p>true if the view was disposed</p>
+
+            </div>
+        </div>
 
 
 </div>

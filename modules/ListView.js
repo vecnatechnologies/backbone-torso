@@ -1,16 +1,18 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery', './View', './templateRenderer'], factory);
+    define(['underscore', 'backbone', './View', './templateRenderer'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'), require('./View'), require('./templateRenderer'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./templateRenderer'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.ListView = factory(root._, root.$, root.Torso.View, root.Torso.Utils.templateRenderer);
+    root.Torso.ListView = factory(root._, root.Backbone, root.Torso.View, root.Torso.Utils.templateRenderer);
   }
-}(this, function(_, $, View, templateRenderer) {
+}(this, function(_, Backbone, View, templateRenderer) {
   'use strict';
 
     var removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
+
+    var $ = Backbone.$;
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
@@ -394,26 +396,24 @@
      * @method update
      */
     update: function() {
-      var view = this,
-        renderNeeded = false,
-        oldViews = this.getItemViews(),
-        newViews = this.__createItemViews(),
-        staleViews = this.__getStaleItemViews(),
-        sizeOfOldViews = _.size(oldViews),
-        sizeOfNewViews = _.size(newViews),
-        sizeOfStaleViews = _.size(staleViews),
-        sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews,
-        changes = sizeOfNewViews + sizeOfStaleViews,
-        percentChange = changes / Math.max(sizeOfFinalViews, 1),
-        fromEmptyToNotEmpty = !sizeOfOldViews && sizeOfNewViews,
-        fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews,
-        threshold = this.updateThreshold || 0.5,
-        signficantChanges = percentChange >= threshold;
+      var oldViews = this.getItemViews();
+      var newViews = this.__createItemViews();
+      var staleViews = this.__getStaleItemViews();
+      var sizeOfOldViews = _.size(oldViews);
+      var sizeOfNewViews = _.size(newViews);
+      var sizeOfStaleViews = _.size(staleViews);
+      var sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews;
+      var changes = sizeOfNewViews + sizeOfStaleViews;
+      var percentChange = changes / Math.max(sizeOfFinalViews, 1);
+      var fromEmptyToNotEmpty = !sizeOfOldViews && sizeOfNewViews;
+      var fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews;
+      var threshold = this.updateThreshold || 0.5;
+      var signficantChanges = percentChange >= threshold;
       if (changes <= 0) {
         return this.reorder();
       }
       // A switch from empty to not empty or vise versa, needs a new render
-      renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
+      var renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
       if (renderNeeded) {
         this.__removeStaleItemViews(staleViews);
         this.__delayedRender();

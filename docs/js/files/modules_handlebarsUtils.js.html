@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.6</em>
+            <em>API Docs for: 0.8.12</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -108,15 +108,15 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([], factory);
+    define([&#x27;underscore&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory();
+    module.exports = factory(require(&#x27;underscore&#x27;));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.handlebarsUtils = factory();
+    root.Torso.Utils.handlebarsUtils = factory(root._);
   }
-}(this, function() {
+}(this, function(_) {
   &#x27;use strict&#x27;;
 
   return function(Handlebars) {
@@ -136,6 +136,10 @@
     /**
      * Usage: {{labelFor &#x27;fieldName&#x27; value=&quot;suffix&quot;}}
      * Generates: for=&quot;field-name-suffix&quot;
+     * Usage: {{labelFor &#x27;fieldName[x].sub&#x27; value=&quot;demo&quot; x=123}}
+     * Generates: for=&quot;field-name-123_sub-demo&quot;
+     * Usage: {{labelFor &#x27;fieldName[bar].sub&#x27; value=&quot;demo&quot; bar=&quot;abc&quot;}}
+     * Generates: for=&quot;field-name_abc_sub-demo&quot;
      * @method Handlebars.helpers.labelFor
      * @param field {String} The field name to convert to a compliant &quot;for&quot; attribute
      * @param options {&lt;Handlebars context&gt;} Always passed in as final argument
@@ -143,12 +147,19 @@
      * @return {String} Compliant HTML generating the &quot;for&quot; attribute
      */
     Handlebars.registerHelper(&#x27;labelFor&#x27;, function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
       return Handlebars.helpers.formAttr(field, &#x27;for&#x27;, options);
     });
 
     /**
      * Usage: {{bindModel &#x27;fieldName&#x27; value=&#x27;suffix&#x27;}}
-     * Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name-suffix&quot; data-model=&quot;fieldName&quot; data-feedback=&quot;firstName&quot;
+     * Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name&quot; data-model=&quot;fieldName&quot; data-feedback=&quot;fieldName&quot; value=&quot;demo&quot;
+     * Usage: {{bindModel &#x27;fieldName[x].sub&#x27; value=&#x27;demo&#x27; x=123}}
+     * Generates: data-model=&quot;fieldName[123].sub&quot; data-feedback=&quot;fieldName[123].sub&quot; name=&quot;field-name-123_sub&quot;
+     *            id=&quot;field-name-123_sub-demo&quot; value=&quot;demo&quot;
+     * Usage: {{bindModel &#x27;fieldName[bar].sub&#x27; value=&#x27;demo&#x27; bar=&#x27;abc&#x27;}}
+     * Generates: data-model=&quot;fieldName.abc.sub&quot; data-feedback=&quot;fieldName[abc].sub&quot; name=&quot;field-name_abc_sub&quot;
+                  id=&quot;field-name_abc_sub-demo&quot; value=&quot;demo&quot;
      * @method Handlebars.helpers.bindModel
      * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
      * @param options {&lt;Handlebars context&gt;} Always passed in as final argument
@@ -161,60 +172,74 @@
 
     /**
      * Usage: {{feedback &#x27;fieldName&#x27;}}
-     * Generates: data-feedback=&quot;firstName&quot;
+     * Generates: data-feedback=&quot;fieldName&quot;
+     * Usage: {{feedback &#x27;fieldName[x].sub&#x27; value=&#x27;demo&#x27; x=123}}
+     * Generates: data-feedback=&quot;fieldName[123].sub&quot;
+     * Usage: {{feedback &#x27;fieldName[bar].sub value=&#x27;demo&#x27; bar=&#x27;abc&#x27;}}
+     * Generates: data-feedback=&quot;fieldName[abc].sub&quot;
      * @method Handlebars.helpers.feedback
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {&lt;Handlebars context&gt;} Always passed in as final argument
      * @return {String} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper(&#x27;feedback&#x27;, function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
       return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
     });
 
     /**
      * Usage: {{formAttr &#x27;fieldName[x].sub&#x27; &#x27;id, for&#x27; value=&#x27;demo&#x27; x=123}}
-     * Generates: id=&quot;first-name-123_sub-demo&quot; for=&quot;first-name-123_sub&quot; value=&quot;demo&quot;
+     * Generates: id=&quot;field-name-123_sub-demo&quot; for=&quot;field-name-123_sub-demo&quot; value=&quot;demo&quot;
+     * Usage: {{feedback &#x27;fieldName[bar].sub value=&#x27;demo&#x27; bar=&#x27;abc&#x27;}}
+     * Generates: id=&quot;field-name_abc_sub-demo&quot; for=&quot;field-name_abc_sub-demo&quot; value=&quot;demo&quot;
      * @method Handlebars.helpers.formAttr
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {&lt;Handlebars context&gt;} Always passed in as final argument
      * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param [options.noValueAttr] {Boolean} when options.noValueAttr is set to true,
+                                              then it will not generate the &quot;value&quot; attribute in the DOM.
      * @return {String} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper(&#x27;formAttr&#x27;, function(field, attrs, options) {
       var i, attrName,
         value = (options.hash ? options.hash.value : undefined),
         res = Handlebars.helpers.injectFieldIndices(field, options.hash),
+        resWithArrayNotation = Handlebars.helpers.injectFieldIndices(field, options.hash, { forceArrayNotation: true }),
         attributes = &#x27;&#x27;;
       attrs = attrs.split(&#x27;,&#x27;);
       for (i = 0; i &lt; attrs.length; i++) {
         attrName = attrs[i].trim();
+        var attrEnd = (i === attrs.length - 1) ? &#x27;&quot;&#x27; : &#x27;&quot; &#x27;;
         if (attrName === FEEDBACK_KEY) {
-          attributes += &#x27;data-feedback=&quot;&#x27; + res + &#x27;&quot; &#x27;;
+          // Feedback needs to always use array notation because of the way it finds the element (by stripping [] contents).
+          attributes += &#x27;data-feedback=&quot;&#x27; + resWithArrayNotation + attrEnd;
         } else if (attrName === MODEL_KEY) {
-          attributes += &#x27;data-model=&quot;&#x27; + res + &#x27;&quot; &#x27;;
+          attributes += &#x27;data-model=&quot;&#x27; + res + attrEnd;
         } else if (attrName === &#x27;name&#x27;) {
-          attributes += &#x27;name=&quot;&#x27; + Handlebars.helpers.dasherize(res) + &#x27;&quot; &#x27;;
+          attributes += &#x27;name=&quot;&#x27; + Handlebars.helpers.dasherize(res) + attrEnd;
         } else if (attrName === &#x27;id&#x27;) {
           attributes += &#x27;id=&quot;&#x27; + Handlebars.helpers.dasherize(res);
           if (value !== undefined) {
             attributes += &#x27;-&#x27; + value;
           }
-          attributes += &#x27;&quot; &#x27;;
+          attributes += attrEnd;
         } else if (attrName === &#x27;for&#x27;) {
           attributes += &#x27;for=&quot;&#x27; + Handlebars.helpers.dasherize(res);
           if (value !== undefined) {
             attributes += &#x27;-&#x27; + value;
           }
-          attributes += &#x27;&quot; &#x27;;
+          attributes += attrEnd;
         }
       }
-      if (value !== undefined) {
-        attributes += &#x27;value=&quot;&#x27; + value +&#x27;&quot;&#x27;;
+      if (value !== undefined &amp;&amp; !options.noValueAttr) {
+        attributes += &#x27; value=&quot;&#x27; + value + &#x27;&quot;&#x27;;
       }
       return new Handlebars.SafeString(attributes);
     });
 
     /**
+     * Usage: {{feedback &#x27;fieldName[x].sub&#x27;}}
+     * Generates: field-name[x]_sub
      * @method Handlebars.helpers.dasherize
      * @param str {String} The input string to make HTML compliant (convert to dashes)
      * @return {String} HTML complicant / dasherized string
@@ -234,18 +259,27 @@
     });
 
     /**
-     * Usage: injectFieldIndices(&#x27;test[x]-thisIsRegular-y&#x27;, {x: 123, y: 456});
-     * Generates: &#x27;test[123]-thisIsRegular-y&#x27;
+     * Usage: injectFieldIndices(&#x27;test[x]-thisIsRegular-y&#x27;, {x: 123, y: 456} and &#x27;foo[x].abc&#x27;, x=&#x27;bar&#x27;);
+     * Generates: &#x27;test[123]-thisIsRegular-y&#x27; and &#x27;foo.bar.abc&#x27;
+     * if options.forceArrayNotation is set then:
+     * Generates: &#x27;test[123]-thisIsRegular-y&#x27; and &#x27;foo[bar].abc&#x27;
      * @method injectFieldIndices
      * @param field {String} The field name
      * @param indexMap {Object} A map of variables
+     * @param options {Object} named parameters
+     *   @param [options.forceArrayNotation=false] {Boolean} Force the usage of [] insetad of . for string values.
      * @return {String} the field string with array variables substituted
      */
-    Handlebars.registerHelper(&#x27;injectFieldIndices&#x27;, function(field, indexMap) {
+    Handlebars.registerHelper(&#x27;injectFieldIndices&#x27;, function(field, indexMap, options) {
       if (indexMap) {
         return field.replace(/\[.+?\]/g, function(m) {
           var newIndex = indexMap[m.substring(1, m.length - 1)];
-          return &#x27;[&#x27; + (newIndex === undefined ? &#x27;&#x27; : newIndex) + &#x27;]&#x27;;
+          var indexToken = &#x27;[&#x27; + (newIndex === undefined ? &#x27;&#x27; : newIndex) + &#x27;]&#x27;;
+          var forceArrayNotation = options &amp;&amp; options.forceArrayNotation;
+          if (_.isString(newIndex) &amp;&amp; !forceArrayNotation) {
+            indexToken = &#x27;.&#x27; + newIndex;
+          }
+          return indexToken;
         });
       } else {
         return field;
@@ -253,7 +287,6 @@
     });
   };
 }));
-
     </pre>
 </div>
                     </div>

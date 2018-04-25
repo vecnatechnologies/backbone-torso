@@ -1,14 +1,14 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
+    define(['underscore'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory();
+    module.exports = factory(require('underscore'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Utils = root.Torso.Utils || {};
-    root.Torso.Utils.handlebarsUtils = factory();
+    root.Torso.Utils.handlebarsUtils = factory(root._);
   }
-}(this, function() {
+}(this, function(_) {
   'use strict';
 
   return function(Handlebars) {
@@ -28,6 +28,10 @@
     /**
      * Usage: {{labelFor 'fieldName' value="suffix"}}
      * Generates: for="field-name-suffix"
+     * Usage: {{labelFor 'fieldName[x].sub' value="demo" x=123}}
+     * Generates: for="field-name-123_sub-demo"
+     * Usage: {{labelFor 'fieldName[bar].sub' value="demo" bar="abc"}}
+     * Generates: for="field-name_abc_sub-demo"
      * @method Handlebars.helpers.labelFor
      * @param field {String} The field name to convert to a compliant "for" attribute
      * @param options {<Handlebars context>} Always passed in as final argument
@@ -35,12 +39,19 @@
      * @return {String} Compliant HTML generating the "for" attribute
      */
     Handlebars.registerHelper('labelFor', function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
       return Handlebars.helpers.formAttr(field, 'for', options);
     });
 
     /**
      * Usage: {{bindModel 'fieldName' value='suffix'}}
-     * Generates: id="field-name-suffix" name="field-name-suffix" data-model="fieldName" data-feedback="firstName"
+     * Generates: id="field-name-suffix" name="field-name" data-model="fieldName" data-feedback="fieldName" value="demo"
+     * Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub"
+     *            id="field-name-123_sub-demo" value="demo"
+     * Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}
+     * Generates: data-model="fieldName.abc.sub" data-feedback="fieldName[abc].sub" name="field-name_abc_sub"
+                  id="field-name_abc_sub-demo" value="demo"
      * @method Handlebars.helpers.bindModel
      * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
      * @param options {<Handlebars context>} Always passed in as final argument
@@ -53,60 +64,74 @@
 
     /**
      * Usage: {{feedback 'fieldName'}}
-     * Generates: data-feedback="firstName"
+     * Generates: data-feedback="fieldName"
+     * Usage: {{feedback 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-feedback="fieldName[123].sub"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: data-feedback="fieldName[abc].sub"
      * @method Handlebars.helpers.feedback
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {<Handlebars context>} Always passed in as final argument
      * @return {String} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('feedback', function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
       return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
     });
 
     /**
      * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
-     * Generates: id="first-name-123_sub-demo" for="first-name-123_sub" value="demo"
+     * Generates: id="field-name-123_sub-demo" for="field-name-123_sub-demo" value="demo"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: id="field-name_abc_sub-demo" for="field-name_abc_sub-demo" value="demo"
      * @method Handlebars.helpers.formAttr
      * @param field {String} The field name to convert to a compliant data-feedback attribute
      * @param options {<Handlebars context>} Always passed in as final argument
      * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param [options.noValueAttr] {Boolean} when options.noValueAttr is set to true,
+                                              then it will not generate the "value" attribute in the DOM.
      * @return {String} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('formAttr', function(field, attrs, options) {
       var i, attrName,
         value = (options.hash ? options.hash.value : undefined),
         res = Handlebars.helpers.injectFieldIndices(field, options.hash),
+        resWithArrayNotation = Handlebars.helpers.injectFieldIndices(field, options.hash, { forceArrayNotation: true }),
         attributes = '';
       attrs = attrs.split(',');
       for (i = 0; i < attrs.length; i++) {
         attrName = attrs[i].trim();
+        var attrEnd = (i === attrs.length - 1) ? '"' : '" ';
         if (attrName === FEEDBACK_KEY) {
-          attributes += 'data-feedback="' + res + '" ';
+          // Feedback needs to always use array notation because of the way it finds the element (by stripping [] contents).
+          attributes += 'data-feedback="' + resWithArrayNotation + attrEnd;
         } else if (attrName === MODEL_KEY) {
-          attributes += 'data-model="' + res + '" ';
+          attributes += 'data-model="' + res + attrEnd;
         } else if (attrName === 'name') {
-          attributes += 'name="' + Handlebars.helpers.dasherize(res) + '" ';
+          attributes += 'name="' + Handlebars.helpers.dasherize(res) + attrEnd;
         } else if (attrName === 'id') {
           attributes += 'id="' + Handlebars.helpers.dasherize(res);
           if (value !== undefined) {
             attributes += '-' + value;
           }
-          attributes += '" ';
+          attributes += attrEnd;
         } else if (attrName === 'for') {
           attributes += 'for="' + Handlebars.helpers.dasherize(res);
           if (value !== undefined) {
             attributes += '-' + value;
           }
-          attributes += '" ';
+          attributes += attrEnd;
         }
       }
-      if (value !== undefined) {
-        attributes += 'value="' + value +'"';
+      if (value !== undefined && !options.noValueAttr) {
+        attributes += ' value="' + value + '"';
       }
       return new Handlebars.SafeString(attributes);
     });
 
     /**
+     * Usage: {{feedback 'fieldName[x].sub'}}
+     * Generates: field-name[x]_sub
      * @method Handlebars.helpers.dasherize
      * @param str {String} The input string to make HTML compliant (convert to dashes)
      * @return {String} HTML complicant / dasherized string
@@ -126,18 +151,27 @@
     });
 
     /**
-     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456});
-     * Generates: 'test[123]-thisIsRegular-y'
+     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'
+     * if options.forceArrayNotation is set then:
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'
      * @method injectFieldIndices
      * @param field {String} The field name
      * @param indexMap {Object} A map of variables
+     * @param options {Object} named parameters
+     *   @param [options.forceArrayNotation=false] {Boolean} Force the usage of [] insetad of . for string values.
      * @return {String} the field string with array variables substituted
      */
-    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap) {
+    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap, options) {
       if (indexMap) {
         return field.replace(/\[.+?\]/g, function(m) {
           var newIndex = indexMap[m.substring(1, m.length - 1)];
-          return '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          var indexToken = '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          var forceArrayNotation = options && options.forceArrayNotation;
+          if (_.isString(newIndex) && !forceArrayNotation) {
+            indexToken = '.' + newIndex;
+          }
+          return indexToken;
         });
       } else {
         return field;

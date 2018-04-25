@@ -1,5 +1,5 @@
 describe('Global Module imports', function() {
-  var window, globalIndex,
+  var globalIndex,
       // Define the globals layout, each array is a global to verify
       //   and each item in the array is a step on the path from the window object.
       // The test below will verify that all items defined below exist on the window object.
@@ -35,8 +35,9 @@ describe('Global Module imports', function() {
       ];
 
   beforeAll(function(done) {
+    var jasmineContext = this;
     require('./importEnv')('testEnv').done(function(pageWindow) {
-      window = pageWindow;
+      jasmineContext.window = pageWindow;
       done();
     });
   });
@@ -45,7 +46,7 @@ describe('Global Module imports', function() {
   for (globalIndex = 0; globalIndex < globals.length; globalIndex++) {
     global = globals[globalIndex];
     it('has the expected "' + global.join('.')  + '" global.', function(global) {
-      var globalPartIndex, nextGlobalKey, globalPart = window;
+      var globalPartIndex, nextGlobalKey, globalPart = this.window;
       for (globalPartIndex = 0; globalPartIndex < global.length; globalPartIndex++) {
         nextGlobalKey = global[globalPartIndex];
         globalPart = globalPart[nextGlobalKey];

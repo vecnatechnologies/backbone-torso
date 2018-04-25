@@ -1,14 +1,17 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'jquery'], factory);
+    define(['underscore', 'backbone'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('jquery'));
+    module.exports = factory(require('underscore'), require('backbone'));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cache = factory(root._, (root.jQuery || root.Zepto || root.ender || root.$));
+    root.Torso.Mixins.cache = factory(root._, root.Backbone);
   }
-}(this, function(_, $) {
+}(this, function(_, Backbone) {
+
+  var $ = Backbone.$;
+
   /**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
@@ -185,6 +188,22 @@
            */
           requesterDispose: function() {
             parentInstance.removeRequester(ownerKey);
+          },
+
+          /**
+           * In addition to removing the model from the collection also remove it from the list of tracked ids.
+           * @param modelIdentifier {*} same duck-typing as Backbone.Collection.get():
+           *                              by id, cid, model object with id or cid properties,
+           *                              or an attributes object that is transformed through modelId
+           */
+          remove: function(modelIdentifier) {
+            var model = this.get(modelIdentifier);
+            parentClass.remove.apply(this, arguments);
+            if (model) {
+              var trackedIdsWithoutModel = this.getTrackedIds();
+              trackedIdsWithoutModel = _.without(trackedIdsWithoutModel, model.id);
+              this.trackIds(trackedIdsWithoutModel);
+            }
           }
         };
 
@@ -316,7 +335,9 @@
 
         // Push cached models to the respective requester
         privateCollection = collection.knownPrivateCollections[guid];
-        privateCollection.set(models, {remove: false});
+        if (privateCollection) {
+          privateCollection.set(models, {remove: false});
+        }
 
         // Create a new request list
         for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
@@ -410,7 +431,9 @@
                 }
                 privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
                 // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
-                privateCollection.set(models, {remove: false});
+                if (privateCollection) {
+                  privateCollection.set(models, {remove: false});
+                }
               }
             });
         }, options)

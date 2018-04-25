@@ -1,8 +1,8 @@
 // Tests using jsDom are deprecated. Port tests to commonjs and add them to test/karma.
 
-var jsdom = require('jsdom'),
-    Promise = require('promise'),
-    argv = require('minimist')(process.argv);
+var jsdom = require('jsdom');
+var Promise = require('promise');
+var argv = require('minimist')(process.argv);
 
 /**
  * @method [Anonymous]

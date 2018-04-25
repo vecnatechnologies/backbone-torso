@@ -1,10 +1,10 @@
-var commonJsImportTest,
-    _ = require('underscore');
+var commonJsImportTest;
+var _ = require('underscore');
 
 commonJsImportTest = function(moduleToImport, expectedModules) {
   expectedModules.push(moduleToImport);
   describe('CommonJS Module import of "' + moduleToImport + '"', function() {
-    var windowRequire, module, actualModule, moduleIndex;
+    var module, actualModule, moduleIndex;
 
     // Each module is browserified separately to validate requiring just that module.
     // This loads the browserified module and then tests that it includes all the dependencies that are required for that module.
@@ -12,8 +12,9 @@ commonJsImportTest = function(moduleToImport, expectedModules) {
     //   file from testSandbox/browserified/modules/Events.js and create a jsdom environment and expose the require method
     //   from the window which is then used to verify that all of the dependencies (and only those dependencies) are included.
     beforeAll(function(done) {
+      var jasmineContext = this;
       require('./importEnv')('browserified' + moduleToImport).done(function(window) {
-        windowRequire = window.require;
+        jasmineContext.windowRequire = window.require;
         done();
       });
     })
@@ -21,13 +22,13 @@ commonJsImportTest = function(moduleToImport, expectedModules) {
     for (moduleIndex = 0; moduleIndex < expectedModules.length; moduleIndex++) {
       module = expectedModules[moduleIndex];
       it('has the expected "' + module  + '" dependency.', function() {
-        expect(windowRequire(this)).toBeDefined();
+        expect(this.windowRequire(this)).toBeDefined();
       }.bind(module));
     }
 
     it('does not implement any extra dependencies.', function() {
       var existingModule, dependenciesIndex, failed = false, allDependencies = [];
-      for (existingModule in windowRequire) {
+      for (existingModule in this.windowRequire) {
         if (existingModule !== moduleToImport) {
           allDependencies.push(existingModule);
         }

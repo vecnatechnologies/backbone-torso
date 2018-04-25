@@ -13,7 +13,6 @@
     "changelogCommand": "git log --pretty=format:'* %s (%h)' [REV_RANGE]",
     "requireCleanWorkingDir": false,
     "src": {
-        "tagName": "v%s",
         "pushRepo": null,
         "beforeStartCommand": false,
         "beforeStageCommand": false,

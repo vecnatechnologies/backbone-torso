@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.6</em>
+            <em>API Docs for: 0.8.12</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -107,7 +107,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l92"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:92</code></a>
+            Defined in: <a href="../files/modules_behaviors_DataBehavior.js.html#l94"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:94</code></a>
         </div>
 
             Module: <a href="../modules/Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a>
@@ -197,10 +197,6 @@ This behavior also manages dependencies between data and other objects to allow 
 
                             </li>
                             <li class="index-item method private">
-                                <a href="#method__dispose">_dispose</a>
-
-                            </li>
-                            <li class="index-item method private">
                                 <a href="#method__undelegateEvents">_undelegateEvents</a>
 
                             </li>
@@ -238,6 +234,10 @@ This behavior also manages dependencies between data and other objects to allow 
                             </li>
                             <li class="index-item method">
                                 <a href="#method_retrieve">retrieve</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_retrieveOncePromise">retrieveOncePromise</a>
 
                             </li>
                             <li class="index-item method">
@@ -313,7 +313,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l622"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:622</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l667"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:667</code></a>
         </p>
 
 
@@ -335,7 +335,7 @@ This behavior also manages dependencies between data and other objects to allow 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>response</code>
+                        <code class="optional">[response]</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -352,7 +352,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l778"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:778</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l841"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:841</code></a>
         </p>
 
 
@@ -369,8 +369,9 @@ This behavior also manages dependencies between data and other objects to allow 
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">response</code>
+                        <code class="param-name optional">[response]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
 
 
                     <div class="param-description">
@@ -397,6 +398,17 @@ This behavior also manages dependencies between data and other objects to allow 
 
                                 <div class="param-description">
                                     <p>if true then trigger fetch no matter what.</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name optional">[emptyIds=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+
+                                <div class="param-description">
+                                    <p>true if were are no ids retrieved.  False otherwise.</p>
 
                                 </div>
 
@@ -432,7 +444,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l753"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:753</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l815"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:815</code></a>
         </p>
 
 
@@ -509,7 +521,7 @@ This behavior also manages dependencies between data and other objects to allow 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l575"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:575</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l620"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:620</code></a>
         </p>
 
 
@@ -552,40 +564,7 @@ It can also return an object that prevents object retrieval ({ skipObjectRetriev
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l562"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:562</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.</p>
-
-    </div>
-
-
-
-
-</div>
-<div id="method___normalizeAndValidateIds" class="method item private">
-    <h3 class="name"><code>__normalizeAndValidateIds</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-        <span class="flag private">private</span>
-
-
-
-
-
-    <div class="meta">
-                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
-                <p>
-                Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l489"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:489</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l549"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:549</code></a>
         </p>
 
 
@@ -620,7 +599,40 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l504"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:504</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l607"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:607</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method___normalizeAndValidateIds" class="method item private">
+    <h3 class="name"><code>__normalizeAndValidateIds</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l534"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:534</code></a>
         </p>
 
 
@@ -655,7 +667,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l538"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:538</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l583"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:583</code></a>
         </p>
 
 
@@ -691,7 +703,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l631"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:631</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l676"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:676</code></a>
         </p>
 
 
@@ -742,7 +754,7 @@ This is done as part of validation because we first validate that both are not s
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l818"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:818</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l883"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:883</code></a>
         </p>
 
 
@@ -802,7 +814,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l475"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:475</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l520"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:520</code></a>
         </p>
 
 
@@ -835,7 +847,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l835"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:835</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l900"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:900</code></a>
         </p>
 
 
@@ -868,7 +880,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l846"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:846</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l911"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:911</code></a>
         </p>
 
 
@@ -901,7 +913,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l410"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:410</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l455"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:455</code></a>
         </p>
 
 
@@ -910,39 +922,6 @@ and the current ids are empty.</p>
 
     <div class="description">
         <p>Removes existing listeners and adds new ones for all of the updateEvents configured.</p>
-
-    </div>
-
-
-
-
-</div>
-<div id="method__dispose" class="method item private">
-    <h3 class="name"><code>_dispose</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-        <span class="flag private">private</span>
-
-
-
-
-
-    <div class="meta">
-                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
-                <p>
-                Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l857"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:857</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Default dispose stuff because its not already on behavior.  See <a href="https://github.com/vecnatechnologies/backbone-torso/issues/295">https://github.com/vecnatechnologies/backbone-torso/issues/295</a></p>
 
     </div>
 
@@ -967,7 +946,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l423"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:423</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l468"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:468</code></a>
         </p>
 
 
@@ -1011,7 +990,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l223"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:223</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l225"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:225</code></a>
         </p>
 
 
@@ -1174,7 +1153,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l313"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:313</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l317"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:317</code></a>
         </p>
 
 
@@ -1218,7 +1197,7 @@ and the current ids are empty.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l348"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:348</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l353"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:353</code></a>
         </p>
 
 
@@ -1263,7 +1242,7 @@ false - the behavior is not currently loading objects or ids.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l358"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:358</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l363"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:363</code></a>
         </p>
 
 
@@ -1308,7 +1287,7 @@ false - the behavior is not currently loading ids.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l368"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:368</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l373"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:373</code></a>
         </p>
 
 
@@ -1350,7 +1329,7 @@ false - the behavior is not currently loading objects.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l378"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:378</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l383"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:383</code></a>
         </p>
 
 
@@ -1382,7 +1361,7 @@ false - the behavior is not currently loading objects.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l334"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:334</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l339"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:339</code></a>
         </p>
 
 
@@ -1417,7 +1396,7 @@ false - the behavior is not currently loading objects.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l292"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:292</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l295"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:295</code></a>
         </p>
 
 
@@ -1461,7 +1440,7 @@ false - the behavior is not currently loading objects.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l278"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:278</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l281"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:281</code></a>
         </p>
 
 
@@ -1487,6 +1466,60 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
 
 
 </div>
+<div id="method_retrieveOncePromise" class="method item">
+    <h3 class="name"><code>retrieveOncePromise</code></h3>
+
+        <span class="paren">()</span>
+
+        <span class="returns-inline">
+            <span class="type">jQuery.Promise</span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                    <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
+                <p>
+                Defined in
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l415"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:415</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>This is a good way to have something be called after at least one retrieve (pull or fetch) has completed.
+This is especially useful if you don't care if the fetch has already happen you just want to do something once
+the data is loaded.</p>
+<p>This can also be done purely by listening for the 'fetched' event, but you might miss the event if it is fired
+before you start listening.  This gives a structure for handling that case so that your methods are called
+if the event is fired and if it is not fired.</p>
+<p>This also gives the ability to distinguish between a successful and failed fetch easily using the promises
+resolve/reject handlers.</p>
+<p>Usage:</p>
+<p>someDataBehavior.retrieveOncePromise()
+.then(view.doSomethingWithTheData, view.handleFiledFetch);</p>
+
+    </div>
+
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">jQuery.Promise</span>:
+                    <p>that resolves when the data is successfully fetched and rejects when the fetch fails.</p>
+
+            </div>
+        </div>
+
+
+</div>
 <div id="method_stopListeningToIdsPropertyChangeEvent" class="method item">
     <h3 class="name"><code>stopListeningToIdsPropertyChangeEvent</code></h3>
 
@@ -1503,7 +1536,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l397"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:397</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l402"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:402</code></a>
         </p>
 
 
@@ -1536,7 +1569,7 @@ pull or a fetch based on the alwaysFetch property.  (pull is default if always f
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l138"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:138</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l140"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:140</code></a>
         </p>
 
 
@@ -1568,7 +1601,7 @@ This property will be ignored if <code>fetch()</code> or <code>pull()</code> is 
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l104"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:104</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l106"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:106</code></a>
         </p>
 
 
@@ -1595,7 +1628,7 @@ This property/option is required.  Instantiation will fail if it is not set.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l210"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:210</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l212"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:212</code></a>
         </p>
 
 
@@ -1622,7 +1655,7 @@ and has get('...') and .toJSON() methods that access the private collection data
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l217"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:217</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l219"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:219</code></a>
         </p>
 
 
@@ -1648,7 +1681,7 @@ and has get('...') and .toJSON() methods that access the private collection data
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l150"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:150</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l152"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:152</code></a>
         </p>
 
 
@@ -1728,7 +1761,7 @@ What was criteria should use this instead:</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l111"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:111</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l113"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:113</code></a>
         </p>
 
 
@@ -1757,7 +1790,7 @@ false (default) - no listeners are added.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l129"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:129</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l131"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:131</code></a>
         </p>
 
 
@@ -1786,7 +1819,7 @@ false (default) - an array of model results are returned.</p>
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l120"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:120</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l122"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:122</code></a>
         </p>
 
 
@@ -1815,7 +1848,7 @@ false (default) - trigger a .retrieve() on this data behavior when the view comp
                     <p>Provided by the <a href="../modules/Torso.behaviors.html">Torso.behaviors</a> module.</p>
                 <p>
                 Defined in
-        <a href="../files/modules_behaviors_DataBehavior.js.html#l196"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:196</code></a>
+        <a href="../files/modules_behaviors_DataBehavior.js.html#l198"><code>modules&#x2F;behaviors&#x2F;DataBehavior.js:198</code></a>
         </p>
 
 

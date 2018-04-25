@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.6</em>
+            <em>API Docs for: 0.8.12</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -108,15 +108,17 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;jquery&#x27;, &#x27;backbone&#x27;, &#x27;./templateRenderer&#x27;, &#x27;./Cell&#x27;, &#x27;./NestedCell&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./templateRenderer&#x27;, &#x27;./Cell&#x27;, &#x27;./NestedCell&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;jquery&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./templateRenderer&#x27;), require(&#x27;./Cell&#x27;), require(&#x27;./NestedCell&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./templateRenderer&#x27;), require(&#x27;./Cell&#x27;), require(&#x27;./NestedCell&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.$, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
   }
-}(this, function(_, $, Backbone, templateRenderer, Cell, NestedCell) {
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell) {
   &#x27;use strict&#x27;;
+
+  var $ = Backbone.$;
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
@@ -638,6 +640,10 @@
       if (this.viewState) {
         this.viewState.off();
         this.viewState.stopListening();
+      }
+      if (this.feedbackCell) {
+        this.feedbackCell.off();
+        this.feedbackCell.stopListening();
       }
       // Delete the dom references
       delete this.$el;
@@ -1560,6 +1566,8 @@
     /**
      * Takes a map from variable name to value to be replaced and processes a string with them.
      * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
+     * Also supports objects:
+     * Example: foo.bar and {bar: someString} will return as foo.someString
      * @private
      * @method __substituteIndicesUsingMap
      */
@@ -1570,7 +1578,11 @@
           return arrayNotation;
         } else {
           newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
-          return &#x27;[&#x27; + (newIndex === undefined ? &#x27;&#x27; : newIndex) + &#x27;]&#x27;;
+          if (_.isString(newIndex)) {
+            return &#x27;.&#x27; + newIndex;
+          } else {
+            return &#x27;[&#x27; + (newIndex === undefined ? &#x27;&#x27; : newIndex) + &#x27;]&#x27;;
+          }
         }
       });
     },
@@ -1581,6 +1593,7 @@
      *    foo[] -&gt; [&#x27;foo[0]&#x27;, &#x27;foo[1]&#x27;].
      * Will also perform nested arrays:
      *    foo[][] -&gt; [&#x27;foo[0][0]&#x27;, foo[1][0]&#x27;]
+     * Supports both foo[x] and foo.bar
      * @method __generateSubAttributes
      * @private
      * @param {String} attr The name of the attribute to expand according to the bound model
@@ -1605,7 +1618,11 @@
           indexes = _.keys(values);
         }
         _.each(indexes, function(index) {
-          subAttrs.push(this.__generateSubAttributes(attrName + &#x27;[&#x27; + index + &#x27;]&#x27; + remainder, model));
+          var indexToken = &#x27;[&#x27; + index + &#x27;]&#x27;;
+          if (_.isString(index)) {
+            indexToken = &#x27;.&#x27; + index;
+          }
+          subAttrs.push(this.__generateSubAttributes(attrName + indexToken + remainder, model));
         }, this);
         return subAttrs;
       }
