@@ -405,7 +405,7 @@
      * @method isAttached
      */
     isAttached: function() {
-      return $.contains(document, this.$el[0]);
+      return this.$el && $.contains(document, this.$el[0]);
     },
 
     /**
