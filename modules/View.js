@@ -1,13 +1,13 @@
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell', './registry'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'), require('./registry'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell, root.Torso.registry);
   }
-}(this, function(_, Backbone, templateRenderer, Cell, NestedCell) {
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell, registry) {
   'use strict';
 
   var $ = Backbone.$;
@@ -100,6 +100,11 @@
       this.trigger('initialize:complete');
       if (!options.noActivate) {
         this.activate();
+      }
+      // Register by default.
+      var shouldRegister = _.isUndefined(options.register) || options.register;
+      if (shouldRegister) {
+        registry.viewInitialized(this);
       }
     },
 
@@ -513,6 +518,7 @@
      * @method dispose
      */
     dispose: function() {
+      this.trigger('before-dispose');
       this.trigger('before-dispose-callback');
       this._dispose();
 
@@ -524,7 +530,9 @@
       this.__disposeChildViews();
 
       // Remove view from DOM
-      this.remove();
+      if (this.$el) {
+        this.remove();
+      }
 
       // Unbind all local event bindings
       this.off();
@@ -542,6 +550,7 @@
       delete this.el;
 
       this.__isDisposed = true;
+      this.trigger('after-dispose');
     },
 
     /**

@@ -16,6 +16,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Torso.Mixins.cacheMixin",
         "Torso.Mixins.cellMixin",
         "Torso.Mixins.loadingMixin",
+        "Torso.Mixins.modelMixin",
         "Torso.Mixins.pollingMixin",
         "Torso.Utils.handlebarsUtils",
         "Torso.Utils.stickitUtils",
@@ -24,7 +25,8 @@ YUI.add("yuidoc-meta", function(Y) {
         "Torso.behaviors.DataBehavior.Data",
         "Torso.validation",
         "View",
-        "history"
+        "history",
+        "registry"
     ],
     "modules": [
         "Torso",

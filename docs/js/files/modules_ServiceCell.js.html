@@ -48,6 +48,7 @@
                                 <li><a href="../classes/ListView.html">ListView</a></li>
                                 <li><a href="../classes/Model.html">Model</a></li>
                                 <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+                                <li><a href="../classes/registry.html">registry</a></li>
                                 <li><a href="../classes/Router.html">Router</a></li>
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
@@ -56,6 +57,7 @@
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.modelMixin.html">Torso.Mixins.modelMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
                                 <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
                                 <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
@@ -108,22 +110,45 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;./Cell&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;./Cell&#x27;, &#x27;./registry&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;./Cell&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;./Cell&#x27;), require(&#x27;./registry&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root.Torso.Cell);
+    root.Torso.ServiceCell = factory(root._, root.Torso.Cell, root.Torso.registry);
   }
-}(this, function(Cell) {
+}(this, function(_, Cell, registry) {
   &#x27;use strict&#x27;;
   /**
    * A service cell is a event listening and event emitting object that is independent of any model or view.
    * @module    Torso
    * @class  ServiceCell
+   * @constructor
+   * @param attributes {Object} the initial attributes to use for this service.
+   * @param [options={}] {Object} the options for setting up this service.
+   *   @param [options.register=true] {Boolean} whether to register this service in the app-level registry.
+   *                                            By default this WILL add it to the registry unless set to false because
+   *                                            most services are global so holding on to them beyond
    * @author kent.willis@vecna.com
    */
-  var ServiceCell = Cell.extend({ });
+  var ServiceCell = Cell.extend({
+    constructor: function() {
+      arguments[1] = arguments[1] || {};
+      // Register by default.
+      arguments[1].register = _.isUndefined(arguments[1].register) || arguments[1].register;
+      Cell.apply(this, arguments);
+    },
+
+    /**
+     * Register this item with the service registry after initialize.
+     * @method __postInitialize
+     * @private
+     * @override
+     */
+    __postInitialize: function() {
+      registry.serviceInitialized(this);
+    }
+  });
 
   return ServiceCell;
 }));

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso.Mixins.loadingMixin - backbone-torso</title>
+    <title>registry - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -104,12 +104,12 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Torso.Mixins.loadingMixin Class</h1>
+<h1>registry Class</h1>
 <div class="box meta">
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_mixins_loadingMixin.js.html#l15"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:15</code></a>
+            Defined in: <a href="../files/modules_registry.js.html#l13"><code>modules&#x2F;registry.js:13</code></a>
         </div>
 
             Module: <a href="../modules/Torso.html">Torso</a>
@@ -118,7 +118,7 @@
 
 
 <div class="box intro">
-    <p>Loading logic.</p>
+    <p>Registry of instantiated Torso objects</p>
 
 </div>
 
@@ -138,28 +138,48 @@
                     <h3>Methods</h3>
 
                     <ul class="index-list methods">
-                            <li class="index-item method">
-                                <a href="#method___loadWrapper">__loadWrapper</a>
+                            <li class="index-item method private">
+                                <a href="#method___disposeCache">__disposeCache</a>
+
+                            </li>
+                            <li class="index-item method private">
+                                <a href="#method___initialize">__initialize</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_constructor">constructor</a>
+                                <a href="#method_cellInitialized">cellInitialized</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_fetch">fetch</a>
+                                <a href="#method_disposeAll">disposeAll</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_getLoadedOncePromise">getLoadedOncePromise</a>
+                                <a href="#method_disposeAllCells">disposeAllCells</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_hasLoadedOnce">hasLoadedOnce</a>
+                                <a href="#method_disposeAllModels">disposeAllModels</a>
 
                             </li>
                             <li class="index-item method">
-                                <a href="#method_isLoading">isLoading</a>
+                                <a href="#method_disposeAllServices">disposeAllServices</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_disposeAllViews">disposeAllViews</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_modelInitialized">modelInitialized</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_serviceInitialized">serviceInitialized</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_viewInitialized">viewInitialized</a>
 
                             </li>
                     </ul>
@@ -172,25 +192,20 @@
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
-<div id="method___loadWrapper" class="method item">
-    <h3 class="name"><code>__loadWrapper</code></h3>
+<div id="method___disposeCache" class="method item private">
+    <h3 class="name"><code>__disposeCache</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>fetchMethod</code>
-                </li>
-                <li class="arg">
-                        <code>options</code>
+                        <code>cache</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
-        </span>
 
 
+        <span class="flag private">private</span>
 
 
 
@@ -199,7 +214,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l74"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:74</code></a>
+        <a href="../files/modules_registry.js.html#l126"><code>modules&#x2F;registry.js:126</code></a>
         </p>
 
 
@@ -207,8 +222,7 @@
     </div>
 
     <div class="description">
-        <p>Base load function that will trigger a &quot;load-begin&quot; and a &quot;load-complete&quot; as
-the fetch happens. Use this method to wrap any method that returns a promise in loading events</p>
+        <p>Invoke dispose on all the items in the given cache.</p>
 
     </div>
 
@@ -217,90 +231,12 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">fetchMethod</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-
-
-                    <div class="param-description">
-                        <ul>
-<li>the method to invoke a fetch</li>
-</ul>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">options</code>
+                        <code class="param-name">cache</code>
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
 
                     <div class="param-description">
-                        <ul>
-<li>the object to hold the options needed by the fetchMethod</li>
-</ul>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
-                    <p>a promise when the fetch method has completed and the events have been triggered</p>
-
-            </div>
-        </div>
-
-
-</div>
-<div id="method_constructor" class="method item">
-    <h3 class="name"><code>constructor</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>args</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l26"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:26</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Adds the loading mixin</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">args</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
-
-
-                    <div class="param-description">
-                        <p>the arguments to the base constructor method</p>
+                        <p>to invoke dispose on each member.</p>
 
                     </div>
 
@@ -311,22 +247,23 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
 
 
 </div>
-<div id="method_fetch" class="method item">
-    <h3 class="name"><code>fetch</code></h3>
+<div id="method___initialize" class="method item private">
+    <h3 class="name"><code>__initialize</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
                 <li class="arg">
-                        <code>options</code>
+                        <code>obj</code>
+                </li>
+                <li class="arg">
+                        <code>cache</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
-        </span>
 
 
+        <span class="flag private">private</span>
 
 
 
@@ -335,7 +272,7 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l64"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:64</code></a>
+        <a href="../files/modules_registry.js.html#l68"><code>modules&#x2F;registry.js:68</code></a>
         </p>
 
 
@@ -343,7 +280,7 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     </div>
 
     <div class="description">
-        <p>Wraps the base fetch in a wrapper that manages loaded states</p>
+        <p>Initialize the given object in the given cache.</p>
 
     </div>
 
@@ -352,14 +289,35 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
 
             <ul class="params-list">
                 <li class="param">
-                        <code class="param-name">options</code>
+                        <code class="param-name">obj</code>
+                        <span class="type">Backbone.Events</span>
+
+
+                    <div class="param-description">
+                        <p>any object that implements/extends backbone events.</p>
+
+                    </div>
+
+                        <ul class="params-list">
+                            <li class="param">
+                                    <code class="param-name">cid</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+                                <div class="param-description">
+                                    <p>the unique identifier for the object.</p>
+
+                                </div>
+
+                            </li>
+                        </ul>
+                </li>
+                <li class="param">
+                        <code class="param-name">cache</code>
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
 
                     <div class="param-description">
-                        <ul>
-<li>the object to hold the options needed by the base fetch method</li>
-</ul>
+                        <p>the cache to add the object to.</p>
 
                     </div>
 
@@ -367,26 +325,20 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
             </ul>
         </div>
 
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
-                    <p>The loadWrapper promise</p>
-
-            </div>
-        </div>
 
 
 </div>
-<div id="method_getLoadedOncePromise" class="method item">
-    <h3 class="name"><code>getLoadedOncePromise</code></h3>
+<div id="method_cellInitialized" class="method item">
+    <h3 class="name"><code>cellInitialized</code></h3>
 
-        <span class="paren">()</span>
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>cell</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
-        </span>
 
 
 
@@ -397,7 +349,7 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l56"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:56</code></a>
+        <a href="../files/modules_registry.js.html#l41"><code>modules&#x2F;registry.js:41</code></a>
         </p>
 
 
@@ -405,30 +357,36 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     </div>
 
     <div class="description">
-        
+        <p>Add the cell to the cell cache when it is initialized.</p>
+
     </div>
 
+        <div class="params">
+            <h4>Parameters:</h4>
 
-        <div class="returns">
-            <h4>Returns:</h4>
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">cell</code>
+                        <span class="type">Torso.Cell</span>
 
-            <div class="returns-description">
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
-                    <p>a promise that will resolve when the model/collection has loaded for the first time</p>
 
-            </div>
+                    <div class="param-description">
+                        <p>the cell to add to the cells cache.</p>
+
+                    </div>
+
+                </li>
+            </ul>
         </div>
 
 
+
 </div>
-<div id="method_hasLoadedOnce" class="method item">
-    <h3 class="name"><code>hasLoadedOnce</code></h3>
+<div id="method_disposeAll" class="method item">
+    <h3 class="name"><code>disposeAll</code></h3>
 
         <span class="paren">()</span>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
-        </span>
 
 
 
@@ -439,7 +397,7 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l40"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:40</code></a>
+        <a href="../files/modules_registry.js.html#l83"><code>modules&#x2F;registry.js:83</code></a>
         </p>
 
 
@@ -447,30 +405,19 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     </div>
 
     <div class="description">
-        
+        <p>Dispose of all items in all of the caches (Models, Cells, Services and Views).</p>
+
     </div>
 
 
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
-                    <p>true if this model/collection has ever loaded from a fetch call</p>
-
-            </div>
-        </div>
 
 
 </div>
-<div id="method_isLoading" class="method item">
-    <h3 class="name"><code>isLoading</code></h3>
+<div id="method_disposeAllCells" class="method item">
+    <h3 class="name"><code>disposeAllCells</code></h3>
 
         <span class="paren">()</span>
 
-        <span class="returns-inline">
-            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
-        </span>
 
 
 
@@ -481,7 +428,7 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/modules_mixins_loadingMixin.js.html#l48"><code>modules&#x2F;mixins&#x2F;loadingMixin.js:48</code></a>
+        <a href="../files/modules_registry.js.html#l102"><code>modules&#x2F;registry.js:102</code></a>
         </p>
 
 
@@ -489,19 +436,266 @@ the fetch happens. Use this method to wrap any method that returns a promise in 
     </div>
 
     <div class="description">
-        
+        <p>Dispose of all items in the Cells cache.</p>
+
     </div>
 
 
-        <div class="returns">
-            <h4>Returns:</h4>
 
-            <div class="returns-description">
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>:
-                    <p>true if this model/collection is currently loading new values from the server</p>
 
-            </div>
+</div>
+<div id="method_disposeAllModels" class="method item">
+    <h3 class="name"><code>disposeAllModels</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_registry.js.html#l94"><code>modules&#x2F;registry.js:94</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Dispose of all items in the Models cache.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_disposeAllServices" class="method item">
+    <h3 class="name"><code>disposeAllServices</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_registry.js.html#l110"><code>modules&#x2F;registry.js:110</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Dispose of all items in the Services cache.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_disposeAllViews" class="method item">
+    <h3 class="name"><code>disposeAllViews</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_registry.js.html#l118"><code>modules&#x2F;registry.js:118</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Dispose of all items in the Views cache.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_modelInitialized" class="method item">
+    <h3 class="name"><code>modelInitialized</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>model</code>
+                </li>
+            </ul><span class="paren">)</span>
         </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_registry.js.html#l32"><code>modules&#x2F;registry.js:32</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add the model to the model cache when it is initialized.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">model</code>
+                        <span class="type">Torso.Model</span>
+
+
+                    <div class="param-description">
+                        <p>the model to add to the models cache.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_serviceInitialized" class="method item">
+    <h3 class="name"><code>serviceInitialized</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>service</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_registry.js.html#l59"><code>modules&#x2F;registry.js:59</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add the service to the model service when it is initialized.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">service</code>
+                        <span class="type">Torso.ServiceCell</span>
+
+
+                    <div class="param-description">
+                        <p>the service to add to the services cache.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_viewInitialized" class="method item">
+    <h3 class="name"><code>viewInitialized</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>view</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_registry.js.html#l50"><code>modules&#x2F;registry.js:50</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add the view to the view cache when it is initialized.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">view</code>
+                        <span class="type">Torso.View</span>
+
+
+                    <div class="param-description">
+                        <p>the view to add to the views cache.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
 
 
 </div>
