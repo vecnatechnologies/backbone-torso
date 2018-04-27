@@ -23,10 +23,11 @@
    */
   var ServiceCell = Cell.extend({
     constructor: function() {
-      arguments[1] = arguments[1] || {};
+      var args = Array.prototype.slice.call(arguments);
+      args[1] = args[1] || {};
       // Register by default.
-      arguments[1].register = _.isUndefined(arguments[1].register) || arguments[1].register;
-      Cell.apply(this, arguments);
+      args[1].register = _.isUndefined(args[1].register) || _.isNull(args[1].register) || args[1].register;
+      Cell.apply(this, args);
     },
 
     /**

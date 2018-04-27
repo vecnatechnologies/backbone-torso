@@ -102,7 +102,7 @@
         this.activate();
       }
       // Register by default.
-      var shouldRegister = _.isUndefined(options.register) || options.register;
+      var shouldRegister = _.isUndefined(options.register) || _.isNull(options.register) || options.register;
       if (shouldRegister) {
         registry.viewInitialized(this);
       }

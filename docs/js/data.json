@@ -4659,7 +4659,7 @@
         },
         {
             "file": "modules/ServiceCell.js",
-            "line": 32,
+            "line": 33,
             "description": "Register this item with the service registry after initialize.",
             "itemtype": "method",
             "name": "__postInitialize",
@@ -6630,7 +6630,7 @@
         },
         {
             "message": "unknown tag: override",
-            "line": " modules/ServiceCell.js:32"
+            "line": " modules/ServiceCell.js:33"
         },
         {
             "message": "unknown tag: override",

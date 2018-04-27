@@ -1979,10 +1979,11 @@
    */
   var ServiceCell = Cell.extend({
     constructor: function() {
-      arguments[1] = arguments[1] || {};
+      var args = Array.prototype.slice.call(arguments);
+      args[1] = args[1] || {};
       // Register by default.
-      arguments[1].register = _.isUndefined(arguments[1].register) || arguments[1].register;
-      Cell.apply(this, arguments);
+      args[1].register = _.isUndefined(args[1].register) || _.isNull(args[1].register) || args[1].register;
+      Cell.apply(this, args);
     },
 
     /**
@@ -2103,7 +2104,7 @@
         this.activate();
       }
       // Register by default.
-      var shouldRegister = _.isUndefined(options.register) || options.register;
+      var shouldRegister = _.isUndefined(options.register) || _.isNull(options.register) || options.register;
       if (shouldRegister) {
         registry.viewInitialized(this);
       }
