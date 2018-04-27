@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>modules/Model.js - backbone-torso</title>
+    <title>Torso.Mixins.modelMixin - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -104,52 +104,163 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: modules/Model.js</h1>
+<h1>Torso.Mixins.modelMixin Class</h1>
+<div class="box meta">
 
-<div class="file">
-    <pre class="code prettyprint linenums">
-(function(root, factory) {
-  if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./mixins/pollingMixin&#x27;, &#x27;./mixins/modelMixin&#x27;], factory);
-  } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./mixins/pollingMixin&#x27;), require(&#x27;./mixins/modelMixin&#x27;));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.model);
-  }
-}(this, function(_, Backbone, pollingMixin, modelMixin) {
-  &#x27;use strict&#x27;;
 
-  /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @param attributes {Object} the initial attributes to use for this model.
-   * @param [options={}] {Object} the options for setting up this model.
-   *   @param [options.register=false] {Boolean} whether to register this model in the app-level registry.
-   *                                             By default this will NOT add it to the registry unless set to true because
-   *                                             we have not mechanism that will make sure the models get removed from the registry
-   *                                             at the appropriate times.
-   * @author kent.willis@vecna.com
-   */
-  var Model = Backbone.Model.extend({
-    constructor: function(attributes, options) {
-      Backbone.Model.apply(this, arguments);
-      options = options || {};
-      if (options.register) {
-        this.__postInitialize();
-      }
-      this.trigger(&#x27;post-initialize&#x27;);
-    }
-  });
-  _.extend(Model.prototype, pollingMixin, modelMixin);
+        <div class="foundat">
+            Defined in: <a href="../files/modules_mixins_modelMixin.js.html#l13"><code>modules&#x2F;mixins&#x2F;modelMixin.js:13</code></a>
+        </div>
 
-  return Model;
-}));
+            Module: <a href="../modules/Torso.html">Torso</a>
 
-    </pre>
+</div>
+
+
+<div class="box intro">
+    <p>The base for a model</p>
+
+</div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method private">
+                                <a href="#method___postInitialize">__postInitialize</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method__dispose">_dispose</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_dispose">dispose</a>
+
+                            </li>
+                    </ul>
+                </div>
+
+
+
+        </div>
+
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method___postInitialize" class="method item private">
+    <h3 class="name"><code>__postInitialize</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_mixins_modelMixin.js.html#l21"><code>modules&#x2F;mixins&#x2F;modelMixin.js:21</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Register this item with the model registry after initialize.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__dispose" class="method item">
+    <h3 class="name"><code>_dispose</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_mixins_modelMixin.js.html#l43"><code>modules&#x2F;mixins&#x2F;modelMixin.js:43</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_dispose" class="method item">
+    <h3 class="name"><code>dispose</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_mixins_modelMixin.js.html#l30"><code>modules&#x2F;mixins&#x2F;modelMixin.js:30</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Default dispose for model-like objects (Models, Cells, and ServiceCells).
+Removes listeners and calls out to _dispose() for child specific dispose logic.
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+
+    </div>
+
+
+
+
+</div>
+            </div>
+
+
+
+    </div>
 </div>
                     </div>
                 </div>

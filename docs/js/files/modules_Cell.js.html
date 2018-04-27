@@ -48,6 +48,7 @@
                                 <li><a href="../classes/ListView.html">ListView</a></li>
                                 <li><a href="../classes/Model.html">Model</a></li>
                                 <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+                                <li><a href="../classes/registry.html">registry</a></li>
                                 <li><a href="../classes/Router.html">Router</a></li>
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
@@ -56,6 +57,7 @@
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.modelMixin.html">Torso.Mixins.modelMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
                                 <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
                                 <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
@@ -108,22 +110,39 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./mixins/cellMixin&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;./Model&#x27;, &#x27;./mixins/cellMixin&#x27;, &#x27;./registry&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./mixins/cellMixin&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;./Model&#x27;), require(&#x27;./mixins/cellMixin&#x27;), require(&#x27;./registry&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Cell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
+    root.Torso.Cell = factory(root._, root.Torso.Model, root.Torso.Mixins.cell, root.Torso.registry);
   }
-}(this, function(_, Backbone, cellMixin) {
+}(this, function(_, Model, cellMixin, registry) {
   &#x27;use strict&#x27;;
   /**
    * An non-persistable object that can listen to and emit events like a models.
    * @module Torso
    * @class  Cell
+   * @constructor
+   * @param attributes {Object} the initial attributes to use for this cell.
+   * @param [options={}] {Object} the options for setting up this cell.
+   *   @param [options.register=false] {Boolean} whether to register this cell in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the cells get removed from the registry
+   *                                             at the appropriate times.
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
-  var Cell = Backbone.Model.extend({});
+  var Cell = Model.extend({
+    /**
+     * Register this item with the cell registry after initialize.
+     * @method __postInitialize
+     * @private
+     * @override
+     */
+    __postInitialize: function() {
+      registry.cellInitialized(this);
+    }
+  });
   _.extend(Cell.prototype, cellMixin);
 
   return Cell;

@@ -48,6 +48,7 @@
                                 <li><a href="../classes/ListView.html">ListView</a></li>
                                 <li><a href="../classes/Model.html">Model</a></li>
                                 <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+                                <li><a href="../classes/registry.html">registry</a></li>
                                 <li><a href="../classes/Router.html">Router</a></li>
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
@@ -56,6 +57,7 @@
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.modelMixin.html">Torso.Mixins.modelMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
                                 <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
                                 <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
@@ -119,6 +121,7 @@
             &#x27;./ServiceCell&#x27;,
             &#x27;./Router&#x27;,
             &#x27;./history&#x27;,
+            &#x27;./registry&#x27;,
             &#x27;./View&#x27;, &#x27;./ListView&#x27;, &#x27;./FormView&#x27;,
             &#x27;./templateRenderer&#x27;,
             &#x27;./handlebarsUtils&#x27;,
@@ -138,6 +141,7 @@
                              require(&#x27;./Model&#x27;), require(&#x27;./NestedCell&#x27;), require(&#x27;./NestedModel&#x27;), require(&#x27;./FormModel&#x27;),
                              require(&#x27;./ServiceCell&#x27;),
                              require(&#x27;./Router&#x27;),
+                             require(&#x27;./registry&#x27;),
                              require(&#x27;./history&#x27;),
                              require(&#x27;./View&#x27;), require(&#x27;./ListView&#x27;), require(&#x27;./FormView&#x27;),
                              require(&#x27;./templateRenderer&#x27;), require(&#x27;./handlebarsUtils&#x27;));
@@ -155,6 +159,7 @@
                  ServiceCell,
                  Router,
                  history,
+                 registry,
                  View, ListView, FormView,
                  templateRenderer,
                  handlebarsUtils) {
@@ -189,6 +194,7 @@
     ServiceCell: ServiceCell,
     Router: Router,
     history: history,
+    registry: registry,
     Utils: {
       templateRenderer: templateRenderer,
       handlebarsUtils: handlebarsUtils

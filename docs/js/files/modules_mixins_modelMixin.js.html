@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>modules/Model.js - backbone-torso</title>
+    <title>modules/mixins/modelMixin.js - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -104,51 +104,59 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1 class="file-heading">File: modules/Model.js</h1>
+<h1 class="file-heading">File: modules/mixins/modelMixin.js</h1>
 
 <div class="file">
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./mixins/pollingMixin&#x27;, &#x27;./mixins/modelMixin&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;../registry&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./mixins/pollingMixin&#x27;), require(&#x27;./mixins/modelMixin&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;../registry&#x27;));
   } else {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.model);
+    root.Torso.Mixins.model = factory(root._, root.Torso.registry);
   }
-}(this, function(_, Backbone, pollingMixin, modelMixin) {
+}(this, function(_, registry) {
   &#x27;use strict&#x27;;
-
   /**
-   * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
-   * @param attributes {Object} the initial attributes to use for this model.
-   * @param [options={}] {Object} the options for setting up this model.
-   *   @param [options.register=false] {Boolean} whether to register this model in the app-level registry.
-   *                                             By default this will NOT add it to the registry unless set to true because
-   *                                             we have not mechanism that will make sure the models get removed from the registry
-   *                                             at the appropriate times.
+   * The base for a model
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  modelMixin
    * @author kent.willis@vecna.com
    */
-  var Model = Backbone.Model.extend({
-    constructor: function(attributes, options) {
-      Backbone.Model.apply(this, arguments);
-      options = options || {};
-      if (options.register) {
-        this.__postInitialize();
-      }
-      this.trigger(&#x27;post-initialize&#x27;);
-    }
-  });
-  _.extend(Model.prototype, pollingMixin, modelMixin);
+  return {
+    /**
+     * Register this item with the model registry after initialize.
+     * @method __postInitialize
+     * @private
+     */
+    __postInitialize: function() {
+      registry.modelInitialized(this);
+    },
 
-  return Model;
+    /**
+     * Default dispose for model-like objects (Models, Cells, and ServiceCells).
+     * Removes listeners and calls out to _dispose() for child specific dispose logic.
+     * Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.
+     * @method dispose
+     */
+    dispose: function() {
+      this.trigger(&#x27;before-dispose&#x27;);
+      this._dispose();
+      this.off();
+      this.trigger(&#x27;after-dispose&#x27;);
+    },
+
+    /**
+     * Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.
+     * @method _dispose
+     */
+    _dispose: _.noop
+  };
 }));
-
     </pre>
 </div>
                     </div>

@@ -11,6 +11,7 @@
             './ServiceCell',
             './Router',
             './history',
+            './registry',
             './View', './ListView', './FormView',
             './templateRenderer',
             './handlebarsUtils',
@@ -30,6 +31,7 @@
                              require('./Model'), require('./NestedCell'), require('./NestedModel'), require('./FormModel'),
                              require('./ServiceCell'),
                              require('./Router'),
+                             require('./registry'),
                              require('./history'),
                              require('./View'), require('./ListView'), require('./FormView'),
                              require('./templateRenderer'), require('./handlebarsUtils'));
@@ -47,6 +49,7 @@
                  ServiceCell,
                  Router,
                  history,
+                 registry,
                  View, ListView, FormView,
                  templateRenderer,
                  handlebarsUtils) {
@@ -81,6 +84,7 @@
     ServiceCell: ServiceCell,
     Router: Router,
     history: history,
+    registry: registry,
     Utils: {
       templateRenderer: templateRenderer,
       handlebarsUtils: handlebarsUtils

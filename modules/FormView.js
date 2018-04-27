@@ -169,7 +169,9 @@
     deactivate: function() {
       View.prototype.deactivate.call(this);
       // No detach callback... Deactivate will have to do as it is called by detach
-      this.unstickit();
+      if (this.$el) {
+        this.unstickit();
+      }
     },
 
     /**

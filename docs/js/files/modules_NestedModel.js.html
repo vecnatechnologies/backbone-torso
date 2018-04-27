@@ -48,6 +48,7 @@
                                 <li><a href="../classes/ListView.html">ListView</a></li>
                                 <li><a href="../classes/Model.html">Model</a></li>
                                 <li><a href="../classes/NestedModel.html">NestedModel</a></li>
+                                <li><a href="../classes/registry.html">registry</a></li>
                                 <li><a href="../classes/Router.html">Router</a></li>
                                 <li><a href="../classes/ServiceCell.html">ServiceCell</a></li>
                                 <li><a href="../classes/Torso.html">Torso</a></li>
@@ -56,6 +57,7 @@
                                 <li><a href="../classes/Torso.Mixins.cacheMixin.html">Torso.Mixins.cacheMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.cellMixin.html">Torso.Mixins.cellMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.loadingMixin.html">Torso.Mixins.loadingMixin</a></li>
+                                <li><a href="../classes/Torso.Mixins.modelMixin.html">Torso.Mixins.modelMixin</a></li>
                                 <li><a href="../classes/Torso.Mixins.pollingMixin.html">Torso.Mixins.pollingMixin</a></li>
                                 <li><a href="../classes/Torso.Utils.handlebarsUtils.html">Torso.Utils.handlebarsUtils</a></li>
                                 <li><a href="../classes/Torso.Utils.stickitUtils.html">Torso.Utils.stickitUtils</a></li>
@@ -108,15 +110,15 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./mixins/pollingMixin&#x27;, &#x27;backbone-nested&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./mixins/pollingMixin&#x27;, &#x27;./mixins/modelMixin&#x27;, &#x27;backbone-nested&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
     require(&#x27;backbone-nested&#x27;);
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./mixins/pollingMixin&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./mixins/pollingMixin&#x27;), require(&#x27;./mixins/modelMixin&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.model);
   }
-}(this, function(_, Backbone, pollingMixin) {
+}(this, function(_, Backbone, pollingMixin, modelMixin) {
   &#x27;use strict&#x27;;
 
   /**
@@ -126,8 +128,14 @@
    * @constructor
    * @author kent.willis@vecna.com
    */
-  var NestedModel = Backbone.NestedModel.extend({});
-  _.extend(NestedModel.prototype, pollingMixin);
+  var NestedModel = Backbone.NestedModel.extend({
+    constructor: function() {
+      Backbone.NestedModel.apply(this, arguments);
+      this.__postInitialize();
+      this.trigger(&#x27;post-initialize&#x27;);
+    }
+  });
+  _.extend(NestedModel.prototype, pollingMixin, modelMixin);
 
   return NestedModel;
 }));
