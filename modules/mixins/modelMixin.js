@@ -20,10 +20,10 @@
   return {
     /**
      * Register this item with the model registry after initialize.
-     * @method __postInitialize
+     * @method __register
      * @private
      */
-    __postInitialize: function() {
+    __register: function() {
       registry.modelInitialized(this);
     },
 

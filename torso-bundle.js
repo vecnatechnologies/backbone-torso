@@ -1273,6 +1273,61 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cell = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellMixin
+   * @author kent.willis@vecna.com
+   */
+  return {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {Boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('backbone'));
@@ -1474,61 +1529,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cell = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellMixin
-   * @author kent.willis@vecna.com
-   */
-  return {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', './Model', './mixins/cellMixin', './registry'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('./Model'), require('./mixins/cellMixin'), require('./registry'));
@@ -1554,11 +1554,11 @@
   var Cell = Model.extend({
     /**
      * Register this item with the cell registry after initialize.
-     * @method __postInitialize
+     * @method __register
      * @private
      * @override
      */
-    __postInitialize: function() {
+    __register: function() {
       registry.cellInitialized(this);
     }
   });
@@ -1620,32 +1620,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
-  }
-}(this, function(_, Backbone, cellMixin) {
-  'use strict';
-
-  /**
-   * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  var NestedCell = Backbone.NestedModel.extend({});
-  _.extend(NestedCell.prototype, cellMixin);
-
-  return NestedCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/modelMixin'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/modelMixin'));
@@ -1675,7 +1649,7 @@
       Backbone.Model.apply(this, arguments);
       options = options || {};
       if (options.register) {
-        this.__postInitialize();
+        this.__register();
       }
       this.trigger('post-initialize');
     }
@@ -1683,6 +1657,47 @@
   _.extend(Model.prototype, pollingMixin, modelMixin);
 
   return Model;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', './NestedModel', './mixins/cellMixin', './registry'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('./NestedModel'), require('./mixins/cellMixin'), require('./registry'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.NestedCell = factory(root._, root.Torso.NestedModel, root.Torso.Mixins.cell, root.Torso.registry);
+  }
+}(this, function(_, TorsoNestedModel, cellMixin, registry) {
+  'use strict';
+
+  /**
+   * Generic Nested Cell
+   * @module    Torso
+   * @class     NestedCell
+   * @constructor
+   * @param attributes {Object} the initial attributes to use for this cell.
+   * @param [options={}] {Object} the options for setting up this cell.
+   *   @param [options.register=false] {Boolean} whether to register this cell in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the models get removed from the registry
+   *                                             at the appropriate times.
+   * @author kent.willis@vecna.com
+   */
+  var NestedCell = TorsoNestedModel.extend({
+    /**
+     * Register this item with the cell registry after initialize.
+     * @method __register
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.cellInitialized(this);
+    }
+  });
+  _.extend(NestedCell.prototype, cellMixin);
+
+  return NestedCell;
 }));
 
 (function(root, factory) {
@@ -1703,12 +1718,21 @@
    * @module    Torso
    * @class     NestedModel
    * @constructor
+   * @param attributes {Object} the initial attributes to use for this model.
+   * @param [options={}] {Object} the options for setting up this model.
+   *   @param [options.register=false] {Boolean} whether to register this model in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the models get removed from the registry
+   *                                             at the appropriate times.
    * @author kent.willis@vecna.com
    */
   var NestedModel = Backbone.NestedModel.extend({
-    constructor: function() {
+    constructor: function(attributes, options) {
       Backbone.NestedModel.apply(this, arguments);
-      this.__postInitialize();
+      options = options || {};
+      if (options.register) {
+        this.__register();
+      }
       this.trigger('post-initialize');
     }
   });
@@ -1988,11 +2012,11 @@
 
     /**
      * Register this item with the service registry after initialize.
-     * @method __postInitialize
+     * @method __register
      * @private
      * @override
      */
-    __postInitialize: function() {
+    __register: function() {
       registry.serviceInitialized(this);
     }
   });

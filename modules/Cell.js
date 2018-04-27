@@ -25,11 +25,11 @@
   var Cell = Model.extend({
     /**
      * Register this item with the cell registry after initialize.
-     * @method __postInitialize
+     * @method __register
      * @private
      * @override
      */
-    __postInitialize: function() {
+    __register: function() {
       registry.cellInitialized(this);
     }
   });

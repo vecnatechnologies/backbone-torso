@@ -9,6 +9,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "FormView",
         "ListView",
         "Model",
+        "NestedCell",
         "NestedModel",
         "Router",
         "ServiceCell",

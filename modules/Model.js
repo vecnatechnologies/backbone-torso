@@ -29,7 +29,7 @@
       Backbone.Model.apply(this, arguments);
       options = options || {};
       if (options.register) {
-        this.__postInitialize();
+        this.__register();
       }
       this.trigger('post-initialize');
     }

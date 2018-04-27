@@ -1,6 +1,8 @@
 var _ = require('underscore');
 var TorsoCell = require('./../../modules/Cell');
+var TorsoNestedCell = require('./../../modules/NestedCell');
 var TorsoModel = require('./../../modules/Model');
+var TorsoNestedModel = require('./../../modules/NestedModel');
 var TorsoServiceCell = require('./../../modules/ServiceCell');
 var TorsoView = require('./../../modules/View');
 var torsoRegistry = require('./../../modules/registry');
@@ -19,8 +21,18 @@ describe('The torso app registry', function() {
     expect(_.size(torsoRegistry.cells)).toBe(0);
   });
 
+  it('does not register nested cells when they are created by default', function() {
+    new TorsoNestedCell();
+    expect(_.size(torsoRegistry.cells)).toBe(0);
+  });
+
   it('does not register models when they are created by default', function() {
     new TorsoModel();
+    expect(_.size(torsoRegistry.models)).toBe(0);
+  });
+
+  it('does not register nested models when they are created by default', function() {
+    new TorsoNestedModel();
     expect(_.size(torsoRegistry.models)).toBe(0);
   });
 
@@ -39,8 +51,18 @@ describe('The torso app registry', function() {
     expect(_.size(torsoRegistry.cells)).toBe(1);
   });
 
+  it('registers nested cells when they are created with register set to true', function() {
+    new TorsoNestedCell({}, { register : true });
+    expect(_.size(torsoRegistry.cells)).toBe(1);
+  });
+
   it('registers models when they are created with register set to true', function() {
     new TorsoModel({}, { register : true });
+    expect(_.size(torsoRegistry.models)).toBe(1);
+  });
+
+  it('registers nested models when they are created with register set to true', function() {
+    new TorsoNestedModel({}, { register : true });
     expect(_.size(torsoRegistry.models)).toBe(1);
   });
 
@@ -59,8 +81,18 @@ describe('The torso app registry', function() {
     expect(_.size(torsoRegistry.cells)).toBe(0);
   });
 
+  it('does not register nested cells when they are created with register set to false', function() {
+    new TorsoNestedCell({}, { register : false });
+    expect(_.size(torsoRegistry.cells)).toBe(0);
+  });
+
   it('does not register models when they are created with register set to false', function() {
     new TorsoModel({}, { register : false });
+    expect(_.size(torsoRegistry.models)).toBe(0);
+  });
+
+  it('does not register nested models when they are created with register set to false', function() {
+    new TorsoNestedModel({}, { register : false });
     expect(_.size(torsoRegistry.models)).toBe(0);
   });
 
@@ -79,8 +111,18 @@ describe('The torso app registry', function() {
     expect(_.size(torsoRegistry.cells)).toBe(0);
   });
 
+  it('does not register nested cells when they are created with register set to null', function() {
+    new TorsoNestedCell({ register : null });
+    expect(_.size(torsoRegistry.cells)).toBe(0);
+  });
+
   it('does not register models when they are created with register set to null', function() {
     new TorsoModel({ register : null });
+    expect(_.size(torsoRegistry.models)).toBe(0);
+  });
+
+  it('does not register nested models when they are created with register set to null', function() {
+    new TorsoNestedModel({ register : null });
     expect(_.size(torsoRegistry.models)).toBe(0);
   });
 
@@ -101,8 +143,22 @@ describe('The torso app registry', function() {
     expect(_.size(torsoRegistry.cells)).toBe(0);
   });
 
+  it('removes nested cells when they are disposed', function() {
+    var cell = new TorsoNestedCell({}, { register : true });
+    expect(_.size(torsoRegistry.cells)).toBe(1);
+    cell.dispose();
+    expect(_.size(torsoRegistry.cells)).toBe(0);
+  });
+
   it('removes models when they are disposed', function() {
     var model = new TorsoModel({}, { register : true });
+    expect(_.size(torsoRegistry.models)).toBe(1);
+    model.dispose();
+    expect(_.size(torsoRegistry.models)).toBe(0);
+  });
+
+  it('removes nested models when they are disposed', function() {
+    var model = new TorsoNestedModel({}, { register : true });
     expect(_.size(torsoRegistry.models)).toBe(1);
     model.dispose();
     expect(_.size(torsoRegistry.models)).toBe(0);
@@ -134,7 +190,19 @@ describe('The torso app registry', function() {
     expect(cell2.dispose).toHaveBeenCalled();
   });
 
-  it('removes models when disposeAllModels() is called', function() {
+  it('removes all nested cells when disposeAllCells() is called', function() {
+    var cell1 = new TorsoNestedCell({}, { register : true });
+    spyOn(cell1, 'dispose').and.callThrough();
+    var cell2 = new TorsoNestedCell({}, { register : true });
+    spyOn(cell2, 'dispose').and.callThrough();
+    expect(_.size(torsoRegistry.cells)).toBe(2);
+    torsoRegistry.disposeAllCells();
+    expect(_.size(torsoRegistry.cells)).toBe(0);
+    expect(cell1.dispose).toHaveBeenCalled();
+    expect(cell2.dispose).toHaveBeenCalled();
+  });
+
+  it('removes all models when disposeAllModels() is called', function() {
     var model1 = new TorsoModel({}, { register : true });
     spyOn(model1, 'dispose').and.callThrough();
     var model2 = new TorsoModel({}, { register : true });
@@ -146,7 +214,19 @@ describe('The torso app registry', function() {
     expect(model2.dispose).toHaveBeenCalled();
   });
 
-  it('removes service cells when disposeAllServices() is called', function() {
+  it('removes all nested models when disposeAllModels() is called', function() {
+    var model1 = new TorsoNestedModel({}, { register : true });
+    spyOn(model1, 'dispose').and.callThrough();
+    var model2 = new TorsoNestedModel({}, { register : true });
+    spyOn(model2, 'dispose').and.callThrough();
+    expect(_.size(torsoRegistry.models)).toBe(2);
+    torsoRegistry.disposeAllModels();
+    expect(_.size(torsoRegistry.models)).toBe(0);
+    expect(model1.dispose).toHaveBeenCalled();
+    expect(model2.dispose).toHaveBeenCalled();
+  });
+
+  it('removes all service cells when disposeAllServices() is called', function() {
     var service1 = new TorsoServiceCell({}, { register : true });
     spyOn(service1, 'dispose').and.callThrough();
     var service2 = new TorsoServiceCell({}, { register : true });
@@ -158,7 +238,7 @@ describe('The torso app registry', function() {
     expect(service2.dispose).toHaveBeenCalled();
   });
 
-  it('removes views when disposeAllViews() is called', function() {
+  it('removes all views when disposeAllViews() is called', function() {
     var view1 = new TorsoView({ register : true });
     spyOn(view1, 'dispose').and.callThrough();
     var view2 = new TorsoView({ register : true });
@@ -184,7 +264,19 @@ describe('The torso app registry', function() {
     expect(cell2.dispose).toHaveBeenCalled();
   });
 
-  it('removes models when disposeAll() is called', function() {
+  it('removes all nested cells when disposeAll() is called', function() {
+    var cell1 = new TorsoNestedCell({}, { register : true });
+    spyOn(cell1, 'dispose').and.callThrough();
+    var cell2 = new TorsoNestedCell({}, { register : true });
+    spyOn(cell2, 'dispose').and.callThrough();
+    expect(_.size(torsoRegistry.cells)).toBe(2);
+    torsoRegistry.disposeAll();
+    expect(_.size(torsoRegistry.cells)).toBe(0);
+    expect(cell1.dispose).toHaveBeenCalled();
+    expect(cell2.dispose).toHaveBeenCalled();
+  });
+
+  it('removes all models when disposeAll() is called', function() {
     var model1 = new TorsoModel({}, { register : true });
     spyOn(model1, 'dispose').and.callThrough();
     var model2 = new TorsoModel({}, { register : true });
@@ -196,7 +288,19 @@ describe('The torso app registry', function() {
     expect(model2.dispose).toHaveBeenCalled();
   });
 
-  it('removes service cells when disposeAllServices() is called', function() {
+  it('removes all nested models when disposeAll() is called', function() {
+    var model1 = new TorsoNestedModel({}, { register : true });
+    spyOn(model1, 'dispose').and.callThrough();
+    var model2 = new TorsoNestedModel({}, { register : true });
+    spyOn(model2, 'dispose').and.callThrough();
+    expect(_.size(torsoRegistry.models)).toBe(2);
+    torsoRegistry.disposeAll();
+    expect(_.size(torsoRegistry.models)).toBe(0);
+    expect(model1.dispose).toHaveBeenCalled();
+    expect(model2.dispose).toHaveBeenCalled();
+  });
+
+  it('removes all service cells when disposeAllServices() is called', function() {
     var service1 = new TorsoServiceCell({}, { register : true });
     spyOn(service1, 'dispose').and.callThrough();
     var service2 = new TorsoServiceCell({}, { register : true });
@@ -208,7 +312,7 @@ describe('The torso app registry', function() {
     expect(service2.dispose).toHaveBeenCalled();
   });
 
-  it('removes views when disposeAll() is called', function() {
+  it('removes all views when disposeAll() is called', function() {
     var view1 = new TorsoView({ register : true });
     spyOn(view1, 'dispose').and.callThrough();
     var view2 = new TorsoView({ register : true });

@@ -47,6 +47,7 @@
                                 <li><a href="../classes/history.html">history</a></li>
                                 <li><a href="../classes/ListView.html">ListView</a></li>
                                 <li><a href="../classes/Model.html">Model</a></li>
+                                <li><a href="../classes/NestedCell.html">NestedCell</a></li>
                                 <li><a href="../classes/NestedModel.html">NestedModel</a></li>
                                 <li><a href="../classes/registry.html">registry</a></li>
                                 <li><a href="../classes/Router.html">Router</a></li>
@@ -135,11 +136,11 @@
   var Cell = Model.extend({
     /**
      * Register this item with the cell registry after initialize.
-     * @method __postInitialize
+     * @method __register
      * @private
      * @override
      */
-    __postInitialize: function() {
+    __register: function() {
       registry.cellInitialized(this);
     }
   });
