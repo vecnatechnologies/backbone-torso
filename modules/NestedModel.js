@@ -16,12 +16,21 @@
    * @module    Torso
    * @class     NestedModel
    * @constructor
+   * @param attributes {Object} the initial attributes to use for this model.
+   * @param [options={}] {Object} the options for setting up this model.
+   *   @param [options.register=false] {Boolean} whether to register this model in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the models get removed from the registry
+   *                                             at the appropriate times.
    * @author kent.willis@vecna.com
    */
   var NestedModel = Backbone.NestedModel.extend({
-    constructor: function() {
+    constructor: function(attributes, options) {
       Backbone.NestedModel.apply(this, arguments);
-      this.__postInitialize();
+      options = options || {};
+      if (options.register) {
+        this.__register();
+      }
       this.trigger('post-initialize');
     }
   });

@@ -47,6 +47,7 @@
                                 <li><a href="../classes/history.html">history</a></li>
                                 <li><a href="../classes/ListView.html">ListView</a></li>
                                 <li><a href="../classes/Model.html">Model</a></li>
+                                <li><a href="../classes/NestedCell.html">NestedCell</a></li>
                                 <li><a href="../classes/NestedModel.html">NestedModel</a></li>
                                 <li><a href="../classes/registry.html">registry</a></li>
                                 <li><a href="../classes/Router.html">Router</a></li>
@@ -110,25 +111,40 @@
     <pre class="code prettyprint linenums">
 (function(root, factory) {
   if (typeof define === &#x27;function&#x27; &amp;&amp; define.amd) {
-    define([&#x27;underscore&#x27;, &#x27;backbone&#x27;, &#x27;./mixins/cellMixin&#x27;, &#x27;backbone-nested&#x27;], factory);
+    define([&#x27;underscore&#x27;, &#x27;./NestedModel&#x27;, &#x27;./mixins/cellMixin&#x27;, &#x27;./registry&#x27;], factory);
   } else if (typeof exports === &#x27;object&#x27;) {
-    require(&#x27;backbone-nested&#x27;);
-    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;backbone&#x27;), require(&#x27;./mixins/cellMixin&#x27;));
+    module.exports = factory(require(&#x27;underscore&#x27;), require(&#x27;./NestedModel&#x27;), require(&#x27;./mixins/cellMixin&#x27;), require(&#x27;./registry&#x27;));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
+    root.Torso.NestedCell = factory(root._, root.Torso.NestedModel, root.Torso.Mixins.cell, root.Torso.registry);
   }
-}(this, function(_, Backbone, cellMixin) {
+}(this, function(_, TorsoNestedModel, cellMixin, registry) {
   &#x27;use strict&#x27;;
 
   /**
-   * Generic Nested Model
+   * Generic Nested Cell
    * @module    Torso
-   * @class     NestedModel
+   * @class     NestedCell
    * @constructor
+   * @param attributes {Object} the initial attributes to use for this cell.
+   * @param [options={}] {Object} the options for setting up this cell.
+   *   @param [options.register=false] {Boolean} whether to register this cell in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the models get removed from the registry
+   *                                             at the appropriate times.
    * @author kent.willis@vecna.com
    */
-  var NestedCell = Backbone.NestedModel.extend({});
+  var NestedCell = TorsoNestedModel.extend({
+    /**
+     * Register this item with the cell registry after initialize.
+     * @method __register
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.cellInitialized(this);
+    }
+  });
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;

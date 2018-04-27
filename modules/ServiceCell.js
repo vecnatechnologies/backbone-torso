@@ -32,11 +32,11 @@
 
     /**
      * Register this item with the service registry after initialize.
-     * @method __postInitialize
+     * @method __register
      * @private
      * @override
      */
-    __postInitialize: function() {
+    __register: function() {
       registry.serviceInitialized(this);
     }
   });

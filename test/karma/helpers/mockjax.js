@@ -2,6 +2,12 @@ var _ = require('underscore');
 jQuery = $ = require('jquery');
 require('jquery-mockjax')($, window);
 
+
+// See https://github.com/jakerella/jquery-mockjax#logging for details about logging level.
+// Set to Error (0) because info logs every request which is way to chatty for our jasmine tests.
+// Change to 2 or higher for more verbose logging from mockjax.
+$.mockjaxSettings.logging = 0;
+
 module.exports = function() {
   var routes = {};
   $.mockjax.clear();

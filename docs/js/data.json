@@ -153,7 +153,9 @@
         "modules/NestedCell.js": {
             "name": "modules/NestedCell.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "NestedCell": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -314,6 +316,7 @@
                 "FormView": 1,
                 "ListView": 1,
                 "Model": 1,
+                "NestedCell": 1,
                 "NestedModel": 1,
                 "Router": 1,
                 "ServiceCell": 1,
@@ -576,6 +579,20 @@
             "file": "modules/Model.js",
             "line": 14,
             "description": "Generic Model"
+        },
+        "NestedCell": {
+            "name": "NestedCell",
+            "shortname": "NestedCell",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Torso",
+            "namespace": "",
+            "file": "modules/NestedCell.js",
+            "line": 13,
+            "description": "Generic Nested Cell"
         },
         "NestedModel": {
             "name": "NestedModel",
@@ -2320,7 +2337,7 @@
             "line": 21,
             "description": "Register this item with the model registry after initialize.",
             "itemtype": "method",
-            "name": "__postInitialize",
+            "name": "__register",
             "access": "private",
             "tagname": "",
             "class": "Torso.Mixins.modelMixin",
@@ -2629,7 +2646,7 @@
             "line": 26,
             "description": "Register this item with the cell registry after initialize.",
             "itemtype": "method",
-            "name": "__postInitialize",
+            "name": "__register",
             "access": "private",
             "tagname": "",
             "override": "",
@@ -4658,11 +4675,23 @@
             "module": "Torso"
         },
         {
+            "file": "modules/NestedCell.js",
+            "line": 27,
+            "description": "Register this item with the cell registry after initialize.",
+            "itemtype": "method",
+            "name": "__register",
+            "access": "private",
+            "tagname": "",
+            "override": "",
+            "class": "NestedCell",
+            "module": "Torso"
+        },
+        {
             "file": "modules/ServiceCell.js",
             "line": 33,
             "description": "Register this item with the service registry after initialize.",
             "itemtype": "method",
-            "name": "__postInitialize",
+            "name": "__register",
             "access": "private",
             "tagname": "",
             "override": "",
@@ -6627,6 +6656,10 @@
         {
             "message": "unknown tag: override",
             "line": " modules/Cell.js:26"
+        },
+        {
+            "message": "unknown tag: override",
+            "line": " modules/NestedCell.js:27"
         },
         {
             "message": "unknown tag: override",
