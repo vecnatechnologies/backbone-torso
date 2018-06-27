@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Torso - backbone-torso</title>
+    <title>Torso.Mixins.modelMixin - backbone-torso</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -105,12 +105,12 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-<h1>Torso Class</h1>
+<h1>Torso.Mixins.modelMixin Class</h1>
 <div class="box meta">
 
 
         <div class="foundat">
-            Defined in: <a href="../files/modules_torso.js.html#l57"><code>modules&#x2F;torso.js:57</code></a>
+            Defined in: <a href="../files/modules_mixins_modelMixin.js.html#l13"><code>modules&#x2F;mixins&#x2F;modelMixin.js:13</code></a>
         </div>
 
             Module: <a href="../modules/Torso.html">Torso</a>
@@ -119,7 +119,7 @@
 
 
 <div class="box intro">
-    <p>File containing all dependencies that exports a single object with everything attached (same format as the global).</p>
+    <p>The base for a model</p>
 
 </div>
 
@@ -128,17 +128,136 @@
     <ul class="api-class-tabs">
         <li class="api-class-tab index"><a href="#index">Index</a></li>
 
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
     </ul>
 
     <div>
         <div id="index" class="api-class-tabpanel index">
             <h2 class="off-left">Item Index</h2>
 
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method private">
+                                <a href="#method___register">__register</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method__dispose">_dispose</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_dispose">dispose</a>
+
+                            </li>
+                    </ul>
+                </div>
 
 
 
         </div>
 
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method___register" class="method item private">
+    <h3 class="name"><code>__register</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_mixins_modelMixin.js.html#l21"><code>modules&#x2F;mixins&#x2F;modelMixin.js:21</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Register this item with the model registry after initialize.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method__dispose" class="method item">
+    <h3 class="name"><code>_dispose</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_mixins_modelMixin.js.html#l43"><code>modules&#x2F;mixins&#x2F;modelMixin.js:43</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.</p>
+
+    </div>
+
+
+
+
+</div>
+<div id="method_dispose" class="method item">
+    <h3 class="name"><code>dispose</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/modules_mixins_modelMixin.js.html#l30"><code>modules&#x2F;mixins&#x2F;modelMixin.js:30</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Default dispose for model-like objects (Models, Cells, and ServiceCells).
+Removes listeners and calls out to _dispose() for child specific dispose logic.
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+
+    </div>
+
+
+
+
+</div>
+            </div>
 
 
 

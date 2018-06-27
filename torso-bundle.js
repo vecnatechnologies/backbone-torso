@@ -57,28 +57,6 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.history = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-  'use strict';
-
-  /**
-   * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
-   * @author kent.willis@vecna.com
-   */
-  return Backbone.history;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'));
@@ -258,6 +236,170 @@
     });
   };
 }));
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.history = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+  'use strict';
+
+  /**
+   * Backbone's history object.
+   * @module    Torso
+   * @class     history
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+  return Backbone.history;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.registry = factory(root._, root.Backbone);
+  }
+}(this, function(_, Backbone) {
+  'use strict';
+
+  /**
+   * Registry of instantiated Torso objects
+   * @module    Torso
+   * @class     registry
+   * @constructor
+   * @author kent.willis@vecna.com
+   */
+
+  // Registry prototype.
+  var Registry = function() {
+    this.cells = {};
+    this.models = {};
+    this.services = {};
+    this.views = {};
+  };
+
+  _.extend(Registry.prototype, Backbone.Events, {
+    cidPrefix: 'r',
+
+    /**
+     * Add the model to the model cache when it is initialized.
+     * @method modelInitialized
+     * @param model {Torso.Model} the model to add to the models cache.
+     */
+    modelInitialized: function(model) {
+      this.__initialize(model, this.models);
+    },
+
+    /**
+     * Add the cell to the cell cache when it is initialized.
+     * @method cellInitialized
+     * @param cell {Torso.Cell} the cell to add to the cells cache.
+     */
+    cellInitialized: function(cell) {
+      this.__initialize(cell, this.cells);
+    },
+
+    /**
+     * Add the view to the view cache when it is initialized.
+     * @method viewInitialized
+     * @param view {Torso.View} the view to add to the views cache.
+     */
+    viewInitialized: function(view) {
+      this.__initialize(view, this.views);
+    },
+
+    /**
+     * Add the service to the model service when it is initialized.
+     * @method serviceInitialized
+     * @param service {Torso.ServiceCell} the service to add to the services cache.
+     */
+    serviceInitialized: function(service) {
+      this.__initialize(service, this.services);
+    },
+
+    /**
+     * Initialize the given object in the given cache.
+     * @method __initialize
+     * @param obj {Backbone.Events} any object that implements/extends backbone events.
+     *   @param obj.cid {String} the unique identifier for the object.
+     * @param cache {Object} the cache to add the object to.
+     * @private
+     */
+    __initialize: function(obj, cache) {
+      cache[obj.cid] = obj;
+      this.listenToOnce(obj, 'before-dispose', function() {
+        delete cache[obj.cid];
+      });
+    },
+
+    /**
+     * Dispose of all items in all of the caches (Models, Cells, Services and Views).
+     * @method disposeAll
+     */
+    disposeAll: function() {
+      this.disposeAllModels();
+      this.disposeAllCells();
+      this.disposeAllServices();
+      this.disposeAllViews();
+    },
+
+    /**
+     * Dispose of all items in the Models cache.
+     * @method disposeAllModels
+     */
+    disposeAllModels: function() {
+      this.__disposeCache(this.models);
+    },
+
+    /**
+     * Dispose of all items in the Cells cache.
+     * @method disposeAllCells
+     */
+    disposeAllCells: function() {
+      this.__disposeCache(this.cells);
+    },
+
+    /**
+     * Dispose of all items in the Services cache.
+     * @method disposeAllServices
+     */
+    disposeAllServices: function() {
+      this.__disposeCache(this.services);
+    },
+
+    /**
+     * Dispose of all items in the Views cache.
+     * @method disposeAllViews
+     */
+    disposeAllViews: function() {
+      this.__disposeCache(this.views);
+    },
+
+    /**
+     * Invoke dispose on all the items in the given cache.
+     * @method __disposeCache
+     * @param cache {Object} to invoke dispose on each member.
+     * @private
+     */
+    __disposeCache: function(cache) {
+      var objects = _.values(cache);
+      _.invoke(objects, 'dispose');
+    }
+  });
+
+  var registry = new Registry();
+
+  return registry;
+}));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone', 'backbone.stickit'], factory);
@@ -1387,22 +1529,39 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/cellMixin'], factory);
+    define(['underscore', './Model', './mixins/cellMixin', './registry'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
+    module.exports = factory(require('underscore'), require('./Model'), require('./mixins/cellMixin'), require('./registry'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Cell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
+    root.Torso.Cell = factory(root._, root.Torso.Model, root.Torso.Mixins.cell, root.Torso.registry);
   }
-}(this, function(_, Backbone, cellMixin) {
+}(this, function(_, Model, cellMixin, registry) {
   'use strict';
   /**
    * An non-persistable object that can listen to and emit events like a models.
    * @module Torso
    * @class  Cell
+   * @constructor
+   * @param attributes {Object} the initial attributes to use for this cell.
+   * @param [options={}] {Object} the options for setting up this cell.
+   *   @param [options.register=false] {Boolean} whether to register this cell in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the cells get removed from the registry
+   *                                             at the appropriate times.
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
-  var Cell = Backbone.Model.extend({});
+  var Cell = Model.extend({
+    /**
+     * Register this item with the cell registry after initialize.
+     * @method __register
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.cellInitialized(this);
+    }
+  });
   _.extend(Cell.prototype, cellMixin);
 
   return Cell;
@@ -1461,14 +1620,15 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin'], factory);
+    define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/modelMixin'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/modelMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Model = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.model);
   }
-}(this, function(_, Backbone, pollingMixin) {
+}(this, function(_, Backbone, pollingMixin, modelMixin) {
   'use strict';
 
   /**
@@ -1476,35 +1636,65 @@
    * @module    Torso
    * @class     Model
    * @constructor
+   * @param attributes {Object} the initial attributes to use for this model.
+   * @param [options={}] {Object} the options for setting up this model.
+   *   @param [options.register=false] {Boolean} whether to register this model in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the models get removed from the registry
+   *                                             at the appropriate times.
    * @author kent.willis@vecna.com
    */
-  var Model = Backbone.Model.extend({});
-  _.extend(Model.prototype, pollingMixin);
+  var Model = Backbone.Model.extend({
+    constructor: function(attributes, options) {
+      Backbone.Model.apply(this, arguments);
+      options = options || {};
+      if (options.register) {
+        this.__register();
+      }
+      this.trigger('post-initialize');
+    }
+  });
+  _.extend(Model.prototype, pollingMixin, modelMixin);
 
   return Model;
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/cellMixin', 'backbone-nested'], factory);
+    define(['underscore', './NestedModel', './mixins/cellMixin', './registry'], factory);
   } else if (typeof exports === 'object') {
-    require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/cellMixin'));
+    module.exports = factory(require('underscore'), require('./NestedModel'), require('./mixins/cellMixin'), require('./registry'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.NestedCell = factory(root._, root.Backbone, root.Torso.Mixins.cell);
+    root.Torso.NestedCell = factory(root._, root.Torso.NestedModel, root.Torso.Mixins.cell, root.Torso.registry);
   }
-}(this, function(_, Backbone, cellMixin) {
+}(this, function(_, TorsoNestedModel, cellMixin, registry) {
   'use strict';
 
   /**
-   * Generic Nested Model
+   * Generic Nested Cell
    * @module    Torso
-   * @class     NestedModel
+   * @class     NestedCell
    * @constructor
+   * @param attributes {Object} the initial attributes to use for this cell.
+   * @param [options={}] {Object} the options for setting up this cell.
+   *   @param [options.register=false] {Boolean} whether to register this cell in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the models get removed from the registry
+   *                                             at the appropriate times.
    * @author kent.willis@vecna.com
    */
-  var NestedCell = Backbone.NestedModel.extend({});
+  var NestedCell = TorsoNestedModel.extend({
+    /**
+     * Register this item with the cell registry after initialize.
+     * @method __register
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.cellInitialized(this);
+    }
+  });
   _.extend(NestedCell.prototype, cellMixin);
 
   return NestedCell;
@@ -1512,15 +1702,15 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './mixins/pollingMixin', 'backbone-nested'], factory);
+    define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/modelMixin', 'backbone-nested'], factory);
   } else if (typeof exports === 'object') {
     require('backbone-nested');
-    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/modelMixin'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling);
+    root.Torso.NestedModel = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.model);
   }
-}(this, function(_, Backbone, pollingMixin) {
+}(this, function(_, Backbone, pollingMixin, modelMixin) {
   'use strict';
 
   /**
@@ -1528,10 +1718,25 @@
    * @module    Torso
    * @class     NestedModel
    * @constructor
+   * @param attributes {Object} the initial attributes to use for this model.
+   * @param [options={}] {Object} the options for setting up this model.
+   *   @param [options.register=false] {Boolean} whether to register this model in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the models get removed from the registry
+   *                                             at the appropriate times.
    * @author kent.willis@vecna.com
    */
-  var NestedModel = Backbone.NestedModel.extend({});
-  _.extend(NestedModel.prototype, pollingMixin);
+  var NestedModel = Backbone.NestedModel.extend({
+    constructor: function(attributes, options) {
+      Backbone.NestedModel.apply(this, arguments);
+      options = options || {};
+      if (options.register) {
+        this.__register();
+      }
+      this.trigger('post-initialize');
+    }
+  });
+  _.extend(NestedModel.prototype, pollingMixin, modelMixin);
 
   return NestedModel;
 }));
@@ -1775,36 +1980,60 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['./Cell'], factory);
+    define(['underscore', './Cell', './registry'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('./Cell'));
+    module.exports = factory(require('underscore'), require('./Cell'), require('./registry'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root.Torso.Cell);
+    root.Torso.ServiceCell = factory(root._, root.Torso.Cell, root.Torso.registry);
   }
-}(this, function(Cell) {
+}(this, function(_, Cell, registry) {
   'use strict';
   /**
    * A service cell is a event listening and event emitting object that is independent of any model or view.
    * @module    Torso
    * @class  ServiceCell
+   * @constructor
+   * @param attributes {Object} the initial attributes to use for this service.
+   * @param [options={}] {Object} the options for setting up this service.
+   *   @param [options.register=true] {Boolean} whether to register this service in the app-level registry.
+   *                                            By default this WILL add it to the registry unless set to false because
+   *                                            most services are global so holding on to them beyond
    * @author kent.willis@vecna.com
    */
-  var ServiceCell = Cell.extend({ });
+  var ServiceCell = Cell.extend({
+    constructor: function() {
+      var args = Array.prototype.slice.call(arguments);
+      args[1] = args[1] || {};
+      // Register by default.
+      args[1].register = _.isUndefined(args[1].register) || _.isNull(args[1].register) || args[1].register;
+      Cell.apply(this, args);
+    },
+
+    /**
+     * Register this item with the service registry after initialize.
+     * @method __register
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.serviceInitialized(this);
+    }
+  });
 
   return ServiceCell;
 }));
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell'], factory);
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell', './registry'], factory);
   } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'));
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'), require('./registry'));
   } else {
     root.Torso = root.Torso || {};
-    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell);
+    root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell, root.Torso.registry);
   }
-}(this, function(_, Backbone, templateRenderer, Cell, NestedCell) {
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell, registry) {
   'use strict';
 
   var $ = Backbone.$;
@@ -1897,6 +2126,11 @@
       this.trigger('initialize:complete');
       if (!options.noActivate) {
         this.activate();
+      }
+      // Register by default.
+      var shouldRegister = _.isUndefined(options.register) || _.isNull(options.register) || options.register;
+      if (shouldRegister) {
+        registry.viewInitialized(this);
       }
     },
 
@@ -2310,6 +2544,7 @@
      * @method dispose
      */
     dispose: function() {
+      this.trigger('before-dispose');
       this.trigger('before-dispose-callback');
       this._dispose();
 
@@ -2321,7 +2556,9 @@
       this.__disposeChildViews();
 
       // Remove view from DOM
-      this.remove();
+      if (this.$el) {
+        this.remove();
+      }
 
       // Unbind all local event bindings
       this.off();
@@ -2339,6 +2576,7 @@
       delete this.el;
 
       this.__isDisposed = true;
+      this.trigger('after-dispose');
     },
 
     /**
@@ -3322,6 +3560,7 @@
 
   return View;
 }));
+
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', './NestedModel'], factory);
@@ -7179,7 +7418,9 @@
     deactivate: function() {
       View.prototype.deactivate.call(this);
       // No detach callback... Deactivate will have to do as it is called by detach
-      this.unstickit();
+      if (this.$el) {
+        this.unstickit();
+      }
     },
 
     /**

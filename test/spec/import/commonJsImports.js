@@ -46,13 +46,14 @@ commonJsImportTest = function(moduleToImport, expectedModules) {
 
 commonJsImportTest('/modules/Events', ['underscore', 'backbone']);
 
-commonJsImportTest('/modules/Cell', ['underscore', 'backbone', '/modules/mixins/cellMixin']);
+commonJsImportTest('/modules/Cell', ['underscore', 'backbone', '/modules/mixins/cellMixin', '/modules/registry']);
 commonJsImportTest('/modules/Collection', ['underscore', 'backbone', 'jquery',
                                          '/modules/mixins/pollingMixin', '/modules/mixins/cacheMixin', '/modules/mixins/loadingMixin']);
 
 commonJsImportTest('/modules/mixins/loadingMixin', ['jquery']);
 commonJsImportTest('/modules/mixins/cacheMixin', ['underscore', 'jquery']);
 commonJsImportTest('/modules/mixins/pollingMixin', []);
+commonJsImportTest('/modules/mixins/modelMixin', ['underscore', '/modules/registry']);
 commonJsImportTest('/modules/Behavior', ['underscore', 'backbone', 'backbone-nested',
                                          '/modules/mixins/cellMixin', '/modules/NestedCell']);
 commonJsImportTest('/modules/behaviors/DataBehavior', ['underscore', 'jquery', 'backbone', 'backbone-nested',
@@ -63,22 +64,23 @@ commonJsImportTest('/modules/behaviors/DataBehavior', ['underscore', 'jquery', '
 commonJsImportTest('/modules/validation', ['underscore', 'backbone-nested', 'backbone',
                                          '/modules/mixins/pollingMixin', '/modules/NestedModel']);
 
-commonJsImportTest('/modules/Model', ['underscore', 'backbone', '/modules/mixins/pollingMixin']);
-commonJsImportTest('/modules/NestedCell', ['underscore', 'backbone', '/modules/mixins/cellMixin', 'backbone-nested']);
-commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', '/modules/mixins/pollingMixin']);
+commonJsImportTest('/modules/Model', ['underscore', 'backbone', '/modules/mixins/pollingMixin', '/modules/registry']);
+commonJsImportTest('/modules/NestedCell', ['underscore', 'backbone', '/modules/mixins/cellMixin', '/modules/registry', 'backbone-nested']);
+commonJsImportTest('/modules/NestedModel', ['backbone-nested', 'underscore', 'backbone', '/modules/mixins/pollingMixin', '/modules/registry']);
 commonJsImportTest('/modules/FormModel', ['underscore', 'jquery', 'backbone-nested', 'backbone',
-                                        '/modules/mixins/pollingMixin', '/modules/NestedModel', '/modules/validation']);
+                                        '/modules/mixins/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/registry']);
 
-commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/mixins/cellMixin', '/modules/Cell']);
+commonJsImportTest('/modules/ServiceCell', ['underscore', 'backbone', '/modules/mixins/cellMixin', '/modules/Cell', '/modules/registry']);
 commonJsImportTest('/modules/Router', ['backbone']);
 commonJsImportTest('/modules/history', ['backbone']);
+commonJsImportTest('/modules/registry', ['underscore', 'backbone']);
 commonJsImportTest('/modules/View', ['underscore', 'backbone', 'jquery', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/mixins/cellMixin',
-                                   '/modules/templateRenderer']);
+                                   '/modules/templateRenderer', '/modules/registry']);
 commonJsImportTest('/modules/FormView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/mixins/cellMixin',
-                                       '/modules/templateRenderer', '/modules/View',
+                                       '/modules/templateRenderer', '/modules/registry', '/modules/View',
                                        '/modules/mixins/pollingMixin', '/modules/NestedModel', '/modules/validation', '/modules/FormModel', 'backbone.stickit']);
 commonJsImportTest('/modules/ListView', ['underscore', 'jquery', 'backbone', 'backbone-nested', '/modules/Cell', '/modules/NestedCell', '/modules/mixins/cellMixin',
-                                       '/modules/templateRenderer', '/modules/View']);
+                                       '/modules/templateRenderer', '/modules/registry', '/modules/View']);
 
 commonJsImportTest('/modules/handlebarsUtils', []);
 commonJsImportTest('/modules/stickitUtils', ['backbone', 'backbone.stickit']);
@@ -95,6 +97,7 @@ commonJsImportTest('/modules/torso', ['backbone', 'backbone-nested', 'backbone.s
                                '/modules/Events',
                                '/modules/Router',
                                '/modules/history',
+                               '/modules/registry',
                                '/modules/NestedCell', '/modules/NestedModel', '/modules/Model', '/modules/FormModel', '/modules/ServiceCell',
                                '/modules/View', '/modules/ListView', '/modules/FormView',
                                '/modules/templateRenderer', '/modules/handlebarsUtils', '/modules/configure']);

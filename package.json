@@ -1,6 +1,6 @@
 {
   "name": "backbone-torso",
-  "version": "0.8.12",
+  "version": "0.8.13",
   "repository": {
     "type": "git",
     "url": "https://github.com/vecnatechnologies/backbone-torso"
@@ -55,6 +55,7 @@
     "karma-browserify": "^5.0.1",
     "karma-chrome-launcher": "^0.2.2",
     "karma-jasmine": "^0.3.7",
+    "karma-mocha-reporter": "2.2.5",
     "karma-phantomjs-launcher": "^1.0.0",
     "lazypipe": "^0.2.2",
     "merge-stream": "^0.1.7",

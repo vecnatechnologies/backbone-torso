@@ -24,6 +24,7 @@ describe('Global Module imports', function() {
         ['Torso', 'FormModel'],
         ['Torso', 'ServiceCell'],
         ['Torso', 'Router'],
+        ['Torso', 'registry'],
         ['Torso', 'history'],
         ['Torso', 'Utils'],
         ['Torso', 'Utils', 'templateRenderer'],
