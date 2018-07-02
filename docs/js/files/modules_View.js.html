@@ -358,6 +358,20 @@
     },
 
     /**
+     * Updates this view element&#x27;s class attribute with the value provided.
+     * If no value provided, removes the class attribute of this view element.
+     * @method updateClassName
+     * @param newClassName {String} the new value of the class attribute
+     */
+    updateClassName: function(newClassName) {
+      if (newClassName === undefined) {
+        this.$el.removeAttr(&#x27;class&#x27;);
+      } else {
+        this.$el.attr(&#x27;class&#x27;, newClassName);
+      }
+    },
+
+    /**
      * Hook during render that is invoked after all DOM rendering is done and tracked views attached.
      * This method can be overwritten as usual OR extended using &lt;baseClass&gt;.prototype.postrender.apply(this, arguments);
      * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
