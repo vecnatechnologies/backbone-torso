@@ -4043,6 +4043,12 @@
                             "description": "The function called before setting view values",
                             "type": "Object",
                             "optional": true
+                        },
+                        {
+                            "name": "stickit",
+                            "description": "Any options fields that stickit accepts",
+                            "type": "Object",
+                            "optional": true
                         }
                     ]
                 }
@@ -4058,7 +4064,7 @@
         },
         {
             "file": "modules/FormView.js",
-            "line": 292,
+            "line": 298,
             "itemtype": "method",
             "name": "__generateSelectOptions",
             "params": [
@@ -4075,6 +4081,12 @@
                         {
                             "name": "modelFormat",
                             "description": "The function called before setting model values",
+                            "type": "Object",
+                            "optional": true
+                        },
+                        {
+                            "name": "stickit.selectOptions",
+                            "description": "stickit's selectOptions fields. Overrides what Torso does by default",
                             "type": "Object",
                             "optional": true
                         }

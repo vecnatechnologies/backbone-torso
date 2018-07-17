@@ -1529,6 +1529,46 @@
 }));
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define(['underscore', './Model', './mixins/cellMixin', './registry'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('./Model'), require('./mixins/cellMixin'), require('./registry'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Cell = factory(root._, root.Torso.Model, root.Torso.Mixins.cell, root.Torso.registry);
+  }
+}(this, function(_, Model, cellMixin, registry) {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @class  Cell
+   * @constructor
+   * @param attributes {Object} the initial attributes to use for this cell.
+   * @param [options={}] {Object} the options for setting up this cell.
+   *   @param [options.register=false] {Boolean} whether to register this cell in the app-level registry.
+   *                                             By default this will NOT add it to the registry unless set to true because
+   *                                             we have not mechanism that will make sure the cells get removed from the registry
+   *                                             at the appropriate times.
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  var Cell = Model.extend({
+    /**
+     * Register this item with the cell registry after initialize.
+     * @method __register
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.cellInitialized(this);
+    }
+  });
+  _.extend(Cell.prototype, cellMixin);
+
+  return Cell;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/cacheMixin', './mixins/loadingMixin'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/cacheMixin'), require('./mixins/loadingMixin'));
@@ -1576,46 +1616,6 @@
   Collection = Collection.extend(cacheMixin(Collection));
 
   return Collection;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', './Model', './mixins/cellMixin', './registry'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('./Model'), require('./mixins/cellMixin'), require('./registry'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Cell = factory(root._, root.Torso.Model, root.Torso.Mixins.cell, root.Torso.registry);
-  }
-}(this, function(_, Model, cellMixin, registry) {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @class  Cell
-   * @constructor
-   * @param attributes {Object} the initial attributes to use for this cell.
-   * @param [options={}] {Object} the options for setting up this cell.
-   *   @param [options.register=false] {Boolean} whether to register this cell in the app-level registry.
-   *                                             By default this will NOT add it to the registry unless set to true because
-   *                                             we have not mechanism that will make sure the cells get removed from the registry
-   *                                             at the appropriate times.
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var Cell = Model.extend({
-    /**
-     * Register this item with the cell registry after initialize.
-     * @method __register
-     * @private
-     * @override
-     */
-    __register: function() {
-      registry.cellInitialized(this);
-    }
-  });
-  _.extend(Cell.prototype, cellMixin);
-
-  return Cell;
 }));
 
 (function(root, factory) {
@@ -7530,11 +7530,17 @@
      * @param options {Object} Additional behavior options for the bindings
      * @param [options.modelFormat] {Object} The function called before setting model values
      * @param [options.viewFormat] {Object} The function called before setting view values
+     * @param [options.stickit] {Object} Any options fields that stickit accepts
      * @private
      * @return {<Stickit Binding Hash>}
      */
     __generateModelFieldBinding: function(field, options) {
       var indices = this.__getAllIndexTokens(field);
+      options = options || {};
+      var stickitOpts = options.stickit || {};
+      if (_.isFunction(stickitOpts)) {
+        stickitOpts = stickitOpts.call(this, field, options);
+      }
       return _.extend({
         observe: field,
         onSet: function(value) {
@@ -7549,7 +7555,7 @@
           params = _.flatten(params);
           return options.viewFormat ? options.viewFormat.apply(this, params) : value;
         }
-      }, options);
+      }, stickitOpts);
     },
 
     /**
@@ -7557,22 +7563,29 @@
      * @param element {Element} The select element to generate options for
      * @param opts {Object} Additional behavior options for the bindings
      * @param [opts.modelFormat] {Object} The function called before setting model values
+     * @param [opts.stickit.selectOptions] {Object} stickit's selectOptions fields. Overrides what Torso does by default
      * @private
      * @return {<Stickit select options hash>}
      */
     __generateSelectOptions: function(element, opts) {
       var collection = [],
           options = $(element).children('option');
+      opts = opts || {};
+      opts.stickit = opts.stickit || {};
+      var selectOptions = opts.stickit.selectOptions || {};
+      if (_.isFunction(selectOptions)) {
+        selectOptions = selectOptions.call(this, element, opts);
+      }
 
       _.each(options, function(option) {
         collection.push({'label': $(option).text(), 'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
       });
 
-      return {
+      return _.extend({
         collection: collection,
         labelPath: 'label',
         valuePath: 'value'
-      };
+      }, selectOptions);
     }
   });
 

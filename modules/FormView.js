@@ -267,11 +267,17 @@
      * @param options {Object} Additional behavior options for the bindings
      * @param [options.modelFormat] {Object} The function called before setting model values
      * @param [options.viewFormat] {Object} The function called before setting view values
+     * @param [options.stickit] {Object} Any options fields that stickit accepts
      * @private
      * @return {<Stickit Binding Hash>}
      */
     __generateModelFieldBinding: function(field, options) {
       var indices = this.__getAllIndexTokens(field);
+      options = options || {};
+      var stickitOpts = options.stickit || {};
+      if (_.isFunction(stickitOpts)) {
+        stickitOpts = stickitOpts.call(this, field, options);
+      }
       return _.extend({
         observe: field,
         onSet: function(value) {
@@ -286,7 +292,7 @@
           params = _.flatten(params);
           return options.viewFormat ? options.viewFormat.apply(this, params) : value;
         }
-      }, options);
+      }, stickitOpts);
     },
 
     /**
@@ -294,22 +300,29 @@
      * @param element {Element} The select element to generate options for
      * @param opts {Object} Additional behavior options for the bindings
      * @param [opts.modelFormat] {Object} The function called before setting model values
+     * @param [opts.stickit.selectOptions] {Object} stickit's selectOptions fields. Overrides what Torso does by default
      * @private
      * @return {<Stickit select options hash>}
      */
     __generateSelectOptions: function(element, opts) {
       var collection = [],
           options = $(element).children('option');
+      opts = opts || {};
+      opts.stickit = opts.stickit || {};
+      var selectOptions = opts.stickit.selectOptions || {};
+      if (_.isFunction(selectOptions)) {
+        selectOptions = selectOptions.call(this, element, opts);
+      }
 
       _.each(options, function(option) {
         collection.push({'label': $(option).text(), 'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
       });
 
-      return {
+      return _.extend({
         collection: collection,
         labelPath: 'label',
         valuePath: 'value'
-      };
+      }, selectOptions);
     }
   });
 
