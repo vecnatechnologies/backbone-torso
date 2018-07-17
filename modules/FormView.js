@@ -272,7 +272,7 @@
      */
     __generateModelFieldBinding: function(field, options) {
       var indices = this.__getAllIndexTokens(field);
-      return {
+      return _.extend({
         observe: field,
         onSet: function(value) {
           var params = [value];
@@ -286,7 +286,7 @@
           params = _.flatten(params);
           return options.viewFormat ? options.viewFormat.apply(this, params) : value;
         }
-      };
+      }, options);
     },
 
     /**
