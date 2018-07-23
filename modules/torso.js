@@ -31,8 +31,8 @@
                              require('./Model'), require('./NestedCell'), require('./NestedModel'), require('./FormModel'),
                              require('./ServiceCell'),
                              require('./Router'),
-                             require('./registry'),
                              require('./history'),
+                             require('./registry'),
                              require('./View'), require('./ListView'), require('./FormView'),
                              require('./templateRenderer'), require('./handlebarsUtils'));
   } else {
