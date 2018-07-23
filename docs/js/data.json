@@ -2,7 +2,7 @@
     "project": {
         "name": "backbone-torso",
         "description": "backbone-torso",
-        "version": "0.8.13"
+        "version": "0.8.15"
     },
     "files": {
         "modules/behaviors/DataBehavior.js": {
