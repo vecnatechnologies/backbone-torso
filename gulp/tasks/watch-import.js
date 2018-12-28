@@ -3,6 +3,6 @@
 
   var gulp = require('gulp');
 
-  gulp.task('watch-import', ['test-import:watch']);
+  gulp.task('watch-import', gulp.series('test-import:watch'));
 
 })();

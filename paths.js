@@ -26,7 +26,7 @@
     testSpecSrc: testSpec + allJsExtension,
     testSourceSrc: testSource + allJsExtension,
     testTemplatesSrc: testSource + allHandlebarsExtension,
-    bundleDest: './',
+    bundleDest: '.',
     docsDest: './docs/js',
     testSandbox: testSandbox,
     testTemplatesDest: testSandbox + '/templates',

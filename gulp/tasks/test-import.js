@@ -6,8 +6,6 @@
       $ = require('gulp-load-plugins')(),
       merge = require('merge-stream'),
       paths = require('../../paths'),
-      globalImportsTest = 'globalImports',
-      commonJsImportsTest = 'commonJsImports',
       SpecReporter = require('jasmine-spec-reporter'),
       argv = require('minimist')(process.argv),
       lazypipe = require('lazypipe'),
@@ -38,22 +36,6 @@
         return gulp.src(testSources)
           .pipe(testPipe());
       };
-
-  // the advantage of these tasks is that they have minimal dependencies for their tests, so global based stuff doesn't run browserify.
-  gulp.task('test:globalImports', ['test-vendor-globals'],
-    test.bind(this, [{ folder: paths.testImport, test: globalImportsTest }]));
-  gulp.task('test:commonJsImports', ['test-vendor-commonJs:test']);
-
-  // test is subtly different than running the 3 tasks above since it runs all of the tests in 2 runs of jasmine instead of 3.
-  // CommonJsImport test is special and test-vendor-commonJs manages when to run it.
-  gulp.task('test-import', ['test-vendor-globals', 'test-vendor-commonJs'],
-    test.bind(this, [{ folder: paths.testImport }, {}]));
-
-  // test:watch is sufficient parallelized that individual commands for each test type doesn't make sense.
-  gulp.task('test-import:watch', ['test-vendor-commonJs:watch', 'test-vendor-globals:watch'], function() {
-    test([{ folder: paths.testImport, test: globalImportsTest }, {}]);
-    gulp.watch([paths.testFunctionalSrc, paths.testSourceSrc], test.bind(this, []));
-  });
 
   module.exports = test;
 

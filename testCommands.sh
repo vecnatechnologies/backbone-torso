@@ -8,8 +8,8 @@ GULP=node_modules/.bin/gulp
 function testCommand() {
   rm -f torso-bundle*.js
   rm -rf testSandbox
-  rm -rf docs
-  npm cache clean
+  rm -rf docs/js
+  npm cache clean --force
   rm -rf node_modules
   npm install
   $*
