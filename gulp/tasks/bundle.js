@@ -22,6 +22,7 @@
     var subDirectories = {
       'DataBehavior': 'behaviors/',
       'cellMixin': 'mixins/',
+      'modelMixin': 'mixins/',
       'pollingMixin': 'mixins/',
       'cacheMixin': 'mixins/',
       'loadingMixin': 'mixins/'
@@ -83,9 +84,9 @@
         .on('end', done); ;
     });
   });
-  gulp.task('bundle:watch', ['bundle'], function() {
-    gulp.watch(paths.modulesSrc, ['bundle']);
-  });
+  gulp.task('bundle:watch', gulp.series('bundle', function() {
+    gulp.watch(paths.modulesSrc, 'bundle');
+  }));
 
   module.exports = bundlePipe;
 
