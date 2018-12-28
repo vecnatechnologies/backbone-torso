@@ -1,15 +1,14 @@
 (function() {
   'use strict';
 
-  var gulp = require('gulp'),
-      del = require('del'),
-      paths = require('../../paths');
+  var gulp = require('gulp');
+  var del = require('del');
+  var paths = require('../../paths');
 
-  gulp.task('clean', function(callback) {
-    del([paths.bundleDest + '/torso-bundle*.js',
-         paths.docsDest,
-         paths.testSandbox],
-        callback);
+  gulp.task('clean', function() {
+    return del([paths.bundleDest + '/torso-bundle*.js',
+                paths.docsDest,
+                paths.testSandbox]);
   });
 
 })();
