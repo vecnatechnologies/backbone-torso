@@ -5,5 +5,5 @@
 * [DOCUMENTATION](DOCUMENTATION.md)
 * [RULES](RULES.md)
 * [Generated API](api)
-* [Annotated Source](annotated/modules/torso.html)
+* [Annotated Source](ANNOTATED.md)
 * [Interactive docs](interactive)
