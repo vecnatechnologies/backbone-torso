@@ -1,0 +1,106 @@
+<h3>
+  <a id="welcome-to-torso" class="anchor" href="#welcome-to-torso" aria-hidden="true"></a>
+  What is Backbone-torso?
+</h3>
+<hr/>
+<p>Backbone provides many convenient tools for building Single Page Applications (SPAs) out of the box, and we absolutely love using it!  However, the bare Backbone library could use some love in areas such as response forms, data validation tools, polling collections, and sub-view management.  Beyond Torso's handy-dandy utility modules, there are some opinionated design philosophies that we've adopted to make reliable and maintainable Backbone apps. </p>
+
+<div class="button-panel">
+  <a class="learn-more pull-right" href="#recipes"><i class="fa fa-spoon"></i> Recipes</a>
+  <a class="learn-more pull-right" href="#modules"><i class="fa fa-cubes"></i> Modules</a>
+  <a class="learn-more pull-right" href="#philosophy"><i class="fa fa-book"></i> Philosophy</a>
+</div>
+
+<!-- DESIGN PHILOSOPHY -->
+<h3>
+  <a id="philosophy" class="anchor" href="#philosophy" aria-hidden="true"></a>
+  Philosophy
+</h3>
+<hr/>
+<p>This is text about the design philosophy.</p>
+<pre><code class="javascript"><script type="text/code">
+var basicView = Torso.View.extend({
+  events: {'click .list-item': 'handler'},
+  initialize: function() {...},
+  activate: function() {...},
+  deactivate: function() {...},
+  prepare: function() {...},
+  render: function() {...},
+  handler: function(evt) {...},
+  dispose: function() {...}
+});
+</script></code></pre>
+<p>And maybe some more text.</p>
+<div class="button-panel">
+  <a class="learn-more pull-right" href="#philosophy"><i class="fa fa-book"></i> Philosophy</a>
+</div>
+
+<!-- MODULES -->
+<h3>
+  <a id="modules" class="anchor" href="#modules" aria-hidden="true"></a>
+  Modules
+</h3>
+<hr/>
+<p>Torso provides modules that provide convenient interfaces for common web functionality.
+Some modules are:</p>
+<ul class="large-links">
+  <li><a href="modules/polling-mixin">Polling mixin</a>
+  <p>Setup periodic polling models or collections.</p>
+<pre><code class="javascript"><script type="text/code">
+var users = new Torso.PollingCollection({
+  model: UserModel,
+  url: '/users'
+});
+// Start periodic 5-second polling
+users.startPolling(5000);
+// Stop polling
+users.stopPolling();
+</script></code></pre>
+          </li>
+
+          <li><a href="modules/list-view">List View</a>
+          <p>Effectively manage a list of sub-views using backbone collections.</p>
+<pre><code class="javascript"><script type="text/code">
+var ingredientsView = new Torso.ListView({
+  collection: ingedientsCollection,
+  childView: SingleIngredientView
+});
+</script></code></pre></li>
+
+<div class="button-panel">
+  <a class="learn-more pull-right" href="#modules"><i class="fa fa-cubes"></i> Modules</a>
+</div>
+
+<!-- Recipes -->
+<h3>
+  <a id="recipes" class="anchor" href="#recipes" aria-hidden="true"></a>
+  Recipes
+</h3>
+<hr/>
+<p>This is an example recipe.</p>
+<pre><code class="javascript"><script type="text/code">
+var viewClass = Torso.View.extend({
+  initialize: function() {
+    // RECIPE
+  }
+});
+</script></code></pre>
+<p>And maybe some more text.</p>
+<div class="button-panel">
+  <a class="learn-more pull-right" href="#recipes"><i class="fa fa-spoon"></i> Recipes</a>
+</div>
+
+<!-- AUTHORS & CONTRIBUTORS -->
+<h3>
+  <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"></a>
+  Authors &amp; Contributors
+</h3>
+<hr/>
+<p>Project creators:<br/>
+  <ul>
+    <li>Kent Willis <a href="https://github.com/kentmw" class="user-mention">@kentmw</a></li>
+    <li>Ariel Wexler <a href="https://github.com/arikwex" class="user-mention">@arikwex</a></li>
+    <li>Josh Young <a href="https://github.com/mandragorn" class="user-mention">@mandragorn</a></li>
+    <li>Devon Bush <a href="https://github.com/devonbush" class="user-mention">@devonbush</a></li>
+  </ul>
+</p>

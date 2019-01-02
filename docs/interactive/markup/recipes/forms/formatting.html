@@ -1,0 +1,117 @@
+<h3>
+  Field Formatting
+</h3>
+<hr/>
+<p>Often times, the user will see data in a different representation than the
+internally stored data format.  This means that the FormModel and FormView have
+a small discrepancy in formatting.  Since Torso uses the Stickit two-way binding
+framework, it is easy to hijack the formatting methods that dictate view format
+and model format.  The <b>viewFormat</b> function dictates how model data is converted
+to view data.  The <b>modelFormat</b> function dictates how view data is converted to
+model data.  These methods are allocated in the Form View class as entries in the
+<b>fields</b> hash.  Entries in the <b>fields</b> hash must have the same name as
+their <b>data-model</b> counterpart.
+</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="rep-form"></div>
+
+<div class="code-type html closed"></div>
+<pre><code class="html" for="rep-form"><script type="text/code">
+<form>
+  <fieldset>
+    <label>Name:</label>
+    <input data-model="name" type="text" name="name"><br/>
+  </fieldset>
+
+  <fieldset>
+    <label>Gender:</label>
+    <input data-model="gender" type="radio" id="gender-male"
+           name="gender" value="male">
+    <label for="gender-male" class="btn">male</label>
+    <input data-model="gender" type="radio" id="gender-female"
+           name="gender" value="female">
+    <label for="gender-female" class="btn">female</label>
+  </fieldset>
+
+  <input class="primary" type="submit" value="Submit">
+</form>
+</script></code></pre>
+<div class="code-type javascript"> - FORMATTERS [Name field]</div>
+<pre><code class="javascript" for="rep-form"><script type="text/code">
+var nameFormatters = {
+  modelFormat: function(value) {
+    if (value) {
+      return value.toUpperCase();
+    } else {
+      return value;
+    }
+  },
+  viewFormat: function(value) {
+    if (value) {
+      return value.toLowerCase();
+    } else {
+      return value;
+    }
+  }
+};
+</script></code></pre>
+<div class="code-type javascript"> - FORMATTERS [Gender field]</div>
+<pre><code class="javascript" for="rep-form"><script type="text/code">
+var genderFormatters = {
+  modelFormat: function(value) {
+    if (value === 'male') {
+      return 1;
+    } else if (value === 'female') {
+      return 2;
+    } else {
+      return 0;
+    }
+  },
+  viewFormat: function(value) {
+    if (value === 1) {
+      return 'male';
+    } else if (value === 2) {
+      return 'female';
+    } else {
+      return undefined;
+    }
+  }
+};
+</script></code></pre>
+<div class="code-type javascript"> - VIEW</div>
+<pre><code class="javascript" for="rep-form"><script type="text/code">
+var FormattedFormView = Torso.FormView.extend({
+  template: compiledTemplate,
+  fields: {
+    'name': nameFormatters,
+    'gender': genderFormatters
+  },
+  events: {
+    'click [type="submit"]': 'submit'
+  },
+  render: function() {
+    this.$el.html(this.template());
+    this.delegateEvents();
+  },
+  submit: function() {
+    alert('FORMATTED DATA SUBMITTED!\n'
+         + JSON.stringify(this.model.toJSON()));
+    this.render();
+    return false;
+  }
+});
+var formView = new FormattedFormView({el: $container});
+formView.render();
+</script></code></pre>
+
+<p>In the demo above, the <b>name</b> field is always stored internally in uppercase
+letters.  When the Form View is re-rendered, the "hidden" Form Model data will be used
+to generate the view state.  Before reaching the UI, the Form Model data is converted
+to lower case letters via the view formatting method. The <b>gender</b> field shows
+that the internal representation for the radio button can be converted to the numbers
+0, 1, and 2 without changing the DOM.</p>
+<p>Please note that the <b>viewFormat</b> method is only invoked ONCE immediately after the
+render call.  This means that any new user input will no undergo the viewFormat data
+transformation.  If you want real time view formatting, look in to Torso's
+<a href="#modules.views.feeback-view">Feedback View</a> module.</p>

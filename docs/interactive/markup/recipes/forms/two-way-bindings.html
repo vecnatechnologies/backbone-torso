@@ -1,0 +1,65 @@
+<h3>
+  Two-Way Bindings
+</h3>
+<hr/>
+<p>Torso provides a FormView module that allows two-way binding. The two-way binding
+implementation uses Backbone.Stickit behind the scenes. As mentioned in the previous section,
+our goal is to have a saved form state. The easiest way to do this is to map a single field
+in the DOM to a single field in a "hidden" data model. Don't worry, we've setup most of this
+for you! Just be sure to annotate your input fields with <b>data-model</b> attributes for
+the FormView to behave properly.
+</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="two-way-form"></div>
+
+<div class="code-type html"></div>
+<pre><code class="html" for="two-way-form"><script type="text/code">
+<form>
+  <fieldset>
+    <label>Name:</label>
+    <input data-model="name" type="text" name="name"><br/>
+  </fieldset>
+
+  <fieldset>
+    <label>Gender:</label>
+    <input data-model="gender" type="radio" id="gender-male"
+           name="gender" value="male">
+    <label for="gender-male" class="btn">male</label>
+    <input data-model="gender" type="radio" id="gender-female"
+           name="gender" value="female">
+    <label for="gender-female" class="btn">female</label>
+  </fieldset>
+
+  <input class="primary" type="submit" value="Submit">
+</form>
+</script></code></pre>
+<div class="code-type javascript"></div>
+<pre><code class="javascript" for="two-way-form"><script type="text/code">
+/* Usage of Torso FormView */
+var TwoWayFormView = Torso.FormView.extend({
+  template: compiledTemplate,
+  events: {
+    'click [type="submit"]': 'submit'
+  },
+  render: function() {
+    this.$el.html(this.template());
+    this.delegateEvents();
+  },
+  submit: function() {
+    /* Access to FormModel data */
+    alert('TWO-WAY-BOUND FORM SUBMITTED!\n'
+         + JSON.stringify(this.model.toJSON()));
+    this.render();
+    return false;
+  }
+});
+var formView = new TwoWayFormView({el: $container});
+formView.render();
+</script></code></pre>
+
+<p>Notice that in this demo, the input field values do not vanish on re-render. This is
+thanks to the hidden data-model that repopulates the fields if the DOM is blown away.
+The binding is invoked in the "delegateEvents" method which was overriden by the
+Torso FormView. Backbone's delegateEvents method is invoked from within the overriden
+delegateEvents method.</p>
