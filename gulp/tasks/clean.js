@@ -7,7 +7,8 @@
 
   gulp.task('clean', function() {
     return del([paths.bundleDest + '/torso-bundle*.js',
-                paths.docsDest,
+                paths.docsApiDest,
+                paths.docsAnnotatedDest,
                 paths.testSandbox]);
   });
 

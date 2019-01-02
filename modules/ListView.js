@@ -16,9 +16,8 @@
 
     /**
      * If one exists, this method will clear the delayed render timeout and invoke render
-     * @param view {ListView} the list view
+     * @param {ListView} view the list view
      * @private
-     * @method breakDelayedRender
      */
     breakDelayedRender = function(view) {
       if (view.__delayedRenderTimeout) {
@@ -35,9 +34,8 @@
      * Calls that happen while it is waiting, will be swallowed. Useful for when you want to
      * batch render calls
      * @private
-     * @method aggregateRenders
-     * @param wait {Number} the number of milliseconds to wait before rendering
-     * @param view {ListView} the list view
+     * @param {number} wait the number of milliseconds to wait before rendering
+     * @param {ListView} view the list view
      */
     aggregateRenders = function(wait, view) {
       var postpone = function() {
@@ -58,8 +56,7 @@
     /**
      * Handles the removal of an item view if a model has been removed from the collection
      * @private
-     * @method removeItemView
-     * @param model {Backbone Model instance} the model that has been removed
+     * @param {Backbone Model instance} model the model that has been removed
      */
     removeItemView = function(model) {
       var itemView = this.getItemViewFromModel(model);
@@ -75,10 +72,9 @@
      * Disposes of an item view, unregisters, stops tracking and triggers a 'item-view-removed' event
      * with the model and an item view as the payload.
      * @private
-     * @method _removeItemView
-     * @param itemView {Backbone View instance} the view being removed
-     * @param modelId {String or Number} the id used for the model
-     * @param [model] {Backbone Model instance} the model
+     * @param {Backbone View instance} itemView the view being removed
+     * @param {string|Number} modelId the id used for the model
+     * @param {Backbone Model instance} [model] the model
      */
     _removeItemView = function(itemView, modelId, model) {
       itemView.dispose();
@@ -93,7 +89,6 @@
      * Handles the addition of an item view if a model has been added to the collection.
      * When possible, it will append the view instead of causing a rerender
      * @private
-     * @method addItemView
      * @param model the model being added
      */
     addItemView = function(model) {
@@ -111,7 +106,6 @@
      * or if this item view is the first, it will cause a re-render. This method will break
      * any delayed renders and force a re-render before continuing.
      * @private
-     * @method _addItemView
      * @param itemView the view being added
      * @param indexOfModel - the index of the model into the array of models to render
      */
@@ -190,24 +184,23 @@
     /**
      * @property __delayedRenderTimeout
      * @private
-     * @type {Number}
+     * @type {number}
      */
     __delayedRenderTimeout: null,
 
     /**
      * Constructor for the list view object.
-     * @method constructor
-     * @param args {Object} - options argument
-     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
-     *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
-     *   @param [args.itemContext] {Object or Function} - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
-     *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
-     *   @param [args.itemContainer] {String}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
-     *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom functionality.
-     *   @param [args.renderWait=0] {Number} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
+     * @param {Object} args - options argument
+     *   @param {Backbone.View definition or Function} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
+     *   @param {Backbone.Collection instance} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
+     *   @param {Object|Function} [args.itemContext] - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
+     *   @param {HTML Template} [args.template] - allows a list view to hold it's own HTML like filter buttons, etc.
+     *   @param {string} [args.itemContainer]  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
+     *   @param {HTML Template} [args.emptyTemplate] - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
+     *   @param {Function} [args.modelsToRender] - If provided, this function will override the modelsToRender() method with custom functionality.
+     *   @param {number} [args.renderWait=0] - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
-     *   @param [args.modelName='model'] {String} - name of the model argument passed to the item view during initialization
+     *   @param [args.modelName='model'] {string} - name of the model argument passed to the item view during initialization
      */
     constructor: function(args) {
       View.apply(this, arguments);
@@ -244,9 +237,8 @@
      * and has the option of removing listeners on a previous collection. It will immediately update child
      * views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument
      *
-     * @method setCollection
-     * @param collection {Backbone.Collection instance} the new collection that this list view should use.
-     * @param preventUpdate {Boolean} if true, the list view will not update the child views nor rerender.
+     * @param {Backbone.Collection instance} collection the new collection that this list view should use.
+     * @param {boolean} preventUpdate if true, the list view will not update the child views nor rerender.
      */
     setCollection: function(collection, preventUpdate) {
       this.stopListening(this.collection, 'remove', removeItemView);
@@ -269,7 +261,6 @@
     /**
      * Override of View.__updateDOM
      * Builds a single DOM fragment from the item views and attaches it at once.
-     * @method __updateDOM
      */
     updateDOM: function() {
       var injectionSite,
@@ -293,7 +284,6 @@
      * Completes each item view's lifecycle of being attached to a parent.
      * Because the item views are attached in a non-standard way, it's important to make sure
      * that the item views are in the appropriate state after being attached as one fragment.
-     * @method __cleanupItemViewsAfterAttachedToParent
      * @private
      */
     __cleanupItemViewsAfterAttachedToParent: function() {
@@ -313,7 +303,6 @@
 
     /**
      * Loops through children views and renders them
-     * @method renderChildViews
      */
     renderChildViews: function() {
       _.each(this.getTrackedViews({child: true}), function(childView) {
@@ -325,7 +314,6 @@
      * Takes existing item views and moves them into correct order defined by
      * this.modelsToRender(). NOTE: As this method doesn't generate or remove views,
      * this method takes advantage of jquery's ability to move elements already attached to the DOM.
-     * @method reorder
      */
     reorder: function() {
       var firstItemView, sameOrder,
@@ -373,7 +361,6 @@
 
     /**
      * Override if you want a different context for your empty template. Defaults to this.prepare()
-     * @method prepareEmpty
      * @return a context that can be used by the empty list template
      */
     prepareEmpty: function() {
@@ -385,7 +372,6 @@
      * By default, all models in the input collection will be
      * shown.  Extensions of this class may override this
      * method to apply collection filters.
-     * @method modelsToRender
      */
     modelsToRender: function() {
       return this.collection ? this.collection.models : [];
@@ -393,7 +379,6 @@
 
     /**
      * Builds any new views, removes stale ones, and re-renders
-     * @method update
      */
     update: function() {
       var oldViews = this.getItemViews();
@@ -424,17 +409,15 @@
 
     /**
      * Returns the view that corresponds to the model if one exists
-     * @param model {Model} the model
+     * @param {Model} model the model
      * @return the item view corresponding to the model
-     * @method getItemViewFromModel
      */
     getItemViewFromModel: function(model) {
       return model ? this.getTrackedView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
     },
 
     /**
-     * @return {Boolean} returns true if there exists any generated item views
-     * @method hasItemViews
+     * @return {boolean} returns true if there exists any generated item views
      */
     hasItemViews: function() {
       return !_.isEmpty(this.getItemViews());
@@ -442,7 +425,6 @@
 
     /**
      * @return {Array of views} Returns unordered list of views generated by this list view
-     * @method getItemViews
      */
     getItemViews: function() {
       var view = this;
@@ -454,7 +436,6 @@
 
     /**
      * Creates all needed item views that don't exist from modelsToRender()
-     * @method __createItemViews
      * @private
      * @return {Array} each object in array contains a 'view' and 'indexOfModel' field
      */
@@ -475,9 +456,8 @@
 
     /**
      * Creates an item view and stores a reference to it
-     * @method __createItemView
      * @private
-     * @param model {Backbone Model} the model to create the view from
+     * @param {Backbone Model} model the model to create the view from
      * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
      * @return {Backbone View} the new item view
      */
@@ -500,7 +480,6 @@
 
     /**
      * Gets all item views that have models that are no longer tracked by modelsToRender
-     * @method __getStaleItemViews
      * @return {Array} An array of information about stale items. Each object has a 'view' and 'modelId' field
      * @private
      */
@@ -524,7 +503,6 @@
 
     /**
      * Removes the item views that no longer have models returned by modelsToRender()
-     * @method __removeStaleItemViews
      * @param [staleItemViewInfo] {Array of objects:
      *   [{
      *     view: stale item view,
@@ -545,7 +523,6 @@
      * modelsToRender(). This will clear the List View's DOM and invoke the necessary
      * detach, register and render logic on each item view.
      * @return a DOM fragment with item view elements appended
-     * @method __emptyAndRebuildItemViewsFragment
      * @private
      */
     __emptyAndRebuildItemViewsFragment: function() {
@@ -574,10 +551,9 @@
     /**
      * Attempts to insert new views and remove stale views individually and correctly reorder all views in an
      * attempt to be faster then a full view re-render
-     * @method __updateByAddingRemoving
-     * @param oldViews {Array of Views} - correctly ordered list of views before making changes to models to render
-     * @param newViews {Array of Views} - the new views created that will be inserted
-     * @param staleViews {Array of Views} - the stale views that will be removed
+     * @param {Array of Views} oldViews - correctly ordered list of views before making changes to models to render
+     * @param {Array of Views} newViews - the new views created that will be inserted
+     * @param {Array of Views} staleViews - the stale views that will be removed
      */
     __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
       var firstItemViewLeft, injectionSite,
@@ -625,8 +601,7 @@
     /**
      * Updates the internal list of model ids that correspond to the models used for the current
      * list of item views. The order is the same order of the item views.
-     * @method __updateOrderedModelIdList
-     * @param [newIdsList] {Array of ids} - if passed the array, it will use that instead of finding the list.
+     * @param {Array of ids} [newIdsList] - if passed the array, it will use that instead of finding the list.
      * @private
      */
     __updateOrderedModelIdList: function(newIdsList) {
@@ -644,7 +619,6 @@
      *   <modelName>: <modelObject>,
      *   listView: the parent list view
      * }
-     * @method __generateItemViewArgs
      * @private
      * @param model the model for an item view
      * @return a context to be used by an item view
@@ -660,17 +634,15 @@
 
     /**
      * Alias method for __generateItemViewArgs()
-     * @method __generateChildArgs
      */
     __generateChildArgs: function() {
       return this.__generateItemViewArgs.apply(this, arguments);
     },
 
     /**
-     * @method __getViewIdFromModelId
      * @private
-     * @param modelId {String or Number} id of model
-     * @return {String or Number} view cid that was built from corresponding model
+     * @param {string|Number} modelId id of model
+     * @return {string|Number} view cid that was built from corresponding model
      */
     __getViewIdFromModelId: function(modelId) {
       return this.__modelToViewMap[modelId];

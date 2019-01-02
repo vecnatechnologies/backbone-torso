@@ -1,0 +1,33 @@
+{
+  "tags": {
+    "allowUnknownTags": false
+  },
+  "source": {
+    "include": [ "README.md", "modules/View.js", "modules/Behavior.js", "modules/torso.js" ]
+  },
+  "opts": {
+    "template": "node_modules/docdash",
+    "encoding": "utf8",
+    "destination": "./docs/api",
+    "recurse": true,
+    "verbose": true,
+    "access": "all"
+  },
+  "docdash": {
+    "search": true,
+    "menu": {
+      "Project Website": {
+        "href": "https://myproject.com",
+        "target": "_blank",
+        "class": "menu-item",
+        "id": "website_link"
+      },
+      "Forum": {
+        "href": "https://myproject.com.forum",
+        "target": "_blank",
+        "class": "menu-item",
+        "id": "forum_link"
+      }
+    }
+  }
+}

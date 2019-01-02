@@ -1,3 +1,10 @@
+/**
+ * The backbone View reference
+ * @external "Backbone.View"
+ * @see {@link http://backbonejs.org/#View|Backbone.View}
+ */
+
+/** @module modules/View */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell', './registry'], factory);
@@ -16,9 +23,12 @@
    * ViewStateCell is a NestedCell that holds view state data and can trigger
    * change events. These changes events will propogate up and trigger on the view
    * as well.
+   * @class
    */
-  var ViewStateCell = NestedCell.extend({
-
+  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
+    /**
+     * @constructs
+     */
     initialize: function(attrs, opts) {
       opts = opts || {};
       this.view = opts.view;
@@ -26,7 +36,6 @@
 
     /**
      * Retrigger view state change events on the view as well.
-     * @method trigger
      * @override
      */
     trigger: function(name) {
@@ -44,12 +53,11 @@
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
-   * @module    Torso
-   * @class     View
-   * @constructor
+   * @class
+   * @extends external:"Backbone.View"
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
-  var View = Backbone.View.extend({
+  var View = Backbone.View.extend(/** @lends View.prototype */{
     viewState: null,
     template: undefined,
     feedback: null,
@@ -75,13 +83,12 @@
      *   to: 'fullName-feedback'
      * }]
      * @private
-     * @property feedback
-     * @type Array
+     * @property {Array} feedback
      */
 
     /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
-     * @method constructor
+     * @constructs
      */
     constructor: function(options) {
       options = options || {};
@@ -110,7 +117,6 @@
 
     /**
      * Alias to this.viewState.get()
-     * @method get
      */
     get: function() {
       return this.viewState.get.apply(this.viewState, arguments);
@@ -118,7 +124,6 @@
 
     /**
      * Alias to this.viewState.set()
-     * @method set
      */
     set: function() {
       return this.viewState.set.apply(this.viewState, arguments);
@@ -126,7 +131,6 @@
 
     /**
      * Alias to this.viewState.has()
-     * @method has
      */
     has: function() {
       return this.viewState.has.apply(this.viewState, arguments);
@@ -134,7 +138,6 @@
 
     /**
      * Alias to this.viewState.unset()
-     * @method unset
      */
     unset: function() {
       return this.viewState.unset.apply(this.viewState, arguments);
@@ -142,16 +145,14 @@
 
     /**
      * Alias to this.viewState.toJSON()
-     * @method toJSON
      */
     toJSON: function() {
       return this.viewState.toJSON();
     },
 
     /**
-     * @param alias {String} the name/alias of the behavior
+     * @param {string} alias the name/alias of the behavior
      * @return {Torso.Behavior} the behavior instance if one exists with that alias
-     * @method getBehavior
      */
     getBehavior: function(alias) {
       if (this.__behaviorInstances) {
@@ -165,7 +166,6 @@
      *
      * @return {Object} context for a render method. Defaults to:
      *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
-     * @method prepare
      */
     prepare: function() {
       return this.__getPrepareFieldsContext();
@@ -173,9 +173,8 @@
 
     /**
      * Augments the context with custom content.
-     * @param context {Object} the context you can modify
+     * @param context the context you can modify
      * @return {Object} [Optional] If you return an object, it will be merged with the context
-     * @method _prepare
      */
     _prepare: function(context) {
       // no changes by default
@@ -188,7 +187,6 @@
      * The render method returns a promise that resolves when rendering is complete. Typically render
      * is synchronous and the rendering is complete upon completion of the method. However, when utilizing
      * transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.
-     * @method render
      * @return {Promise} a promise that when resolved signifies that the rendering process is complete.
      */
     render: function() {
@@ -227,8 +225,7 @@
      * Hook during render that is invoked before any DOM rendering is performed.
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);
      * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
-     * @method prerender
-     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
+     * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
      */
     prerender: _.noop,
 
@@ -237,7 +234,6 @@
      * Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);
      * this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.
      * Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.
-     * @method updateDOM
      */
     updateDOM: function() {
       if (this.template) {
@@ -249,8 +245,7 @@
     /**
      * Updates this view element's class attribute with the value provided.
      * If no value provided, removes the class attribute of this view element.
-     * @method updateClassName
-     * @param newClassName {String} the new value of the class attribute
+     * @param {string} newClassName the new value of the class attribute
      */
     updateClassName: function(newClassName) {
       if (newClassName === undefined) {
@@ -264,14 +259,12 @@
      * Hook during render that is invoked after all DOM rendering is done and tracked views attached.
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);
      * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
-     * @method postrender
-     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
+     * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
      */
     postrender: _.noop,
 
     /**
      * Hotswap rendering system reroute method.
-     * @method templateRender
      * See Torso.templateRenderer#render for params
      */
     templateRender: function(el, template, context, opts) {
@@ -285,7 +278,6 @@
     /**
      * Overrides the base delegateEvents
      * Binds DOM events with the view using events hash while also adding feedback event bindings
-     * @method delegateEvents
      */
     delegateEvents: function() {
       this.undelegateEvents(); // always undelegate events - backbone sometimes doesn't.
@@ -302,7 +294,6 @@
     /**
      * Overrides undelegateEvents
      * Unbinds DOM events from the view.
-     * @method undelegateEvents
      */
     undelegateEvents: function() {
       Backbone.View.prototype.undelegateEvents.call(this);
@@ -313,15 +304,14 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param [$el] {jQuery element} the element to attach to. This element will be replaced with this view.
-     *                               If options.replaceMethod is provided, then this parameter is ignored.
-     * @param [options] {Object} optional options
-     * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
+     * @param {jQuery} [$el] the element to attach to. This element will be replaced with this view.
+     *                       If options.replaceMethod is provided, then this parameter is ignored.
+     * @param {Object} [options] optional options
+     * @param   {Fucntion} [options.replaceMethod] if given, this view will invoke replaceMethod function
      *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
-     * @param   [options.discardInjectionSite=false] {Booleon} if set to true, the injection site is not saved.
+     * @param   {Booleon} [options.discardInjectionSite=false] if set to true, the injection site is not saved.
      * @return {Promise} promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can
      *                   make it asynchronous.
-     * @method attachTo
      */
     attachTo: function($el, options) {
       options = options || {};
@@ -358,17 +348,16 @@
      *     previousView: the previous view (can be undefined)
      *     parentView: the parent view transitioning in or out the tracked view
      *   }
-     * @param $el {jQuery element or String} the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
-     * @param view   {View}   The instantiated view object to be attached
-     * @param [options] {Object} optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
-     * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
-     * @param   [options.shared=false] {Boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
-     * @param   [options.useTransition=false] {Boolean} if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite
-     * @param   [options.addBefore=false] {Boolean} if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.
-     * @param   [options.previousView] {View} if using options.useTransition, then you can explicitly define the view that should be transitioned out.
+     * @param {jQuery|string} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
+     * @param {View}   view   The instantiated view object to be attached
+     * @param {Object} [options] optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
+     * @param   {boolean} [options.shared=false] if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @param   {boolean} [options.useTransition=false] if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite
+     * @param   {boolean} [options.addBefore=false] if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param   {View} [options.previousView] if using options.useTransition, then you can explicitly define the view that should be transitioned out.
      *                                        If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.
-     * @method attachView
      */
     attachView: function($el, view, options) {
       options = options || {};
@@ -398,21 +387,18 @@
     /**
      * Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
-     * @method attachTrackedViews
-     * @return {Promise or List of Promises} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
+     * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
      */
     attachTrackedViews: _.noop,
 
     /**
      * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
      * after the DOM has been attached to the document. The default implementation is a no-op.
-     * @method _attached
      */
     _attached: _.noop,
 
     /**
-     * @return {Boolean} true if the view is attached to a parent
-     * @method isAttachedToParent
+     * @return {boolean} true if the view is attached to a parent
      */
     isAttachedToParent: function() {
       return this.__isAttachedToParent;
@@ -420,8 +406,7 @@
 
     /**
      * NOTE: depends on a global variable "document"
-     * @return {Boolean} true if the view is attached to the DOM
-     * @method isAttached
+     * @return {boolean} true if the view is attached to the DOM
      */
     isAttached: function() {
       return this.$el && $.contains(document, this.$el[0]);
@@ -431,7 +416,6 @@
      * If attached, will detach the view from the DOM.
      * This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach
      * callback on each tracked view recursively.
-     * @method detach
      */
     detach: function() {
       var wasAttached;
@@ -456,11 +440,10 @@
     /**
      * Detach all tracked views or a subset of them based on the options parameter.
      * NOTE: this is not recursive - it will not separate the entire view tree.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, detach only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, detach only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {Boolean} If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     * @method detachTrackedViews
+     *   @param {boolean} [options.child=false] If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      */
     detachTrackedViews: function(options) {
       var trackedViewsHash = this.getTrackedViews(options);
@@ -472,13 +455,11 @@
     /**
      * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
      * after the view has been removed from the document. The default implementation is a no-op.
-     * @method _detached
      */
     _detached: _.noop,
 
     /**
      * Resets listeners and events in order for the view to be reattached to the visible DOM
-     * @method activate
      */
     activate: function() {
       this.__activateTrackedViews();
@@ -492,13 +473,11 @@
     /**
      * Method to be invoked when activate is called. Use this method to turn on any
      * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
-     * @method _activate
      */
     _activate: _.noop,
 
     /**
-     * @return {Boolean} true if the view is active
-     * @method isActive
+     * @return {boolean} true if the view is active
      */
     isActive: function() {
       return this.__isActive;
@@ -507,7 +486,6 @@
     /**
      * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
      * and events that may affect user experience. Recursively invokes deactivate on child views
-     * @method deactivate
      */
     deactivate: function() {
       this.__deactivateTrackedViews();
@@ -521,7 +499,6 @@
     /**
      * Method to be invoked when deactivate is called. Use this method to turn off any
      * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
-     * @method _deactivate
      */
     _deactivate: _.noop,
 
@@ -529,7 +506,6 @@
      * Removes all listeners, disposes children views, stops listening to events, removes DOM.
      * After dispose is called, the view can be safely garbage collected. Called while
      * recursively removing views from the hierarchy.
-     * @method dispose
      */
     dispose: function() {
       this.trigger('before-dispose');
@@ -571,25 +547,22 @@
      * Method to be invoked when dispose is called. By default calling dispose will remove the
      * view's element, its on's, listenTo's, and any registered children.
      * Override this method to destruct any extra
-     * @method _dispose
      */
     _dispose: _.noop,
 
     /**
-     * @return {Boolean} true if the view was disposed
-     * @method isDisposed
+     * @return {boolean} true if the view was disposed
      */
     isDisposed: function() {
       return this.__isDisposed;
     },
 
     /**
-     * @return {Boolean} true if this view has tracked views (limited by the options parameter)
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, only check the shared views. These are views not owned by this parent. As compared to a child view
+     * @return {boolean} true if this view has tracked views (limited by the options parameter)
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, only check the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {Boolean} If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     * @method hasTrackedViews
+     *   @param {boolean} [options.child=false] If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      */
     hasTrackedViews: function(options) {
       return !_.isEmpty(this.getTrackedViews(options));
@@ -597,11 +570,10 @@
 
     /**
      * Returns all tracked views, both child views and shared views.
-     * @method getTrackedViews
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, get only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, get only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {Boolean} If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return {List<View>} all tracked views (filtered by options parameter)
      */
     getTrackedViews: function(options) {
@@ -610,8 +582,7 @@
 
     /**
      * @return the view with the given cid.  Will look in both shared and child views.
-     * @param viewCID {String} the cid of the view
-     * @method getTrackedView
+     * @param {string} viewCID the cid of the view
      */
     getTrackedView: function(viewCID) {
       var childView = this.__childViews[viewCID],
@@ -623,12 +594,11 @@
      * Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will
      * be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the
      * view as a child view unless specified by options.shared.
-     * @param view {View} the tracked view
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view
+     * @param {View} view the tracked view
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.
      * @return {View} the tracked view
-     * @method registerTrackedView
      */
     registerTrackedView: function(view, options) {
       options = options || {};
@@ -643,9 +613,8 @@
 
     /**
      * Unbinds the tracked view - no recursive calls will be made to this shared view
-     * @param view {View} the shared view
+     * @param {View} view the shared view
      * @return {View} the tracked view
-     * @method unregisterTrackedView
      */
     unregisterTrackedView: function(view) {
       delete this.__childViews[view.cid];
@@ -656,13 +625,11 @@
     /**
      * Unbinds all tracked view - no recursive calls will be made to this shared view
      * You can limit the types of views that will be unregistered by using the options parameter.
-     * @param view {View} the shared view
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {Boolean} If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return {View} the tracked view
-     * @method unregisterTrackedView
      */
     unregisterTrackedViews: function(options) {
       var trackedViewsHash = this.getTrackedViews(options);
@@ -674,12 +641,11 @@
     /**
      * Override to provide your own transition out logic. Default logic is to just detach from the page.
      * The method is passed a callback that should be invoked when the transition out has fully completed.
-     * @method transitionOut
-     * @param done {Function} callback that MUST be invoked when the transition is complete.
-     * @param options {Object} optionals options object
-     * @param   options.currentView {View} the view that is being transitioned in.
-     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
-     * @param   options.parentView {View} the view that is invoking the transition.
+     * @param {Function} done callback that MUST be invoked when the transition is complete.
+     * @param options optionals options object
+     * @param   {View} options.currentView the view that is being transitioned in.
+     * @param   {View} options.previousView the view that is being transitioned out. Typically this view.
+     * @param   {View} options.parentView the view that is invoking the transition.
      */
     transitionOut: function(done, options) {
       this.detach();
@@ -689,14 +655,13 @@
     /**
      * Override to provide your own transition in logic. Default logic is to just attach to the page.
      * The method is passed a callback that should be invoked when the transition in has fully completed.
-     * @method transitionIn
-     * @param attach {Function} callback to be invoked when you want this view to be attached to the dom.
+     * @param {Function} attach callback to be invoked when you want this view to be attached to the dom.
                                 If you are trying to transition in a tracked view, consider using this.transitionInView()
-     * @param done {Function} callback that MUST be invoked when the transition is complete.
-     * @param options {Object} optionals options object
-     * @param   options.currentView {View} the view that is being transitioned in.
-     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
-     * @param   options.parentView {View} the view that is invoking the transition.
+     * @param {Function} done callback that MUST be invoked when the transition is complete.
+     * @param options optionals options object
+     * @param   {View} options.currentView the view that is being transitioned in.
+     * @param   {View} options.previousView the view that is being transitioned out. Typically this view.
+     * @param   {View} options.parentView the view that is invoking the transition.
      */
     transitionIn: function(attach, done, options) {
       attach();
@@ -705,10 +670,9 @@
 
     /**
      * Invokes a feedback entry's "then" method
-     * @param to {String} the "to" field corresponding to the feedback entry to be invoked.
-     * @param [evt] {Event} the event to be passed to the "then" method
-     * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
-     * @method invokeFeedback
+     * @param {string} to the "to" field corresponding to the feedback entry to be invoked.
+     * @param {Event} [evt] the event to be passed to the "then" method
+     * @param {Object} [indexMap] a map from index variable name to index value. Needed for "to" fields with array notation.
      */
     invokeFeedback: function(to, evt, indexMap) {
       var result,
@@ -748,7 +712,6 @@
      * To create dynamic show/hide logic, perform the logic in a function that returns the correct view, or you can
      * call this.set('hide:foo', true) or this.set('hide:foo', false)
      * @private
-     * @method __attachViewsFromInjectionSites
      */
     __attachViewsFromInjectionSites: function() {
       var injectionSites = _.result(this, 'injectionSites');
@@ -817,7 +780,6 @@
      *     will be thrown.
      *   * 'model' and 'view' are reserved field names and cannot be reused.
      *
-     * @method __getPrepareFieldsContext
      * @return {Object} context composed of { modelName: model.toJSON() } for every model identified.
      * @private
      */
@@ -886,7 +848,6 @@
 
     /**
      * Initializes the behaviors
-     * @method __initializeBehaviors
      */
     __initializeBehaviors: function(viewOptions) {
       var view = this;
@@ -931,7 +892,6 @@
     /**
      * If the view is attaching during the render process, then it replaces the injection site
      * with the view's element after the view has generated its DOM.
-     * @method __performPendingAttach
      * @private
      */
     __performPendingAttach: function() {
@@ -942,11 +902,10 @@
 
     /**
      * Deactivates all tracked views or a subset of them based on the options parameter.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {Boolean} If true, deactivate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     * @method __deactivateTrackedViews
+     *   @param {boolean} [options.child=false] If true, deactivate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @private
      */
     __deactivateTrackedViews: function(options) {
@@ -957,11 +916,10 @@
 
     /**
      * Activates all tracked views or a subset of them based on the options parameter.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, activate only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, activate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {Boolean} If true, activate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     * @method __activateTrackedViews
+     *   @param {boolean} [options.child=false] If true, activate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @private
      */
     __activateTrackedViews: function(options) {
@@ -972,7 +930,6 @@
 
     /**
      * Disposes all child views recursively
-     * @method disposeChildViews
      * @private
      */
     __disposeChildViews: function() {
@@ -988,15 +945,14 @@
      * though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.
      * If the previous view is the same as the new view, it is injected normally without transitioning in.
      * The previous view must has used an injection site with the standard "inject=<name of injection site>" attribute to be found.
-     * @method transitionNewViewIntoSite
      * @private
-     * @param injectionSiteName {String} The name of the injection site in the template. This is the value corresponding to the attribute "inject".
-     * @param newView {View} The instantiated view object to be transitioned into the injection site
-     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
-     * @param   [options.previousView] {View} the view that should be transitioned out. If none is provided, it will look to see if a view already
+     * @param {string} injectionSiteName The name of the injection site in the template. This is the value corresponding to the attribute "inject".
+     * @param {View} newView The instantiated view object to be transitioned into the injection site
+     * @param {Object} [options] optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   {View} [options.previousView] the view that should be transitioned out. If none is provided, it will look to see if a view already
      *                                 is at this injection site and uses that by default.
-     * @param   [options.addBefore=false] {Boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
-     * @param   [options.shared=false] {Boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @param   {boolean} [options.addBefore=false] if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param   {boolean} [options.shared=false] if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
      * When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields
      * will be added to the options parameter to allow better handling of the transitions. These include:
@@ -1034,12 +990,11 @@
 
     /**
      * Will transition out previousView at the same time as transitioning in newView.
-     * @method __performTwoWayTransition
-     * @param injectionSiteName {String} The name of the injection site in the template. This is the value corresponding to the attribute "inject".
-     * @param previousView {View} the view that should be transitioned out.
-     * @param newView {View} The view that should be transitioned into the injection site
-     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
-     * @param   [options.addBefore=false] {Boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param {string} injectionSiteName The name of the injection site in the template. This is the value corresponding to the attribute "inject".
+     * @param {View} previousView the view that should be transitioned out.
+     * @param {View} newView The view that should be transitioned into the injection site
+     * @param {Object} [options] optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   {boolean} [options.addBefore=false] if true, the new view's element will be added before the previous view's element. Defaults to after.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
      * @private
      */
@@ -1070,13 +1025,12 @@
     /**
      * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
      * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
-     * @param $el {jQuery element} the element to attach to.
-     * @param newView {View} the view to be transitioned in.
-     * @param [options] {Object} optional options object
-     * @param   [options.noActivate=false] {Boolean} if set to true, the view will not be activated upon attaching.
-     * @param   [options.shared=false] {Boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @param {jQuery} $el the element to attach to.
+     * @param {View} newView the view to be transitioned in.
+     * @param {Object} [options] optional options object
+     * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
+     * @param   {boolean} [options.shared=false] if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
      * @return {Promise} resolved when transition is complete. No payload is provided upon resolution.
-     * @method transitionInView
      * @private
      */
     __transitionInView: function($el, newView, options) {
@@ -1097,11 +1051,10 @@
      * Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.
      * NOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.
      * This means that you can add "add" or "remove" tracked view using this method, however you can interact with the views inside the map completely.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {Boolean} If true, will add the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {}] {Object}[options=  Optional options.
+     *   @param {boolean} [options.shared=false] If true, will add the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {Boolean} If true, will add child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     * @method __getTrackedViewsHash
+     *   @param {boolean} [options.child=false] If true, will add child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return READ-ONLY snapshot of the object maps cotaining tracked views keyed by their cid (filtered by optional options parameter).
      * @private
      */
@@ -1123,7 +1076,6 @@
     /**
      * Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.
      * @private
-     * @method __updateInjectionSiteMap
      */
     __updateInjectionSiteMap: function() {
       var parentView = this;
@@ -1139,11 +1091,10 @@
 
     /**
      * Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method
-     * @method __replaceInjectionSite
-     * @param $el {jQuery Element} the injection site element to be replaced
-     * @param [options] {Object} Optional options
-     * @param   [options.replaceMethod] {Function} use an alternative replace method. Invoked with the view's element as the argument.
-     * @param   [options.discardInjectionSite=false] {Boolean} if true, the view will not save a reference to the injection site after replacement.
+     * @param {jQuery} $el the injection site element to be replaced
+     * @param {Object} [options] Optional options
+     * @param   {Function} [options.replaceMethod] use an alternative replace method. Invoked with the view's element as the argument.
+     * @param   {boolean} [options.discardInjectionSite=false] if true, the view will not save a reference to the injection site after replacement.
      * @private
      */
     __replaceInjectionSite: function($el, options) {
@@ -1156,7 +1107,6 @@
 
     /**
      * Call this method when a view is attached to the DOM. It is recursive to child views, but checks whether each child view is attached.
-     * @method __invokeAttached
      * @private
      */
     __invokeAttached: function() {
@@ -1175,7 +1125,6 @@
 
     /**
      * Call this method when a view is detached from the DOM. It is recursive to child views.
-     * @method __invokeDetached
      */
     __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {
@@ -1201,7 +1150,6 @@
      * ...}
      * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
      * @private
-     * @method __generateFeedbackCellCallbacks
      */
     __generateFeedbackCellCallbacks: function() {
       var self = this;
@@ -1240,10 +1188,9 @@
 
     /**
      * Processes the result of the then method. Adds to the feedback cell.
-     * @param result {Object} the result of the then method
-     * @param feedbackCellField {Object} the name of the feedbackCellField, typically the "to" value.
+     * @param result the result of the then method
+     * @param feedbackCellField the name of the feedbackCellField, typically the "to" value.
      * @private
-     * @method __processFeedbackThenResult
      */
     __processFeedbackThenResult: function(result, feedbackCellField) {
       var newState = $.extend({}, result);
@@ -1255,7 +1202,6 @@
      * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks
      * Finds all feedback zones that match the "to" field, and binds the "when" events to invoke the "then" method
      * @private
-     * @method __generateFeedbackBindings
      */
     __generateFeedbackBindings: function() {
       var i,
@@ -1362,13 +1308,12 @@
 
     /**
      * Returns a properly wrapped "then" using a configuration object "bindInfo" and an "eventKey" that will be passed as the type
-     * @param bindInfo {Object}
+     * @param bindInfo
      * @param   bindInfo.feedbackCellField the property name of the feedback cell to store the "then" instructions
      * @param   bindInfo.fn the original "then" function
      * @param   [bindInfo.indices] the index map
      * @return {Function} the properly wrapped "then" function
      * @private
-     * @method __generateThenCallback
      */
     __generateThenCallback: function(bindInfo, eventKey) {
       return function() {
@@ -1386,10 +1331,9 @@
     /**
      * Returns all elements on the page that match the feedback mapping
      * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
-     * @param dest {String} the string of the data-feedback
-     * @return {jQuery array} all elements on the page that match the feedback mapping
+     * @param {string} dest the string of the data-feedback
+     * @return {jQuery} all elements on the page that match the feedback mapping
      * @private
-     * @method __getFeedbackDestinations
      */
     __getFeedbackDestinations: function(dest) {
       var self = this,
@@ -1413,7 +1357,6 @@
      * @param indexMap map from variable names to values when substituting array notation
      * @return the events that were generated
      * @private
-     * @method __generateWhenEvents
      */
     __generateWhenEvents: function(whenMap, indexMap) {
       var self = this,
@@ -1451,7 +1394,6 @@
      * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
      * This does not handle or return any "open" array notations: []
      * @private
-     * @method __getAllIndexTokens
      */
     __getAllIndexTokens: function(attr) {
       return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
@@ -1469,7 +1411,6 @@
      * Replaces all array notations with open array notations.
      * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
      * @private
-     * @method __stripAllAttribute
      */
     __stripAllAttribute: function(attr) {
       attr = attr.replace(/\[.+?\]/g, function() {
@@ -1484,7 +1425,6 @@
      * Also supports objects:
      * Example: foo.bar and {bar: someString} will return as foo.someString
      * @private
-     * @method __substituteIndicesUsingMap
      */
     __substituteIndicesUsingMap : function(dest, indexMap) {
       var newIndex;
@@ -1509,10 +1449,9 @@
      * Will also perform nested arrays:
      *    foo[][] -> ['foo[0][0]', foo[1][0]']
      * Supports both foo[x] and foo.bar
-     * @method __generateSubAttributes
      * @private
-     * @param {String} attr The name of the attribute to expand according to the bound model
-     * @return {Array<String>} The fully expanded subattribute names
+     * @param {string} attr The name of the attribute to expand according to the bound model
+     * @return {Array<string>} The fully expanded subattribute names
      */
     __generateSubAttributes: function(attr, model) {
       var firstBracket = attr.indexOf('[]');

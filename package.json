@@ -5,6 +5,13 @@
     "type": "git",
     "url": "https://github.com/vecnatechnologies/backbone-torso"
   },
+  "paths": {
+    "src": "modules/*.js modules/**/*.js",
+    "docs": {
+      "annotated": "docs/annotated",
+      "api": "docs/api"
+    }
+  },
   "scripts": {
     "build": "gulp && npm run test && npm run doc",
     "prepublishOnly": "gulp prepublish && npm run doc",
@@ -12,11 +19,18 @@
     "test-func": "karma start",
     "watch:test-func": "npm run test-func -- karma.conf.dev.js --debug",
     "test-import": "gulp test-vendor-globals && gulp test-vendor-commonJs",
-    "doc": "mkdir docs/js -p && yuidoc",
-    "doc:dev": "mkdir docs/js -p && yuidoc --server",
+    "doc": "npm run doc-api && npm run doc-annotate",
+    "doc-api": "rm -rf $npm_package_paths_docs_api && mkdir $npm_package_paths_docs_api -p && jsdoc -r --access all $npm_package_paths_src -d $npm_package_paths_docs_api",
+    "doc-annotate": "rm -rf $npm_package_paths_docs_annotated && mkdir $npm_package_paths_docs_annotated -p && docco $npm_package_paths_src -l plain-markdown -o $npm_package_paths_docs_annotated",
+    "doc:dev": "npm run doc-api:dev & npm run doc-annotate:dev",
+    "doc-api:dev": "npm run doc-api && onchange $npm_package_paths_src -- npm run doc-api",
+    "doc-annotate:dev": "npm run doc-annotate && onchange $npm_package_paths_src -- docco {{changed}} -l plain-markdown -o $npm_package_paths_docs_annotated",
     "watch-import": "gulp watch-import & npm run doc:dev",
     "clean": "gulp clean",
-    "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev"
+    "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev",
+    "blah": "docco --help",
+    "blah3": "rm -rf docs/jsdoc && jsdoc -c jsdoc.json",
+    "blah3:dev": "npm run blah3 && onchange jsdoc.json $npm_package_paths_src -- npm run blah3"
   },
   "main": "modules/torso.js",
   "dependencies": {
@@ -28,6 +42,8 @@
   "devDependencies": {
     "browserify": "^16.2.3",
     "del": "^3.0.0",
+    "docco": "^0.8.0",
+    "docdash": "^1.0.1",
     "gulp": "^4.0.0",
     "gulp-cached": "^1.0.2",
     "gulp-cli": "^2.0.1",
@@ -50,6 +66,7 @@
     "jasmine-spec-reporter": "2.1.0",
     "jquery": "^2.2.4",
     "jquery-mockjax": "2.2.1",
+    "jsdoc": "^3.5.5",
     "jshint": "^2.9.7",
     "jshint-stylish": "^1.0.1",
     "karma": "^3.1.4",
@@ -62,6 +79,7 @@
     "merge-stream": "^0.1.7",
     "minimist": "1.1.0",
     "node-dir": "0.1.8 ",
+    "onchange": "^5.2.0",
     "path": "0.11.14",
     "phantomjs-prebuilt": "^2.1.16",
     "promise": "6.1.0",
@@ -69,8 +87,10 @@
     "requireify": "^0.2.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",
-    "watchify": "^3.11.0",
-    "yuidocjs": "^0.10.2"
+    "vue": "^2.5.21",
+    "vue-template-compiler": "^2.5.21",
+    "watch": "^1.0.2",
+    "watchify": "^3.11.0"
   },
   "engines": {
     "node": ">=0.8.0"
@@ -88,16 +108,5 @@
       "name": "Josh Young",
       "email": "jyoung@vecna.com"
     }
-  ],
-  "yuidoc": {
-    "name": "backbone-torso",
-    "description": "backbone-torso",
-    "options": {
-      "linkNatives": true,
-      "outdir": "./docs/js",
-      "paths": [
-        "modules"
-      ]
-    }
-  }
+  ]
 }

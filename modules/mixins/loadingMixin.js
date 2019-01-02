@@ -25,8 +25,7 @@
     return {
       /**
        * Adds the loading mixin
-       * @method constructor
-       * @param args {Object} the arguments to the base constructor method
+       * @param {Object} args the arguments to the base constructor method
        */
       constructor: function(args) {
         base.call(this, args);
@@ -38,23 +37,20 @@
       },
 
       /**
-       * @method hasLoadedOnce
-       * @return {Boolean} true if this model/collection has ever loaded from a fetch call
+       * @return {boolean} true if this model/collection has ever loaded from a fetch call
        */
       hasLoadedOnce: function() {
         return this.loadedOnce;
       },
 
       /**
-       * @method isLoading
-       * @return {Boolean} true if this model/collection is currently loading new values from the server
+       * @return {boolean} true if this model/collection is currently loading new values from the server
        */
       isLoading: function() {
         return this.loading;
       },
 
       /**
-       * @method getLoadedOncePromise
        * @return {Promise} a promise that will resolve when the model/collection has loaded for the first time
        */
       getLoadedOncePromise: function() {
@@ -63,8 +59,7 @@
 
       /**
        * Wraps the base fetch in a wrapper that manages loaded states
-       * @method fetch
-       * @param options {Object} - the object to hold the options needed by the base fetch method
+       * @param {Object} options - the object to hold the options needed by the base fetch method
        * @return {Promise} The loadWrapper promise
        */
       fetch: function(options) {
@@ -74,9 +69,8 @@
       /**
        * Base load function that will trigger a "load-begin" and a "load-complete" as
        * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       * @method __loadWrapper
-       * @param fetchMethod {Function} - the method to invoke a fetch
-       * @param options {Object} - the object to hold the options needed by the fetchMethod
+       * @param {Function} fetchMethod - the method to invoke a fetch
+       * @param {Object} options - the object to hold the options needed by the fetchMethod
        * @return {Promise} a promise when the fetch method has completed and the events have been triggered
        */
       __loadWrapper: function(fetchMethod, options) {
