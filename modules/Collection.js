@@ -20,7 +20,6 @@
   var Collection = Backbone.Collection.extend({
       /**
        * The default filter.  Always returns itself.
-       * @method filterDefault
        * @return {Collection} a new instance of this collection
        */
       filterDefault: function() {
@@ -30,7 +29,6 @@
       /**
        * Will abolish all listeners and events that are hooked
        * to this collection.
-       * @method dispose
        */
       dispose: function() {
         this.unbind();

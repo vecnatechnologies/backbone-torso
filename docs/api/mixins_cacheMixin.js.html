@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: mixins/cacheMixin.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: mixins/cacheMixin.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function(root, factory) {
+  if (typeof define === 'function' &amp;&amp; define.amd) {
+    define(['underscore', 'backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cache = factory(root._, root.Backbone);
+  }
+}(this, function(_, Backbone) {
+
+  var $ = Backbone.$;
+
+  /**
+   * Custom additions to the Backbone Collection object.
+   * - safe disposal methods for memory + event management
+   * - special functional overrides to support ID registration for different views
+   *
+   * @module    Torso
+   * @namespace Torso.Mixins
+   * @class  cacheMixin
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   */
+  var mixin = function(base) {
+
+    var cacheMixin, createRequesterCollectionClass;
+
+    /**
+     * Returns a new class of collection that inherits from the parent but not the cacheMixin
+     * and adds a requesterMixin that connects this cache to it's parent
+     *
+     * @param {Backbone Collection instance} parent the parent of the private collection
+     * @param {string} guid the unique code of the owner of this private collection
+     */
+    createRequesterCollectionClass = function(parent, guid) {
+      return parent.constructor.extend((function(parentClass, parentInstance, ownerKey) {
+
+        /**
+         * A mixin that overrides base collection methods meant for cache's and tailors them
+         * to a requester.
+         */
+        var requesterMixin = {
+
+          /**
+           * @return {Array} array of ids that this collection is tracking
+           */
+          getTrackedIds: function() {
+            return this.trackedIds;
+          },
+
+          /**
+           * Will force the cache to fetch just the registered ids of this collection
+           * @param [options] - argument options
+           * @param {Array} [options.idsToFetch=collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+           * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetch: function(options) {
+            options = options || {};
+            options.idsToFetch = options.idsToFetch || this.trackedIds;
+            options.setOptions = options.setOptions || {remove: false};
+            return this.__loadWrapper(function() {
+              if (options.idsToFetch &amp;&amp; options.idsToFetch.length) {
+                return parentInstance.fetchByIds(options);
+              } else {
+                return $.Deferred().resolve().promise();
+              }
+            });
+          },
+
+          /**
+           * Will force the cache to fetch a subset of this collection's tracked ids
+           * @param {Array} ids array of model ids
+           * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @return {Promise} promise that will resolve when the fetch is complete
+           */
+          fetchByIds: function(ids, options) {
+            options = options || {};
+            options.idsToFetch = _.intersection(ids, this.getTrackedIds());
+            return this.fetch(options);
+          },
+
+          /**
+           * Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.
+           * Overrides the Id registration system to route via the parent collection
+           * @param ids The list of ids that this collection wants to track
+           */
+          trackIds: function(ids) {
+            this.remove(_.difference(this.trackedIds, ids));
+            parentInstance.registerIds(ids, ownerKey);
+            this.trackedIds = ids;
+          },
+
+          /**
+           * Adds a new model to the requester collection and tracks the model.id
+           * @param {Backbone Model} model the model to be added
+           */
+          addModelAndTrack: function(model) {
+            this.add(model);
+            parentInstance.add(model);
+            this.trackNewId(model.id);
+          },
+
+          /**
+           * Tracks a new id
+           * @param {string|Number} id the id attribute of the model
+           */
+          trackNewId: function(id) {
+            this.trackIds(this.getTrackedIds().concat(id));
+          },
+
+          /**
+           * Will begin tracking the new ids and then ask the cache to fetch them
+           * This will reset any previous list of ids being tracked.
+           * @return the promise of the fetch by ids
+           */
+          trackAndFetch: function(newIds) {
+            this.trackIds(newIds);
+            return this.fetch();
+          },
+
+          /**
+           * Will force the cache to fetch any of this collection's tracked models that are not in the cache
+           * while not fetching models that are already in the cache. Useful when you want the effeciency of
+           * pulling models from the cache and don't need all the models to be up-to-date.
+           *
+           * If the ids being fetched are already being fetched by the cache, then they will not be re-fetched.
+           *
+           * The resulting promise is resolved when ALL items in the process of being fetched have completed.
+           * The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.
+           *
+           * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
+           *                   Will only resolve once all ids have attempted to be fetched from the server.
+           */
+          pull: function(options) {
+            options = options || {};
+
+            //find ids that we don't have in cache and aren't already in the process of being fetched.
+            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
+            var idsWithPromises = _.pick(parentInstance.idPromises, idsNotInCache);
+
+            // Determine which ids are already being fetched and the associated promises for those ids.
+            options.idsToFetch = _.difference(idsNotInCache, _.uniq(_.flatten(_.keys(idsWithPromises))));
+            var thisFetchPromise = this.fetch(options);
+
+            // Return a promise that resolves when all ids are fetched (including pending ids).
+            var allPromisesToWaitFor = _.flatten(_.values(idsWithPromises));
+            allPromisesToWaitFor.push(thisFetchPromise);
+            var allUniquePromisesToWaitFor = _.uniq(allPromisesToWaitFor);
+            return $.when.apply($, allUniquePromisesToWaitFor)
+              // Make it look like the multiple promises was performed by a single request.
+              .then(function() {
+                // collects the parts of each ajax call into arrays: result = { [data1, data2, ...], [textStatus1, textStatus2, ...], [jqXHR1, jqXHR2, ...] };
+                var result = _.zip(arguments);
+                // Flatten the data so it looks like the result of a single request.
+                var resultData = result[0];
+                var flattenedResultData = _.flatten(resultData);
+                return flattenedResultData;
+              });
+          },
+
+          /**
+           * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
+           * the difference between pull and fetch.
+           * @return the promise of the fetch by ids
+           */
+          trackAndPull: function(newIds) {
+            this.trackIds(newIds);
+            return this.pull();
+          },
+
+          /**
+           * Handles the disposing of this collection as it relates to a requester collection.
+           */
+          requesterDispose: function() {
+            parentInstance.removeRequester(ownerKey);
+          },
+
+          /**
+           * In addition to removing the model from the collection also remove it from the list of tracked ids.
+           * @param {*} modelIdentifier same duck-typing as Backbone.Collection.get():
+           *                              by id, cid, model object with id or cid properties,
+           *                              or an attributes object that is transformed through modelId
+           */
+          remove: function(modelIdentifier) {
+            var model = this.get(modelIdentifier);
+            parentClass.remove.apply(this, arguments);
+            if (model) {
+              var trackedIdsWithoutModel = this.getTrackedIds();
+              trackedIdsWithoutModel = _.without(trackedIdsWithoutModel, model.id);
+              this.trackIds(trackedIdsWithoutModel);
+            }
+          }
+        };
+
+        return requesterMixin;
+      })(parent.constructor.__super__, parent, guid));
+    };
+
+    /**
+     * Adds functions to manage state of requesters
+     * @param {Collection} collection the collection to add this mixin
+     */
+    cacheMixin = function(collection) {
+
+      //************* PRIVATE METHODS ************//
+
+      /**
+       * @private
+       * @param {string} guid the global unique identifier for the requester
+       * @param {Array} array the array of ids the requester wants
+       */
+      var setRequestedIds = function(guid, array) {
+        collection.requestMap[guid] = {
+          array: array,
+          dict: _.object(_.map(array, function(id) { return [id, id]; }))
+        };
+      };
+
+      //*********** PUBLIC METHODS ************//
+
+      /**
+       * @param {string} the global unique id of the requester
+       * @return {Array} an array of the ids the requester with the guid has requested
+       */
+      collection.getRequesterIds = function(guid) {
+        return this.requestMap[guid] &amp;&amp; this.requestMap[guid].array;
+      };
+
+      /**
+       * This method is used for quick look up of a certain id within the list of requested ids
+       * @param {string} guid the global unique id of the requester
+       * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
+       */
+      collection.getRequesterIdsAsDictionary = function(guid) {
+        return this.requestMap[guid] &amp;&amp; this.requestMap[guid].dict;
+      };
+
+      /**
+       * Removes a requester from this cache. No longer receives updates
+       * @param {string} guid the global unique id of the requester
+       */
+      collection.removeRequester = function(guid) {
+        delete this.requestMap[guid];
+        delete this.knownPrivateCollections[guid];
+      };
+
+      /**
+       * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
+       * TODO: should this return just the knownPrivateCollections
+       * @return {Array} an array of the all requesters in the form of their GUID's
+       */
+      collection.getRequesters = function()  {
+        return _.keys(this.requestMap);
+      };
+
+      /**
+       * Return the list of Ids requested by this collection
+       * @return {Array} the corresponding requested Ids
+       */
+      collection.getAllRequestedIds = function() {
+        return this.collectionTrackedIds;
+      };
+
+      /**
+       * Used to return a collection of desired models given the requester object.
+       * Binds a custom "resized" event to the private collections.
+       * Overrides the fetch method to call the parent collection's fetchByIds method.
+       * Overrides the registerIds method to redirect to its parent collection.
+       * @param {string} guid Identifier for the requesting view
+       * @return {Collection} an new empty collection of the same type as "this"
+       */
+      collection.createPrivateCollection = function(guid, args) {
+        args = args || {};
+        args.isRequester = true;
+        args.parentInstance = collection;
+        var RequesterClass = createRequesterCollectionClass(collection, guid);
+        this.knownPrivateCollections[guid] = new RequesterClass(null, args);
+        return this.knownPrivateCollections[guid];
+      };
+
+      /**
+       * Registers a list of Ids that a particular object cares about and pushes
+       * any cached models its way.
+       *
+       * This method intelligently updates the "_requestedIds" field to contain all unique
+       * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
+       * is overriden such that it no longer routes through Backbone's fetch all,
+       * but rather a custom "fetchByIds" method.
+       * @param {Array} newIds  - New ids to register under the requester
+       * @param {string} guid   - The GUID of the object that wants the ids
+       */
+      collection.registerIds = function(newIds, guid) {
+        var i, newIdx, model, requesterIdx, storedIds,
+            requesters, requesterLength, privateCollection,
+            models = [],
+            distinctIds = {},
+            result = [];
+
+        // Save the new requests in the map
+        setRequestedIds(guid, newIds);
+        requesters = collection.getRequesters();
+        requesterLength = requesters.length;
+
+        // Collect all cached models
+        for (newIdx = 0; newIdx &lt; newIds.length; newIdx++) {
+          model = collection.get(newIds[newIdx]);
+          if (model) {
+            models.push(model);
+          }
+        }
+
+        // Push cached models to the respective requester
+        privateCollection = collection.knownPrivateCollections[guid];
+        if (privateCollection) {
+          privateCollection.set(models, {remove: false});
+        }
+
+        // Create a new request list
+        for (requesterIdx = 0; requesterIdx &lt; requesterLength; requesterIdx++) {
+          storedIds = this.getRequesterIds(requesters[requesterIdx]);
+          if (!_.isUndefined(storedIds)) {
+            for (i = 0; i &lt; storedIds.length; i++) {
+              distinctIds[storedIds[i]] = true;
+            }
+          }
+        }
+
+        // Convert the hash table of unique Ids to a list
+        for (i in distinctIds) {
+          result.push(i);
+        }
+        this.collectionTrackedIds = result;
+
+        // Overrides the polling mixin's fetch method
+        this.polledFetch = function() {
+          collection.fetchByIds({
+            setOptions: {remove: true}
+          });
+        };
+      };
+
+      /**
+       * Overrides the base fetch call if this.fetchUsingTrackedIds is true
+       * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
+       * it will pass through to the default fetch.
+       */
+      collection.fetch = function(options) {
+        options = options || {};
+        if (this.fetchUsingTrackedIds) {
+          return this.fetchByIds({
+            setOptions: _.extend({remove: true}, options)
+          });
+        } else {
+          return base.prototype.fetch.call(this, options);
+        }
+      };
+
+      /**
+       * A custom fetch operation to only fetch the requested Ids.
+       * @param [options] - argument options
+       * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+       * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
+       * @return {Promise} the promise of the fetch
+       */
+      collection.fetchByIds = function(options) {
+        options = options || {};
+        // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
+        var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+        var fetchComplete = false;
+        var fetchPromise = this.__loadWrapper(function(options) {
+          var contentType = options.fetchContentType || collection.fetchContentType;
+          var ajaxOpts = {
+              type: collection.fetchHttpAction,
+              url: _.result(collection, 'url') + collection.getByIdsUrl,
+              data: {ids: requestedIds.join(',')}
+            };
+          if (contentType || (ajaxOpts.type &amp;&amp; ajaxOpts.type.toUpperCase() != 'GET')) {
+            ajaxOpts.contentType = contentType || 'application/json; charset=utf-8';
+            ajaxOpts.data = JSON.stringify(requestedIds);
+          }
+          return $.ajax(ajaxOpts)
+            .done(function(data) {
+              var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
+                  requesterLength, requesters, model,
+                  requestedIdsLength = requestedIds.length,
+                  setOptions = options.setOptions;
+              collection.set(collection.parse(data), setOptions);
+              // Set respective collection's models for requested ids only.
+              requesters = collection.getRequesters();
+              requesterLength = requesters.length;
+              // For each requester...
+              for (requesterIdx = 0; requesterIdx &lt; requesterLength; requesterIdx++) {
+                requesterIdsAsDict = collection.getRequesterIdsAsDictionary(requesters[requesterIdx]);
+                models = [];
+                // ... now let's iterate over the ids that were fetched ...
+                for (i = 0; i &lt; requestedIdsLength; i++) {
+                  //if the id that the requester cares about matches that model whose id was just fetched...
+                  if (requesterIdsAsDict[requestedIds[i]]) {
+                    model = collection.get(requestedIds[i]);
+                    // if the model was removed, no worries, the parent won't attempt to update the child on that one.
+                    if (model) {
+                      models.push(model);
+                    }
+                  }
+                }
+                privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
+                // a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
+                if (privateCollection) {
+                  privateCollection.set(models, {remove: false});
+                }
+              }
+            });
+        }, options)
+          .always(function() {
+            // This happens once the promise is resolved, and removes the pending promise for that id.
+
+            // Track that the fetch was completed so we don't add a dead promise (since this is what cleans up completed promises).
+            fetchComplete = true;
+
+            // Note that an id may have multiple promises (if fetch was called multiple times and then a pull with the same id).
+            // We want to wait for all of them to complete, this tracks them separately and removes the in-flight promises once they are done.
+            _.each(requestedIds, function(requestedId) {
+              if (collection.idPromises) {
+                var existingPromisesForId = collection.idPromises[requestedId];
+                var remainingPromisesForId = _.without(existingPromisesForId, fetchPromise);
+                if (_.isEmpty(remainingPromisesForId)) {
+                  delete collection.idPromises[requestedId];
+                } else {
+                  collection.idPromises[requestedId] = remainingPromisesForId;
+                }
+              }
+            });
+          });
+
+        // Track the promises associated with each id so we know when that id has completed fetching.
+        // Multiple simultaneous pulls will generate multiple promises for a shared id.
+        // Pulls will not generate new promises for the given ids (if there are ids being fetched
+        if (!fetchComplete) { // fixes the sync case (mainly during tests when mockjax is used).
+          _.each(requestedIds, function(requestedId) {
+            var existingPromises = collection.idPromises[requestedId];
+            if (!existingPromises) {
+              existingPromises = [];
+              collection.idPromises[requestedId] = existingPromises;
+            }
+
+            existingPromises.push(fetchPromise);
+          });
+        }
+
+        return fetchPromise;
+      };
+    };
+
+    return {
+      /**
+       * The constructor constructor / initialize method for collections.
+       * Allocate new memory for the local references if they
+       * were null when this method was called.
+       * @param {Object} [options] - optional options object
+       * @param   [options.fetchHttpAction='POST'] {string} http action used to get objects by ids
+       * @param   [options.getByIdsUrl='/ids'] {string} path appended to collection.url to get objects by a list of ids
+       * @param   {boolean} [options.fetchUsingTrackedIds=true] if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
+                                                               but will rather call the default fetch method.
+       */
+      constructor: function(models, options) {
+        options = options || {};
+        base.call(this, models, options);
+        this.isRequester = options.isRequester;
+        this.parentInstance = options.parentInstance;
+        if (!this.isRequester) {
+          this.requestMap = {};
+          this.collectionTrackedIds = [];
+          this.knownPrivateCollections = {};
+          this.idPromises = {};
+          var cacheDefaults = _.defaults(
+            _.pick(options, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
+            _.pick(this, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
+            {
+              getByIdsUrl: '/ids',
+              fetchHttpAction: 'GET',
+              fetchUsingTrackedIds: true
+            }
+          );
+          _.extend(this, cacheDefaults);
+          cacheMixin(this);
+        } else {
+          this.trackedIds = [];
+          this.listenTo(this.parentInstance, 'load-begin', function() {
+            this.trigger('cache-load-begin');
+          });
+          this.listenTo(this.parentInstance, 'load-complete', function() {
+            this.trigger('cache-load-complete');
+          });
+        }
+      },
+    };
+  };
+
+  return mixin;
+}));
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-modules_Behavior.html">modules/Behavior</a></li><li><a href="module-modules_View.html">modules/View</a></li></ul><h3>Externals</h3><ul><li><a href="external-_Backbone.View_.html">Backbone.View</a></li><li><a href="external-Backbone.html">Backbone</a></li></ul><h3>Classes</h3><ul><li><a href="Behavior.html">Behavior</a></li><li><a href="cacheMixin.html">cacheMixin</a></li><li><a href="cellMixin.html">cellMixin</a></li><li><a href="DataBehavior.html">DataBehavior</a></li><li><a href="handlebarsUtils.html">handlebarsUtils</a></li><li><a href="loadingMixin.html">loadingMixin</a></li><li><a href="modelMixin.html">modelMixin</a></li><li><a href="pollingMixin.html">pollingMixin</a></li><li><a href="Router.html">Router</a></li><li><a href="stickitUtils.html">stickitUtils</a></li><li><a href="templateRenderer.html">templateRenderer</a></li><li><a href="Torso.html">Torso</a></li><li><a href="validation.html">validation</a></li><li><a href="View.html">View</a></li><li><a href="ViewStateCell.html">ViewStateCell</a></li></ul><h3>Namespaces</h3><ul><li><a href="Torso.behaviors.html">behaviors</a></li><li><a href="Torso.behaviors.DataBehavior.html">DataBehavior</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__abortIfDisposed">__abortIfDisposed</a></li><li><a href="global.html#__cleanupItemViewsAfterAttachedToParent">__cleanupItemViewsAfterAttachedToParent</a></li><li><a href="global.html#__cloneVal">__cloneVal</a></li><li><a href="global.html#__completeLoadingIds">__completeLoadingIds</a></li><li><a href="global.html#__copyFields">__copyFields</a></li><li><a href="global.html#__createItemView">__createItemView</a></li><li><a href="global.html#__createItemViews">__createItemViews</a></li><li><a href="global.html#__createModelConfig">__createModelConfig</a></li><li><a href="global.html#__delayedRenderTimeout">__delayedRenderTimeout</a></li><li><a href="global.html#__disposeCache">__disposeCache</a></li><li><a href="global.html#__emptyAndRebuildItemViewsFragment">__emptyAndRebuildItemViewsFragment</a></li><li><a href="global.html#__fetchFailed">__fetchFailed</a></li><li><a href="global.html#__fetchSuccess">__fetchSuccess</a></li><li><a href="global.html#__findAlias">__findAlias</a></li><li><a href="global.html#__generateAllHashValues">__generateAllHashValues</a></li><li><a href="global.html#__generateChildArgs">__generateChildArgs</a></li><li><a href="global.html#__generateHashValue">__generateHashValue</a></li><li><a href="global.html#__generateItemViewArgs">__generateItemViewArgs</a></li><li><a href="global.html#__generateModelFieldBinding">__generateModelFieldBinding</a></li><li><a href="global.html#__generateSelectOptions">__generateSelectOptions</a></li><li><a href="global.html#__generateStickitBindings">__generateStickitBindings</a></li><li><a href="global.html#__getAllModelConfigs">__getAllModelConfigs</a></li><li><a href="global.html#__getComputedModelConfigs">__getComputedModelConfigs</a></li><li><a href="global.html#__getComputedModels">__getComputedModels</a></li><li><a href="global.html#__getFieldOptions">__getFieldOptions</a></li><li><a href="global.html#__getIds">__getIds</a></li><li><a href="global.html#__getModelAliases">__getModelAliases</a></li><li><a href="global.html#__getStaleItemViews">__getStaleItemViews</a></li><li><a href="global.html#__getTrackedModelFields">__getTrackedModelFields</a></li><li><a href="global.html#__getViewIdFromModelId">__getViewIdFromModelId</a></li><li><a href="global.html#__hashValue">__hashValue</a></li><li><a href="global.html#__initialize">__initialize</a></li><li><a href="global.html#__initMappings">__initMappings</a></li><li><a href="global.html#__invokeComputedPull">__invokeComputedPull</a></li><li><a href="global.html#__listenToComputedValuesDependency">__listenToComputedValuesDependency</a></li><li><a href="global.html#__listenToModelField">__listenToModelField</a></li><li><a href="global.html#__loadWrapper">__loadWrapper</a></li><li><a href="global.html#__normalizeAndValidateIds">__normalizeAndValidateIds</a></li><li><a href="global.html#__normalizeAndValidateUpdateEvents">__normalizeAndValidateUpdateEvents</a></li><li><a href="global.html#__parseContainerDetailString">__parseContainerDetailString</a></li><li><a href="global.html#__parseIdContainer">__parseIdContainer</a></li><li><a href="global.html#__parseIdsPropertyNameAndIdContainer">__parseIdsPropertyNameAndIdContainer</a></li><li><a href="global.html#__parseStringUpdateEvent">__parseStringUpdateEvent</a></li><li><a href="global.html#__parseUpdateEvent">__parseUpdateEvent</a></li><li><a href="global.html#__parseUpdateEvents">__parseUpdateEvents</a></li><li><a href="global.html#__pull">__pull</a></li><li><a href="global.html#__push">__push</a></li><li><a href="global.html#__register">__register</a></li><li><a href="global.html#__removeStaleItemViews">__removeStaleItemViews</a></li><li><a href="global.html#__saveToModels">__saveToModels</a></li><li><a href="global.html#__setupListeners">__setupListeners</a></li><li><a href="global.html#__shouldTriggerFetchedEvent">__shouldTriggerFetchedEvent</a></li><li><a href="global.html#__skipRetrieveOnEmptyTrackedIdsAndNewIds">__skipRetrieveOnEmptyTrackedIdsAndNewIds</a></li><li><a href="global.html#__updateByAddingRemoving">__updateByAddingRemoving</a></li><li><a href="global.html#__updateCache">__updateCache</a></li><li><a href="global.html#__updateFormField">__updateFormField</a></li><li><a href="global.html#__updateFormModel">__updateFormModel</a></li><li><a href="global.html#__updateOrderedModelIdList">__updateOrderedModelIdList</a></li><li><a href="global.html#__validateCache">__validateCache</a></li><li><a href="global.html#__validateIds">__validateIds</a></li><li><a href="global.html#__validUpdateEvent">__validUpdateEvent</a></li><li><a href="global.html#_activate">_activate</a></li><li><a href="global.html#_deactivate">_deactivate</a></li><li><a href="global.html#_delegateUpdateEvents">_delegateUpdateEvents</a></li><li><a href="global.html#_dispose">_dispose</a></li><li><a href="global.html#_thenAddClassIfInvalid">_thenAddClassIfInvalid</a></li><li><a href="global.html#_thenSetTextIfInvalid">_thenSetTextIfInvalid</a></li><li><a href="global.html#_undelegateUpdateEvents">_undelegateUpdateEvents</a></li><li><a href="global.html#activate">activate</a></li><li><a href="global.html#alwaysFetch">alwaysFetch</a></li><li><a href="global.html#cache">cache</a></li><li><a href="global.html#cellInitialized">cellInitialized</a></li><li><a href="global.html#checkIfModelsAreStale">checkIfModelsAreStale</a></li><li><a href="global.html#collection">collection</a></li><li><a href="global.html#constructor">constructor</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#deactivate">deactivate</a></li><li><a href="global.html#delegateEvents">delegateEvents</a></li><li><a href="global.html#dispose">dispose</a></li><li><a href="global.html#disposeAll">disposeAll</a></li><li><a href="global.html#disposeAllCells">disposeAllCells</a></li><li><a href="global.html#disposeAllModels">disposeAllModels</a></li><li><a href="global.html#disposeAllServices">disposeAllServices</a></li><li><a href="global.html#disposeAllViews">disposeAllViews</a></li><li><a href="global.html#emptyTemplate">emptyTemplate</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#FETCHED_STATUSES">FETCHED_STATUSES</a></li><li><a href="global.html#filterDefault">filterDefault</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getItemViewFromModel">getItemViewFromModel</a></li><li><a href="global.html#getItemViews">getItemViews</a></li><li><a href="global.html#getLoadedOncePromise">getLoadedOncePromise</a></li><li><a href="global.html#getMapping">getMapping</a></li><li><a href="global.html#getMappings">getMappings</a></li><li><a href="global.html#getModel">getModel</a></li><li><a href="global.html#getModels">getModels</a></li><li><a href="global.html#getTrackedModel">getTrackedModel</a></li><li><a href="global.html#getTrackedModels">getTrackedModels</a></li><li><a href="global.html#hasItemViews">hasItemViews</a></li><li><a href="global.html#hasLoadedOnce">hasLoadedOnce</a></li><li><a href="global.html#ids">ids</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#invalid">invalid</a></li><li><a href="global.html#isLoading">isLoading</a></li><li><a href="global.html#isLoadingIds">isLoadingIds</a></li><li><a href="global.html#isLoadingObjects">isLoadingObjects</a></li><li><a href="global.html#isModelCompatible">isModelCompatible</a></li><li><a href="global.html#isModelStale">isModelStale</a></li><li><a href="global.html#isTrackingAnyObjectModel">isTrackingAnyObjectModel</a></li><li><a href="global.html#isUpdating">isUpdating</a></li><li><a href="global.html#itemContainer">itemContainer</a></li><li><a href="global.html#itemView">itemView</a></li><li><a href="global.html#listenToIdsPropertyChangeEvent">listenToIdsPropertyChangeEvent</a></li><li><a href="global.html#mapping">mapping</a></li><li><a href="global.html#modelInitialized">modelInitialized</a></li><li><a href="global.html#models">models</a></li><li><a href="global.html#modelsToRender">modelsToRender</a></li><li><a href="global.html#parentBehavior">parentBehavior</a></li><li><a href="global.html#prepare">prepare</a></li><li><a href="global.html#prepareEmpty">prepareEmpty</a></li><li><a href="global.html#preValidate">preValidate</a></li><li><a href="global.html#privateCollection">privateCollection</a></li><li><a href="global.html#pull">pull</a></li><li><a href="global.html#push">push</a></li><li><a href="global.html#renderChildViews">renderChildViews</a></li><li><a href="global.html#renderOnFetch">renderOnFetch</a></li><li><a href="global.html#reorder">reorder</a></li><li><a href="global.html#resetModelListeners">resetModelListeners</a></li><li><a href="global.html#resetUpdating">resetUpdating</a></li><li><a href="global.html#retrieve">retrieve</a></li><li><a href="global.html#retrieveOncePromise">retrieveOncePromise</a></li><li><a href="global.html#returnSingleResult">returnSingleResult</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#serviceInitialized">serviceInitialized</a></li><li><a href="global.html#setCollection">setCollection</a></li><li><a href="global.html#setMapping">setMapping</a></li><li><a href="global.html#setMappings">setMappings</a></li><li><a href="global.html#setTrackedModel">setTrackedModel</a></li><li><a href="global.html#setTrackedModels">setTrackedModels</a></li><li><a href="global.html#skipInitialLoad">skipInitialLoad</a></li><li><a href="global.html#startUpdating">startUpdating</a></li><li><a href="global.html#stopListeningToIdsPropertyChangeEvent">stopListeningToIdsPropertyChangeEvent</a></li><li><a href="global.html#stopUpdating">stopUpdating</a></li><li><a href="global.html#template">template</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#trackModel">trackModel</a></li><li><a href="global.html#trackModels">trackModels</a></li><li><a href="global.html#unsetMapping">unsetMapping</a></li><li><a href="global.html#unsetMappings">unsetMappings</a></li><li><a href="global.html#unsetTrackedModel">unsetTrackedModel</a></li><li><a href="global.html#unsetTrackedModels">unsetTrackedModels</a></li><li><a href="global.html#untrackModel">untrackModel</a></li><li><a href="global.html#untrackModels">untrackModels</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateDOM">updateDOM</a></li><li><a href="global.html#updateEvents">updateEvents</a></li><li><a href="global.html#valid">valid</a></li><li><a href="global.html#viewInitialized">viewInitialized</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 02 2019 14:51:58 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

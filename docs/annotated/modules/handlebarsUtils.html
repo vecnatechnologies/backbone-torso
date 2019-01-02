@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>handlebarsUtils.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>handlebarsUtils.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'underscore'</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>));
+  } <span class="hljs-keyword">else</span> {
+    root.Torso = root.Torso || {};
+    root.Torso.Utils = root.Torso.Utils || {};
+    root.Torso.Utils.handlebarsUtils = factory(root._);
+  }
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_</span>) </span>{
+<span class="hljs-meta">  'use strict'</span>;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">Handlebars</span>) </span>{
+
+    <span class="hljs-comment">/**
+     * Extensions to handlebars helpers.
+     *
+     * @module    Torso
+     * @namespace Torso.Utils
+     * @class     handlebarsUtils
+     * @static
+     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+     */</span>
+    <span class="hljs-keyword">var</span> FEEDBACK_KEY = <span class="hljs-string">'feedback'</span>,
+        MODEL_KEY = <span class="hljs-string">'model'</span>;
+
+    <span class="hljs-comment">/**
+     * Usage: {{labelFor 'fieldName' value="suffix"}}
+     * Generates: for="field-name-suffix"
+     * Usage: {{labelFor 'fieldName[x].sub' value="demo" x=123}}
+     * Generates: for="field-name-123_sub-demo"
+     * Usage: {{labelFor 'fieldName[bar].sub' value="demo" bar="abc"}}
+     * Generates: for="field-name_abc_sub-demo"
+     * @param {string} field The field name to convert to a compliant "for" attribute
+     * @param {&lt;Handlebars context&gt;} options Always passed in as final argument
+     * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {string} Compliant HTML generating the "for" attribute
+     */</span>
+    Handlebars.registerHelper(<span class="hljs-string">'labelFor'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
+      options = _.extend(options, {<span class="hljs-attr">noValueAttr</span>: <span class="hljs-literal">true</span>});
+      <span class="hljs-keyword">return</span> Handlebars.helpers.formAttr(field, <span class="hljs-string">'for'</span>, options);
+    });
+
+    <span class="hljs-comment">/**
+     * Usage: {{bindModel 'fieldName' value='suffix'}}
+     * Generates: id="field-name-suffix" name="field-name" data-model="fieldName" data-feedback="fieldName" value="demo"
+     * Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub"
+     *            id="field-name-123_sub-demo" value="demo"
+     * Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}
+     * Generates: data-model="fieldName.abc.sub" data-feedback="fieldName[abc].sub" name="field-name_abc_sub"
+                  id="field-name_abc_sub-demo" value="demo"
+     * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
+     * @param {&lt;Handlebars context&gt;} options Always passed in as final argument
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     */</span>
+    Handlebars.registerHelper(<span class="hljs-string">'bindModel'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
+      <span class="hljs-keyword">return</span> Handlebars.helpers.formAttr(field, MODEL_KEY + <span class="hljs-string">', '</span> + FEEDBACK_KEY + <span class="hljs-string">', name, id'</span>, options);
+    });
+
+    <span class="hljs-comment">/**
+     * Usage: {{feedback 'fieldName'}}
+     * Generates: data-feedback="fieldName"
+     * Usage: {{feedback 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-feedback="fieldName[123].sub"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: data-feedback="fieldName[abc].sub"
+     * @param {string} field The field name to convert to a compliant data-feedback attribute
+     * @param {&lt;Handlebars context&gt;} options Always passed in as final argument
+     * @return {string} Compliant HTML generating the data-feedback attribute
+     */</span>
+    Handlebars.registerHelper(<span class="hljs-string">'feedback'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
+      options = _.extend(options, {<span class="hljs-attr">noValueAttr</span>: <span class="hljs-literal">true</span>});
+      <span class="hljs-keyword">return</span> Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
+    });
+
+    <span class="hljs-comment">/**
+     * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
+     * Generates: id="field-name-123_sub-demo" for="field-name-123_sub-demo" value="demo"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: id="field-name_abc_sub-demo" for="field-name_abc_sub-demo" value="demo"
+     * @param {string} field The field name to convert to a compliant data-feedback attribute
+     * @param {&lt;Handlebars context&gt;} options Always passed in as final argument
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
+                                              then it will not generate the "value" attribute in the DOM.
+     * @return {string} Compliant HTML generating the data-feedback attribute
+     */</span>
+    Handlebars.registerHelper(<span class="hljs-string">'formAttr'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, attrs, options</span>) </span>{
+      <span class="hljs-keyword">var</span> i, attrName,
+        value = (options.hash ? options.hash.value : <span class="hljs-literal">undefined</span>),
+        res = Handlebars.helpers.injectFieldIndices(field, options.hash),
+        resWithArrayNotation = Handlebars.helpers.injectFieldIndices(field, options.hash, { <span class="hljs-attr">forceArrayNotation</span>: <span class="hljs-literal">true</span> }),
+        attributes = <span class="hljs-string">''</span>;
+      attrs = attrs.split(<span class="hljs-string">','</span>);
+      <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; attrs.length; i++) {
+        attrName = attrs[i].trim();
+        <span class="hljs-keyword">var</span> attrEnd = (i === attrs.length - <span class="hljs-number">1</span>) ? <span class="hljs-string">'"'</span> : <span class="hljs-string">'" '</span>;
+        <span class="hljs-keyword">if</span> (attrName === FEEDBACK_KEY) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Feedback needs to always use array notation because of the way it finds the element (by stripping [] contents).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          attributes += <span class="hljs-string">'data-feedback="'</span> + resWithArrayNotation + attrEnd;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (attrName === MODEL_KEY) {
+          attributes += <span class="hljs-string">'data-model="'</span> + res + attrEnd;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (attrName === <span class="hljs-string">'name'</span>) {
+          attributes += <span class="hljs-string">'name="'</span> + Handlebars.helpers.dasherize(res) + attrEnd;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (attrName === <span class="hljs-string">'id'</span>) {
+          attributes += <span class="hljs-string">'id="'</span> + Handlebars.helpers.dasherize(res);
+          <span class="hljs-keyword">if</span> (value !== <span class="hljs-literal">undefined</span>) {
+            attributes += <span class="hljs-string">'-'</span> + value;
+          }
+          attributes += attrEnd;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (attrName === <span class="hljs-string">'for'</span>) {
+          attributes += <span class="hljs-string">'for="'</span> + Handlebars.helpers.dasherize(res);
+          <span class="hljs-keyword">if</span> (value !== <span class="hljs-literal">undefined</span>) {
+            attributes += <span class="hljs-string">'-'</span> + value;
+          }
+          attributes += attrEnd;
+        }
+      }
+      <span class="hljs-keyword">if</span> (value !== <span class="hljs-literal">undefined</span> &amp;&amp; !options.noValueAttr) {
+        attributes += <span class="hljs-string">' value="'</span> + value + <span class="hljs-string">'"'</span>;
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Handlebars.SafeString(attributes);
+    });
+
+    <span class="hljs-comment">/**
+     * Usage: {{feedback 'fieldName[x].sub'}}
+     * Generates: field-name[x]_sub
+     * @param {string} str The input string to make HTML compliant (convert to dashes)
+     * @return {string} HTML complicant / dasherized string
+     */</span>
+    Handlebars.registerHelper(<span class="hljs-string">'dasherize'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">str</span>) </span>{
+      <span class="hljs-keyword">var</span> camelCaseRemoved, dotsRemoved, bracesRemoved;
+      camelCaseRemoved = str.replace(<span class="hljs-regexp">/([A-Z])/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">rep</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'-'</span> + rep.toLowerCase();
+      });
+      dotsRemoved = camelCaseRemoved.replace(<span class="hljs-regexp">/\./g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'_'</span>;
+      });
+      bracesRemoved = dotsRemoved.replace(<span class="hljs-regexp">/\[[0-9]+\]/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">rep</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'-'</span> + rep.substring(<span class="hljs-number">1</span>, rep.length - <span class="hljs-number">1</span>);
+      });
+      <span class="hljs-keyword">return</span> bracesRemoved;
+    });
+
+    <span class="hljs-comment">/**
+     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'
+     * if options.forceArrayNotation is set then:
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'
+     * @param {string} field The field name
+     * @param {Object} indexMap A map of variables
+     * @param {Object} options named parameters
+     *   @param {boolean} [options.forceArrayNotation=false] Force the usage of [] insetad of . for string values.
+     * @return {string} the field string with array variables substituted
+     */</span>
+    Handlebars.registerHelper(<span class="hljs-string">'injectFieldIndices'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, indexMap, options</span>) </span>{
+      <span class="hljs-keyword">if</span> (indexMap) {
+        <span class="hljs-keyword">return</span> field.replace(<span class="hljs-regexp">/\[.+?\]/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">m</span>) </span>{
+          <span class="hljs-keyword">var</span> newIndex = indexMap[m.substring(<span class="hljs-number">1</span>, m.length - <span class="hljs-number">1</span>)];
+          <span class="hljs-keyword">var</span> indexToken = <span class="hljs-string">'['</span> + (newIndex === <span class="hljs-literal">undefined</span> ? <span class="hljs-string">''</span> : newIndex) + <span class="hljs-string">']'</span>;
+          <span class="hljs-keyword">var</span> forceArrayNotation = options &amp;&amp; options.forceArrayNotation;
+          <span class="hljs-keyword">if</span> (_.isString(newIndex) &amp;&amp; !forceArrayNotation) {
+            indexToken = <span class="hljs-string">'.'</span> + newIndex;
+          }
+          <span class="hljs-keyword">return</span> indexToken;
+        });
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> field;
+      }
+    });
+  };
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

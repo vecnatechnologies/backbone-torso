@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>cellMixin.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="../Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="../Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="../Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="../Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="../FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="../FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="../ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="../Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="../NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="../NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="../Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="../ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="../View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="../behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="../configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="../handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="../history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="../registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="../stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="../templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="../torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="../validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>cellMixin.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-built_in">module</span>.exports = factory();
+  } <span class="hljs-keyword">else</span> {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cell = factory();
+  }
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-meta">  'use strict'</span>;
+  <span class="hljs-comment">/**
+   * An non-persistable object that can listen to and emit events like a models.
+   * @module Torso
+   * @namespace Torso.Mixins
+   * @class  cellMixin
+   * @author kent.willis@vecna.com
+   */</span>
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-comment">/**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {boolean} isModelCompatible
+     * @default false
+     */</span>
+    isModelCompatible: <span class="hljs-literal">false</span>,
+
+    <span class="hljs-attr">save</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isModelCompatible) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Cell does not have save'</span>;
+      }
+    },
+
+    <span class="hljs-attr">fetch</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isModelCompatible) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Cell does not have fetch'</span>;
+      }
+    },
+
+    <span class="hljs-attr">sync</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isModelCompatible) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Cell does not have sync'</span>;
+      }
+    },
+
+    <span class="hljs-attr">url</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isModelCompatible) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Cell does not have url'</span>;
+      }
+    }
+  };
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

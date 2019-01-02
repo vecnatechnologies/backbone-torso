@@ -1,3 +1,14 @@
+/**
+ * The backbone View reference
+ * @external Backbone
+ * @property {external:"Backbone.View"} View
+ * @see {@link http://backbonejs.org/|Backbone}
+ */
+/**
+ * @namespace Torso
+ * @property {module:modules/Behavior} Behavior
+ * @property {module:modules/View} View
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['./behaviors/DataBehavior',
@@ -57,9 +68,6 @@
   /**
    * File containing all dependencies that exports a single object with everything attached (same format as the global).
    *
-   * @module    Torso
-   * @class     Torso
-   * @static
    * @author    jyoung@vecna.com
    */
   return {

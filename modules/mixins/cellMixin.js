@@ -22,7 +22,7 @@
      * Whether a cell can pass as a model or not.
      * If true, the cell will not fail is persisted functions are invoked
      * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {Boolean} isModelCompatible
+     * @property {boolean} isModelCompatible
      * @default false
      */
     isModelCompatible: false,

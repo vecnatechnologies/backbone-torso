@@ -68,16 +68,15 @@
 
     /**
      * Constructor the form view object.
-     * @method constructor
-     * @param args {Object} - options argument
+     * @param {Object} args - options argument
      * @param [args.model=new FormModelClass()] {Torso.FormModel} - a form model for binding that defaults to class-level
                                                                     model or instantiates a FormModelClass
      * @param [args.FormModelClass=Torso.FormModel] - the class that will be used as the FormModel. Defaults to a class-level
                                                       definition or Torso.FormModel if none is provided
-     * @param [args.template]  {HTML Template} - overrides the template used by this view
-     * @param [args.events]    {Events Hash} - merge + override the events hash used by this view
-     * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
-     * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
+     * @param {HTML Template}  [args.template] - overrides the template used by this view
+     * @param {Events Hash}    [args.events] - merge + override the events hash used by this view
+     * @param {Field Hash}    [args.fields] - merge + override automated two-way binding field hash used by this view
+     * @param {Binding Hash}  [args.bindings] - merge + override custom epoxy binding hash used by this view
      */
     constructor: function(args) {
       args = args || {};
@@ -104,7 +103,6 @@
 
     /**
      * Prepare the formview's default render context
-     * @method prepare
      * @return {Object}
      *         {Object.errors} A hash of field names mapped to error messages
      *         {Object.success} A boolean value of true if validation has succeeded
@@ -118,7 +116,6 @@
 
     /**
      * Override the delegate events and wrap our custom additions
-     * @method delegateEvents
      */
     delegateEvents: function() {
       /* DOM event bindings and plugins */
@@ -130,9 +127,8 @@
     /**
      * Resets the form model with the passed in model. Stops listening to current form model
      * and sets up listeners on the new one.
-     * @method resetModelListeners
-     * @param model {Torso.FormModel} the new form model
-     * @param [stopListening=false] {Boolean} if true, it will stop listening to the previous form model
+     * @param {Torso.FormModel} model the new form model
+     * @param {boolean} [stopListening=false] if true, it will stop listening to the previous form model
      */
     resetModelListeners: function(model, stopListening) {
       if (this.model && stopListening) {
@@ -145,7 +141,6 @@
 
     /**
      * Default method called on validation success.
-     * @method valid
      */
     valid: function() {
       this._success = true;
@@ -154,7 +149,6 @@
 
     /**
      * Default method called on validation failure.
-     * @method valid
      */
     invalid: function(model, errors) {
       this._success = false;
@@ -164,7 +158,6 @@
     /**
      * Deactivate callback that removes bindings and other resources
      * that shouldn't exist in a dactivated state
-     * @method deactivate
      */
     deactivate: function() {
       View.prototype.deactivate.call(this);
@@ -180,11 +173,10 @@
      * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param fieldName {String or Array<String>} the name of the form model field or an array of field names
-     * @param className {String} the class name to add or remove
-     * @param [onValid] {Boolean} if true, will reverse the logic operator
+     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {string} className the class name to add or remove
+     * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
-     * @method _thenAddClassIfInvalid
      */
     _thenAddClassIfInvalid: function(fieldName, className, onValid) {
       var isValid = this.model.isValid(fieldName);
@@ -205,11 +197,10 @@
      * If the field is invalid, it removes the text. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param fieldName {String or Array<String>} the name of the form model field or an array of field names
-     * @param text {String} the text to set
-     * @param [onValid] {Boolean} if true, will reverse the logic operator
+     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {string} text the text to set
+     * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
-     * @method _thenAddTextIfInvalid
      */
     _thenSetTextIfInvalid: function(fieldName, text, onValid) {
       var isValid = this.model.isValid(fieldName);
@@ -228,7 +219,6 @@
 
     /**
      * Selects all data-model references in this view's DOM, and creates stickit bindings
-     * @method __generateStickitBindings
      * @private
      */
     __generateStickitBindings: function() {
@@ -252,8 +242,7 @@
     },
 
     /**
-     * @method __getFieldOptions
-     * @param attr {String} An attribute of the model
+     * @param {string} attr An attribute of the model
      * @return {Object} Any settings that are associates with that attribute
      */
     __getFieldOptions: function(attr) {
@@ -262,12 +251,11 @@
     },
 
     /**
-     * @method __generateModelFieldBinding
-     * @param field {String} A specific model field
-     * @param options {Object} Additional behavior options for the bindings
-     * @param [options.modelFormat] {Object} The function called before setting model values
-     * @param [options.viewFormat] {Object} The function called before setting view values
-     * @param [options.stickit] {Object} Any options fields that stickit accepts
+     * @param {string} field A specific model field
+     * @param {Object} options Additional behavior options for the bindings
+     * @param {Object} [options.modelFormat] The function called before setting model values
+     * @param {Object} [options.viewFormat] The function called before setting view values
+     * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
      * @return {<Stickit Binding Hash>}
      */
@@ -296,11 +284,10 @@
     },
 
     /**
-     * @method  __generateSelectOptions
-     * @param element {Element} The select element to generate options for
-     * @param opts {Object} Additional behavior options for the bindings
-     * @param [opts.modelFormat] {Object} The function called before setting model values
-     * @param [opts.stickit.selectOptions] {Object} stickit's selectOptions fields. Overrides what Torso does by default
+     * @param {Element} element The select element to generate options for
+     * @param {Object} opts Additional behavior options for the bindings
+     * @param {Object} [opts.modelFormat] The function called before setting model values
+     * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
      * @return {<Stickit select options hash>}
      */

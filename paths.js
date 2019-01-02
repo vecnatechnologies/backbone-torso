@@ -1,17 +1,17 @@
 (function() {
   'use strict';
 
-  var modules = './modules',
-      test = './test',
-      testSandbox = './testSandbox',
-      testBrowserifiedDest = testSandbox + '/browserified',
-      testSource = test + '/source',
-      testSpec = test + '/spec',
-      testImport = testSpec + '/import',
-      testFunctional = testSpec + '/functional',
-      allJsExtension = '/**/*.js',
-      allHandlebarsExtension = '/**/*.hbs',
-      testEnvFile = 'testEnv.js';
+  var modules = './modules';
+  var test = './test';
+  var testSandbox = './testSandbox';
+  var testBrowserifiedDest = testSandbox + '/browserified';
+  var testSource = test + '/source';
+  var testSpec = test + '/spec';
+  var testImport = testSpec + '/import';
+  var testFunctional = testSpec + '/functional';
+  var allJsExtension = '/**/*.js';
+  var allHandlebarsExtension = '/**/*.hbs';
+  var testEnvFile = 'testEnv.js';
 
   module.exports = {
     gulpSrc: './gulp' + allJsExtension,
@@ -27,7 +27,8 @@
     testSourceSrc: testSource + allJsExtension,
     testTemplatesSrc: testSource + allHandlebarsExtension,
     bundleDest: '.',
-    docsDest: './docs/js',
+    docsApiDest: './docs/api',
+    docsAnnotatedDest: './docs/annotated',
     testSandbox: testSandbox,
     testTemplatesDest: testSandbox + '/templates',
     testBrowserifiedDest: testBrowserifiedDest,

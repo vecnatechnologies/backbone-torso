@@ -21,7 +21,7 @@
    */
   var pollingMixin = {
     /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     * @property {number} pollTimeoutId The id from when setTimeout was called to start polling.
      */
     pollTimeoutId: undefined,
     __pollStarted: false,
@@ -29,7 +29,6 @@
 
     /**
      * Returns true if the poll is active
-     * @method isPolling
      */
     isPolling: function() {
       return this.__pollStarted;
@@ -39,8 +38,7 @@
      * Starts polling Model/Collection by calling fetch every pollInterval.
      * Note: Each Model/Collection will only allow a singleton of polling to occur so
      * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
+     * @param  {Integer} pollInterval interval between each poll in ms.
      */
     startPolling: function(pollInterval) {
       var self = this;
@@ -61,7 +59,6 @@
 
     /**
      * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
      */
     stopPolling: function() {
       window.clearInterval(this.pollTimeoutId);
@@ -71,7 +68,6 @@
     /**
      * By default, the polled fetching operation is routed directly
      * to backbone's fetch all.
-     * @method polledFetch
      */
     polledFetch: function() {
       this.fetch();
@@ -82,7 +78,6 @@
     /**
      * Private function to recursively call itself and poll for db updates.
      * @private
-     * @method __poll
      */
     __poll: function() {
       this.polledFetch();

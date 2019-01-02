@@ -20,7 +20,6 @@
   return {
     /**
      * Register this item with the model registry after initialize.
-     * @method __register
      * @private
      */
     __register: function() {
@@ -31,7 +30,6 @@
      * Default dispose for model-like objects (Models, Cells, and ServiceCells).
      * Removes listeners and calls out to _dispose() for child specific dispose logic.
      * Triggers 2 events - "before-dispose" and "after-dispose".
-     * @method dispose
      */
     dispose: function() {
       this.trigger('before-dispose');
@@ -42,7 +40,6 @@
 
     /**
      * Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.
-     * @method _dispose
      */
     _dispose: _.noop
   };

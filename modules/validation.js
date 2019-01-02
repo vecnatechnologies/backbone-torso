@@ -346,12 +346,11 @@
         /**
          * Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but
          * you can pass in different values to use in the validation process instead.
-         * @param attr {String or Object or Array} Either the name of the attribute, an array containing many attribute names, or
+         * @param {string or Object or Array} attr Either the name of the attribute, an array containing many attribute names, or
          * on object with attribute name to values
-         * @param [value] {Any} a value to use for the attribute value instead of using the model's value.
+         * @param {Any} [value] a value to use for the attribute value instead of using the model's value.
          * @return undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
          * and the error as the value
-         * @method preValidate
          */
         preValidate: function(attr, value) {
           var self = this,
