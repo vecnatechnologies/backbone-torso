@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: handlebarsUtils.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: handlebarsUtils.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function(root, factory) {
+  if (typeof define === 'function' &amp;&amp; define.amd) {
+    define(['underscore'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Utils = root.Torso.Utils || {};
+    root.Torso.Utils.handlebarsUtils = factory(root._);
+  }
+}(this, function(_) {
+  'use strict';
+
+  return function(Handlebars) {
+
+    /**
+     * Extensions to handlebars helpers.
+     *
+     * @module    Torso
+     * @namespace Torso.Utils
+     * @class     handlebarsUtils
+     * @static
+     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+     */
+    var FEEDBACK_KEY = 'feedback',
+        MODEL_KEY = 'model';
+
+    /**
+     * Usage: {{labelFor 'fieldName' value="suffix"}}
+     * Generates: for="field-name-suffix"
+     * Usage: {{labelFor 'fieldName[x].sub' value="demo" x=123}}
+     * Generates: for="field-name-123_sub-demo"
+     * Usage: {{labelFor 'fieldName[bar].sub' value="demo" bar="abc"}}
+     * Generates: for="field-name_abc_sub-demo"
+     * @param {string} field The field name to convert to a compliant "for" attribute
+     * @param {&lt;Handlebars context>} options Always passed in as final argument
+     * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {string} Compliant HTML generating the "for" attribute
+     */
+    Handlebars.registerHelper('labelFor', function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
+      return Handlebars.helpers.formAttr(field, 'for', options);
+    });
+
+    /**
+     * Usage: {{bindModel 'fieldName' value='suffix'}}
+     * Generates: id="field-name-suffix" name="field-name" data-model="fieldName" data-feedback="fieldName" value="demo"
+     * Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub"
+     *            id="field-name-123_sub-demo" value="demo"
+     * Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}
+     * Generates: data-model="fieldName.abc.sub" data-feedback="fieldName[abc].sub" name="field-name_abc_sub"
+                  id="field-name_abc_sub-demo" value="demo"
+     * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
+     * @param {&lt;Handlebars context>} options Always passed in as final argument
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     */
+    Handlebars.registerHelper('bindModel', function(field, options) {
+      return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
+    });
+
+    /**
+     * Usage: {{feedback 'fieldName'}}
+     * Generates: data-feedback="fieldName"
+     * Usage: {{feedback 'fieldName[x].sub' value='demo' x=123}}
+     * Generates: data-feedback="fieldName[123].sub"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: data-feedback="fieldName[abc].sub"
+     * @param {string} field The field name to convert to a compliant data-feedback attribute
+     * @param {&lt;Handlebars context>} options Always passed in as final argument
+     * @return {string} Compliant HTML generating the data-feedback attribute
+     */
+    Handlebars.registerHelper('feedback', function(field, options) {
+      options = _.extend(options, {noValueAttr: true});
+      return Handlebars.helpers.formAttr(field, FEEDBACK_KEY, options);
+    });
+
+    /**
+     * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
+     * Generates: id="field-name-123_sub-demo" for="field-name-123_sub-demo" value="demo"
+     * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     * Generates: id="field-name_abc_sub-demo" for="field-name_abc_sub-demo" value="demo"
+     * @param {string} field The field name to convert to a compliant data-feedback attribute
+     * @param {&lt;Handlebars context>} options Always passed in as final argument
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
+                                              then it will not generate the "value" attribute in the DOM.
+     * @return {string} Compliant HTML generating the data-feedback attribute
+     */
+    Handlebars.registerHelper('formAttr', function(field, attrs, options) {
+      var i, attrName,
+        value = (options.hash ? options.hash.value : undefined),
+        res = Handlebars.helpers.injectFieldIndices(field, options.hash),
+        resWithArrayNotation = Handlebars.helpers.injectFieldIndices(field, options.hash, { forceArrayNotation: true }),
+        attributes = '';
+      attrs = attrs.split(',');
+      for (i = 0; i &lt; attrs.length; i++) {
+        attrName = attrs[i].trim();
+        var attrEnd = (i === attrs.length - 1) ? '"' : '" ';
+        if (attrName === FEEDBACK_KEY) {
+          // Feedback needs to always use array notation because of the way it finds the element (by stripping [] contents).
+          attributes += 'data-feedback="' + resWithArrayNotation + attrEnd;
+        } else if (attrName === MODEL_KEY) {
+          attributes += 'data-model="' + res + attrEnd;
+        } else if (attrName === 'name') {
+          attributes += 'name="' + Handlebars.helpers.dasherize(res) + attrEnd;
+        } else if (attrName === 'id') {
+          attributes += 'id="' + Handlebars.helpers.dasherize(res);
+          if (value !== undefined) {
+            attributes += '-' + value;
+          }
+          attributes += attrEnd;
+        } else if (attrName === 'for') {
+          attributes += 'for="' + Handlebars.helpers.dasherize(res);
+          if (value !== undefined) {
+            attributes += '-' + value;
+          }
+          attributes += attrEnd;
+        }
+      }
+      if (value !== undefined &amp;&amp; !options.noValueAttr) {
+        attributes += ' value="' + value + '"';
+      }
+      return new Handlebars.SafeString(attributes);
+    });
+
+    /**
+     * Usage: {{feedback 'fieldName[x].sub'}}
+     * Generates: field-name[x]_sub
+     * @param {string} str The input string to make HTML compliant (convert to dashes)
+     * @return {string} HTML complicant / dasherized string
+     */
+    Handlebars.registerHelper('dasherize', function(str) {
+      var camelCaseRemoved, dotsRemoved, bracesRemoved;
+      camelCaseRemoved = str.replace(/([A-Z])/g, function(rep) {
+        return '-' + rep.toLowerCase();
+      });
+      dotsRemoved = camelCaseRemoved.replace(/\./g, function() {
+        return '_';
+      });
+      bracesRemoved = dotsRemoved.replace(/\[[0-9]+\]/g, function(rep) {
+        return '-' + rep.substring(1, rep.length - 1);
+      });
+      return bracesRemoved;
+    });
+
+    /**
+     * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'
+     * if options.forceArrayNotation is set then:
+     * Generates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'
+     * @param {string} field The field name
+     * @param {Object} indexMap A map of variables
+     * @param {Object} options named parameters
+     *   @param {boolean} [options.forceArrayNotation=false] Force the usage of [] insetad of . for string values.
+     * @return {string} the field string with array variables substituted
+     */
+    Handlebars.registerHelper('injectFieldIndices', function(field, indexMap, options) {
+      if (indexMap) {
+        return field.replace(/\[.+?\]/g, function(m) {
+          var newIndex = indexMap[m.substring(1, m.length - 1)];
+          var indexToken = '[' + (newIndex === undefined ? '' : newIndex) + ']';
+          var forceArrayNotation = options &amp;&amp; options.forceArrayNotation;
+          if (_.isString(newIndex) &amp;&amp; !forceArrayNotation) {
+            indexToken = '.' + newIndex;
+          }
+          return indexToken;
+        });
+      } else {
+        return field;
+      }
+    });
+  };
+}));</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-modules_Behavior.html">modules/Behavior</a></li><li><a href="module-modules_View.html">modules/View</a></li></ul><h3>Externals</h3><ul><li><a href="external-_Backbone.View_.html">Backbone.View</a></li><li><a href="external-Backbone.html">Backbone</a></li></ul><h3>Classes</h3><ul><li><a href="Behavior.html">Behavior</a></li><li><a href="cacheMixin.html">cacheMixin</a></li><li><a href="cellMixin.html">cellMixin</a></li><li><a href="DataBehavior.html">DataBehavior</a></li><li><a href="handlebarsUtils.html">handlebarsUtils</a></li><li><a href="loadingMixin.html">loadingMixin</a></li><li><a href="modelMixin.html">modelMixin</a></li><li><a href="pollingMixin.html">pollingMixin</a></li><li><a href="Router.html">Router</a></li><li><a href="stickitUtils.html">stickitUtils</a></li><li><a href="templateRenderer.html">templateRenderer</a></li><li><a href="Torso.html">Torso</a></li><li><a href="validation.html">validation</a></li><li><a href="View.html">View</a></li><li><a href="ViewStateCell.html">ViewStateCell</a></li></ul><h3>Namespaces</h3><ul><li><a href="Torso.behaviors.html">behaviors</a></li><li><a href="Torso.behaviors.DataBehavior.html">DataBehavior</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__abortIfDisposed">__abortIfDisposed</a></li><li><a href="global.html#__cleanupItemViewsAfterAttachedToParent">__cleanupItemViewsAfterAttachedToParent</a></li><li><a href="global.html#__cloneVal">__cloneVal</a></li><li><a href="global.html#__completeLoadingIds">__completeLoadingIds</a></li><li><a href="global.html#__copyFields">__copyFields</a></li><li><a href="global.html#__createItemView">__createItemView</a></li><li><a href="global.html#__createItemViews">__createItemViews</a></li><li><a href="global.html#__createModelConfig">__createModelConfig</a></li><li><a href="global.html#__delayedRenderTimeout">__delayedRenderTimeout</a></li><li><a href="global.html#__disposeCache">__disposeCache</a></li><li><a href="global.html#__emptyAndRebuildItemViewsFragment">__emptyAndRebuildItemViewsFragment</a></li><li><a href="global.html#__fetchFailed">__fetchFailed</a></li><li><a href="global.html#__fetchSuccess">__fetchSuccess</a></li><li><a href="global.html#__findAlias">__findAlias</a></li><li><a href="global.html#__generateAllHashValues">__generateAllHashValues</a></li><li><a href="global.html#__generateChildArgs">__generateChildArgs</a></li><li><a href="global.html#__generateHashValue">__generateHashValue</a></li><li><a href="global.html#__generateItemViewArgs">__generateItemViewArgs</a></li><li><a href="global.html#__generateModelFieldBinding">__generateModelFieldBinding</a></li><li><a href="global.html#__generateSelectOptions">__generateSelectOptions</a></li><li><a href="global.html#__generateStickitBindings">__generateStickitBindings</a></li><li><a href="global.html#__getAllModelConfigs">__getAllModelConfigs</a></li><li><a href="global.html#__getComputedModelConfigs">__getComputedModelConfigs</a></li><li><a href="global.html#__getComputedModels">__getComputedModels</a></li><li><a href="global.html#__getFieldOptions">__getFieldOptions</a></li><li><a href="global.html#__getIds">__getIds</a></li><li><a href="global.html#__getModelAliases">__getModelAliases</a></li><li><a href="global.html#__getStaleItemViews">__getStaleItemViews</a></li><li><a href="global.html#__getTrackedModelFields">__getTrackedModelFields</a></li><li><a href="global.html#__getViewIdFromModelId">__getViewIdFromModelId</a></li><li><a href="global.html#__hashValue">__hashValue</a></li><li><a href="global.html#__initialize">__initialize</a></li><li><a href="global.html#__initMappings">__initMappings</a></li><li><a href="global.html#__invokeComputedPull">__invokeComputedPull</a></li><li><a href="global.html#__listenToComputedValuesDependency">__listenToComputedValuesDependency</a></li><li><a href="global.html#__listenToModelField">__listenToModelField</a></li><li><a href="global.html#__loadWrapper">__loadWrapper</a></li><li><a href="global.html#__normalizeAndValidateIds">__normalizeAndValidateIds</a></li><li><a href="global.html#__normalizeAndValidateUpdateEvents">__normalizeAndValidateUpdateEvents</a></li><li><a href="global.html#__parseContainerDetailString">__parseContainerDetailString</a></li><li><a href="global.html#__parseIdContainer">__parseIdContainer</a></li><li><a href="global.html#__parseIdsPropertyNameAndIdContainer">__parseIdsPropertyNameAndIdContainer</a></li><li><a href="global.html#__parseStringUpdateEvent">__parseStringUpdateEvent</a></li><li><a href="global.html#__parseUpdateEvent">__parseUpdateEvent</a></li><li><a href="global.html#__parseUpdateEvents">__parseUpdateEvents</a></li><li><a href="global.html#__pull">__pull</a></li><li><a href="global.html#__push">__push</a></li><li><a href="global.html#__register">__register</a></li><li><a href="global.html#__removeStaleItemViews">__removeStaleItemViews</a></li><li><a href="global.html#__saveToModels">__saveToModels</a></li><li><a href="global.html#__setupListeners">__setupListeners</a></li><li><a href="global.html#__shouldTriggerFetchedEvent">__shouldTriggerFetchedEvent</a></li><li><a href="global.html#__skipRetrieveOnEmptyTrackedIdsAndNewIds">__skipRetrieveOnEmptyTrackedIdsAndNewIds</a></li><li><a href="global.html#__updateByAddingRemoving">__updateByAddingRemoving</a></li><li><a href="global.html#__updateCache">__updateCache</a></li><li><a href="global.html#__updateFormField">__updateFormField</a></li><li><a href="global.html#__updateFormModel">__updateFormModel</a></li><li><a href="global.html#__updateOrderedModelIdList">__updateOrderedModelIdList</a></li><li><a href="global.html#__validateCache">__validateCache</a></li><li><a href="global.html#__validateIds">__validateIds</a></li><li><a href="global.html#__validUpdateEvent">__validUpdateEvent</a></li><li><a href="global.html#_activate">_activate</a></li><li><a href="global.html#_deactivate">_deactivate</a></li><li><a href="global.html#_delegateUpdateEvents">_delegateUpdateEvents</a></li><li><a href="global.html#_dispose">_dispose</a></li><li><a href="global.html#_thenAddClassIfInvalid">_thenAddClassIfInvalid</a></li><li><a href="global.html#_thenSetTextIfInvalid">_thenSetTextIfInvalid</a></li><li><a href="global.html#_undelegateUpdateEvents">_undelegateUpdateEvents</a></li><li><a href="global.html#activate">activate</a></li><li><a href="global.html#alwaysFetch">alwaysFetch</a></li><li><a href="global.html#cache">cache</a></li><li><a href="global.html#cellInitialized">cellInitialized</a></li><li><a href="global.html#checkIfModelsAreStale">checkIfModelsAreStale</a></li><li><a href="global.html#collection">collection</a></li><li><a href="global.html#constructor">constructor</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#deactivate">deactivate</a></li><li><a href="global.html#delegateEvents">delegateEvents</a></li><li><a href="global.html#dispose">dispose</a></li><li><a href="global.html#disposeAll">disposeAll</a></li><li><a href="global.html#disposeAllCells">disposeAllCells</a></li><li><a href="global.html#disposeAllModels">disposeAllModels</a></li><li><a href="global.html#disposeAllServices">disposeAllServices</a></li><li><a href="global.html#disposeAllViews">disposeAllViews</a></li><li><a href="global.html#emptyTemplate">emptyTemplate</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#FETCHED_STATUSES">FETCHED_STATUSES</a></li><li><a href="global.html#filterDefault">filterDefault</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getItemViewFromModel">getItemViewFromModel</a></li><li><a href="global.html#getItemViews">getItemViews</a></li><li><a href="global.html#getLoadedOncePromise">getLoadedOncePromise</a></li><li><a href="global.html#getMapping">getMapping</a></li><li><a href="global.html#getMappings">getMappings</a></li><li><a href="global.html#getModel">getModel</a></li><li><a href="global.html#getModels">getModels</a></li><li><a href="global.html#getTrackedModel">getTrackedModel</a></li><li><a href="global.html#getTrackedModels">getTrackedModels</a></li><li><a href="global.html#hasItemViews">hasItemViews</a></li><li><a href="global.html#hasLoadedOnce">hasLoadedOnce</a></li><li><a href="global.html#ids">ids</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#invalid">invalid</a></li><li><a href="global.html#isLoading">isLoading</a></li><li><a href="global.html#isLoadingIds">isLoadingIds</a></li><li><a href="global.html#isLoadingObjects">isLoadingObjects</a></li><li><a href="global.html#isModelCompatible">isModelCompatible</a></li><li><a href="global.html#isModelStale">isModelStale</a></li><li><a href="global.html#isTrackingAnyObjectModel">isTrackingAnyObjectModel</a></li><li><a href="global.html#isUpdating">isUpdating</a></li><li><a href="global.html#itemContainer">itemContainer</a></li><li><a href="global.html#itemView">itemView</a></li><li><a href="global.html#listenToIdsPropertyChangeEvent">listenToIdsPropertyChangeEvent</a></li><li><a href="global.html#mapping">mapping</a></li><li><a href="global.html#modelInitialized">modelInitialized</a></li><li><a href="global.html#models">models</a></li><li><a href="global.html#modelsToRender">modelsToRender</a></li><li><a href="global.html#parentBehavior">parentBehavior</a></li><li><a href="global.html#prepare">prepare</a></li><li><a href="global.html#prepareEmpty">prepareEmpty</a></li><li><a href="global.html#preValidate">preValidate</a></li><li><a href="global.html#privateCollection">privateCollection</a></li><li><a href="global.html#pull">pull</a></li><li><a href="global.html#push">push</a></li><li><a href="global.html#renderChildViews">renderChildViews</a></li><li><a href="global.html#renderOnFetch">renderOnFetch</a></li><li><a href="global.html#reorder">reorder</a></li><li><a href="global.html#resetModelListeners">resetModelListeners</a></li><li><a href="global.html#resetUpdating">resetUpdating</a></li><li><a href="global.html#retrieve">retrieve</a></li><li><a href="global.html#retrieveOncePromise">retrieveOncePromise</a></li><li><a href="global.html#returnSingleResult">returnSingleResult</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#serviceInitialized">serviceInitialized</a></li><li><a href="global.html#setCollection">setCollection</a></li><li><a href="global.html#setMapping">setMapping</a></li><li><a href="global.html#setMappings">setMappings</a></li><li><a href="global.html#setTrackedModel">setTrackedModel</a></li><li><a href="global.html#setTrackedModels">setTrackedModels</a></li><li><a href="global.html#skipInitialLoad">skipInitialLoad</a></li><li><a href="global.html#startUpdating">startUpdating</a></li><li><a href="global.html#stopListeningToIdsPropertyChangeEvent">stopListeningToIdsPropertyChangeEvent</a></li><li><a href="global.html#stopUpdating">stopUpdating</a></li><li><a href="global.html#template">template</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#trackModel">trackModel</a></li><li><a href="global.html#trackModels">trackModels</a></li><li><a href="global.html#unsetMapping">unsetMapping</a></li><li><a href="global.html#unsetMappings">unsetMappings</a></li><li><a href="global.html#unsetTrackedModel">unsetTrackedModel</a></li><li><a href="global.html#unsetTrackedModels">unsetTrackedModels</a></li><li><a href="global.html#untrackModel">untrackModel</a></li><li><a href="global.html#untrackModels">untrackModels</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateDOM">updateDOM</a></li><li><a href="global.html#updateEvents">updateEvents</a></li><li><a href="global.html#valid">valid</a></li><li><a href="global.html#viewInitialized">viewInitialized</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jan 02 2019 14:51:58 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
