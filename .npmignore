@@ -2,4 +2,6 @@ testSandbox
 test
 demo
 gulp
-docs/js
+docs/annotated
+docs/api
+docs/interactive
