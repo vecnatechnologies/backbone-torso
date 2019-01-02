@@ -1,64 +1,235 @@
+<!DOCTYPE html>
 
-
-
-
-
-
-  
-
-```
-/**
+<html>
+<head>
+  <title>torso.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>torso.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
  * The backbone View reference
  * @external Backbone
  * @property {external:"Backbone.View"} View
  * @see {@link http://backbonejs.org/|Backbone}
- */
-/**
+ */</span>
+<span class="hljs-comment">/**
  * @namespace Torso
  * @property {module:modules/Behavior} Behavior
  * @property {module:modules/View} View
- */
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['./behaviors/DataBehavior',
-            './Behavior',
-            './Cell',
-            './Collection',
-            './Events',
-            './mixins/loadingMixin', './mixins/cacheMixin', './mixins/cellMixin', './mixins/pollingMixin',
-            './validation',
-            './Model', './NestedCell', './NestedModel', './FormModel',
-            './ServiceCell',
-            './Router',
-            './history',
-            './registry',
-            './View', './ListView', './FormView',
-            './templateRenderer',
-            './handlebarsUtils',
-            './configure',
-            './stickitUtils'],
+ */</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'./behaviors/DataBehavior'</span>,
+            <span class="hljs-string">'./Behavior'</span>,
+            <span class="hljs-string">'./Cell'</span>,
+            <span class="hljs-string">'./Collection'</span>,
+            <span class="hljs-string">'./Events'</span>,
+            <span class="hljs-string">'./mixins/loadingMixin'</span>, <span class="hljs-string">'./mixins/cacheMixin'</span>, <span class="hljs-string">'./mixins/cellMixin'</span>, <span class="hljs-string">'./mixins/pollingMixin'</span>,
+            <span class="hljs-string">'./validation'</span>,
+            <span class="hljs-string">'./Model'</span>, <span class="hljs-string">'./NestedCell'</span>, <span class="hljs-string">'./NestedModel'</span>, <span class="hljs-string">'./FormModel'</span>,
+            <span class="hljs-string">'./ServiceCell'</span>,
+            <span class="hljs-string">'./Router'</span>,
+            <span class="hljs-string">'./history'</span>,
+            <span class="hljs-string">'./registry'</span>,
+            <span class="hljs-string">'./View'</span>, <span class="hljs-string">'./ListView'</span>, <span class="hljs-string">'./FormView'</span>,
+            <span class="hljs-string">'./templateRenderer'</span>,
+            <span class="hljs-string">'./handlebarsUtils'</span>,
+            <span class="hljs-string">'./configure'</span>,
+            <span class="hljs-string">'./stickitUtils'</span>],
            factory);
-  } else if (typeof exports === 'object') {
-    require('./stickitUtils');
-    require('./configure');
-    module.exports = factory(require('./behaviors/DataBehavior'),
-                             require('./Behavior'),
-                             require('./Cell'),
-                             require('./Collection'),
-                             require('./Events'),
-                             require('./mixins/loadingMixin'), require('./mixins/cacheMixin'), require('./mixins/cellMixin'), require('./mixins/pollingMixin'),
-                             require('./validation'),
-                             require('./Model'), require('./NestedCell'), require('./NestedModel'), require('./FormModel'),
-                             require('./ServiceCell'),
-                             require('./Router'),
-                             require('./history'),
-                             require('./registry'),
-                             require('./View'), require('./ListView'), require('./FormView'),
-                             require('./templateRenderer'), require('./handlebarsUtils'));
-  } else {
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-built_in">require</span>(<span class="hljs-string">'./stickitUtils'</span>);
+    <span class="hljs-built_in">require</span>(<span class="hljs-string">'./configure'</span>);
+    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'./behaviors/DataBehavior'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Behavior'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Cell'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Collection'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Events'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./mixins/loadingMixin'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./mixins/cacheMixin'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./mixins/cellMixin'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./mixins/pollingMixin'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./validation'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Model'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./NestedCell'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./NestedModel'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./FormModel'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./ServiceCell'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Router'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./history'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./registry'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./View'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./ListView'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./FormView'</span>),
+                             <span class="hljs-built_in">require</span>(<span class="hljs-string">'./templateRenderer'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./handlebarsUtils'</span>));
+  } <span class="hljs-keyword">else</span> {
     root.Torso = root.Torso || {};
   }
-}(this, function(DataBehavior,
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">DataBehavior,
                  Behavior,
                  Cell,
                  Collection,
@@ -72,50 +243,50 @@
                  registry,
                  View, ListView, FormView,
                  templateRenderer,
-                 handlebarsUtils) {
+                 handlebarsUtils</span>) </span>{
 
-  /**
+  <span class="hljs-comment">/**
    * File containing all dependencies that exports a single object with everything attached (same format as the global).
    *
    * @author    jyoung@vecna.com
-   */
-  return {
-    behaviors: {
-      DataBehavior: DataBehavior
+   */</span>
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-attr">behaviors</span>: {
+      <span class="hljs-attr">DataBehavior</span>: DataBehavior
     },
-    Behavior: Behavior,
-    Cell: Cell,
-    Collection: Collection,
-    Events: Events,
-    Mixins: {
-      loading: loadingMixin,
-      cache: cacheMixin,
-      polling: pollingMixin,
-      validation: validation.mixin,
-      cell: cellMixin
+    <span class="hljs-attr">Behavior</span>: Behavior,
+    <span class="hljs-attr">Cell</span>: Cell,
+    <span class="hljs-attr">Collection</span>: Collection,
+    <span class="hljs-attr">Events</span>: Events,
+    <span class="hljs-attr">Mixins</span>: {
+      <span class="hljs-attr">loading</span>: loadingMixin,
+      <span class="hljs-attr">cache</span>: cacheMixin,
+      <span class="hljs-attr">polling</span>: pollingMixin,
+      <span class="hljs-attr">validation</span>: validation.mixin,
+      <span class="hljs-attr">cell</span>: cellMixin
     },
-    Model: Model,
-    NestedCell: NestedCell,
-    NestedModel: NestedModel,
-    FormModel: FormModel,
-    ServiceCell: ServiceCell,
-    Router: Router,
-    history: history,
-    registry: registry,
-    Utils: {
-      templateRenderer: templateRenderer,
-      handlebarsUtils: handlebarsUtils
+    <span class="hljs-attr">Model</span>: Model,
+    <span class="hljs-attr">NestedCell</span>: NestedCell,
+    <span class="hljs-attr">NestedModel</span>: NestedModel,
+    <span class="hljs-attr">FormModel</span>: FormModel,
+    <span class="hljs-attr">ServiceCell</span>: ServiceCell,
+    <span class="hljs-attr">Router</span>: Router,
+    <span class="hljs-attr">history</span>: history,
+    <span class="hljs-attr">registry</span>: registry,
+    <span class="hljs-attr">Utils</span>: {
+      <span class="hljs-attr">templateRenderer</span>: templateRenderer,
+      <span class="hljs-attr">handlebarsUtils</span>: handlebarsUtils
     },
-    validation: validation,
-    View: View,
-    ListView: ListView,
-    FormView: FormView
+    <span class="hljs-attr">validation</span>: validation,
+    <span class="hljs-attr">View</span>: View,
+    <span class="hljs-attr">ListView</span>: ListView,
+    <span class="hljs-attr">FormView</span>: FormView
   };
-}));
-
-
-```
-
-
-
-
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,81 +1,252 @@
+<!DOCTYPE html>
 
-
-
-
-
-
-  
-
-```
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
-  } else if (typeof exports === 'object') {
-    require('backbone.stickit');
-    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./FormModel'), require('./Cell'));
-  } else {
+<html>
+<head>
+  <title>FormView.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>FormView.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'./View'</span>, <span class="hljs-string">'./FormModel'</span>, <span class="hljs-string">'./Cell'</span>, <span class="hljs-string">'backbone.stickit'</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone.stickit'</span>);
+    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./View'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./FormModel'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Cell'</span>));
+  } <span class="hljs-keyword">else</span> {
     root.Torso = root.Torso || {};
     root.Torso.FormView = factory(root._, root.Backbone, root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
   }
-}(this, function(_, Backbone, View, FormModel, Cell) {
-  'use strict';
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone, View, FormModel, Cell</span>) </span>{
+<span class="hljs-meta">  'use strict'</span>;
 
-  var $ = Backbone.$;
+  <span class="hljs-keyword">var</span> $ = Backbone.$;
 
-  /**
+  <span class="hljs-comment">/**
    * Generic Form View
    * @module    Torso
    * @class     FormView
    * @constructor
    * @author ariel.wexler@vecna.com
-   */
-  var FormView = View.extend({
-    /**
+   */</span>
+  <span class="hljs-keyword">var</span> FormView = View.extend({
+    <span class="hljs-comment">/**
      * Validation error hash
      * @private
      * @property _errors
      * @type Object
-     **/
-    /**
+     **/</span>
+    <span class="hljs-comment">/**
      * Validation success
      * @private
      * @property _success
      * @type Boolean
-     **/
-    /**
+     **/</span>
+    <span class="hljs-comment">/**
      * Stickit bindings hash local backup
      * @private
      * @property _bindings
      * @type Object
-     */
-    /**
+     */</span>
+    <span class="hljs-comment">/**
      * Handlebars template for form
      * @property template
      * @type HTMLtemplate
-     **/
-    /**
+     **/</span>
+    <span class="hljs-comment">/**
      * Backbone events hash
      * @property events
      * @type Object
-     **/
-    /**
+     **/</span>
+    <span class="hljs-comment">/**
      * Two-way binding field customization
      * @property fields
      * @type Object
-     **/
-    /**
+     **/</span>
+    <span class="hljs-comment">/**
      * Stickit bindings hash
      * @property bindings
      * @type Object
-     **/
-    /**
+     **/</span>
+    <span class="hljs-comment">/**
      * The class to be used when instantiating the form model
      * @property FormModelClass
      * @type Torso.FormModel class extension
-     **/
+     **/</span>
 
-    /**
+    <span class="hljs-comment">/**
      * Constructor the form view object.
      * @param {Object} args - options argument
      * @param [args.model=new FormModelClass()] {Torso.FormModel} - a form model for binding that defaults to class-level
@@ -86,332 +257,323 @@
      * @param {Events Hash}    [args.events] - merge + override the events hash used by this view
      * @param {Field Hash}    [args.fields] - merge + override automated two-way binding field hash used by this view
      * @param {Binding Hash}  [args.bindings] - merge + override custom epoxy binding hash used by this view
-     */
-    constructor: function(args) {
+     */</span>
+    <span class="hljs-keyword">constructor</span>: function(args) {
       args = args || {};
 
-      /* Listen to model validation callbacks */
-      var FormModelClass = args.FormModelClass || this.FormModelClass || FormModel;
-      this.model = args.model || this.model || (new FormModelClass());
+      <span class="hljs-comment">/* Listen to model validation callbacks */</span>
+      <span class="hljs-keyword">var</span> FormModelClass = args.FormModelClass || <span class="hljs-keyword">this</span>.FormModelClass || FormModel;
+      <span class="hljs-keyword">this</span>.model = args.model || <span class="hljs-keyword">this</span>.model || (<span class="hljs-keyword">new</span> FormModelClass());
 
-      /* Override template */
-      this.template = args.template || this.template;
+      <span class="hljs-comment">/* Override template */</span>
+      <span class="hljs-keyword">this</span>.template = args.template || <span class="hljs-keyword">this</span>.template;
 
-      /* Merge events, fields, bindings, and computeds */
-      this.events = _.extend({}, this.events || {}, args.events || {});
-      this.fields = _.extend({}, this.fields || {}, args.fields || {});
-      this._errors = [];
-      this._success = false;
+      <span class="hljs-comment">/* Merge events, fields, bindings, and computeds */</span>
+      <span class="hljs-keyword">this</span>.events = _.extend({}, <span class="hljs-keyword">this</span>.events || {}, args.events || {});
+      <span class="hljs-keyword">this</span>.fields = _.extend({}, <span class="hljs-keyword">this</span>.fields || {}, args.fields || {});
+      <span class="hljs-keyword">this</span>._errors = [];
+      <span class="hljs-keyword">this</span>._success = <span class="hljs-literal">false</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>this._bindings is a snapshot of the original bindings</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>._bindings = _.extend({}, <span class="hljs-keyword">this</span>.bindings || {}, args.bindings || {});
 
+      View.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
 
-
-
-
-
-
-this._bindings is a snapshot of the original bindings
-
-
-  
-
-```
-      this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
-
-      View.apply(this, arguments);
-
-      this.resetModelListeners(this.model);
+      <span class="hljs-keyword">this</span>.resetModelListeners(<span class="hljs-keyword">this</span>.model);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Prepare the formview's default render context
      * @return {Object}
      *         {Object.errors} A hash of field names mapped to error messages
      *         {Object.success} A boolean value of true if validation has succeeded
-     */
-    prepare: function() {
-      var templateContext = View.prototype.prepare.apply(this);
-      templateContext.formErrors = (_.size(this._errors) !== 0) ? this._errors : null;
-      templateContext.formSuccess = this._success;
-      return templateContext;
+     */</span>
+    prepare: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> templateContext = View.prototype.prepare.apply(<span class="hljs-keyword">this</span>);
+      templateContext.formErrors = (_.size(<span class="hljs-keyword">this</span>._errors) !== <span class="hljs-number">0</span>) ? <span class="hljs-keyword">this</span>._errors : <span class="hljs-literal">null</span>;
+      templateContext.formSuccess = <span class="hljs-keyword">this</span>._success;
+      <span class="hljs-keyword">return</span> templateContext;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Override the delegate events and wrap our custom additions
-     */
-    delegateEvents: function() {
-      /* DOM event bindings and plugins */
-      this.__generateStickitBindings();
-      this.stickit();
-      View.prototype.delegateEvents.call(this);
+     */</span>
+    delegateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-comment">/* DOM event bindings and plugins */</span>
+      <span class="hljs-keyword">this</span>.__generateStickitBindings();
+      <span class="hljs-keyword">this</span>.stickit();
+      View.prototype.delegateEvents.call(<span class="hljs-keyword">this</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Resets the form model with the passed in model. Stops listening to current form model
      * and sets up listeners on the new one.
      * @param {Torso.FormModel} model the new form model
      * @param {boolean} [stopListening=false] if true, it will stop listening to the previous form model
-     */
-    resetModelListeners: function(model, stopListening) {
-      if (this.model && stopListening) {
-        this.stopListening(this.model);
+     */</span>
+    resetModelListeners: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, stopListening</span>) </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.model &amp;&amp; stopListening) {
+        <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.model);
       }
-      this.model = model;
-      this.listenTo(this.model, 'validated:valid', this.valid);
-      this.listenTo(this.model, 'validated:invalid', this.invalid);
+      <span class="hljs-keyword">this</span>.model = model;
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.model, <span class="hljs-string">'validated:valid'</span>, <span class="hljs-keyword">this</span>.valid);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.model, <span class="hljs-string">'validated:invalid'</span>, <span class="hljs-keyword">this</span>.invalid);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Default method called on validation success.
-     */
-    valid: function() {
-      this._success = true;
-      this._errors = [];
+     */</span>
+    valid: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>._success = <span class="hljs-literal">true</span>;
+      <span class="hljs-keyword">this</span>._errors = [];
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Default method called on validation failure.
-     */
-    invalid: function(model, errors) {
-      this._success = false;
-      this._errors = errors;
+     */</span>
+    invalid: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, errors</span>) </span>{
+      <span class="hljs-keyword">this</span>._success = <span class="hljs-literal">false</span>;
+      <span class="hljs-keyword">this</span>._errors = errors;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Deactivate callback that removes bindings and other resources
      * that shouldn't exist in a dactivated state
-     */
-    deactivate: function() {
-      View.prototype.deactivate.call(this);
+     */</span>
+    deactivate: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      View.prototype.deactivate.call(<span class="hljs-keyword">this</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>No detach callback… Deactivate will have to do as it is called by detach</p>
 
-```
-
-
-
-
-
-
-
-No detach callback... Deactivate will have to do as it is called by detach
-
-
-  
-
-```
-      if (this.$el) {
-        this.unstickit();
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.$el) {
+        <span class="hljs-keyword">this</span>.unstickit();
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * For use in a feedback's "then" callback
      * Checks to see if the form model's field is valid. If the field is invalid, it adds the class.
      * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {string or Array&lt;string&gt;} fieldName the name of the form model field or an array of field names
      * @param {string} className the class name to add or remove
      * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
-     */
-    _thenAddClassIfInvalid: function(fieldName, className, onValid) {
-      var isValid = this.model.isValid(fieldName);
-      if ((onValid ? true : false) === (isValid ? true : false)) {
-        return {
-          addClass: className
+     */</span>
+    _thenAddClassIfInvalid: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fieldName, className, onValid</span>) </span>{
+      <span class="hljs-keyword">var</span> isValid = <span class="hljs-keyword">this</span>.model.isValid(fieldName);
+      <span class="hljs-keyword">if</span> ((onValid ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>) === (isValid ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>)) {
+        <span class="hljs-keyword">return</span> {
+          <span class="hljs-attr">addClass</span>: className
         };
-      } else {
-        return {
-          removeClass: className
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> {
+          <span class="hljs-attr">removeClass</span>: className
         };
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * For use in a feedback's "then" callback
      * Checks to see if the form model's field is valid. If the field is invalid, it sets the text.
      * If the field is invalid, it removes the text. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {string or Array&lt;string&gt;} fieldName the name of the form model field or an array of field names
      * @param {string} text the text to set
      * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
-     */
-    _thenSetTextIfInvalid: function(fieldName, text, onValid) {
-      var isValid = this.model.isValid(fieldName);
-      if ((onValid ? true : false) === (isValid ? true : false)) {
-        return {
-          text: text
+     */</span>
+    _thenSetTextIfInvalid: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fieldName, text, onValid</span>) </span>{
+      <span class="hljs-keyword">var</span> isValid = <span class="hljs-keyword">this</span>.model.isValid(fieldName);
+      <span class="hljs-keyword">if</span> ((onValid ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>) === (isValid ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>)) {
+        <span class="hljs-keyword">return</span> {
+          <span class="hljs-attr">text</span>: text
         };
-      } else {
-        return {
-          text: ''
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> {
+          <span class="hljs-attr">text</span>: <span class="hljs-string">''</span>
         };
       }
-    },
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><strong><strong><strong>**</strong></strong></strong> Private methods <strong><strong><strong>**</strong></strong></strong>//</p>
 
-
-```
-
-
-
-
-
-
-
-************** Private methods **************//
-
-
-  
-
-```
-
-    /**
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    <span class="hljs-comment">/**
      * Selects all data-model references in this view's DOM, and creates stickit bindings
      * @private
-     */
-    __generateStickitBindings: function() {
-      var self = this;
+     */</span>
+    __generateStickitBindings: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Start by removing all old bindings and falling back to the initialized binding contents</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.bindings = _.extend({}, <span class="hljs-keyword">this</span>._bindings);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Stickit model two-way bindings</p>
 
-
-
-
-
-
-
-Start by removing all old bindings and falling back to the initialized binding contents
-
-
-  
-
-```
-      this.bindings = _.extend({}, this._bindings);
-
-
-```
-
-
-
-
-
-
-
-Stickit model two-way bindings
-
-
-  
-
-```
-      _.each(this.$('[data-model]'), function(element) {
-        var attr = $(element).data('model'),
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      _.each(<span class="hljs-keyword">this</span>.$(<span class="hljs-string">'[data-model]'</span>), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element</span>) </span>{
+        <span class="hljs-keyword">var</span> attr = $(element).data(<span class="hljs-string">'model'</span>),
             options = self.__getFieldOptions(attr),
-            fieldBinding = self.__generateModelFieldBinding(attr, options);
+            fieldBinding = self.__generateModelFieldBinding(attr, options);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>add select options</p>
 
-
-```
-
-
-
-
-
-
-
-add select options
-
-
-  
-
-```
-        if ($(element).is('select')) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> ($(element).is(<span class="hljs-string">'select'</span>)) {
           fieldBinding.selectOptions = self.__generateSelectOptions(element, options);
         }
 
-        self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
+        self.bindings[<span class="hljs-string">'[data-model="'</span> + attr + <span class="hljs-string">'"]'</span>] = fieldBinding;
       });
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @param {string} attr An attribute of the model
      * @return {Object} Any settings that are associates with that attribute
-     */
-    __getFieldOptions: function(attr) {
-      attr = this.__stripAllAttribute(attr);
-      return this.fields[attr] || {};
+     */</span>
+    __getFieldOptions: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attr</span>) </span>{
+      attr = <span class="hljs-keyword">this</span>.__stripAllAttribute(attr);
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fields[attr] || {};
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @param {string} field A specific model field
      * @param {Object} options Additional behavior options for the bindings
      * @param {Object} [options.modelFormat] The function called before setting model values
      * @param {Object} [options.viewFormat] The function called before setting view values
      * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
-     * @return {<Stickit Binding Hash>}
-     */
-    __generateModelFieldBinding: function(field, options) {
-      var indices = this.__getAllIndexTokens(field);
+     * @return {&lt;Stickit Binding Hash&gt;}
+     */</span>
+    __generateModelFieldBinding: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
+      <span class="hljs-keyword">var</span> indices = <span class="hljs-keyword">this</span>.__getAllIndexTokens(field);
       options = options || {};
-      var stickitOpts = options.stickit || {};
-      if (_.isFunction(stickitOpts)) {
-        stickitOpts = stickitOpts.call(this, field, options);
+      <span class="hljs-keyword">var</span> stickitOpts = options.stickit || {};
+      <span class="hljs-keyword">if</span> (_.isFunction(stickitOpts)) {
+        stickitOpts = stickitOpts.call(<span class="hljs-keyword">this</span>, field, options);
       }
-      return _.extend({
-        observe: field,
-        onSet: function(value) {
-          var params = [value];
+      <span class="hljs-keyword">return</span> _.extend({
+        <span class="hljs-attr">observe</span>: field,
+        <span class="hljs-attr">onSet</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>{
+          <span class="hljs-keyword">var</span> params = [value];
           params.push(indices);
           params = _.flatten(params);
-          return options.modelFormat ? options.modelFormat.apply(this, params) : value;
+          <span class="hljs-keyword">return</span> options.modelFormat ? options.modelFormat.apply(<span class="hljs-keyword">this</span>, params) : value;
         },
-        onGet: function(value) {
-          var params = [value];
+        <span class="hljs-attr">onGet</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>{
+          <span class="hljs-keyword">var</span> params = [value];
           params.push(indices);
           params = _.flatten(params);
-          return options.viewFormat ? options.viewFormat.apply(this, params) : value;
+          <span class="hljs-keyword">return</span> options.viewFormat ? options.viewFormat.apply(<span class="hljs-keyword">this</span>, params) : value;
         }
       }, stickitOpts);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @param {Element} element The select element to generate options for
      * @param {Object} opts Additional behavior options for the bindings
      * @param {Object} [opts.modelFormat] The function called before setting model values
      * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
-     * @return {<Stickit select options hash>}
-     */
-    __generateSelectOptions: function(element, opts) {
-      var collection = [],
-          options = $(element).children('option');
+     * @return {&lt;Stickit select options hash&gt;}
+     */</span>
+    __generateSelectOptions: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element, opts</span>) </span>{
+      <span class="hljs-keyword">var</span> collection = [],
+          options = $(element).children(<span class="hljs-string">'option'</span>);
       opts = opts || {};
       opts.stickit = opts.stickit || {};
-      var selectOptions = opts.stickit.selectOptions || {};
-      if (_.isFunction(selectOptions)) {
-        selectOptions = selectOptions.call(this, element, opts);
+      <span class="hljs-keyword">var</span> selectOptions = opts.stickit.selectOptions || {};
+      <span class="hljs-keyword">if</span> (_.isFunction(selectOptions)) {
+        selectOptions = selectOptions.call(<span class="hljs-keyword">this</span>, element, opts);
       }
 
-      _.each(options, function(option) {
-        collection.push({'label': $(option).text(), 'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
+      _.each(options, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">option</span>) </span>{
+        collection.push({<span class="hljs-string">'label'</span>: $(option).text(), <span class="hljs-string">'value'</span>: opts.modelFormat ? opts.modelFormat.apply(<span class="hljs-keyword">this</span>, [$(option).val()]) : $(option).val()});
       });
 
-      return _.extend({
-        collection: collection,
-        labelPath: 'label',
-        valuePath: 'value'
+      <span class="hljs-keyword">return</span> _.extend({
+        <span class="hljs-attr">collection</span>: collection,
+        <span class="hljs-attr">labelPath</span>: <span class="hljs-string">'label'</span>,
+        <span class="hljs-attr">valuePath</span>: <span class="hljs-string">'value'</span>
       }, selectOptions);
     }
   });
 
-  return FormView;
-}));
-
-
-```
-
-
-
-
+  <span class="hljs-keyword">return</span> FormView;
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

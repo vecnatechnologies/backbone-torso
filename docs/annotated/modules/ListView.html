@@ -1,203 +1,374 @@
+<!DOCTYPE html>
 
-
-
-
-
-
-  
-
-```
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', './View', './templateRenderer'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./templateRenderer'));
-  } else {
+<html>
+<head>
+  <title>ListView.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ListView.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'./View'</span>, <span class="hljs-string">'./templateRenderer'</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./View'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./templateRenderer'</span>));
+  } <span class="hljs-keyword">else</span> {
     root.Torso = root.Torso || {};
     root.Torso.ListView = factory(root._, root.Backbone, root.Torso.View, root.Torso.Utils.templateRenderer);
   }
-}(this, function(_, Backbone, View, templateRenderer) {
-  'use strict';
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone, View, templateRenderer</span>) </span>{
+<span class="hljs-meta">  'use strict'</span>;
 
-    var removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
+    <span class="hljs-keyword">var</span> removeItemView, _removeItemView, addItemView, _addItemView, aggregateRenders, breakDelayedRender;
 
-    var $ = Backbone.$;
+    <span class="hljs-keyword">var</span> $ = Backbone.$;
 
-    /**
+    <span class="hljs-comment">/**
      * If one exists, this method will clear the delayed render timeout and invoke render
      * @param {ListView} view the list view
      * @private
-     */
-    breakDelayedRender = function(view) {
-      if (view.__delayedRenderTimeout) {
+     */</span>
+    breakDelayedRender = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
+      <span class="hljs-keyword">if</span> (view.__delayedRenderTimeout) {
         clearTimeout(view.__delayedRenderTimeout);
-        view.__delayedRenderTimeout = null;
-        if (!view.isDisposed()) {
+        view.__delayedRenderTimeout = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">if</span> (!view.isDisposed()) {
           view.render();
         }
       }
     };
 
-    /**
+    <span class="hljs-comment">/**
      * Aggregates calls to render by waiting a certain amount of time and then rendering.
      * Calls that happen while it is waiting, will be swallowed. Useful for when you want to
      * batch render calls
      * @private
      * @param {number} wait the number of milliseconds to wait before rendering
      * @param {ListView} view the list view
-     */
-    aggregateRenders = function(wait, view) {
-      var postpone = function() {
-        view.__delayedRenderTimeout = null;
-        if (!view.isDisposed()) {
+     */</span>
+    aggregateRenders = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">wait, view</span>) </span>{
+      <span class="hljs-keyword">var</span> postpone = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        view.__delayedRenderTimeout = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">if</span> (!view.isDisposed()) {
           view.render();
         }
       };
-      return function() {
-        if (!view.__delayedRenderTimeout && wait > 0) {
+      <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">if</span> (!view.__delayedRenderTimeout &amp;&amp; wait &gt; <span class="hljs-number">0</span>) {
           view.__delayedRenderTimeout = setTimeout(postpone, wait);
-        } else if (wait <= 0 && !view.isDisposed()) {
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (wait &lt;= <span class="hljs-number">0</span> &amp;&amp; !view.isDisposed()) {
           view.render();
         }
       };
     };
 
-    /**
+    <span class="hljs-comment">/**
      * Handles the removal of an item view if a model has been removed from the collection
      * @private
      * @param {Backbone Model instance} model the model that has been removed
-     */
-    removeItemView = function(model) {
-      var itemView = this.getItemViewFromModel(model);
-      if (itemView) {
-        _removeItemView.call(this, itemView, model[this.__modelId], model);
-        if (!this.hasItemViews()) {
-          this.__delayedRender();
+     */</span>
+    removeItemView = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+      <span class="hljs-keyword">var</span> itemView = <span class="hljs-keyword">this</span>.getItemViewFromModel(model);
+      <span class="hljs-keyword">if</span> (itemView) {
+        _removeItemView.call(<span class="hljs-keyword">this</span>, itemView, model[<span class="hljs-keyword">this</span>.__modelId], model);
+        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.hasItemViews()) {
+          <span class="hljs-keyword">this</span>.__delayedRender();
         }
       }
     };
 
-    /**
+    <span class="hljs-comment">/**
      * Disposes of an item view, unregisters, stops tracking and triggers a 'item-view-removed' event
      * with the model and an item view as the payload.
      * @private
      * @param {Backbone View instance} itemView the view being removed
      * @param {string|Number} modelId the id used for the model
      * @param {Backbone Model instance} [model] the model
-     */
-    _removeItemView = function(itemView, modelId, model) {
+     */</span>
+    _removeItemView = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">itemView, modelId, model</span>) </span>{
       itemView.dispose();
-      this.unregisterTrackedView(itemView, { shared: false });
-      delete this.__modelToViewMap[modelId];
-      this.__updateOrderedModelIdList();
-      this.trigger('item-view-removed', {model: model || itemView.model, view: itemView});
-      this.trigger('child-view-removed', {model: model || itemView.model, view: itemView});
+      <span class="hljs-keyword">this</span>.unregisterTrackedView(itemView, { <span class="hljs-attr">shared</span>: <span class="hljs-literal">false</span> });
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__modelToViewMap[modelId];
+      <span class="hljs-keyword">this</span>.__updateOrderedModelIdList();
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'item-view-removed'</span>, {<span class="hljs-attr">model</span>: model || itemView.model, <span class="hljs-attr">view</span>: itemView});
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'child-view-removed'</span>, {<span class="hljs-attr">model</span>: model || itemView.model, <span class="hljs-attr">view</span>: itemView});
     };
 
-    /**
+    <span class="hljs-comment">/**
      * Handles the addition of an item view if a model has been added to the collection.
      * When possible, it will append the view instead of causing a rerender
      * @private
      * @param model the model being added
-     */
-    addItemView = function(model) {
-      var itemView,
-          models = this.modelsToRender(),
+     */</span>
+    addItemView = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+      <span class="hljs-keyword">var</span> itemView,
+          models = <span class="hljs-keyword">this</span>.modelsToRender(),
           indexOfModel = models.indexOf(model);
-      if (indexOfModel > -1) {
-        itemView = this.__createItemView(model);
-        _addItemView.call(this, itemView, indexOfModel);
+      <span class="hljs-keyword">if</span> (indexOfModel &gt; <span class="hljs-number">-1</span>) {
+        itemView = <span class="hljs-keyword">this</span>.__createItemView(model);
+        _addItemView.call(<span class="hljs-keyword">this</span>, itemView, indexOfModel);
       }
     };
 
-    /**
+    <span class="hljs-comment">/**
      * Adds the new item view before or after a sibling view. If no sibling view exists
      * or if this item view is the first, it will cause a re-render. This method will break
      * any delayed renders and force a re-render before continuing.
      * @private
      * @param itemView the view being added
      * @param indexOfModel - the index of the model into the array of models to render
-     */
-    _addItemView = function(itemView, indexOfModel) {
-      var viewAfter, viewBefore, replaceMethod,
-        models = this.modelsToRender();
-      if (!this.hasItemViews()) {
-        this.__delayedRender();
-      } else {
-        breakDelayedRender(this);
-        viewAfter = this.getItemViewFromModel(models[indexOfModel + 1]);
-        viewBefore = this.getItemViewFromModel(models[indexOfModel - 1]);
-        if (viewAfter) {
+     */</span>
+    _addItemView = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">itemView, indexOfModel</span>) </span>{
+      <span class="hljs-keyword">var</span> viewAfter, viewBefore, replaceMethod,
+        models = <span class="hljs-keyword">this</span>.modelsToRender();
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.hasItemViews()) {
+        <span class="hljs-keyword">this</span>.__delayedRender();
+      } <span class="hljs-keyword">else</span> {
+        breakDelayedRender(<span class="hljs-keyword">this</span>);
+        viewAfter = <span class="hljs-keyword">this</span>.getItemViewFromModel(models[indexOfModel + <span class="hljs-number">1</span>]);
+        viewBefore = <span class="hljs-keyword">this</span>.getItemViewFromModel(models[indexOfModel - <span class="hljs-number">1</span>]);
+        <span class="hljs-keyword">if</span> (viewAfter) {
           replaceMethod = _.bind(viewAfter.$el.before, viewAfter.$el);
-        } else if (viewBefore) {
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (viewBefore) {
           replaceMethod = _.bind(viewBefore.$el.after, viewBefore.$el);
-        } else {
-          this.__delayedRender();
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">this</span>.__delayedRender();
         }
-        if (replaceMethod) {
-          this.attachView(null, itemView, {
-            replaceMethod: replaceMethod,
-            discardInjectionSite: true
+        <span class="hljs-keyword">if</span> (replaceMethod) {
+          <span class="hljs-keyword">this</span>.attachView(<span class="hljs-literal">null</span>, itemView, {
+            <span class="hljs-attr">replaceMethod</span>: replaceMethod,
+            <span class="hljs-attr">discardInjectionSite</span>: <span class="hljs-literal">true</span>
           });
         }
       }
     };
 
-  /**
+  <span class="hljs-comment">/**
    * A view that is backed by a collection that managers views per model in the collection.
    * @module    Torso
    * @class     ListView
    * @constructor
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var ListView = View.extend({
-    /**
+   */</span>
+  <span class="hljs-keyword">var</span> ListView = View.extend({
+    <span class="hljs-comment">/**
      * The collection that holds the models that this list view will track
      * @property collection
      * @type Collection
-     */
-    collection: null,
-    /**
+     */</span>
+    collection: <span class="hljs-literal">null</span>,
+    <span class="hljs-comment">/**
      * The item view class definition that will be instantiated for each model in the list.
      * itemView can also be a function that takes a model and returns a view class. This allows
      * for different view classes depending on the model.
      * @property itemView
      * @type View or Function
-     */
-    itemView: null,
-    /**
+     */</span>
+    itemView: <span class="hljs-literal">null</span>,
+    <span class="hljs-comment">/**
      * The template that allows a list view to hold it's own HTML like filter buttons, etc.
      * @property template
      * @type HTML Template
-     */
-    template: null,
-    /**
+     */</span>
+    template: <span class="hljs-literal">null</span>,
+    <span class="hljs-comment">/**
      * If provided, this template that will be shown if the modelsToRender() method returns
      * an empty list. If an itemContainer is provided, the empty template will be rendered there.
      * @property emptyTemplate
      * @type HTML Template
-     */
-    emptyTemplate: null,
-    /**
+     */</span>
+    emptyTemplate: <span class="hljs-literal">null</span>,
+    <span class="hljs-comment">/**
      * (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
      * @property itemContainer
      * @type String
-     */
-    itemContainer: null,
-    __modelName: '',
-    __modelId: '',
-    __modelToViewMap: null,
-    __itemContext: null,
-    __renderWait: 0,
-    __delayedRender: null,
-    /**
+     */</span>
+    itemContainer: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">__modelName</span>: <span class="hljs-string">''</span>,
+    <span class="hljs-attr">__modelId</span>: <span class="hljs-string">''</span>,
+    <span class="hljs-attr">__modelToViewMap</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">__itemContext</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-attr">__renderWait</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-attr">__delayedRender</span>: <span class="hljs-literal">null</span>,
+    <span class="hljs-comment">/**
      * @property __delayedRenderTimeout
      * @private
      * @type {number}
-     */
-    __delayedRenderTimeout: null,
+     */</span>
+    __delayedRenderTimeout: <span class="hljs-literal">null</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Constructor for the list view object.
      * @param {Object} args - options argument
      *   @param {Backbone.View definition or Function} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
@@ -210,37 +381,37 @@
      *   @param {number} [args.renderWait=0] - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {string} - name of the model argument passed to the item view during initialization
-     */
-    constructor: function(args) {
-      View.apply(this, arguments);
+     */</span>
+    <span class="hljs-keyword">constructor</span>: function(args) {
+      View.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
       args = args || {};
 
-      var collection = args.collection || this.collection;
+      <span class="hljs-keyword">var</span> collection = args.collection || <span class="hljs-keyword">this</span>.collection;
 
-      this.template = args.template || this.template;
-      this.emptyTemplate = args.emptyTemplate || this.emptyTemplate;
-      this.itemView = args.itemView || this.itemView;
-      this.itemContainer = args.itemContainer || this.itemContainer;
-      if (this.template && !this.itemContainer) {
-        throw 'Item container is required when using a template';
+      <span class="hljs-keyword">this</span>.template = args.template || <span class="hljs-keyword">this</span>.template;
+      <span class="hljs-keyword">this</span>.emptyTemplate = args.emptyTemplate || <span class="hljs-keyword">this</span>.emptyTemplate;
+      <span class="hljs-keyword">this</span>.itemView = args.itemView || <span class="hljs-keyword">this</span>.itemView;
+      <span class="hljs-keyword">this</span>.itemContainer = args.itemContainer || <span class="hljs-keyword">this</span>.itemContainer;
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.template &amp;&amp; !<span class="hljs-keyword">this</span>.itemContainer) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Item container is required when using a template'</span>;
       }
-      this.modelsToRender = args.modelsToRender || this.modelsToRender;
-      this.__itemContext = args.itemContext || this.__itemContext;
-      this.__modelToViewMap = {};
-      this.__renderWait = args.renderWait || this.__renderWait;
-      this.__modelId = args.modelId || this.modelId || 'cid';
-      this.__modelName = args.modelName || this.modelName || 'model';
-      this.__orderedModelIdList = [];
-      this.__createItemViews();
-      this.__delayedRender = aggregateRenders(this.__renderWait, this);
+      <span class="hljs-keyword">this</span>.modelsToRender = args.modelsToRender || <span class="hljs-keyword">this</span>.modelsToRender;
+      <span class="hljs-keyword">this</span>.__itemContext = args.itemContext || <span class="hljs-keyword">this</span>.__itemContext;
+      <span class="hljs-keyword">this</span>.__modelToViewMap = {};
+      <span class="hljs-keyword">this</span>.__renderWait = args.renderWait || <span class="hljs-keyword">this</span>.__renderWait;
+      <span class="hljs-keyword">this</span>.__modelId = args.modelId || <span class="hljs-keyword">this</span>.modelId || <span class="hljs-string">'cid'</span>;
+      <span class="hljs-keyword">this</span>.__modelName = args.modelName || <span class="hljs-keyword">this</span>.modelName || <span class="hljs-string">'model'</span>;
+      <span class="hljs-keyword">this</span>.__orderedModelIdList = [];
+      <span class="hljs-keyword">this</span>.__createItemViews();
+      <span class="hljs-keyword">this</span>.__delayedRender = aggregateRenders(<span class="hljs-keyword">this</span>.__renderWait, <span class="hljs-keyword">this</span>);
 
-      if (collection) {
-        this.setCollection(collection, true);
+      <span class="hljs-keyword">if</span> (collection) {
+        <span class="hljs-keyword">this</span>.setCollection(collection, <span class="hljs-literal">true</span>);
       }
-      this.on('render:after-dom-update', this.__cleanupItemViewsAfterAttachedToParent);
+      <span class="hljs-keyword">this</span>.on(<span class="hljs-string">'render:after-dom-update'</span>, <span class="hljs-keyword">this</span>.__cleanupItemViewsAfterAttachedToParent);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Sets the collection from which this view generates item views.
      * This method will attach all necessary event listeners to the new collection to auto-generate item views
      * and has the option of removing listeners on a previous collection. It will immediately update child
@@ -248,353 +419,346 @@
      *
      * @param {Backbone.Collection instance} collection the new collection that this list view should use.
      * @param {boolean} preventUpdate if true, the list view will not update the child views nor rerender.
-     */
-    setCollection: function(collection, preventUpdate) {
-      this.stopListening(this.collection, 'remove', removeItemView);
-      this.stopListening(this.collection, 'add', addItemView);
-      this.stopListening(this.collection, 'sort', this.reorder);
-      this.stopListening(this.collection, 'reset', this.update);
+     */</span>
+    setCollection: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">collection, preventUpdate</span>) </span>{
+      <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'remove'</span>, removeItemView);
+      <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'add'</span>, addItemView);
+      <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'sort'</span>, <span class="hljs-keyword">this</span>.reorder);
+      <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'reset'</span>, <span class="hljs-keyword">this</span>.update);
 
-      this.collection = collection;
+      <span class="hljs-keyword">this</span>.collection = collection;
 
-      this.listenTo(this.collection, 'remove', removeItemView);
-      this.listenTo(this.collection, 'add', addItemView);
-      this.listenTo(this.collection, 'sort', this.reorder);
-      this.listenTo(this.collection, 'reset', this.update);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'remove'</span>, removeItemView);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'add'</span>, addItemView);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'sort'</span>, <span class="hljs-keyword">this</span>.reorder);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.collection, <span class="hljs-string">'reset'</span>, <span class="hljs-keyword">this</span>.update);
 
-      if (!preventUpdate) {
-        this.update();
+      <span class="hljs-keyword">if</span> (!preventUpdate) {
+        <span class="hljs-keyword">this</span>.update();
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Override of View.__updateDOM
      * Builds a single DOM fragment from the item views and attaches it at once.
-     */
-    updateDOM: function() {
-      var injectionSite,
-        newDOM = $(templateRenderer.copyTopElement(this.el));
-      if (this.template) {
-        newDOM.html(this.template(this.prepare()));
-        injectionSite = newDOM.find('[inject=' + this.itemContainer + ']');
-      } else {
-        injectionSite = $('<span>');
+     */</span>
+    updateDOM: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> injectionSite,
+        newDOM = $(templateRenderer.copyTopElement(<span class="hljs-keyword">this</span>.el));
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.template) {
+        newDOM.html(<span class="hljs-keyword">this</span>.template(<span class="hljs-keyword">this</span>.prepare()));
+        injectionSite = newDOM.find(<span class="hljs-string">'[inject='</span> + <span class="hljs-keyword">this</span>.itemContainer + <span class="hljs-string">']'</span>);
+      } <span class="hljs-keyword">else</span> {
+        injectionSite = $(<span class="hljs-string">'&lt;span&gt;'</span>);
         newDOM.append(injectionSite);
       }
-      if (this.hasItemViews()) {
-        injectionSite.replaceWith(this.__emptyAndRebuildItemViewsFragment());
-      } else if (this.emptyTemplate) {
-        injectionSite.replaceWith(this.emptyTemplate(this.prepareEmpty()));
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.hasItemViews()) {
+        injectionSite.replaceWith(<span class="hljs-keyword">this</span>.__emptyAndRebuildItemViewsFragment());
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.emptyTemplate) {
+        injectionSite.replaceWith(<span class="hljs-keyword">this</span>.emptyTemplate(<span class="hljs-keyword">this</span>.prepareEmpty()));
       }
-      this.$el.html(newDOM.contents());
+      <span class="hljs-keyword">this</span>.$el.html(newDOM.contents());
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Completes each item view's lifecycle of being attached to a parent.
      * Because the item views are attached in a non-standard way, it's important to make sure
      * that the item views are in the appropriate state after being attached as one fragment.
      * @private
-     */
-    __cleanupItemViewsAfterAttachedToParent: function() {
-      _.each(this.modelsToRender(), function(model) {
-        var itemView = this.getItemViewFromModel(model);
-        if (itemView) {
+     */</span>
+    __cleanupItemViewsAfterAttachedToParent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      _.each(<span class="hljs-keyword">this</span>.modelsToRender(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+        <span class="hljs-keyword">var</span> itemView = <span class="hljs-keyword">this</span>.getItemViewFromModel(model);
+        <span class="hljs-keyword">if</span> (itemView) {
           itemView.delegateEvents();
-          if (!itemView.__attachedCallbackInvoked && itemView.isAttached()) {
+          <span class="hljs-keyword">if</span> (!itemView.__attachedCallbackInvoked &amp;&amp; itemView.isAttached()) {
             itemView.__invokeAttached();
           }
           itemView.activate();
-        } else {
+        } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Shouldn’t get here. Item view is missing…</p>
 
-```
-
-
-
-
-
-
-
-Shouldn't get here. Item view is missing...
-
-
-  
-
-```
-        }
-      }, this);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        }
+      }, <span class="hljs-keyword">this</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Loops through children views and renders them
-     */
-    renderChildViews: function() {
-      _.each(this.getTrackedViews({child: true}), function(childView) {
+     */</span>
+    renderChildViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      _.each(<span class="hljs-keyword">this</span>.getTrackedViews({<span class="hljs-attr">child</span>: <span class="hljs-literal">true</span>}), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">childView</span>) </span>{
         childView.render();
       });
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Takes existing item views and moves them into correct order defined by
-     * this.modelsToRender(). NOTE: As this method doesn't generate or remove views,
+     * this.modelsToRender(). <span class="hljs-doctag">NOTE:</span> As this method doesn't generate or remove views,
      * this method takes advantage of jquery's ability to move elements already attached to the DOM.
-     */
-    reorder: function() {
-      var firstItemView, sameOrder,
+     */</span>
+    reorder: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> firstItemView, sameOrder,
         elements = [],
-        models = this.modelsToRender(),
-        newOrderOfIds = _.pluck(models, this.__modelId),
+        models = <span class="hljs-keyword">this</span>.modelsToRender(),
+        newOrderOfIds = _.pluck(models, <span class="hljs-keyword">this</span>.__modelId),
         sizeOfNewModels = _.size(newOrderOfIds),
-        sizeOfOldModels = _.size(this.__orderedModelIdList),
+        sizeOfOldModels = _.size(<span class="hljs-keyword">this</span>.__orderedModelIdList),
         sameSize = sizeOfNewModels === sizeOfOldModels;
 
-      if (sameSize) {
+      <span class="hljs-keyword">if</span> (sameSize) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>is order the same?</p>
 
-```
-
-
-
-
-
-
-
-is order the same?
-
-
-  
-
-```
-        sameOrder = _.reduce(this.__orderedModelIdList, function(result, oldId, index) {
-          return result && newOrderOfIds[index] == oldId;
-        }, true);
-      } else {
-        throw 'Reorder should not be invoked if the number of models have changed';
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        sameOrder = _.reduce(<span class="hljs-keyword">this</span>.__orderedModelIdList, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">result, oldId, index</span>) </span>{
+          <span class="hljs-keyword">return</span> result &amp;&amp; newOrderOfIds[index] == oldId;
+        }, <span class="hljs-literal">true</span>);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-string">'Reorder should not be invoked if the number of models have changed'</span>;
       }
-      if (!sizeOfNewModels || sameOrder) {
+      <span class="hljs-keyword">if</span> (!sizeOfNewModels || sameOrder) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>stop early if there are no models to reorder or the models are the same</p>
 
-```
-
-
-
-
-
-
-
-stop early if there are no models to reorder or the models are the same
-
-
-  
-
-```
-        return;
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span>;
       }
-      _.each(models, function(model, index) {
-        var itemView = this.getItemViewFromModel(model);
-        if (itemView) {
+      _.each(models, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, index</span>) </span>{
+        <span class="hljs-keyword">var</span> itemView = <span class="hljs-keyword">this</span>.getItemViewFromModel(model);
+        <span class="hljs-keyword">if</span> (itemView) {
           elements.push(itemView.$el);
         }
-        if (index === 0) {
+        <span class="hljs-keyword">if</span> (index === <span class="hljs-number">0</span>) {
           firstItemView = itemView;
         }
-      }, this);
+      }, <span class="hljs-keyword">this</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>elements that are already connected to the DOM will be moved instead of re-attached
+meaning that detach, delegate events, and attach are not needed</p>
 
-```
-
-
-
-
-
-
-
-elements that are already connected to the DOM will be moved instead of re-attached
-meaning that detach, delegate events, and attach are not needed
-
-
-  
-
-```
-      if (!this.itemContainer) {
-        this.$el.append(elements);
-      } else if (firstItemView) {
-        var injectionSite = $("<span>");
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.itemContainer) {
+        <span class="hljs-keyword">this</span>.$el.append(elements);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (firstItemView) {
+        <span class="hljs-keyword">var</span> injectionSite = $(<span class="hljs-string">"&lt;span&gt;"</span>);
         firstItemView.$el.before(injectionSite);
         injectionSite.after(elements);
         injectionSite.remove();
       }
-      this.__updateOrderedModelIdList(newOrderOfIds);
-      this.trigger('reorder-complete');
+      <span class="hljs-keyword">this</span>.__updateOrderedModelIdList(newOrderOfIds);
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'reorder-complete'</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Override if you want a different context for your empty template. Defaults to this.prepare()
      * @return a context that can be used by the empty list template
-     */
-    prepareEmpty: function() {
-      return this.prepare();
+     */</span>
+    prepareEmpty: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.prepare();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Returns an array of which models should be rendered.
      * By default, all models in the input collection will be
      * shown.  Extensions of this class may override this
      * method to apply collection filters.
-     */
-    modelsToRender: function() {
-      return this.collection ? this.collection.models : [];
+     */</span>
+    modelsToRender: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.collection ? <span class="hljs-keyword">this</span>.collection.models : [];
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Builds any new views, removes stale ones, and re-renders
-     */
-    update: function() {
-      var oldViews = this.getItemViews();
-      var newViews = this.__createItemViews();
-      var staleViews = this.__getStaleItemViews();
-      var sizeOfOldViews = _.size(oldViews);
-      var sizeOfNewViews = _.size(newViews);
-      var sizeOfStaleViews = _.size(staleViews);
-      var sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews;
-      var changes = sizeOfNewViews + sizeOfStaleViews;
-      var percentChange = changes / Math.max(sizeOfFinalViews, 1);
-      var fromEmptyToNotEmpty = !sizeOfOldViews && sizeOfNewViews;
-      var fromNotEmptyToEmpty = sizeOfOldViews && sizeOfOldViews === sizeOfStaleViews && !sizeOfNewViews;
-      var threshold = this.updateThreshold || 0.5;
-      var signficantChanges = percentChange >= threshold;
-      if (changes <= 0) {
-        return this.reorder();
-      }
+     */</span>
+    update: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> oldViews = <span class="hljs-keyword">this</span>.getItemViews();
+      <span class="hljs-keyword">var</span> newViews = <span class="hljs-keyword">this</span>.__createItemViews();
+      <span class="hljs-keyword">var</span> staleViews = <span class="hljs-keyword">this</span>.__getStaleItemViews();
+      <span class="hljs-keyword">var</span> sizeOfOldViews = _.size(oldViews);
+      <span class="hljs-keyword">var</span> sizeOfNewViews = _.size(newViews);
+      <span class="hljs-keyword">var</span> sizeOfStaleViews = _.size(staleViews);
+      <span class="hljs-keyword">var</span> sizeOfFinalViews = sizeOfOldViews - sizeOfStaleViews + sizeOfNewViews;
+      <span class="hljs-keyword">var</span> changes = sizeOfNewViews + sizeOfStaleViews;
+      <span class="hljs-keyword">var</span> percentChange = changes / <span class="hljs-built_in">Math</span>.max(sizeOfFinalViews, <span class="hljs-number">1</span>);
+      <span class="hljs-keyword">var</span> fromEmptyToNotEmpty = !sizeOfOldViews &amp;&amp; sizeOfNewViews;
+      <span class="hljs-keyword">var</span> fromNotEmptyToEmpty = sizeOfOldViews &amp;&amp; sizeOfOldViews === sizeOfStaleViews &amp;&amp; !sizeOfNewViews;
+      <span class="hljs-keyword">var</span> threshold = <span class="hljs-keyword">this</span>.updateThreshold || <span class="hljs-number">0.5</span>;
+      <span class="hljs-keyword">var</span> signficantChanges = percentChange &gt;= threshold;
+      <span class="hljs-keyword">if</span> (changes &lt;= <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.reorder();
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>A switch from empty to not empty or vise versa, needs a new render</p>
 
-```
-
-
-
-
-
-
-
-A switch from empty to not empty or vise versa, needs a new render
-
-
-  
-
-```
-      var renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
-      if (renderNeeded) {
-        this.__removeStaleItemViews(staleViews);
-        this.__delayedRender();
-      } else {
-        this.__updateByAddingRemoving(oldViews, newViews, staleViews);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> renderNeeded = fromEmptyToNotEmpty || fromNotEmptyToEmpty || signficantChanges;
+      <span class="hljs-keyword">if</span> (renderNeeded) {
+        <span class="hljs-keyword">this</span>.__removeStaleItemViews(staleViews);
+        <span class="hljs-keyword">this</span>.__delayedRender();
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.__updateByAddingRemoving(oldViews, newViews, staleViews);
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Returns the view that corresponds to the model if one exists
      * @param {Model} model the model
      * @return the item view corresponding to the model
-     */
-    getItemViewFromModel: function(model) {
-      return model ? this.getTrackedView(this.__modelToViewMap[model[this.__modelId]]) : undefined;
+     */</span>
+    getItemViewFromModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+      <span class="hljs-keyword">return</span> model ? <span class="hljs-keyword">this</span>.getTrackedView(<span class="hljs-keyword">this</span>.__modelToViewMap[model[<span class="hljs-keyword">this</span>.__modelId]]) : <span class="hljs-literal">undefined</span>;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @return {boolean} returns true if there exists any generated item views
-     */
-    hasItemViews: function() {
-      return !_.isEmpty(this.getItemViews());
+     */</span>
+    hasItemViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> !_.isEmpty(<span class="hljs-keyword">this</span>.getItemViews());
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @return {Array of views} Returns unordered list of views generated by this list view
-     */
-    getItemViews: function() {
-      var view = this;
-      var orderedViewIds = _.map(this.__orderedModelIdList, this.__getViewIdFromModelId, this);
-      return _.map(orderedViewIds, this.getTrackedView, this);
-    },
+     */</span>
+    getItemViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">var</span> orderedViewIds = _.map(<span class="hljs-keyword">this</span>.__orderedModelIdList, <span class="hljs-keyword">this</span>.__getViewIdFromModelId, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">return</span> _.map(orderedViewIds, <span class="hljs-keyword">this</span>.getTrackedView, <span class="hljs-keyword">this</span>);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><strong><strong><strong>**</strong></strong></strong> Private methods <strong><strong><strong>**</strong></strong></strong>//</p>
 
-
-```
-
-
-
-
-
-
-
-************** Private methods **************//
-
-
-  
-
-```
-
-    /**
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+    <span class="hljs-comment">/**
      * Creates all needed item views that don't exist from modelsToRender()
      * @private
      * @return {Array} each object in array contains a 'view' and 'indexOfModel' field
-     */
-    __createItemViews: function() {
-      var newItemViews = [];
-      _.each(this.modelsToRender(), function(model, indexOfModel) {
-        var itemView = this.getItemViewFromModel(model);
-        if (!itemView) {
+     */</span>
+    __createItemViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> newItemViews = [];
+      _.each(<span class="hljs-keyword">this</span>.modelsToRender(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, indexOfModel</span>) </span>{
+        <span class="hljs-keyword">var</span> itemView = <span class="hljs-keyword">this</span>.getItemViewFromModel(model);
+        <span class="hljs-keyword">if</span> (!itemView) {
           newItemViews.push({
-            view: this.__createItemView(model, true),
-            indexOfModel: indexOfModel
+            <span class="hljs-attr">view</span>: <span class="hljs-keyword">this</span>.__createItemView(model, <span class="hljs-literal">true</span>),
+            <span class="hljs-attr">indexOfModel</span>: indexOfModel
           });
         }
-      }, this);
-      this.__updateOrderedModelIdList();
-      return newItemViews;
+      }, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">this</span>.__updateOrderedModelIdList();
+      <span class="hljs-keyword">return</span> newItemViews;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Creates an item view and stores a reference to it
      * @private
      * @param {Backbone Model} model the model to create the view from
      * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
      * @return {Backbone View} the new item view
-     */
-    __createItemView: function(model, noUpdateToIdList) {
-      var itemView,
-        ItemViewClass = this.itemView;
-      if (!_.isFunction(this.itemView.extend)) {
-        ItemViewClass = this.itemView(model);
+     */</span>
+    __createItemView: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, noUpdateToIdList</span>) </span>{
+      <span class="hljs-keyword">var</span> itemView,
+        ItemViewClass = <span class="hljs-keyword">this</span>.itemView;
+      <span class="hljs-keyword">if</span> (!_.isFunction(<span class="hljs-keyword">this</span>.itemView.extend)) {
+        ItemViewClass = <span class="hljs-keyword">this</span>.itemView(model);
       }
-      itemView = new ItemViewClass(this.__generateItemViewArgs(model));
-      this.registerTrackedView(itemView, { shared: false });
-      this.__modelToViewMap[model[this.__modelId]] = itemView.cid;
-      if (!noUpdateToIdList) {
-        this.__updateOrderedModelIdList();
+      itemView = <span class="hljs-keyword">new</span> ItemViewClass(<span class="hljs-keyword">this</span>.__generateItemViewArgs(model));
+      <span class="hljs-keyword">this</span>.registerTrackedView(itemView, { <span class="hljs-attr">shared</span>: <span class="hljs-literal">false</span> });
+      <span class="hljs-keyword">this</span>.__modelToViewMap[model[<span class="hljs-keyword">this</span>.__modelId]] = itemView.cid;
+      <span class="hljs-keyword">if</span> (!noUpdateToIdList) {
+        <span class="hljs-keyword">this</span>.__updateOrderedModelIdList();
       }
-      this.trigger('child-view-added', {model: model, view: itemView});
-      this.trigger('item-view-added', {model: model, view: itemView});
-      return itemView;
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'child-view-added'</span>, {<span class="hljs-attr">model</span>: model, <span class="hljs-attr">view</span>: itemView});
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'item-view-added'</span>, {<span class="hljs-attr">model</span>: model, <span class="hljs-attr">view</span>: itemView});
+      <span class="hljs-keyword">return</span> itemView;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Gets all item views that have models that are no longer tracked by modelsToRender
      * @return {Array} An array of information about stale items. Each object has a 'view' and 'modelId' field
      * @private
-     */
-    __getStaleItemViews: function() {
-      var staleItemViews = [];
-      var modelsWithViews = _.clone(this.__modelToViewMap);
-      _.each(this.modelsToRender(), function(model) {
-        var itemView = this.getItemViewFromModel(model);
-        if (itemView) {
-          delete modelsWithViews[model[this.__modelId]];
+     */</span>
+    __getStaleItemViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> staleItemViews = [];
+      <span class="hljs-keyword">var</span> modelsWithViews = _.clone(<span class="hljs-keyword">this</span>.__modelToViewMap);
+      _.each(<span class="hljs-keyword">this</span>.modelsToRender(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+        <span class="hljs-keyword">var</span> itemView = <span class="hljs-keyword">this</span>.getItemViewFromModel(model);
+        <span class="hljs-keyword">if</span> (itemView) {
+          <span class="hljs-keyword">delete</span> modelsWithViews[model[<span class="hljs-keyword">this</span>.__modelId]];
         }
-      }, this);
-      _.each(modelsWithViews, function(viewId, modelId) {
-        var itemView = this.getTrackedView(viewId);
-        if (itemView) {
-          staleItemViews.push({ view: itemView, modelId: modelId });
+      }, <span class="hljs-keyword">this</span>);
+      _.each(modelsWithViews, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">viewId, modelId</span>) </span>{
+        <span class="hljs-keyword">var</span> itemView = <span class="hljs-keyword">this</span>.getTrackedView(viewId);
+        <span class="hljs-keyword">if</span> (itemView) {
+          staleItemViews.push({ <span class="hljs-attr">view</span>: itemView, <span class="hljs-attr">modelId</span>: modelId });
         }
-      }, this);
-      return staleItemViews;
+      }, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">return</span> staleItemViews;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Removes the item views that no longer have models returned by modelsToRender()
      * @param [staleItemViewInfo] {Array of objects:
      *   [{
@@ -602,176 +766,171 @@ A switch from empty to not empty or vise versa, needs a new render
      *     modelId: id of model item
      *   }]} If provided, stale items will not be found, but this array will be used instead.
      * @private
-     */
-    __removeStaleItemViews: function(staleItemViewInfo) {
-      var view = this;
-      staleItemViewInfo = staleItemViewInfo || this.__getStaleItemViews();
-      _.each(staleItemViewInfo, function(staleViewInfo) {
+     */</span>
+    __removeStaleItemViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">staleItemViewInfo</span>) </span>{
+      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>;
+      staleItemViewInfo = staleItemViewInfo || <span class="hljs-keyword">this</span>.__getStaleItemViews();
+      _.each(staleItemViewInfo, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">staleViewInfo</span>) </span>{
         _removeItemView.call(view, staleViewInfo.view, staleViewInfo.modelId);
       });
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Creates a DOM fragment with each item view appended in the order defined by
      * modelsToRender(). This will clear the List View's DOM and invoke the necessary
      * detach, register and render logic on each item view.
      * @return a DOM fragment with item view elements appended
      * @private
-     */
-    __emptyAndRebuildItemViewsFragment: function() {
-      var injectionFragment = document.createDocumentFragment();
+     */</span>
+    __emptyAndRebuildItemViewsFragment: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> injectionFragment = <span class="hljs-built_in">document</span>.createDocumentFragment();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Clearing the DOM will reduce the repaints needed as we detach each item view.</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.$el.empty();
 
+     _.each(<span class="hljs-keyword">this</span>.modelsToRender(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+        <span class="hljs-keyword">var</span> itemView = <span class="hljs-keyword">this</span>.getItemViewFromModel(model);
+        <span class="hljs-keyword">if</span> (itemView) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>detach to be safe, but during a render, the item views will already be detached.</p>
 
-
-
-
-
-
-Clearing the DOM will reduce the repaints needed as we detach each item view.
-
-
-  
-
-```
-      this.$el.empty();
-
-     _.each(this.modelsToRender(), function(model) {
-        var itemView = this.getItemViewFromModel(model);
-        if (itemView) {
-
-```
-
-
-
-
-
-
-
-detach to be safe, but during a render, the item views will already be detached.
-
-
-  
-
-```
-          itemView.detach();
-          this.registerTrackedView(itemView, { shared: false });
-          itemView.attachTo(null, {
-            replaceMethod: function($el) {
-              injectionFragment.appendChild($el[0]);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          itemView.detach();
+          <span class="hljs-keyword">this</span>.registerTrackedView(itemView, { <span class="hljs-attr">shared</span>: <span class="hljs-literal">false</span> });
+          itemView.attachTo(<span class="hljs-literal">null</span>, {
+            <span class="hljs-attr">replaceMethod</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$el</span>) </span>{
+              injectionFragment.appendChild($el[<span class="hljs-number">0</span>]);
             },
-            discardInjectionSite: true
+            <span class="hljs-attr">discardInjectionSite</span>: <span class="hljs-literal">true</span>
           });
         }
-      }, this);
-      this.__updateOrderedModelIdList();
-      return $(injectionFragment);
+      }, <span class="hljs-keyword">this</span>);
+      <span class="hljs-keyword">this</span>.__updateOrderedModelIdList();
+      <span class="hljs-keyword">return</span> $(injectionFragment);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Attempts to insert new views and remove stale views individually and correctly reorder all views in an
      * attempt to be faster then a full view re-render
      * @param {Array of Views} oldViews - correctly ordered list of views before making changes to models to render
      * @param {Array of Views} newViews - the new views created that will be inserted
      * @param {Array of Views} staleViews - the stale views that will be removed
-     */
-    __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
-      var firstItemViewLeft, injectionSite,
-        view = this,
+     */</span>
+    __updateByAddingRemoving: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">oldViews, newViews, staleViews</span>) </span>{
+      <span class="hljs-keyword">var</span> firstItemViewLeft, injectionSite,
+        view = <span class="hljs-keyword">this</span>,
         sizeOfOldViews = _.size(oldViews),
         sizeOfNewViews = _.size(newViews),
         sizeOfStaleViews = _.size(staleViews);
-      if (view.itemContainer && sizeOfOldViews && sizeOfOldViews == sizeOfStaleViews) {
+      <span class="hljs-keyword">if</span> (view.itemContainer &amp;&amp; sizeOfOldViews &amp;&amp; sizeOfOldViews == sizeOfStaleViews) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>we removed all the views!</p>
 
-```
-
-
-
-
-
-
-
-we removed all the views!
-
-
-  
-
-```
-        injectionSite = $('<span>');
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        injectionSite = $(<span class="hljs-string">'&lt;span&gt;'</span>);
         _.first(oldViews).$el.before(injectionSite);
       }
       view.__removeStaleItemViews(staleViews);
-      _.each(newViews, function(createdViewInfo, indexOfView) {
-        if (createdViewInfo.indexOfModel === 0) {
+      _.each(newViews, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">createdViewInfo, indexOfView</span>) </span>{
+        <span class="hljs-keyword">if</span> (createdViewInfo.indexOfModel === <span class="hljs-number">0</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>need to handle this case uniquely.</p>
 
-```
-
-
-
-
-
-
-
-need to handle this case uniquely.
-
-
-  
-
-```
-          var replaceMethod;
-          if (!view.itemContainer) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">var</span> replaceMethod;
+          <span class="hljs-keyword">if</span> (!view.itemContainer) {
             replaceMethod = _.bind(view.$el.prepend, view.$el);
-          } else {
-            if (injectionSite) {
+          } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">if</span> (injectionSite) {
               replaceMethod = _.bind(injectionSite.replaceWith, injectionSite);
-            } else {
-              var staleModelIdMap = _.indexBy(staleViews, 'modelId');
-              var firstModelIdLeft = _.find(view.__orderedModelIdList, function(modelId) {
-                return !staleModelIdMap[modelId];
+            } <span class="hljs-keyword">else</span> {
+              <span class="hljs-keyword">var</span> staleModelIdMap = _.indexBy(staleViews, <span class="hljs-string">'modelId'</span>);
+              <span class="hljs-keyword">var</span> firstModelIdLeft = _.find(view.__orderedModelIdList, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelId</span>) </span>{
+                <span class="hljs-keyword">return</span> !staleModelIdMap[modelId];
               });
               firstItemViewLeft = view.getTrackedView(view.__modelToViewMap[firstModelIdLeft]);
               replaceMethod = _.bind(firstItemViewLeft.$el.prepend, firstItemViewLeft.$el);
             }
           }
-          view.attachView(null, createdViewInfo.view, {
-            replaceMethod: replaceMethod,
-            discardInjectionSite: true
+          view.attachView(<span class="hljs-literal">null</span>, createdViewInfo.view, {
+            <span class="hljs-attr">replaceMethod</span>: replaceMethod,
+            <span class="hljs-attr">discardInjectionSite</span>: <span class="hljs-literal">true</span>
           });
-        } else {
+        } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>There will always the view before this one because we are adding new views in order
+and we took care of the initial case.</p>
 
-```
-
-
-
-
-
-
-
-There will always the view before this one because we are adding new views in order
-and we took care of the initial case.
-
-
-  
-
-```
-          _addItemView.call(view, createdViewInfo.view, createdViewInfo.indexOfModel);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          _addItemView.call(view, createdViewInfo.view, createdViewInfo.indexOfModel);
         }
       });
-      this.reorder();
+      <span class="hljs-keyword">this</span>.reorder();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Updates the internal list of model ids that correspond to the models used for the current
      * list of item views. The order is the same order of the item views.
      * @param {Array of ids} [newIdsList] - if passed the array, it will use that instead of finding the list.
      * @private
-     */
-    __updateOrderedModelIdList: function(newIdsList) {
-      this.__orderedModelIdList = newIdsList || _.pluck(this.modelsToRender(), this.__modelId);
+     */</span>
+    __updateOrderedModelIdList: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newIdsList</span>) </span>{
+      <span class="hljs-keyword">this</span>.__orderedModelIdList = newIdsList || _.pluck(<span class="hljs-keyword">this</span>.modelsToRender(), <span class="hljs-keyword">this</span>.__modelId);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Method to generate arguments when creating an item view. Override this method
      * to change the arguments for a given item view.
      * The format of the subview's arguments is:
@@ -779,45 +938,45 @@ and we took care of the initial case.
      *   context: {
      *     ... inherited from parent ...
      *   },
-     *   <modelName>: <modelObject>,
+     *   &lt;modelName&gt;: &lt;modelObject&gt;,
      *   listView: the parent list view
      * }
      * @private
      * @param model the model for an item view
      * @return a context to be used by an item view
-     */
-    __generateItemViewArgs: function(model) {
-      var args = {
-        'context': _.extend({}, _.result(this, '__itemContext')),
-        'listView': this
+     */</span>
+    __generateItemViewArgs: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+      <span class="hljs-keyword">var</span> args = {
+        <span class="hljs-string">'context'</span>: _.extend({}, _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'__itemContext'</span>)),
+        <span class="hljs-string">'listView'</span>: <span class="hljs-keyword">this</span>
       };
-      args[this.__modelName] = model;
-      return args;
+      args[<span class="hljs-keyword">this</span>.__modelName] = model;
+      <span class="hljs-keyword">return</span> args;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Alias method for __generateItemViewArgs()
-     */
-    __generateChildArgs: function() {
-      return this.__generateItemViewArgs.apply(this, arguments);
+     */</span>
+    __generateChildArgs: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__generateItemViewArgs.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @private
      * @param {string|Number} modelId id of model
      * @return {string|Number} view cid that was built from corresponding model
-     */
-    __getViewIdFromModelId: function(modelId) {
-      return this.__modelToViewMap[modelId];
+     */</span>
+    __getViewIdFromModelId: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelId</span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__modelToViewMap[modelId];
     }
   });
 
-  return ListView;
-}));
-
-
-```
-
-
-
-
+  <span class="hljs-keyword">return</span> ListView;
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

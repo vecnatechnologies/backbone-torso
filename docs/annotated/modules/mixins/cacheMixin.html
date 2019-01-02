@@ -1,27 +1,198 @@
+<!DOCTYPE html>
 
-
-
-
-
-
-  
-
-```
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'));
-  } else {
+<html>
+<head>
+  <title>cacheMixin.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="../Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="../Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="../Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="../Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="../FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="../FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="../ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="../Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="../NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="../NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="../Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="../ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="../View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="../behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="../configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="../handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="../history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="../registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="../stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="../templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="../torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="../validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>cacheMixin.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>));
+  } <span class="hljs-keyword">else</span> {
     root.Torso = root.Torso || {};
     root.Torso.Mixins = root.Torso.Mixins || {};
     root.Torso.Mixins.cache = factory(root._, root.Backbone);
   }
-}(this, function(_, Backbone) {
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>) </span>{
 
-  var $ = Backbone.$;
+  <span class="hljs-keyword">var</span> $ = Backbone.$;
 
-  /**
+  <span class="hljs-comment">/**
    * Custom additions to the Backbone Collection object.
    * - safe disposal methods for memory + event management
    * - special functional overrides to support ID registration for different views
@@ -30,106 +201,106 @@
    * @namespace Torso.Mixins
    * @class  cacheMixin
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
-  var mixin = function(base) {
+   */</span>
+  <span class="hljs-keyword">var</span> mixin = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">base</span>) </span>{
 
-    var cacheMixin, createRequesterCollectionClass;
+    <span class="hljs-keyword">var</span> cacheMixin, createRequesterCollectionClass;
 
-    /**
+    <span class="hljs-comment">/**
      * Returns a new class of collection that inherits from the parent but not the cacheMixin
      * and adds a requesterMixin that connects this cache to it's parent
      *
      * @param {Backbone Collection instance} parent the parent of the private collection
      * @param {string} guid the unique code of the owner of this private collection
-     */
-    createRequesterCollectionClass = function(parent, guid) {
-      return parent.constructor.extend((function(parentClass, parentInstance, ownerKey) {
+     */</span>
+    createRequesterCollectionClass = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">parent, guid</span>) </span>{
+      <span class="hljs-keyword">return</span> parent.constructor.extend((<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">parentClass, parentInstance, ownerKey</span>) </span>{
 
-        /**
+        <span class="hljs-comment">/**
          * A mixin that overrides base collection methods meant for cache's and tailors them
          * to a requester.
-         */
-        var requesterMixin = {
+         */</span>
+        <span class="hljs-keyword">var</span> requesterMixin = {
 
-          /**
+          <span class="hljs-comment">/**
            * @return {Array} array of ids that this collection is tracking
-           */
-          getTrackedIds: function() {
-            return this.trackedIds;
+           */</span>
+          getTrackedIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.trackedIds;
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Will force the cache to fetch just the registered ids of this collection
            * @param [options] - argument options
            * @param {Array} [options.idsToFetch=collectionTrackedIds] - A list of request Ids, will default to current tracked ids
            * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
            * @return {Promise} promise that will resolve when the fetch is complete
-           */
-          fetch: function(options) {
+           */</span>
+          fetch: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
             options = options || {};
-            options.idsToFetch = options.idsToFetch || this.trackedIds;
-            options.setOptions = options.setOptions || {remove: false};
-            return this.__loadWrapper(function() {
-              if (options.idsToFetch && options.idsToFetch.length) {
-                return parentInstance.fetchByIds(options);
-              } else {
-                return $.Deferred().resolve().promise();
+            options.idsToFetch = options.idsToFetch || <span class="hljs-keyword">this</span>.trackedIds;
+            options.setOptions = options.setOptions || {<span class="hljs-attr">remove</span>: <span class="hljs-literal">false</span>};
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__loadWrapper(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+              <span class="hljs-keyword">if</span> (options.idsToFetch &amp;&amp; options.idsToFetch.length) {
+                <span class="hljs-keyword">return</span> parentInstance.fetchByIds(options);
+              } <span class="hljs-keyword">else</span> {
+                <span class="hljs-keyword">return</span> $.Deferred().resolve().promise();
               }
             });
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Will force the cache to fetch a subset of this collection's tracked ids
            * @param {Array} ids array of model ids
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete
-           */
-          fetchByIds: function(ids, options) {
+           */</span>
+          fetchByIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">ids, options</span>) </span>{
             options = options || {};
-            options.idsToFetch = _.intersection(ids, this.getTrackedIds());
-            return this.fetch(options);
+            options.idsToFetch = _.intersection(ids, <span class="hljs-keyword">this</span>.getTrackedIds());
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fetch(options);
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.
            * Overrides the Id registration system to route via the parent collection
            * @param ids The list of ids that this collection wants to track
-           */
-          trackIds: function(ids) {
-            this.remove(_.difference(this.trackedIds, ids));
+           */</span>
+          trackIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">ids</span>) </span>{
+            <span class="hljs-keyword">this</span>.remove(_.difference(<span class="hljs-keyword">this</span>.trackedIds, ids));
             parentInstance.registerIds(ids, ownerKey);
-            this.trackedIds = ids;
+            <span class="hljs-keyword">this</span>.trackedIds = ids;
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Adds a new model to the requester collection and tracks the model.id
            * @param {Backbone Model} model the model to be added
-           */
-          addModelAndTrack: function(model) {
-            this.add(model);
+           */</span>
+          addModelAndTrack: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+            <span class="hljs-keyword">this</span>.add(model);
             parentInstance.add(model);
-            this.trackNewId(model.id);
+            <span class="hljs-keyword">this</span>.trackNewId(model.id);
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Tracks a new id
            * @param {string|Number} id the id attribute of the model
-           */
-          trackNewId: function(id) {
-            this.trackIds(this.getTrackedIds().concat(id));
+           */</span>
+          trackNewId: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>) </span>{
+            <span class="hljs-keyword">this</span>.trackIds(<span class="hljs-keyword">this</span>.getTrackedIds().concat(id));
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Will begin tracking the new ids and then ask the cache to fetch them
            * This will reset any previous list of ids being tracked.
            * @return the promise of the fetch by ids
-           */
-          trackAndFetch: function(newIds) {
-            this.trackIds(newIds);
-            return this.fetch();
+           */</span>
+          trackAndFetch: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newIds</span>) </span>{
+            <span class="hljs-keyword">this</span>.trackIds(newIds);
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fetch();
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Will force the cache to fetch any of this collection's tracked models that are not in the cache
            * while not fetching models that are already in the cache. Useful when you want the effeciency of
            * pulling models from the cache and don't need all the models to be up-to-date.
@@ -142,267 +313,254 @@
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
            *                   Will only resolve once all ids have attempted to be fetched from the server.
-           */
-          pull: function(options) {
-            options = options || {};
+           */</span>
+          pull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
+            options = options || {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>find ids that we don’t have in cache and aren’t already in the process of being fetched.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">var</span> idsNotInCache = _.difference(<span class="hljs-keyword">this</span>.getTrackedIds(), _.pluck(parentInstance.models, <span class="hljs-string">'id'</span>));
+            <span class="hljs-keyword">var</span> idsWithPromises = _.pick(parentInstance.idPromises, idsNotInCache);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Determine which ids are already being fetched and the associated promises for those ids.</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            options.idsToFetch = _.difference(idsNotInCache, _.uniq(_.flatten(_.keys(idsWithPromises))));
+            <span class="hljs-keyword">var</span> thisFetchPromise = <span class="hljs-keyword">this</span>.fetch(options);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Return a promise that resolves when all ids are fetched (including pending ids).</p>
 
-
-
-
-
-
-
-find ids that we don't have in cache and aren't already in the process of being fetched.
-
-
-  
-
-```
-            var idsNotInCache = _.difference(this.getTrackedIds(), _.pluck(parentInstance.models, 'id'));
-            var idsWithPromises = _.pick(parentInstance.idPromises, idsNotInCache);
-
-
-```
-
-
-
-
-
-
-
-Determine which ids are already being fetched and the associated promises for those ids.
-
-
-  
-
-```
-            options.idsToFetch = _.difference(idsNotInCache, _.uniq(_.flatten(_.keys(idsWithPromises))));
-            var thisFetchPromise = this.fetch(options);
-
-
-```
-
-
-
-
-
-
-
-Return a promise that resolves when all ids are fetched (including pending ids).
-
-
-  
-
-```
-            var allPromisesToWaitFor = _.flatten(_.values(idsWithPromises));
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">var</span> allPromisesToWaitFor = _.flatten(_.values(idsWithPromises));
             allPromisesToWaitFor.push(thisFetchPromise);
-            var allUniquePromisesToWaitFor = _.uniq(allPromisesToWaitFor);
-            return $.when.apply($, allUniquePromisesToWaitFor)
+            <span class="hljs-keyword">var</span> allUniquePromisesToWaitFor = _.uniq(allPromisesToWaitFor);
+            <span class="hljs-keyword">return</span> $.when.apply($, allUniquePromisesToWaitFor)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Make it look like the multiple promises was performed by a single request.</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>collects the parts of each ajax call into arrays: result = { [data1, data2, …], [textStatus1, textStatus2, …], [jqXHR1, jqXHR2, …] };</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">var</span> result = _.zip(<span class="hljs-built_in">arguments</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Flatten the data so it looks like the result of a single request.</p>
 
-
-
-
-
-
-Make it look like the multiple promises was performed by a single request.
-
-
-  
-
-```
-              .then(function() {
-
-```
-
-
-
-
-
-
-
-collects the parts of each ajax call into arrays: result = { [data1, data2, ...], [textStatus1, textStatus2, ...], [jqXHR1, jqXHR2, ...] };
-
-
-  
-
-```
-                var result = _.zip(arguments);
-
-```
-
-
-
-
-
-
-
-Flatten the data so it looks like the result of a single request.
-
-
-  
-
-```
-                var resultData = result[0];
-                var flattenedResultData = _.flatten(resultData);
-                return flattenedResultData;
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">var</span> resultData = result[<span class="hljs-number">0</span>];
+                <span class="hljs-keyword">var</span> flattenedResultData = _.flatten(resultData);
+                <span class="hljs-keyword">return</span> flattenedResultData;
               });
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
            * the difference between pull and fetch.
            * @return the promise of the fetch by ids
-           */
-          trackAndPull: function(newIds) {
-            this.trackIds(newIds);
-            return this.pull();
+           */</span>
+          trackAndPull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newIds</span>) </span>{
+            <span class="hljs-keyword">this</span>.trackIds(newIds);
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.pull();
           },
 
-          /**
+          <span class="hljs-comment">/**
            * Handles the disposing of this collection as it relates to a requester collection.
-           */
-          requesterDispose: function() {
+           */</span>
+          requesterDispose: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
             parentInstance.removeRequester(ownerKey);
           },
 
-          /**
+          <span class="hljs-comment">/**
            * In addition to removing the model from the collection also remove it from the list of tracked ids.
            * @param {*} modelIdentifier same duck-typing as Backbone.Collection.get():
            *                              by id, cid, model object with id or cid properties,
            *                              or an attributes object that is transformed through modelId
-           */
-          remove: function(modelIdentifier) {
-            var model = this.get(modelIdentifier);
-            parentClass.remove.apply(this, arguments);
-            if (model) {
-              var trackedIdsWithoutModel = this.getTrackedIds();
+           */</span>
+          remove: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelIdentifier</span>) </span>{
+            <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.get(modelIdentifier);
+            parentClass.remove.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+            <span class="hljs-keyword">if</span> (model) {
+              <span class="hljs-keyword">var</span> trackedIdsWithoutModel = <span class="hljs-keyword">this</span>.getTrackedIds();
               trackedIdsWithoutModel = _.without(trackedIdsWithoutModel, model.id);
-              this.trackIds(trackedIdsWithoutModel);
+              <span class="hljs-keyword">this</span>.trackIds(trackedIdsWithoutModel);
             }
           }
         };
 
-        return requesterMixin;
+        <span class="hljs-keyword">return</span> requesterMixin;
       })(parent.constructor.__super__, parent, guid));
     };
 
-    /**
+    <span class="hljs-comment">/**
      * Adds functions to manage state of requesters
      * @param {Collection} collection the collection to add this mixin
-     */
-    cacheMixin = function(collection) {
+     */</span>
+    cacheMixin = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">collection</span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p><strong><strong>*****</strong></strong> PRIVATE METHODS <strong><strong>****</strong></strong>//</p>
 
-
-```
-
-
-
-
-
-
-
-************* PRIVATE METHODS ************//
-
-
-  
-
-```
-
-      /**
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+      <span class="hljs-comment">/**
        * @private
        * @param {string} guid the global unique identifier for the requester
        * @param {Array} array the array of ids the requester wants
-       */
-      var setRequestedIds = function(guid, array) {
+       */</span>
+      <span class="hljs-keyword">var</span> setRequestedIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid, array</span>) </span>{
         collection.requestMap[guid] = {
-          array: array,
-          dict: _.object(_.map(array, function(id) { return [id, id]; }))
+          <span class="hljs-attr">array</span>: array,
+          <span class="hljs-attr">dict</span>: _.object(_.map(array, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>) </span>{ <span class="hljs-keyword">return</span> [id, id]; }))
         };
-      };
+      };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong><strong>***</strong></strong> PUBLIC METHODS <strong><strong>****</strong></strong>//</p>
 
-
-```
-
-
-
-
-
-
-
-*********** PUBLIC METHODS ************//
-
-
-  
-
-```
-
-      /**
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+      <span class="hljs-comment">/**
        * @param {string} the global unique id of the requester
        * @return {Array} an array of the ids the requester with the guid has requested
-       */
-      collection.getRequesterIds = function(guid) {
-        return this.requestMap[guid] && this.requestMap[guid].array;
+       */</span>
+      collection.getRequesterIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.requestMap[guid] &amp;&amp; <span class="hljs-keyword">this</span>.requestMap[guid].array;
       };
 
-      /**
+      <span class="hljs-comment">/**
        * This method is used for quick look up of a certain id within the list of requested ids
        * @param {string} guid the global unique id of the requester
-       * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
-       */
-      collection.getRequesterIdsAsDictionary = function(guid) {
-        return this.requestMap[guid] && this.requestMap[guid].dict;
+       * @return {Object} an dictionary of id -&gt; id of the requester ids for a given requester.
+       */</span>
+      collection.getRequesterIdsAsDictionary = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid</span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.requestMap[guid] &amp;&amp; <span class="hljs-keyword">this</span>.requestMap[guid].dict;
       };
 
-      /**
+      <span class="hljs-comment">/**
        * Removes a requester from this cache. No longer receives updates
        * @param {string} guid the global unique id of the requester
-       */
-      collection.removeRequester = function(guid) {
-        delete this.requestMap[guid];
-        delete this.knownPrivateCollections[guid];
+       */</span>
+      collection.removeRequester = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid</span>) </span>{
+        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.requestMap[guid];
+        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.knownPrivateCollections[guid];
       };
 
-      /**
-       * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
-       * TODO: should this return just the knownPrivateCollections
+      <span class="hljs-comment">/**
+       * <span class="hljs-doctag">NOTE:</span> this methods returns only the guids for requester collections that are currently tracking ids
+       * <span class="hljs-doctag">TODO:</span> should this return just the knownPrivateCollections
        * @return {Array} an array of the all requesters in the form of their GUID's
-       */
-      collection.getRequesters = function()  {
-        return _.keys(this.requestMap);
+       */</span>
+      collection.getRequesters = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)  </span>{
+        <span class="hljs-keyword">return</span> _.keys(<span class="hljs-keyword">this</span>.requestMap);
       };
 
-      /**
+      <span class="hljs-comment">/**
        * Return the list of Ids requested by this collection
        * @return {Array} the corresponding requested Ids
-       */
-      collection.getAllRequestedIds = function() {
-        return this.collectionTrackedIds;
+       */</span>
+      collection.getAllRequestedIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.collectionTrackedIds;
       };
 
-      /**
+      <span class="hljs-comment">/**
        * Used to return a collection of desired models given the requester object.
        * Binds a custom "resized" event to the private collections.
        * Overrides the fetch method to call the parent collection's fetchByIds method.
        * Overrides the registerIds method to redirect to its parent collection.
        * @param {string} guid Identifier for the requesting view
        * @return {Collection} an new empty collection of the same type as "this"
-       */
-      collection.createPrivateCollection = function(guid, args) {
+       */</span>
+      collection.createPrivateCollection = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid, args</span>) </span>{
         args = args || {};
-        args.isRequester = true;
+        args.isRequester = <span class="hljs-literal">true</span>;
         args.parentInstance = collection;
-        var RequesterClass = createRequesterCollectionClass(collection, guid);
-        this.knownPrivateCollections[guid] = new RequesterClass(null, args);
-        return this.knownPrivateCollections[guid];
+        <span class="hljs-keyword">var</span> RequesterClass = createRequesterCollectionClass(collection, guid);
+        <span class="hljs-keyword">this</span>.knownPrivateCollections[guid] = <span class="hljs-keyword">new</span> RequesterClass(<span class="hljs-literal">null</span>, args);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.knownPrivateCollections[guid];
       };
 
-      /**
+      <span class="hljs-comment">/**
        * Registers a list of Ids that a particular object cares about and pushes
        * any cached models its way.
        *
@@ -412,388 +570,368 @@ Flatten the data so it looks like the result of a single request.
        * but rather a custom "fetchByIds" method.
        * @param {Array} newIds  - New ids to register under the requester
        * @param {string} guid   - The GUID of the object that wants the ids
-       */
-      collection.registerIds = function(newIds, guid) {
-        var i, newIdx, model, requesterIdx, storedIds,
+       */</span>
+      collection.registerIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newIds, guid</span>) </span>{
+        <span class="hljs-keyword">var</span> i, newIdx, model, requesterIdx, storedIds,
             requesters, requesterLength, privateCollection,
             models = [],
             distinctIds = {},
-            result = [];
+            result = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Save the new requests in the map</p>
 
-
-```
-
-
-
-
-
-
-
-Save the new requests in the map
-
-
-  
-
-```
-        setRequestedIds(guid, newIds);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        setRequestedIds(guid, newIds);
         requesters = collection.getRequesters();
-        requesterLength = requesters.length;
+        requesterLength = requesters.length;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Collect all cached models</p>
 
-
-```
-
-
-
-
-
-
-
-Collect all cached models
-
-
-  
-
-```
-        for (newIdx = 0; newIdx < newIds.length; newIdx++) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (newIdx = <span class="hljs-number">0</span>; newIdx &lt; newIds.length; newIdx++) {
           model = collection.get(newIds[newIdx]);
-          if (model) {
+          <span class="hljs-keyword">if</span> (model) {
             models.push(model);
           }
-        }
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Push cached models to the respective requester</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        privateCollection = collection.knownPrivateCollections[guid];
+        <span class="hljs-keyword">if</span> (privateCollection) {
+          privateCollection.set(models, {<span class="hljs-attr">remove</span>: <span class="hljs-literal">false</span>});
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Create a new request list</p>
 
-```
-
-
-
-
-
-
-
-Push cached models to the respective requester
-
-
-  
-
-```
-        privateCollection = collection.knownPrivateCollections[guid];
-        if (privateCollection) {
-          privateCollection.set(models, {remove: false});
-        }
-
-
-```
-
-
-
-
-
-
-
-Create a new request list
-
-
-  
-
-```
-        for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
-          storedIds = this.getRequesterIds(requesters[requesterIdx]);
-          if (!_.isUndefined(storedIds)) {
-            for (i = 0; i < storedIds.length; i++) {
-              distinctIds[storedIds[i]] = true;
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (requesterIdx = <span class="hljs-number">0</span>; requesterIdx &lt; requesterLength; requesterIdx++) {
+          storedIds = <span class="hljs-keyword">this</span>.getRequesterIds(requesters[requesterIdx]);
+          <span class="hljs-keyword">if</span> (!_.isUndefined(storedIds)) {
+            <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; storedIds.length; i++) {
+              distinctIds[storedIds[i]] = <span class="hljs-literal">true</span>;
             }
           }
-        }
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Convert the hash table of unique Ids to a list</p>
 
-
-```
-
-
-
-
-
-
-
-Convert the hash table of unique Ids to a list
-
-
-  
-
-```
-        for (i in distinctIds) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (i <span class="hljs-keyword">in</span> distinctIds) {
           result.push(i);
         }
-        this.collectionTrackedIds = result;
+        <span class="hljs-keyword">this</span>.collectionTrackedIds = result;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Overrides the polling mixin’s fetch method</p>
 
-
-```
-
-
-
-
-
-
-
-Overrides the polling mixin's fetch method
-
-
-  
-
-```
-        this.polledFetch = function() {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.polledFetch = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
           collection.fetchByIds({
-            setOptions: {remove: true}
+            <span class="hljs-attr">setOptions</span>: {<span class="hljs-attr">remove</span>: <span class="hljs-literal">true</span>}
           });
         };
       };
 
-      /**
+      <span class="hljs-comment">/**
        * Overrides the base fetch call if this.fetchUsingTrackedIds is true
        * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
        * it will pass through to the default fetch.
-       */
-      collection.fetch = function(options) {
+       */</span>
+      collection.fetch = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
         options = options || {};
-        if (this.fetchUsingTrackedIds) {
-          return this.fetchByIds({
-            setOptions: _.extend({remove: true}, options)
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.fetchUsingTrackedIds) {
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fetchByIds({
+            <span class="hljs-attr">setOptions</span>: _.extend({<span class="hljs-attr">remove</span>: <span class="hljs-literal">true</span>}, options)
           });
-        } else {
-          return base.prototype.fetch.call(this, options);
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> base.prototype.fetch.call(<span class="hljs-keyword">this</span>, options);
         }
       };
 
-      /**
+      <span class="hljs-comment">/**
        * A custom fetch operation to only fetch the requested Ids.
        * @param [options] - argument options
        * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
        * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
        * @return {Promise} the promise of the fetch
-       */
-      collection.fetchByIds = function(options) {
-        options = options || {};
+       */</span>
+      collection.fetchByIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
+        options = options || {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Fires a method from the loadingMixin that wraps the fetch with events that happen before and after</p>
 
-```
-
-
-
-
-
-
-
-Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
-
-
-  
-
-```
-        var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
-        var fetchComplete = false;
-        var fetchPromise = this.__loadWrapper(function(options) {
-          var contentType = options.fetchContentType || collection.fetchContentType;
-          var ajaxOpts = {
-              type: collection.fetchHttpAction,
-              url: _.result(collection, 'url') + collection.getByIdsUrl,
-              data: {ids: requestedIds.join(',')}
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+        <span class="hljs-keyword">var</span> fetchComplete = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">var</span> fetchPromise = <span class="hljs-keyword">this</span>.__loadWrapper(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
+          <span class="hljs-keyword">var</span> contentType = options.fetchContentType || collection.fetchContentType;
+          <span class="hljs-keyword">var</span> ajaxOpts = {
+              <span class="hljs-attr">type</span>: collection.fetchHttpAction,
+              <span class="hljs-attr">url</span>: _.result(collection, <span class="hljs-string">'url'</span>) + collection.getByIdsUrl,
+              <span class="hljs-attr">data</span>: {<span class="hljs-attr">ids</span>: requestedIds.join(<span class="hljs-string">','</span>)}
             };
-          if (contentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() != 'GET')) {
-            ajaxOpts.contentType = contentType || 'application/json; charset=utf-8';
-            ajaxOpts.data = JSON.stringify(requestedIds);
+          <span class="hljs-keyword">if</span> (contentType || (ajaxOpts.type &amp;&amp; ajaxOpts.type.toUpperCase() != <span class="hljs-string">'GET'</span>)) {
+            ajaxOpts.contentType = contentType || <span class="hljs-string">'application/json; charset=utf-8'</span>;
+            ajaxOpts.data = <span class="hljs-built_in">JSON</span>.stringify(requestedIds);
           }
-          return $.ajax(ajaxOpts)
-            .done(function(data) {
-              var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
+          <span class="hljs-keyword">return</span> $.ajax(ajaxOpts)
+            .done(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+              <span class="hljs-keyword">var</span> i, requesterIdx, requesterIdsAsDict, models, privateCollection,
                   requesterLength, requesters, model,
                   requestedIdsLength = requestedIds.length,
                   setOptions = options.setOptions;
-              collection.set(collection.parse(data), setOptions);
+              collection.set(collection.parse(data), setOptions);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Set respective collection’s models for requested ids only.</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              requesters = collection.getRequesters();
+              requesterLength = requesters.length;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>For each requester…</p>
 
-
-
-
-
-
-
-Set respective collection's models for requested ids only.
-
-
-  
-
-```
-              requesters = collection.getRequesters();
-              requesterLength = requesters.length;
-
-```
-
-
-
-
-
-
-
-For each requester...
-
-
-  
-
-```
-              for (requesterIdx = 0; requesterIdx < requesterLength; requesterIdx++) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              <span class="hljs-keyword">for</span> (requesterIdx = <span class="hljs-number">0</span>; requesterIdx &lt; requesterLength; requesterIdx++) {
                 requesterIdsAsDict = collection.getRequesterIdsAsDictionary(requesters[requesterIdx]);
-                models = [];
+                models = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>… now let’s iterate over the ids that were fetched …</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; requestedIdsLength; i++) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>if the id that the requester cares about matches that model whose id was just fetched…</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                  <span class="hljs-keyword">if</span> (requesterIdsAsDict[requestedIds[i]]) {
+                    model = collection.get(requestedIds[i]);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>if the model was removed, no worries, the parent won’t attempt to update the child on that one.</p>
 
-
-
-
-
-
-... now let's iterate over the ids that were fetched ...
-
-
-  
-
-```
-                for (i = 0; i < requestedIdsLength; i++) {
-
-```
-
-
-
-
-
-
-
-if the id that the requester cares about matches that model whose id was just fetched...
-
-
-  
-
-```
-                  if (requesterIdsAsDict[requestedIds[i]]) {
-                    model = collection.get(requestedIds[i]);
-
-```
-
-
-
-
-
-
-
-if the model was removed, no worries, the parent won't attempt to update the child on that one.
-
-
-  
-
-```
-                    if (model) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> (model) {
                       models.push(model);
                     }
                   }
                 }
-                privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];
+                privateCollection = collection.knownPrivateCollections[requesters[requesterIdx]];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>a fetch by the parent will not remove a model in a requester collection that wasn’t fetched with this call</p>
 
-```
-
-
-
-
-
-
-
-a fetch by the parent will not remove a model in a requester collection that wasn't fetched with this call
-
-
-  
-
-```
-                if (privateCollection) {
-                  privateCollection.set(models, {remove: false});
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> (privateCollection) {
+                  privateCollection.set(models, {<span class="hljs-attr">remove</span>: <span class="hljs-literal">false</span>});
                 }
               }
             });
         }, options)
-          .always(function() {
+          .always(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>This happens once the promise is resolved, and removes the pending promise for that id.</p>
 
-```
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Track that the fetch was completed so we don’t add a dead promise (since this is what cleans up completed promises).</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            fetchComplete = <span class="hljs-literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Note that an id may have multiple promises (if fetch was called multiple times and then a pull with the same id).
+We want to wait for all of them to complete, this tracks them separately and removes the in-flight promises once they are done.</p>
 
-
-
-
-
-
-This happens once the promise is resolved, and removes the pending promise for that id.
-
-
-
-
-
-
-
-
-Track that the fetch was completed so we don't add a dead promise (since this is what cleans up completed promises).
-
-
-  
-
-```
-            fetchComplete = true;
-
-
-```
-
-
-
-
-
-
-
-Note that an id may have multiple promises (if fetch was called multiple times and then a pull with the same id).
-We want to wait for all of them to complete, this tracks them separately and removes the in-flight promises once they are done.
-
-
-  
-
-```
-            _.each(requestedIds, function(requestedId) {
-              if (collection.idPromises) {
-                var existingPromisesForId = collection.idPromises[requestedId];
-                var remainingPromisesForId = _.without(existingPromisesForId, fetchPromise);
-                if (_.isEmpty(remainingPromisesForId)) {
-                  delete collection.idPromises[requestedId];
-                } else {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            _.each(requestedIds, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">requestedId</span>) </span>{
+              <span class="hljs-keyword">if</span> (collection.idPromises) {
+                <span class="hljs-keyword">var</span> existingPromisesForId = collection.idPromises[requestedId];
+                <span class="hljs-keyword">var</span> remainingPromisesForId = _.without(existingPromisesForId, fetchPromise);
+                <span class="hljs-keyword">if</span> (_.isEmpty(remainingPromisesForId)) {
+                  <span class="hljs-keyword">delete</span> collection.idPromises[requestedId];
+                } <span class="hljs-keyword">else</span> {
                   collection.idPromises[requestedId] = remainingPromisesForId;
                 }
               }
             });
-          });
-
-
-```
-
-
-
-
-
-
-
-Track the promises associated with each id so we know when that id has completed fetching.
+          });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Track the promises associated with each id so we know when that id has completed fetching.
 Multiple simultaneous pulls will generate multiple promises for a shared id.
-Pulls will not generate new promises for the given ids (if there are ids being fetched
+Pulls will not generate new promises for the given ids (if there are ids being fetched</p>
 
-
-  
-
-```
-        if (!fetchComplete) { // fixes the sync case (mainly during tests when mockjax is used).
-          _.each(requestedIds, function(requestedId) {
-            var existingPromises = collection.idPromises[requestedId];
-            if (!existingPromises) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (!fetchComplete) { <span class="hljs-comment">// fixes the sync case (mainly during tests when mockjax is used).</span>
+          _.each(requestedIds, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">requestedId</span>) </span>{
+            <span class="hljs-keyword">var</span> existingPromises = collection.idPromises[requestedId];
+            <span class="hljs-keyword">if</span> (!existingPromises) {
               existingPromises = [];
               collection.idPromises[requestedId] = existingPromises;
             }
@@ -802,12 +940,12 @@ Pulls will not generate new promises for the given ids (if there are ids being f
           });
         }
 
-        return fetchPromise;
+        <span class="hljs-keyword">return</span> fetchPromise;
       };
     };
 
-    return {
-      /**
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-comment">/**
        * The constructor constructor / initialize method for collections.
        * Allocate new memory for the local references if they
        * were null when this method was called.
@@ -816,47 +954,47 @@ Pulls will not generate new promises for the given ids (if there are ids being f
        * @param   [options.getByIdsUrl='/ids'] {string} path appended to collection.url to get objects by a list of ids
        * @param   {boolean} [options.fetchUsingTrackedIds=true] if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
                                                                but will rather call the default fetch method.
-       */
-      constructor: function(models, options) {
+       */</span>
+      <span class="hljs-keyword">constructor</span>: function(models, options) {
         options = options || {};
-        base.call(this, models, options);
-        this.isRequester = options.isRequester;
-        this.parentInstance = options.parentInstance;
-        if (!this.isRequester) {
-          this.requestMap = {};
-          this.collectionTrackedIds = [];
-          this.knownPrivateCollections = {};
-          this.idPromises = {};
-          var cacheDefaults = _.defaults(
-            _.pick(options, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
-            _.pick(this, 'getByIdsUrl', 'fetchHttpAction', 'fetchUsingTrackedIds'),
+        base.call(<span class="hljs-keyword">this</span>, models, options);
+        <span class="hljs-keyword">this</span>.isRequester = options.isRequester;
+        <span class="hljs-keyword">this</span>.parentInstance = options.parentInstance;
+        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isRequester) {
+          <span class="hljs-keyword">this</span>.requestMap = {};
+          <span class="hljs-keyword">this</span>.collectionTrackedIds = [];
+          <span class="hljs-keyword">this</span>.knownPrivateCollections = {};
+          <span class="hljs-keyword">this</span>.idPromises = {};
+          <span class="hljs-keyword">var</span> cacheDefaults = _.defaults(
+            _.pick(options, <span class="hljs-string">'getByIdsUrl'</span>, <span class="hljs-string">'fetchHttpAction'</span>, <span class="hljs-string">'fetchUsingTrackedIds'</span>),
+            _.pick(<span class="hljs-keyword">this</span>, <span class="hljs-string">'getByIdsUrl'</span>, <span class="hljs-string">'fetchHttpAction'</span>, <span class="hljs-string">'fetchUsingTrackedIds'</span>),
             {
-              getByIdsUrl: '/ids',
-              fetchHttpAction: 'GET',
-              fetchUsingTrackedIds: true
+              <span class="hljs-attr">getByIdsUrl</span>: <span class="hljs-string">'/ids'</span>,
+              <span class="hljs-attr">fetchHttpAction</span>: <span class="hljs-string">'GET'</span>,
+              <span class="hljs-attr">fetchUsingTrackedIds</span>: <span class="hljs-literal">true</span>
             }
           );
-          _.extend(this, cacheDefaults);
-          cacheMixin(this);
-        } else {
-          this.trackedIds = [];
-          this.listenTo(this.parentInstance, 'load-begin', function() {
-            this.trigger('cache-load-begin');
+          _.extend(<span class="hljs-keyword">this</span>, cacheDefaults);
+          cacheMixin(<span class="hljs-keyword">this</span>);
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">this</span>.trackedIds = [];
+          <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.parentInstance, <span class="hljs-string">'load-begin'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+            <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'cache-load-begin'</span>);
           });
-          this.listenTo(this.parentInstance, 'load-complete', function() {
-            this.trigger('cache-load-complete');
+          <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.parentInstance, <span class="hljs-string">'load-complete'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+            <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'cache-load-complete'</span>);
           });
         }
       },
     };
   };
 
-  return mixin;
-}));
-
-
-```
-
-
-
-
+  <span class="hljs-keyword">return</span> mixin;
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,160 +1,329 @@
+<!DOCTYPE html>
 
-
-
-
-
-
-  
-
-```
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('backbone'));
-  } else {
+<html>
+<head>
+  <title>registry.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>registry.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>));
+  } <span class="hljs-keyword">else</span> {
     root.Torso = root.Torso || {};
     root.Torso.registry = factory(root._, root.Backbone);
   }
-}(this, function(_, Backbone) {
-  'use strict';
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone</span>) </span>{
+<span class="hljs-meta">  'use strict'</span>;
 
-  /**
+  <span class="hljs-comment">/**
    * Registry of instantiated Torso objects
    * @module    Torso
    * @class     registry
    * @constructor
    * @author kent.willis@vecna.com
-   */
+   */</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Registry prototype.</p>
 
-
-```
-
-
-
-
-
-
-
-Registry prototype.
-
-
-  
-
-```
-  var Registry = function() {
-    this.cells = {};
-    this.models = {};
-    this.services = {};
-    this.views = {};
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> Registry = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">this</span>.cells = {};
+    <span class="hljs-keyword">this</span>.models = {};
+    <span class="hljs-keyword">this</span>.services = {};
+    <span class="hljs-keyword">this</span>.views = {};
   };
 
   _.extend(Registry.prototype, Backbone.Events, {
-    cidPrefix: 'r',
+    <span class="hljs-attr">cidPrefix</span>: <span class="hljs-string">'r'</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Add the model to the model cache when it is initialized.
      * @param {Torso.Model} model the model to add to the models cache.
-     */
-    modelInitialized: function(model) {
-      this.__initialize(model, this.models);
+     */</span>
+    modelInitialized: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+      <span class="hljs-keyword">this</span>.__initialize(model, <span class="hljs-keyword">this</span>.models);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Add the cell to the cell cache when it is initialized.
      * @param {Torso.Cell} cell the cell to add to the cells cache.
-     */
-    cellInitialized: function(cell) {
-      this.__initialize(cell, this.cells);
+     */</span>
+    cellInitialized: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">cell</span>) </span>{
+      <span class="hljs-keyword">this</span>.__initialize(cell, <span class="hljs-keyword">this</span>.cells);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Add the view to the view cache when it is initialized.
      * @param {Torso.View} view the view to add to the views cache.
-     */
-    viewInitialized: function(view) {
-      this.__initialize(view, this.views);
+     */</span>
+    viewInitialized: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
+      <span class="hljs-keyword">this</span>.__initialize(view, <span class="hljs-keyword">this</span>.views);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Add the service to the model service when it is initialized.
      * @param {Torso.ServiceCell} service the service to add to the services cache.
-     */
-    serviceInitialized: function(service) {
-      this.__initialize(service, this.services);
+     */</span>
+    serviceInitialized: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">service</span>) </span>{
+      <span class="hljs-keyword">this</span>.__initialize(service, <span class="hljs-keyword">this</span>.services);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Initialize the given object in the given cache.
      * @param {Backbone.Events} obj any object that implements/extends backbone events.
      *   @param {string} obj.cid the unique identifier for the object.
      * @param {Object} cache the cache to add the object to.
      * @private
-     */
-    __initialize: function(obj, cache) {
+     */</span>
+    __initialize: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj, cache</span>) </span>{
       cache[obj.cid] = obj;
-      this.listenToOnce(obj, 'before-dispose', function() {
-        delete cache[obj.cid];
+      <span class="hljs-keyword">this</span>.listenToOnce(obj, <span class="hljs-string">'before-dispose'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">delete</span> cache[obj.cid];
       });
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Dispose of all items in all of the caches (Models, Cells, Services and Views).
-     */
-    disposeAll: function() {
-      this.disposeAllModels();
-      this.disposeAllCells();
-      this.disposeAllServices();
-      this.disposeAllViews();
+     */</span>
+    disposeAll: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.disposeAllModels();
+      <span class="hljs-keyword">this</span>.disposeAllCells();
+      <span class="hljs-keyword">this</span>.disposeAllServices();
+      <span class="hljs-keyword">this</span>.disposeAllViews();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Dispose of all items in the Models cache.
-     */
-    disposeAllModels: function() {
-      this.__disposeCache(this.models);
+     */</span>
+    disposeAllModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.__disposeCache(<span class="hljs-keyword">this</span>.models);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Dispose of all items in the Cells cache.
-     */
-    disposeAllCells: function() {
-      this.__disposeCache(this.cells);
+     */</span>
+    disposeAllCells: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.__disposeCache(<span class="hljs-keyword">this</span>.cells);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Dispose of all items in the Services cache.
-     */
-    disposeAllServices: function() {
-      this.__disposeCache(this.services);
+     */</span>
+    disposeAllServices: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.__disposeCache(<span class="hljs-keyword">this</span>.services);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Dispose of all items in the Views cache.
-     */
-    disposeAllViews: function() {
-      this.__disposeCache(this.views);
+     */</span>
+    disposeAllViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.__disposeCache(<span class="hljs-keyword">this</span>.views);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Invoke dispose on all the items in the given cache.
      * @param {Object} cache to invoke dispose on each member.
      * @private
-     */
-    __disposeCache: function(cache) {
-      var objects = _.values(cache);
-      _.invoke(objects, 'dispose');
+     */</span>
+    __disposeCache: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">cache</span>) </span>{
+      <span class="hljs-keyword">var</span> objects = _.values(cache);
+      _.invoke(objects, <span class="hljs-string">'dispose'</span>);
     }
   });
 
-  var registry = new Registry();
+  <span class="hljs-keyword">var</span> registry = <span class="hljs-keyword">new</span> Registry();
 
-  return registry;
-}));
-
-
-```
-
-
-
-
+  <span class="hljs-keyword">return</span> registry;
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

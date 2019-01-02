@@ -1,41 +1,212 @@
+<!DOCTYPE html>
 
-
-
-
-
-
-  
-
-```
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', 'backbone', '../Behavior', '../Collection', '../Events'], factory);
-  } else if (typeof exports === 'object') {
-    var _ = require('underscore');
-    var Backbone = require('backbone');
-    var Behavior = require('../Behavior');
-    var Collection = require('../Collection');
-    var Events = require('../Events');
-    module.exports = factory(_, Backbone, Behavior, Collection, Events);
-  } else {
+<html>
+<head>
+  <title>DataBehavior.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="../Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="../Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="../Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="../Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="../FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="../FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="../ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="../Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="../NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="../NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="../Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="../ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="../View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="../configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="../handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="../history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="../mixins/cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="../mixins/cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="../mixins/loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="../mixins/modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="../mixins/pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="../registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="../stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="../templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="../torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="../validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>DataBehavior.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'../Behavior'</span>, <span class="hljs-string">'../Collection'</span>, <span class="hljs-string">'../Events'</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+    <span class="hljs-keyword">var</span> Backbone = <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>);
+    <span class="hljs-keyword">var</span> Behavior = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../Behavior'</span>);
+    <span class="hljs-keyword">var</span> Collection = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../Collection'</span>);
+    <span class="hljs-keyword">var</span> Events = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../Events'</span>);
+    <span class="hljs-built_in">module</span>.exports = factory(_, Backbone, Behavior, Collection, Events);
+  } <span class="hljs-keyword">else</span> {
     root.Torso = root.Torso || {};
     root.Torso.behaviors = root.Torso.behaviors || {};
     root.Torso.behaviors.DataBehavior = factory(root._, root.Backbone, root.Torso.Behavior, root.Torso.Collection, root.Torso.Events);
   }
-}(this, function(_, Backbone, Behavior, Collection, Events) {
-  'use strict';
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone, Behavior, Collection, Events</span>) </span>{
+<span class="hljs-meta">  'use strict'</span>;
 
-  var $ = Backbone.$;
+  <span class="hljs-keyword">var</span> $ = Backbone.$;
 
-  var PROPERTY_SEPARATOR = '.';
-  var CONTAINER_SEPARATOR = ':';
+  <span class="hljs-keyword">var</span> PROPERTY_SEPARATOR = <span class="hljs-string">'.'</span>;
+  <span class="hljs-keyword">var</span> CONTAINER_SEPARATOR = <span class="hljs-string">':'</span>;
 
-  var FETCHED_STATUSES = {
-    SUCCESS: 'success',
-    FAILURE: 'failed'
+  <span class="hljs-keyword">var</span> FETCHED_STATUSES = {
+    <span class="hljs-attr">SUCCESS</span>: <span class="hljs-string">'success'</span>,
+    <span class="hljs-attr">FAILURE</span>: <span class="hljs-string">'failed'</span>
   };
 
-  /**
+  <span class="hljs-comment">/**
    * Converts string or number values into an array with a single string or number item.
    * If the input is not a string, number, array, or info about the ids then undefined is returned.
    * This is a private helper method used internally by this behavior and is not exposed in any way.
@@ -43,106 +214,103 @@
    *   @param {boolean} [ids.skipObjectRetrieval] set if this is a meta-info object about the ids.
    * @return {string[]|number[]|Object} an array of strings or numbers.
    * @private
-   */
-  function normalizeIds(ids) {
-    if (_.isArray(ids)) {
+   */</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">normalizeIds</span>(<span class="hljs-params">ids</span>) </span>{
+    <span class="hljs-keyword">if</span> (_.isArray(ids)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>remove any nesting of arrays - it is assumed that the resulting ids will be simple string or number values.</p>
 
-```
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      ids = _.flatten(ids);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>remove any duplicate ids.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> _.uniq(ids);
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isString(ids) || _.isNumber(ids)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>individual id - convert to array for consistency.</p>
 
-
-
-
-
-
-remove any nesting of arrays - it is assumed that the resulting ids will be simple string or number values.
-
-
-  
-
-```
-      ids = _.flatten(ids);
-
-```
-
-
-
-
-
-
-
-remove any duplicate ids.
-
-
-  
-
-```
-      return _.uniq(ids);
-    } else if (_.isString(ids) || _.isNumber(ids)) {
-
-```
-
-
-
-
-
-
-
-individual id - convert to array for consistency.
-
-
-  
-
-```
-      return [ids];
-    } else if (ids && ids.skipObjectRetrieval) {
-      return ids;
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> [ids];
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ids &amp;&amp; ids.skipObjectRetrieval) {
+      <span class="hljs-keyword">return</span> ids;
     }
   }
 
-  /**
+  <span class="hljs-comment">/**
    * Converts any undefined or null values to an empty array.  All other values are left unchanged.
    * @param valueToConvert the value to check for null or undefined.
    * @return {Array|*} either the original value or [] if the valueToConvert is null or undefined.
-   */
-  function undefinedOrNullToEmptyArray(valueToConvert) {
-    if (_.isUndefined(valueToConvert) || _.isNull(valueToConvert)) {
+   */</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">undefinedOrNullToEmptyArray</span>(<span class="hljs-params">valueToConvert</span>) </span>{
+    <span class="hljs-keyword">if</span> (_.isUndefined(valueToConvert) || _.isNull(valueToConvert)) {
       valueToConvert = [];
     }
-    return valueToConvert;
+    <span class="hljs-keyword">return</span> valueToConvert;
   }
 
-  /**
+  <span class="hljs-comment">/**
    * Gets a nested property from an object, returning undefined if it doesn't exist on any level.
    * @param {Object} rootObject object containing the property to get.
    * @param {string} propertyString string identifying the nested object to retrieve.
    * @return {*} either undefined or the property referenced from the rootObject.
-   */
-  function getNestedProperty(rootObject, propertyString) {
-    propertyString = propertyString.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-    propertyString = propertyString.replace(/^\./, '');           // strip a leading dot
-    var propertyStringParts = propertyString.split(PROPERTY_SEPARATOR);
-    return _.reduce(propertyStringParts, function(currentBaseObject, currentPropertyName) {
-      return _.isUndefined(currentBaseObject) ? undefined : currentBaseObject[currentPropertyName];
+   */</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getNestedProperty</span>(<span class="hljs-params">rootObject, propertyString</span>) </span>{
+    propertyString = propertyString.replace(<span class="hljs-regexp">/\[(\w+)\]/g</span>, <span class="hljs-string">'.$1'</span>); <span class="hljs-comment">// convert indexes to properties</span>
+    propertyString = propertyString.replace(<span class="hljs-regexp">/^\./</span>, <span class="hljs-string">''</span>);           <span class="hljs-comment">// strip a leading dot</span>
+    <span class="hljs-keyword">var</span> propertyStringParts = propertyString.split(PROPERTY_SEPARATOR);
+    <span class="hljs-keyword">return</span> _.reduce(propertyStringParts, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">currentBaseObject, currentPropertyName</span>) </span>{
+      <span class="hljs-keyword">return</span> _.isUndefined(currentBaseObject) ? <span class="hljs-literal">undefined</span> : currentBaseObject[currentPropertyName];
     }, rootObject);
   }
 
-  /**
+  <span class="hljs-comment">/**
    * Determines if the stringDefinition contains a container definition (i.e. has a ':' in it).
    * @param stringDefinition to test.
    * @return {boolean} true if the string definition contains a container definition, false otherwise.
-   */
-  function containsContainerDefinition(stringDefinition) {
-    return !!stringDefinition && stringDefinition.indexOf(CONTAINER_SEPARATOR) > -1;
+   */</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">containsContainerDefinition</span>(<span class="hljs-params">stringDefinition</span>) </span>{
+    <span class="hljs-keyword">return</span> !!stringDefinition &amp;&amp; stringDefinition.indexOf(CONTAINER_SEPARATOR) &gt; <span class="hljs-number">-1</span>;
   }
 
-  /**
+  <span class="hljs-comment">/**
    * Behaviors defined in Torso.
    * @module Torso.behaviors
    * @namespace Torso.behaviors
-   */
+   */</span>
 
-  /**
+  <span class="hljs-comment">/**
    * This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
    * This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
    * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
@@ -151,43 +319,43 @@ individual id - convert to array for consistency.
    *
    * @class DataBehavior
    * @author  jyoung@vecna.com
-   */
-  var DataBehavior = Behavior.extend({
-    /**
+   */</span>
+  <span class="hljs-keyword">var</span> DataBehavior = Behavior.extend({
+    <span class="hljs-comment">/**
      * The torso collection that is acting as a cache used to create the private collections.
      * This property/option is required.  Instantiation will fail if it is not set.
      * @property {Collection} cache
-     */
-    cache: undefined,
+     */</span>
+    cache: <span class="hljs-literal">undefined</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Adds a listener on the Behavior for the `fetched` event that triggers a render on the view.
      * true - A listener is added to the behavior that re-renders the view when a 'fetched' event is triggered.
      * false (default) - no listeners are added.
      * @property {boolean} renderOnFetch
      * @default false
-     */
-    renderOnFetch: false,
+     */</span>
+    renderOnFetch: <span class="hljs-literal">false</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Skip triggering a load of this data behavior when the view completes initializing.
      * true - no load after the view is initialized.
      * false (default) - trigger a .retrieve() on this data behavior when the view completes initialization.
      * @property {boolean} skipInitialLoad
      * @default false
-     */
-    skipInitialLoad: false,
+     */</span>
+    skipInitialLoad: <span class="hljs-literal">false</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Determines the result of `view.getBehavior('thisBehaviorAlias').toJSON()`.
      * true - a single model result is returned.
      * false (default) - an array of model results are returned.
      * @property {boolean} returnSingleResult
      * @default false
-     */
-    returnSingleResult: false,
+     */</span>
+    returnSingleResult: <span class="hljs-literal">false</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Determines whether `pull()` or `fetch()` is called when using `retrieve()`.
      * true - Use fetch() by default on the private collection.
      * false (default) - Use pull() by default on the private collection.
@@ -196,10 +364,10 @@ individual id - convert to array for consistency.
      * This property will be ignored if `fetch()` or `pull()` is called directly.
      * @property {boolean} alwaysFetch
      * @default false
-     */
-    alwaysFetch: false,
+     */</span>
+    alwaysFetch: <span class="hljs-literal">false</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).
      *   - {string|number} - the id to use directly (equivalent to an array of a single id).
      *   - {string[]|number[]} - the ids to use directly.
@@ -209,13 +377,13 @@ individual id - convert to array for consistency.
      *                Only one property can be identified as supplying the id for this data model.
      *                If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
      *                The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
-     *                have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
+     *                have been fetched for the first time.  Then a 'change:&lt;propertyName&gt;' event can be used to notify this
      *                data behavior that the property has been modified.
      *     - property {string} - the name of the property that defines the ids. The root object is assumed to be the view unless
      *                           idContainer is defined. The idContainer is the object that fires a change event for the given property name.
      *                           Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
      *                           Will get the property before the first '.' from the view and if it is an object will try to use a
-     *                           .get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.
+     *                           .get('&lt;propertyName&gt;') on it and set a 'change:&lt;propertyName&gt;' listener on it.
      *                           If it is a string/number or array of string/number, then it will use that as the ids.
      *                           Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
      *                           old idContainer and start listening to the new one defined by this property.
@@ -242,10 +410,10 @@ individual id - convert to array for consistency.
      *           return cache.fetchIdsByCriteria(criteria);
      *         }
      * @property {string|number|string[]|number[]|Object|Function} ids
-     */
-    ids: undefined,
+     */</span>
+    ids: <span class="hljs-literal">undefined</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * cause this behavior to re-calculate its ids and refetch them from the server if the given events are triggered
      * (space separated if string, single item is equivalent to array of single item).
      *   - 'view:eventName' - arbitrary event triggered on the view (eventName can be a change:propertyName event).
@@ -254,25 +422,25 @@ individual id - convert to array for consistency.
      *   - 'this:eventName' - arbitrary event triggered by this behavior (eventName can be a change:propertyName event).
      *   - 'behaviorAlias:eventName' - arbitrary event triggered by another data behavior on this view (eventName can be a change:propertyName event).
      *   - 'behaviorAlias.data:eventName' - arbitrary event triggered by the data of another DataBehavior on this view (eventName can be a change:propertyName event).
-     *   - { '<eventName>': < object (or function returning an object) that the event is triggered on > } - arbitrary ('<eventName>') triggered on the supplied object.
+     *   - { '&lt;eventName&gt;': &lt; object (or function returning an object) that the event is triggered on &gt; } - arbitrary ('&lt;eventName&gt;') triggered on the supplied object.
      * @property {string|string[]|Object|Object[]} updateEvents
-     */
-    updateEvents: undefined,
+     */</span>
+    updateEvents: <span class="hljs-literal">undefined</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * Object that manages interaction with the data.  Contains the privateCollection, proxies all events from the privateCollection,
      * and has get('...') and .toJSON() methods that access the private collection data.
      * @property {Torso.behaviors.DataBehavior.Data} data
-     */
-    data: undefined,
+     */</span>
+    data: <span class="hljs-literal">undefined</span>,
 
-    /**
+    <span class="hljs-comment">/**
      * The possible fetched statuses.  This is the status value of the fetched event payload.
      * @property {Object} { SUCCESS: 'SUCCESS', FAILURE: 'FAILURE' } FETCHED_STATUSES
-     */
+     */</span>
     FETCHED_STATUSES: FETCHED_STATUSES,
 
-    /**
+    <span class="hljs-comment">/**
      * @override
      * @param {Object} [behaviorState] the initial state of the behavior.
      * @param {Object} behaviorOptions
@@ -285,202 +453,199 @@ individual id - convert to array for consistency.
      *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.ids=behaviorOptions.id] see ids property.
      *   @param {string|string[]|Object|Object[]} [behaviorOptions.updateEvents] see updateEvents property.
      * @param {Object} [viewOptions] options passed to View's initialize
-     */
-    constructor: function(behaviorState, behaviorOptions, viewOptions) {
-      _.bindAll(this, '__skipRetrieveOnEmptyTrackedIdsAndNewIds', '__completeLoadingIds', '__fetchSuccess', '__fetchFailed', '__abortIfDisposed');
+     */</span>
+    <span class="hljs-keyword">constructor</span>: function(behaviorState, behaviorOptions, viewOptions) {
+      _.bindAll(<span class="hljs-keyword">this</span>, <span class="hljs-string">'__skipRetrieveOnEmptyTrackedIdsAndNewIds'</span>, <span class="hljs-string">'__completeLoadingIds'</span>, <span class="hljs-string">'__fetchSuccess'</span>, <span class="hljs-string">'__fetchFailed'</span>, <span class="hljs-string">'__abortIfDisposed'</span>);
       behaviorOptions = behaviorOptions || {};
       behaviorOptions = _.defaults(behaviorOptions, {
-        alwaysFetch: false
+        <span class="hljs-attr">alwaysFetch</span>: <span class="hljs-literal">false</span>
       });
-      _.extend(this, _.pick(behaviorOptions, 'cache', 'id', 'ids', 'renderOnFetch', 'skipInitialLoad', 'returnSingleResult', 'alwaysFetch', 'updateEvents'));
+      _.extend(<span class="hljs-keyword">this</span>, _.pick(behaviorOptions, <span class="hljs-string">'cache'</span>, <span class="hljs-string">'id'</span>, <span class="hljs-string">'ids'</span>, <span class="hljs-string">'renderOnFetch'</span>, <span class="hljs-string">'skipInitialLoad'</span>, <span class="hljs-string">'returnSingleResult'</span>, <span class="hljs-string">'alwaysFetch'</span>, <span class="hljs-string">'updateEvents'</span>));
 
-      this.__validateCache();
-      this.__normalizeAndValidateIds();
-      this.__normalizeAndValidateUpdateEvents();
+      <span class="hljs-keyword">this</span>.__validateCache();
+      <span class="hljs-keyword">this</span>.__normalizeAndValidateIds();
+      <span class="hljs-keyword">this</span>.__normalizeAndValidateUpdateEvents();
 
-      this.cid = this.cid || _.uniqueId(this.cidPrefix);
-      this.data = new this.Data({
-        parentBehavior: this,
-        privateCollection: this.cache.createPrivateCollection(this.cid)
+      <span class="hljs-keyword">this</span>.cid = <span class="hljs-keyword">this</span>.cid || _.uniqueId(<span class="hljs-keyword">this</span>.cidPrefix);
+      <span class="hljs-keyword">this</span>.data = <span class="hljs-keyword">new</span> <span class="hljs-keyword">this</span>.Data({
+        <span class="hljs-attr">parentBehavior</span>: <span class="hljs-keyword">this</span>,
+        <span class="hljs-attr">privateCollection</span>: <span class="hljs-keyword">this</span>.cache.createPrivateCollection(<span class="hljs-keyword">this</span>.cid)
       });
 
-      Behavior.apply(this, arguments);
+      Behavior.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
 
-      this.set('loadingIds', 0);
+      <span class="hljs-keyword">this</span>.set(<span class="hljs-string">'loadingIds'</span>, <span class="hljs-number">0</span>);
 
-      this.on('id-container-updated', this.listenToIdsPropertyChangeEvent);
-      this.on('id-container-updated', this.retrieve);
-      this.listenTo(this.view, 'initialize:complete', this.listenToIdsPropertyChangeEvent);
-      this.listenTo(this.view, 'initialize:complete', this._delegateUpdateEvents);
-      if (!this.skipInitialLoad) {
-        this.listenTo(this.view, 'initialize:complete', this.retrieve);
-      }
+      <span class="hljs-keyword">this</span>.on(<span class="hljs-string">'id-container-updated'</span>, <span class="hljs-keyword">this</span>.listenToIdsPropertyChangeEvent);
+      <span class="hljs-keyword">this</span>.on(<span class="hljs-string">'id-container-updated'</span>, <span class="hljs-keyword">this</span>.retrieve);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.view, <span class="hljs-string">'initialize:complete'</span>, <span class="hljs-keyword">this</span>.listenToIdsPropertyChangeEvent);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.view, <span class="hljs-string">'initialize:complete'</span>, <span class="hljs-keyword">this</span>._delegateUpdateEvents);
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.skipInitialLoad) {
+        <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.view, <span class="hljs-string">'initialize:complete'</span>, <span class="hljs-keyword">this</span>.retrieve);
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>This allows ‘renderOnFetch’ to be changed at runtime after the constructor is executed.</p>
 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.on(<span class="hljs-string">'fetched'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>If a view isn’t active then it shouldn’t be rendering.
+When a view is attached it is rendered anyway.</p>
 
-```
-
-
-
-
-
-
-
-This allows 'renderOnFetch' to be changed at runtime after the constructor is executed.
-
-
-  
-
-```
-      this.on('fetched', function() {
-
-```
-
-
-
-
-
-
-
-If a view isn't active then it shouldn't be rendering.
-When a view is attached it is rendered anyway.
-
-
-  
-
-```
-        if (this.renderOnFetch && this.view.isActive() && this.view.isAttached()) {
-          this.view.render();
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.renderOnFetch &amp;&amp; <span class="hljs-keyword">this</span>.view.isActive() &amp;&amp; <span class="hljs-keyword">this</span>.view.isAttached()) {
+          <span class="hljs-keyword">this</span>.view.render();
         }
       });
-      this.listenTo(this.view, 'before-dispose-callback', this.data.dispose);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.view, <span class="hljs-string">'before-dispose-callback'</span>, <span class="hljs-keyword">this</span>.data.dispose);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
      * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
-     */
-    retrieve: function() {
-      if (this.alwaysFetch) {
-        return this.fetch();
-      } else {
-        return this.pull();
+     */</span>
+    retrieve: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.alwaysFetch) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.fetch();
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.pull();
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
-     */
-    pull: function() {
-      var thisDataBehavior = this;
-      return this.__getIds()
-        .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
-        .then(this.__abortIfDisposed)
-        .then(function(idsResult) {
-          if (idsResult && !idsResult.skipObjectRetrieval) {
-            return thisDataBehavior.data.privateCollection.trackAndPull(idsResult);
+     */</span>
+    pull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> thisDataBehavior = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__getIds()
+        .then(<span class="hljs-keyword">this</span>.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(<span class="hljs-keyword">this</span>.__abortIfDisposed)
+        .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">idsResult</span>) </span>{
+          <span class="hljs-keyword">if</span> (idsResult &amp;&amp; !idsResult.skipObjectRetrieval) {
+            <span class="hljs-keyword">return</span> thisDataBehavior.data.privateCollection.trackAndPull(idsResult);
           }
-          return idsResult;
-        }, function(errorResponse) {
-          errorResponse.failedOnIds = true;
-          return errorResponse;
+          <span class="hljs-keyword">return</span> idsResult;
+        }, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">errorResponse</span>) </span>{
+          errorResponse.failedOnIds = <span class="hljs-literal">true</span>;
+          <span class="hljs-keyword">return</span> errorResponse;
         })
-        .then(this.__fetchSuccess, this.__fetchFailed);
+        .then(<span class="hljs-keyword">this</span>.__fetchSuccess, <span class="hljs-keyword">this</span>.__fetchFailed);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
-     */
-    fetch: function() {
-      var thisDataBehavior = this;
-      return this.__getIds()
-        .then(this.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
-        .then(this.__abortIfDisposed)
-        .then(function(idsResult) {
-          if (idsResult && !idsResult.skipObjectRetrieval) {
-            return thisDataBehavior.data.privateCollection.trackAndFetch(idsResult);
+     */</span>
+    fetch: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> thisDataBehavior = <span class="hljs-keyword">this</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__getIds()
+        .then(<span class="hljs-keyword">this</span>.__skipRetrieveOnEmptyTrackedIdsAndNewIds)
+        .then(<span class="hljs-keyword">this</span>.__abortIfDisposed)
+        .then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">idsResult</span>) </span>{
+          <span class="hljs-keyword">if</span> (idsResult &amp;&amp; !idsResult.skipObjectRetrieval) {
+            <span class="hljs-keyword">return</span> thisDataBehavior.data.privateCollection.trackAndFetch(idsResult);
           }
-          return idsResult;
-        }, function(errorResponse) {
-          errorResponse.failedOnIds = true;
-          return errorResponse;
+          <span class="hljs-keyword">return</span> idsResult;
+        }, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">errorResponse</span>) </span>{
+          errorResponse.failedOnIds = <span class="hljs-literal">true</span>;
+          <span class="hljs-keyword">return</span> errorResponse;
         })
-        .then(this.__fetchSuccess, this.__fetchFailed);
+        .then(<span class="hljs-keyword">this</span>.__fetchSuccess, <span class="hljs-keyword">this</span>.__fetchFailed);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Adds the toJSON of the data represented by this behavior to the context.
      * @override
-     */
-    prepare: function() {
-      var behaviorContext = Behavior.prototype.prepare.apply(this) || {};
-      behaviorContext.data = this.data.toJSON();
-      behaviorContext.loading = this.isLoading();
-      behaviorContext.loadingIds = this.isLoadingIds();
-      behaviorContext.loadingObjects = this.isLoadingObjects();
-      return behaviorContext;
+     */</span>
+    prepare: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> behaviorContext = Behavior.prototype.prepare.apply(<span class="hljs-keyword">this</span>) || {};
+      behaviorContext.data = <span class="hljs-keyword">this</span>.data.toJSON();
+      behaviorContext.loading = <span class="hljs-keyword">this</span>.isLoading();
+      behaviorContext.loadingIds = <span class="hljs-keyword">this</span>.isLoadingIds();
+      behaviorContext.loadingObjects = <span class="hljs-keyword">this</span>.isLoadingObjects();
+      <span class="hljs-keyword">return</span> behaviorContext;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Determine if the behavior is loading objects or ids.
      * @return {boolean} true - the behavior is currently loading objects or ids.
      *                   false - the behavior is not currently loading objects or ids.
-     */
-    isLoading: function() {
-      return this.isLoadingIds() || this.isLoadingObjects();
+     */</span>
+    isLoading: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.isLoadingIds() || <span class="hljs-keyword">this</span>.isLoadingObjects();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Determine if the behavior is loading ids.
      * @return {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
-     */
-    isLoadingIds: function() {
-      return this.get('loadingIds') > 0;
+     */</span>
+    isLoadingIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'loadingIds'</span>) &gt; <span class="hljs-number">0</span>;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Determine if the behavior is loading objects.
      * @return {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
-     */
-    isLoadingObjects: function() {
-      return this.data.privateCollection.isLoading();
+     */</span>
+    isLoadingObjects: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.data.privateCollection.isLoading();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Listens for the change event on the ids property and, if triggered, re-fetches the data based on the new ids.
-     */
-    listenToIdsPropertyChangeEvent: function() {
-      if (!_.isUndefined(this.ids.property)) {
-        this.stopListeningToIdsPropertyChangeEvent();
-        var idsPropertyNameAndContext = this.__parseIdsPropertyNameAndIdContainer();
-        var idContainer = idsPropertyNameAndContext.idContainer;
-        var canListenToEvents = idContainer && _.isFunction(idContainer.on);
-        if (canListenToEvents) {
-          this.__currentContextWithListener = idContainer;
-          this.__currentContextEventName = 'change:' + idsPropertyNameAndContext.idsPropertyName;
-          this.listenTo(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
-          this.listenTo(this.__currentContextWithListener, 'fetched:ids', this.retrieve);
+     */</span>
+    listenToIdsPropertyChangeEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (!_.isUndefined(<span class="hljs-keyword">this</span>.ids.property)) {
+        <span class="hljs-keyword">this</span>.stopListeningToIdsPropertyChangeEvent();
+        <span class="hljs-keyword">var</span> idsPropertyNameAndContext = <span class="hljs-keyword">this</span>.__parseIdsPropertyNameAndIdContainer();
+        <span class="hljs-keyword">var</span> idContainer = idsPropertyNameAndContext.idContainer;
+        <span class="hljs-keyword">var</span> canListenToEvents = idContainer &amp;&amp; _.isFunction(idContainer.on);
+        <span class="hljs-keyword">if</span> (canListenToEvents) {
+          <span class="hljs-keyword">this</span>.__currentContextWithListener = idContainer;
+          <span class="hljs-keyword">this</span>.__currentContextEventName = <span class="hljs-string">'change:'</span> + idsPropertyNameAndContext.idsPropertyName;
+          <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.__currentContextWithListener, <span class="hljs-keyword">this</span>.__currentContextEventName, <span class="hljs-keyword">this</span>.retrieve);
+          <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.__currentContextWithListener, <span class="hljs-string">'fetched:ids'</span>, <span class="hljs-keyword">this</span>.retrieve);
         }
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Removes the listener added by listenToIdsPropertyChangeEvent().
-     */
-    stopListeningToIdsPropertyChangeEvent: function() {
-      if (this.__currentContextWithListener) {
-        this.stopListening(this.__currentContextWithListener, this.__currentContextEventName, this.retrieve);
-        this.stopListening(this.__currentContextWithListener, 'fetched:ids', this.retrieve);
-        delete this.__currentContextWithListener;
-        delete this.__currentContextEventName;
+     */</span>
+    stopListeningToIdsPropertyChangeEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.__currentContextWithListener) {
+        <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.__currentContextWithListener, <span class="hljs-keyword">this</span>.__currentContextEventName, <span class="hljs-keyword">this</span>.retrieve);
+        <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.__currentContextWithListener, <span class="hljs-string">'fetched:ids'</span>, <span class="hljs-keyword">this</span>.retrieve);
+        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__currentContextWithListener;
+        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__currentContextEventName;
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * This is a good way to have something be called after at least one retrieve (pull or fetch) has completed.
      * This is especially useful if you don't care if the fetch has already happen you just want to do something once
      * the data is loaded.
@@ -498,592 +663,589 @@ When a view is attached it is rendered anyway.
      *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
      *
      * @return {jQuery.Promise} that resolves when the data is successfully fetched and rejects when the fetch fails.
-     */
-    retrieveOncePromise: function() {
-      var retrieveOnceDeferred = $.Deferred();
-      var demographicsFetchSuccess = this.get('fetchSuccess');
-      if (demographicsFetchSuccess) {
+     */</span>
+    retrieveOncePromise: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> retrieveOnceDeferred = $.Deferred();
+      <span class="hljs-keyword">var</span> demographicsFetchSuccess = <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'fetchSuccess'</span>);
+      <span class="hljs-keyword">if</span> (demographicsFetchSuccess) {
         retrieveOnceDeferred.resolve();
-      } else if (demographicsFetchSuccess === false) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (demographicsFetchSuccess === <span class="hljs-literal">false</span>) {
         retrieveOnceDeferred.reject();
-      } else {
-        this.once('fetched', function() {
-          var demographicsFetchSuccess = this.get('fetchSuccess');
-          if (demographicsFetchSuccess) {
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>.once(<span class="hljs-string">'fetched'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+          <span class="hljs-keyword">var</span> demographicsFetchSuccess = <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'fetchSuccess'</span>);
+          <span class="hljs-keyword">if</span> (demographicsFetchSuccess) {
             retrieveOnceDeferred.resolve();
-          } else {
+          } <span class="hljs-keyword">else</span> {
             retrieveOnceDeferred.reject();
           }
         });
       }
-      return retrieveOnceDeferred.promise();
+      <span class="hljs-keyword">return</span> retrieveOnceDeferred.promise();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Removes existing listeners and adds new ones for all of the updateEvents configured.
      * @private
-     */
-    _delegateUpdateEvents: function() {
-      this._undelegateUpdateEvents();
-      var updateEvents = this.__parseUpdateEvents();
-      _.each(updateEvents, function(parsedUpdateEvent) {
-        this.listenTo(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, this.retrieve);
-      }, this);
+     */</span>
+    _delegateUpdateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>._undelegateUpdateEvents();
+      <span class="hljs-keyword">var</span> updateEvents = <span class="hljs-keyword">this</span>.__parseUpdateEvents();
+      _.each(updateEvents, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">parsedUpdateEvent</span>) </span>{
+        <span class="hljs-keyword">this</span>.listenTo(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, <span class="hljs-keyword">this</span>.retrieve);
+      }, <span class="hljs-keyword">this</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Removes existing event listeners.
      * @private
-     */
-    _undelegateUpdateEvents: function() {
-      var updateEvents = this.__parseUpdateEvents();
-      _.each(updateEvents, function(parsedUpdateEvent) {
-        this.stopListening(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, this.retrieve);
-      }, this);
+     */</span>
+    _undelegateUpdateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> updateEvents = <span class="hljs-keyword">this</span>.__parseUpdateEvents();
+      _.each(updateEvents, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">parsedUpdateEvent</span>) </span>{
+        <span class="hljs-keyword">this</span>.stopListening(parsedUpdateEvent.idContainer, parsedUpdateEvent.eventName, <span class="hljs-keyword">this</span>.retrieve);
+      }, <span class="hljs-keyword">this</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Parses this.updateEvents configuration.
      * @return {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
      * @private
-     */
-    __parseUpdateEvents: function() {
-      this.__normalizeAndValidateUpdateEvents();
-      var updateEvents = _.flatten(_.map(this.updateEvents, this.__parseUpdateEvent, this));
-      return _.compact(updateEvents);
+     */</span>
+    __parseUpdateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.__normalizeAndValidateUpdateEvents();
+      <span class="hljs-keyword">var</span> updateEvents = _.flatten(_.map(<span class="hljs-keyword">this</span>.updateEvents, <span class="hljs-keyword">this</span>.__parseUpdateEvent, <span class="hljs-keyword">this</span>));
+      <span class="hljs-keyword">return</span> _.compact(updateEvents);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
      * @return {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
-     */
-    __parseUpdateEvent: function(updateEventConfiguration) {
-      if (_.isUndefined(updateEventConfiguration)) {
-        return undefined;
+     */</span>
+    __parseUpdateEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">updateEventConfiguration</span>) </span>{
+      <span class="hljs-keyword">if</span> (_.isUndefined(updateEventConfiguration)) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
       }
-      var parsedUpdateEvents = [];
-      if (_.isString(updateEventConfiguration)) {
-        var updateEvent = this.__parseStringUpdateEvent(updateEventConfiguration);
-        if (!_.isUndefined(updateEvent)) {
+      <span class="hljs-keyword">var</span> parsedUpdateEvents = [];
+      <span class="hljs-keyword">if</span> (_.isString(updateEventConfiguration)) {
+        <span class="hljs-keyword">var</span> updateEvent = <span class="hljs-keyword">this</span>.__parseStringUpdateEvent(updateEventConfiguration);
+        <span class="hljs-keyword">if</span> (!_.isUndefined(updateEvent)) {
           parsedUpdateEvents.push(updateEvent);
         }
-      } else if (_.isObject(updateEventConfiguration)) {
-        parsedUpdateEvents = _.map(updateEventConfiguration, function(idContainer, eventName) {
-          return {
-            idContainer: idContainer,
-            eventName: eventName
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isObject(updateEventConfiguration)) {
+        parsedUpdateEvents = _.map(updateEventConfiguration, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">idContainer, eventName</span>) </span>{
+          <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">idContainer</span>: idContainer,
+            <span class="hljs-attr">eventName</span>: eventName
           };
         });
       }
-      return parsedUpdateEvents;
+      <span class="hljs-keyword">return</span> parsedUpdateEvents;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Validates that the cache property is valid and if not throws an error describing why its not valid.
      * @private
-     */
-    __validateCache: function() {
-      if (!this.cache) {
-        throw new Error('Torso Data Behavior constructed without a cache');
+     */</span>
+    __validateCache: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.cache) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Torso Data Behavior constructed without a cache'</span>);
       }
-      if (!(this.cache instanceof Collection)) {
-        throw new Error('Torso Data Behavior\'s cache is not of type Torso.Collection');
+      <span class="hljs-keyword">if</span> (!(<span class="hljs-keyword">this</span>.cache <span class="hljs-keyword">instanceof</span> Collection)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Torso Data Behavior\'s cache is not of type Torso.Collection'</span>);
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Validates that the ids property is valid and if not throws an error describing why its not valid.
      * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
      * This is done as part of validation because we first validate that both are not set.
      * @private
-     */
-    __normalizeAndValidateIds: function() {
-      if (!_.isUndefined(this.ids) && !_.isUndefined(this.id)) {
-        throw new Error('Torso Data Behavior constructed with both id and ids.  Please define only one.');
+     */</span>
+    __normalizeAndValidateIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (!_.isUndefined(<span class="hljs-keyword">this</span>.ids) &amp;&amp; !_.isUndefined(<span class="hljs-keyword">this</span>.id)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Torso Data Behavior constructed with both id and ids.  Please define only one.'</span>);
       }
-      this.ids = this.id || this.ids;
-      this.__validateIds();
+      <span class="hljs-keyword">this</span>.ids = <span class="hljs-keyword">this</span>.id || <span class="hljs-keyword">this</span>.ids;
+      <span class="hljs-keyword">this</span>.__validateIds();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Validates that the ids property is valid and if not throws an error describing why its not valid.
      * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
      * This is done as part of validation because we first validate that both are not set.
      * @private
-     */
-    __validateIds: function() {
-      if (_.isUndefined(this.ids)) {
-        throw new Error('Torso Data Behavior constructed without a way to identify the ids for this data.  Please define either id, ids.');
+     */</span>
+    __validateIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">if</span> (_.isUndefined(<span class="hljs-keyword">this</span>.ids)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Torso Data Behavior constructed without a way to identify the ids for this data.  Please define either id, ids.'</span>);
       }
 
-      var idsIsArray = _.isArray(this.ids);
-      var idsIsSingleId = _.isString(this.ids) || _.isNumber(this.ids);
-      var idsIsFunction = _.isFunction(this.ids);
-      var idsIsObjectWithStringProperty = _.isString(this.ids.property);
-      var idsIsObject = _.isObject(this.ids);
-      var idsIsValid = idsIsArray || idsIsSingleId || idsIsFunction || idsIsObjectWithStringProperty;
-      if (!idsIsValid && idsIsObject) {
-        throw new Error('Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: ' + JSON.stringify(this.ids));
-      } else if (!idsIsValid) {
-        throw new Error('Data Behavior ids invalid definition.  Not a string, number, object, array or function: ' + JSON.stringify(this.ids));
+      <span class="hljs-keyword">var</span> idsIsArray = _.isArray(<span class="hljs-keyword">this</span>.ids);
+      <span class="hljs-keyword">var</span> idsIsSingleId = _.isString(<span class="hljs-keyword">this</span>.ids) || _.isNumber(<span class="hljs-keyword">this</span>.ids);
+      <span class="hljs-keyword">var</span> idsIsFunction = _.isFunction(<span class="hljs-keyword">this</span>.ids);
+      <span class="hljs-keyword">var</span> idsIsObjectWithStringProperty = _.isString(<span class="hljs-keyword">this</span>.ids.property);
+      <span class="hljs-keyword">var</span> idsIsObject = _.isObject(<span class="hljs-keyword">this</span>.ids);
+      <span class="hljs-keyword">var</span> idsIsValid = idsIsArray || idsIsSingleId || idsIsFunction || idsIsObjectWithStringProperty;
+      <span class="hljs-keyword">if</span> (!idsIsValid &amp;&amp; idsIsObject) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Data Behavior ids invalid definition.  It is an object, but the property field is not defined or is not a string: '</span> + <span class="hljs-built_in">JSON</span>.stringify(<span class="hljs-keyword">this</span>.ids));
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!idsIsValid) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Data Behavior ids invalid definition.  Not a string, number, object, array or function: '</span> + <span class="hljs-built_in">JSON</span>.stringify(<span class="hljs-keyword">this</span>.ids));
       }
 
-      if (idsIsObjectWithStringProperty) {
-        var propertyNameContainsIdContainer = containsContainerDefinition(this.ids.property);
-        var hasIdContainerProperty = !_.isUndefined(this.ids.idContainer);
+      <span class="hljs-keyword">if</span> (idsIsObjectWithStringProperty) {
+        <span class="hljs-keyword">var</span> propertyNameContainsIdContainer = containsContainerDefinition(<span class="hljs-keyword">this</span>.ids.property);
+        <span class="hljs-keyword">var</span> hasIdContainerProperty = !_.isUndefined(<span class="hljs-keyword">this</span>.ids.idContainer);
 
-        if (hasIdContainerProperty && propertyNameContainsIdContainer) {
-          throw new Error('Data Behavior ids invalid definition.  Id container defined on both ids.property and ids.idContainer: ', JSON.stringify(this.ids));
+        <span class="hljs-keyword">if</span> (hasIdContainerProperty &amp;&amp; propertyNameContainsIdContainer) {
+          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Data Behavior ids invalid definition.  Id container defined on both ids.property and ids.idContainer: '</span>, <span class="hljs-built_in">JSON</span>.stringify(<span class="hljs-keyword">this</span>.ids));
         }
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Validates that the updateEvents property is valid and if not throws an error describing why its not valid.
      * @private
-     */
-    __normalizeAndValidateUpdateEvents: function() {
-      var updateEventsIsArray = _.isArray(this.updateEvents);
-      var updateEventsIsSingleValue = !updateEventsIsArray && (_.isObject(this.updateEvents) || _.isString(this.updateEvents));
-      var updateEventsIsUndefined = _.isUndefined(this.updateEvents);
-      var updateEventsIsValidType = updateEventsIsArray || updateEventsIsSingleValue || updateEventsIsUndefined;
+     */</span>
+    __normalizeAndValidateUpdateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> updateEventsIsArray = _.isArray(<span class="hljs-keyword">this</span>.updateEvents);
+      <span class="hljs-keyword">var</span> updateEventsIsSingleValue = !updateEventsIsArray &amp;&amp; (_.isObject(<span class="hljs-keyword">this</span>.updateEvents) || _.isString(<span class="hljs-keyword">this</span>.updateEvents));
+      <span class="hljs-keyword">var</span> updateEventsIsUndefined = _.isUndefined(<span class="hljs-keyword">this</span>.updateEvents);
+      <span class="hljs-keyword">var</span> updateEventsIsValidType = updateEventsIsArray || updateEventsIsSingleValue || updateEventsIsUndefined;
 
-      if (updateEventsIsSingleValue) {
-        this.updateEvents = [this.updateEvents];
+      <span class="hljs-keyword">if</span> (updateEventsIsSingleValue) {
+        <span class="hljs-keyword">this</span>.updateEvents = [<span class="hljs-keyword">this</span>.updateEvents];
       }
 
-      if (!updateEventsIsValidType) {
-        throw new Error('Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: ', this.updateEvents);
-      }
+      <span class="hljs-keyword">if</span> (!updateEventsIsValidType) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Update events are not an array, string or object.  Please see parameters for examples of how to define updateEvents.  Configured UpdateEvents: '</span>, <span class="hljs-keyword">this</span>.updateEvents);
+      }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Remove any random falsey values (mostly to get rid of undefined events).</p>
 
-
-```
-
-
-
-
-
-
-
-Remove any random falsey values (mostly to get rid of undefined events).
-
-
-  
-
-```
-      this.updateEvents = _.compact(this.updateEvents);
-      _.each(this.updateEvents, this.__validUpdateEvent);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.updateEvents = _.compact(<span class="hljs-keyword">this</span>.updateEvents);
+      _.each(<span class="hljs-keyword">this</span>.updateEvents, <span class="hljs-keyword">this</span>.__validUpdateEvent);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.
      * @private
-     */
-    __validUpdateEvent: function(updateEventConfiguration) {
-      var validStringConfig = _.isString(updateEventConfiguration);
-      var validObjectConfig = _.isObject(updateEventConfiguration) && _.keys(updateEventConfiguration).length > 0;
-      if (!validStringConfig && !validObjectConfig) {
-        throw new Error('Not a valid updateEvent configuration.  Update events need to either be strings or objects with a single property: ' + JSON.stringify(updateEventConfiguration));
+     */</span>
+    __validUpdateEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">updateEventConfiguration</span>) </span>{
+      <span class="hljs-keyword">var</span> validStringConfig = _.isString(updateEventConfiguration);
+      <span class="hljs-keyword">var</span> validObjectConfig = _.isObject(updateEventConfiguration) &amp;&amp; _.keys(updateEventConfiguration).length &gt; <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">if</span> (!validStringConfig &amp;&amp; !validObjectConfig) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Not a valid updateEvent configuration.  Update events need to either be strings or objects with a single property: '</span> + <span class="hljs-built_in">JSON</span>.stringify(updateEventConfiguration));
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @return {$.Deferred.Promise} A jquery deferred promise that resolves to the ids to track in the private collection
      *                              or rejects with the error message.
      *                              It can also return an object that prevents object retrieval ({ skipObjectRetrieval: true }).
      * @private
-     */
-    __getIds: function() {
-      this.set('loadingIds', this.get('loadingIds') + 1);
-      this.__validateIds(); // validate ids enforces a fast-fail that guarantees that one of the if statements below will work.
+     */</span>
+    __getIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.set(<span class="hljs-string">'loadingIds'</span>, <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'loadingIds'</span>) + <span class="hljs-number">1</span>);
+      <span class="hljs-keyword">this</span>.__validateIds(); <span class="hljs-comment">// validate ids enforces a fast-fail that guarantees that one of the if statements below will work.</span>
 
-      var idsDeferred = $.Deferred();
-      var ids = this.ids;
-      var normalizedIds = normalizeIds(ids);
-      if (!_.isUndefined(normalizedIds)) {
+      <span class="hljs-keyword">var</span> idsDeferred = $.Deferred();
+      <span class="hljs-keyword">var</span> ids = <span class="hljs-keyword">this</span>.ids;
+      <span class="hljs-keyword">var</span> normalizedIds = normalizeIds(ids);
+      <span class="hljs-keyword">if</span> (!_.isUndefined(normalizedIds)) {
         idsDeferred.resolve(normalizedIds);
-      } else if (_.isFunction(this.ids)) {
-        ids = this.ids(this.cache);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isFunction(<span class="hljs-keyword">this</span>.ids)) {
+        ids = <span class="hljs-keyword">this</span>.ids(<span class="hljs-keyword">this</span>.cache);
         normalizedIds = normalizeIds(ids);
-        if (!_.isUndefined(normalizedIds)) {
+        <span class="hljs-keyword">if</span> (!_.isUndefined(normalizedIds)) {
           idsDeferred.resolve(normalizedIds);
-        } else if (ids && _.isFunction(ids.then)) {
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ids &amp;&amp; _.isFunction(ids.then)) {
           idsDeferred = ids.then(normalizeIds);
-        } else {
+        } <span class="hljs-keyword">else</span> {
           idsDeferred.resolve([]);
         }
-      } else if (!_.isUndefined(this.ids.property)) {
-        var parsedContextDefinition = this.__parseIdsPropertyNameAndIdContainer();
-        var propertyName = parsedContextDefinition.idsPropertyName;
-        var idContainer = parsedContextDefinition.idContainer;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!_.isUndefined(<span class="hljs-keyword">this</span>.ids.property)) {
+        <span class="hljs-keyword">var</span> parsedContextDefinition = <span class="hljs-keyword">this</span>.__parseIdsPropertyNameAndIdContainer();
+        <span class="hljs-keyword">var</span> propertyName = parsedContextDefinition.idsPropertyName;
+        <span class="hljs-keyword">var</span> idContainer = parsedContextDefinition.idContainer;
 
         ids = getNestedProperty(idContainer, propertyName);
-        var propertyOnContextIsUndefined = idContainer && _.isUndefined(ids);
-        var idContainerHasGetMethod = idContainer && _.isFunction(idContainer.get);
+        <span class="hljs-keyword">var</span> propertyOnContextIsUndefined = idContainer &amp;&amp; _.isUndefined(ids);
+        <span class="hljs-keyword">var</span> idContainerHasGetMethod = idContainer &amp;&amp; _.isFunction(idContainer.get);
 
-        if (propertyOnContextIsUndefined && idContainerHasGetMethod) {
+        <span class="hljs-keyword">if</span> (propertyOnContextIsUndefined &amp;&amp; idContainerHasGetMethod) {
           ids = idContainer.get(propertyName);
         }
         normalizedIds = normalizeIds(ids);
 
         idsDeferred.resolve(normalizedIds);
       }
-      return idsDeferred.promise()
+      <span class="hljs-keyword">return</span> idsDeferred.promise()
         .then(undefinedOrNullToEmptyArray)
-        .always(this.__completeLoadingIds);
+        .always(<span class="hljs-keyword">this</span>.__completeLoadingIds);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Sets the loading ids property to false (loading completed).
      * @private
-     */
-    __completeLoadingIds: function() {
-      this.set('loadingIds', this.get('loadingIds') - 1);
+     */</span>
+    __completeLoadingIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.set(<span class="hljs-string">'loadingIds'</span>, <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'loadingIds'</span>) - <span class="hljs-number">1</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.
      * @return {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
      * @private
-     */
-    __parseIdsPropertyNameAndIdContainer: function() {
-      var propertyName = this.ids.property;
-      var propertyNameContainsIdContainer = containsContainerDefinition(propertyName);
-      var hasIdContainerProperty = !_.isUndefined(this.ids.idContainer);
+     */</span>
+    __parseIdsPropertyNameAndIdContainer: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> propertyName = <span class="hljs-keyword">this</span>.ids.property;
+      <span class="hljs-keyword">var</span> propertyNameContainsIdContainer = containsContainerDefinition(propertyName);
+      <span class="hljs-keyword">var</span> hasIdContainerProperty = !_.isUndefined(<span class="hljs-keyword">this</span>.ids.idContainer);
 
-      var idContainer;
-      if (hasIdContainerProperty) {
-        idContainer = this.__parseIdContainer();
+      <span class="hljs-keyword">var</span> idContainer;
+      <span class="hljs-keyword">if</span> (hasIdContainerProperty) {
+        idContainer = <span class="hljs-keyword">this</span>.__parseIdContainer();
       }
 
-      if (propertyNameContainsIdContainer) {
-        var containerAndDetail = this.__parseContainerDetailString(propertyName);
+      <span class="hljs-keyword">if</span> (propertyNameContainsIdContainer) {
+        <span class="hljs-keyword">var</span> containerAndDetail = <span class="hljs-keyword">this</span>.__parseContainerDetailString(propertyName);
         propertyName = containerAndDetail.detail;
         idContainer = containerAndDetail.idContainer;
       }
 
-      if (_.isUndefined(idContainer)) {
-        idContainer = this.view;
+      <span class="hljs-keyword">if</span> (_.isUndefined(idContainer)) {
+        idContainer = <span class="hljs-keyword">this</span>.view;
       }
 
-      return {
-        idsPropertyName: propertyName,
-        idContainer: idContainer
+      <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">idsPropertyName</span>: propertyName,
+        <span class="hljs-attr">idContainer</span>: idContainer
       };
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Parses the idContainer property of ids.
      * @return {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
      * @private
-     */
-    __parseIdContainer: function() {
-      var idContainerDefinition = this.ids.idContainer;
-      var idContainer;
-      if (_.isUndefined(idContainerDefinition)) {
-        idContainer = undefined;
-      } else if (_.isFunction(idContainerDefinition)) {
-        var idContainerFxn = _.bind(idContainerDefinition, this);
+     */</span>
+    __parseIdContainer: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> idContainerDefinition = <span class="hljs-keyword">this</span>.ids.idContainer;
+      <span class="hljs-keyword">var</span> idContainer;
+      <span class="hljs-keyword">if</span> (_.isUndefined(idContainerDefinition)) {
+        idContainer = <span class="hljs-literal">undefined</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isFunction(idContainerDefinition)) {
+        <span class="hljs-keyword">var</span> idContainerFxn = _.bind(idContainerDefinition, <span class="hljs-keyword">this</span>);
         idContainer = idContainerFxn();
-      } else if (_.isObject(idContainerDefinition)) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isObject(idContainerDefinition)) {
         idContainer = idContainerDefinition;
-      } else {
-        throw new Error('Invalid idContainer.  Not an object or function: ' + JSON.stringify(this.ids));
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Invalid idContainer.  Not an object or function: '</span> + <span class="hljs-built_in">JSON</span>.stringify(<span class="hljs-keyword">this</span>.ids));
       }
-      return idContainer;
+      <span class="hljs-keyword">return</span> idContainer;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Parses a string that contains a container and details for that container (event name or property name).
-     * Strings are expected to be of the form '<some container path>:<detail>'.
+     * Strings are expected to be of the form '&lt;some container path&gt;:&lt;detail&gt;'.
      * @param fullContainerAndDetail
      * @return {{detail: String, idContainer: *}} the idContainer is the actual object containing the ids.
      *         details is the rest of the idContainer string without the idContainer definition.
      * @private
-     */
-    __parseContainerDetailString: function(fullContainerAndDetail) {
-      var containerString = '';
-      if (containsContainerDefinition(fullContainerAndDetail)) {
-        containerString = fullContainerAndDetail.split(CONTAINER_SEPARATOR, 1)[0];
+     */</span>
+    __parseContainerDetailString: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fullContainerAndDetail</span>) </span>{
+      <span class="hljs-keyword">var</span> containerString = <span class="hljs-string">''</span>;
+      <span class="hljs-keyword">if</span> (containsContainerDefinition(fullContainerAndDetail)) {
+        containerString = fullContainerAndDetail.split(CONTAINER_SEPARATOR, <span class="hljs-number">1</span>)[<span class="hljs-number">0</span>];
       }
-      var containerStringParts = containerString.split(PROPERTY_SEPARATOR);
+      <span class="hljs-keyword">var</span> containerStringParts = containerString.split(PROPERTY_SEPARATOR);
 
-      var rootContainerString = containerStringParts[0];
-      var rootContainer;
-      if (rootContainerString === 'this') {
-        rootContainer = this;
-      } else if (rootContainerString === 'behaviors' || rootContainerString === 'behavior') {
-        var behaviorAlias = containerStringParts[1];
-        rootContainerString += PROPERTY_SEPARATOR + behaviorAlias; // property track what part of the string has been consumed.
-        rootContainer = this.view.getBehavior(behaviorAlias);
-      } else {
-        if (rootContainerString !== 'view') {
-          rootContainerString = ''; // property track what part of the string has been consumed.
+      <span class="hljs-keyword">var</span> rootContainerString = containerStringParts[<span class="hljs-number">0</span>];
+      <span class="hljs-keyword">var</span> rootContainer;
+      <span class="hljs-keyword">if</span> (rootContainerString === <span class="hljs-string">'this'</span>) {
+        rootContainer = <span class="hljs-keyword">this</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (rootContainerString === <span class="hljs-string">'behaviors'</span> || rootContainerString === <span class="hljs-string">'behavior'</span>) {
+        <span class="hljs-keyword">var</span> behaviorAlias = containerStringParts[<span class="hljs-number">1</span>];
+        rootContainerString += PROPERTY_SEPARATOR + behaviorAlias; <span class="hljs-comment">// property track what part of the string has been consumed.</span>
+        rootContainer = <span class="hljs-keyword">this</span>.view.getBehavior(behaviorAlias);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">if</span> (rootContainerString !== <span class="hljs-string">'view'</span>) {
+          rootContainerString = <span class="hljs-string">''</span>; <span class="hljs-comment">// property track what part of the string has been consumed.</span>
         }
-        rootContainer = this.view;
+        rootContainer = <span class="hljs-keyword">this</span>.view;
       }
 
-      var container = rootContainer;
-      var rootContainerPropertyString = containerString.replace(rootContainerString, '');
-      if (rootContainerPropertyString) {
+      <span class="hljs-keyword">var</span> container = rootContainer;
+      <span class="hljs-keyword">var</span> rootContainerPropertyString = containerString.replace(rootContainerString, <span class="hljs-string">''</span>);
+      <span class="hljs-keyword">if</span> (rootContainerPropertyString) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>remove leading .</p>
 
-```
-
-
-
-
-
-
-
-remove leading .
-
-
-  
-
-```
-        if (rootContainerPropertyString[0] === PROPERTY_SEPARATOR) {
-          rootContainerPropertyString = rootContainerPropertyString.slice(1);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (rootContainerPropertyString[<span class="hljs-number">0</span>] === PROPERTY_SEPARATOR) {
+          rootContainerPropertyString = rootContainerPropertyString.slice(<span class="hljs-number">1</span>);
         }
         container = getNestedProperty(rootContainer, rootContainerPropertyString);
       }
 
-      var detail = fullContainerAndDetail.replace(containerString + CONTAINER_SEPARATOR, '');
-      return {
-        detail: detail,
-        idContainer: container
+      <span class="hljs-keyword">var</span> detail = fullContainerAndDetail.replace(containerString + CONTAINER_SEPARATOR, <span class="hljs-string">''</span>);
+      <span class="hljs-keyword">return</span> {
+        <span class="hljs-attr">detail</span>: detail,
+        <span class="hljs-attr">idContainer</span>: container
       };
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Parse a string type update event.
      * Context Key (first part of the string up to the first ':') can be one of the following:
      *   this (maps to the behavior),
      *   view or empty (maps to the behavior's view),
      *   viewState (maps to the behavior's view's viewState),
      *   model (maps to the behavior's view's model),
-     *   <*> any others are assumed to be the names of behaviors on this behavior's view.
+     *   &lt;*&gt; any others are assumed to be the names of behaviors on this behavior's view.
      * @param {string} updateEventConfiguration a string representation of the event.
      * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
      * @private
-     */
-    __parseStringUpdateEvent: function(updateEventConfiguration) {
-      var parsedIdContainerDetails = this.__parseContainerDetailString(updateEventConfiguration);
-      if (parsedIdContainerDetails) {
-        return {
-          idContainer: parsedIdContainerDetails.idContainer,
-          eventName: parsedIdContainerDetails.detail
+     */</span>
+    __parseStringUpdateEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">updateEventConfiguration</span>) </span>{
+      <span class="hljs-keyword">var</span> parsedIdContainerDetails = <span class="hljs-keyword">this</span>.__parseContainerDetailString(updateEventConfiguration);
+      <span class="hljs-keyword">if</span> (parsedIdContainerDetails) {
+        <span class="hljs-keyword">return</span> {
+          <span class="hljs-attr">idContainer</span>: parsedIdContainerDetails.idContainer,
+          <span class="hljs-attr">eventName</span>: parsedIdContainerDetails.detail
         };
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Rejects the promise chain if this behavior is already disposed.
      * @return {jQuery.Promise} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
      * @private
-     */
-    __abortIfDisposed: function() {
-      var resultDeferred = $.Deferred();
-      if (this.isDisposed()) {
-        var rejectArguments = Array.prototype.slice.call(arguments);
-        rejectArguments.push('Data Behavior disposed, aborting.');
+     */</span>
+    __abortIfDisposed: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> resultDeferred = $.Deferred();
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isDisposed()) {
+        <span class="hljs-keyword">var</span> rejectArguments = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>);
+        rejectArguments.push(<span class="hljs-string">'Data Behavior disposed, aborting.'</span>);
         resultDeferred.reject.apply(resultDeferred, rejectArguments);
-      } else {
-        resultDeferred.resolve.apply(resultDeferred, arguments);
+      } <span class="hljs-keyword">else</span> {
+        resultDeferred.resolve.apply(resultDeferred, <span class="hljs-built_in">arguments</span>);
       }
-      return resultDeferred.promise();
+      <span class="hljs-keyword">return</span> resultDeferred.promise();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
      * @param {Object} response the response from the server.
      *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
      *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
      * @private
-     */
-    __fetchSuccess: function(response) {
-      this.set('fetchSuccess', true);
-      this.set('fetchedOnce', true);
-      if (this.__shouldTriggerFetchedEvent(response)) {
-        this.trigger('fetched', {
-          status: FETCHED_STATUSES.SUCCESS,
-          response: response
+     */</span>
+    __fetchSuccess: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
+      <span class="hljs-keyword">this</span>.set(<span class="hljs-string">'fetchSuccess'</span>, <span class="hljs-literal">true</span>);
+      <span class="hljs-keyword">this</span>.set(<span class="hljs-string">'fetchedOnce'</span>, <span class="hljs-literal">true</span>);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.__shouldTriggerFetchedEvent(response)) {
+        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'fetched'</span>, {
+          <span class="hljs-attr">status</span>: FETCHED_STATUSES.SUCCESS,
+          <span class="hljs-attr">response</span>: response
         });
-        this.data.trigger('fetched', {
-          status: FETCHED_STATUSES.SUCCESS,
-          response: response
+        <span class="hljs-keyword">this</span>.data.trigger(<span class="hljs-string">'fetched'</span>, {
+          <span class="hljs-attr">status</span>: FETCHED_STATUSES.SUCCESS,
+          <span class="hljs-attr">response</span>: response
         });
       }
-      this.trigger('fetched:ids');
-      this.data.trigger('fetched:ids');
-      return response;
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'fetched:ids'</span>);
+      <span class="hljs-keyword">this</span>.data.trigger(<span class="hljs-string">'fetched:ids'</span>);
+      <span class="hljs-keyword">return</span> response;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
      * @param {Object} [response] the response from the server.
      *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
      *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
      *   @param {boolean} [response.emptyIds=false] true if were are no ids retrieved.  False otherwise.
      * @private
-     */
-    __fetchFailed: function(response) {
-      this.set('fetchSuccess', false);
-      this.set('fetchedOnce', true);
-      if (this.__shouldTriggerFetchedEvent(response)) {
-        this.trigger('fetched', {
-          status: FETCHED_STATUSES.FAILURE,
-          response: response
+     */</span>
+    __fetchFailed: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
+      <span class="hljs-keyword">this</span>.set(<span class="hljs-string">'fetchSuccess'</span>, <span class="hljs-literal">false</span>);
+      <span class="hljs-keyword">this</span>.set(<span class="hljs-string">'fetchedOnce'</span>, <span class="hljs-literal">true</span>);
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.__shouldTriggerFetchedEvent(response)) {
+        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'fetched'</span>, {
+          <span class="hljs-attr">status</span>: FETCHED_STATUSES.FAILURE,
+          <span class="hljs-attr">response</span>: response
         });
-        this.data.trigger('fetched', {
-          status: FETCHED_STATUSES.FAILURE,
-          response: response
+        <span class="hljs-keyword">this</span>.data.trigger(<span class="hljs-string">'fetched'</span>, {
+          <span class="hljs-attr">status</span>: FETCHED_STATUSES.FAILURE,
+          <span class="hljs-attr">response</span>: response
         });
-        if (response && response.emptyIds) {
-          this.__firstEmptyFetchedTriggered = true;
+        <span class="hljs-keyword">if</span> (response &amp;&amp; response.emptyIds) {
+          <span class="hljs-keyword">this</span>.__firstEmptyFetchedTriggered = <span class="hljs-literal">true</span>;
         }
       }
-      this.trigger('fetched:ids');
-      this.data.trigger('fetched:ids');
-      return response;
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'fetched:ids'</span>);
+      <span class="hljs-keyword">this</span>.data.trigger(<span class="hljs-string">'fetched:ids'</span>);
+      <span class="hljs-keyword">return</span> response;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Determines if the 'fetched' event should be triggered in the __fetchFailed or __fetchSuccess methods.
      * @param {Object} response to use to determine if the fetched event should be triggered.
      *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
      *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
      * @return {boolean} true if the fetched event should be triggered, false otherwise.
      * @private
-     */
-    __shouldTriggerFetchedEvent: function(response) {
-      return !response || !response.skipObjectRetrieval || response.forceFetchedEvent;
+     */</span>
+    __shouldTriggerFetchedEvent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
+      <span class="hljs-keyword">return</span> !response || !response.skipObjectRetrieval || response.forceFetchedEvent;
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Skip retrieving objects if new ids list is empty and existing ids list is empty.
      * @param {Array|Object} idsResult
      * @return {Array|Object} either the original idsResult
      *                        or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
      *                        and the current ids are empty.
      * @private
-     */
-    __skipRetrieveOnEmptyTrackedIdsAndNewIds: function(idsResult) {
-      if (_.isEmpty(idsResult) && _.isEmpty(this.data.privateCollection.getTrackedIds())) {
-        return { skipObjectRetrieval: true, forceFetchedEvent: true };
-      } else {
-        return idsResult;
+     */</span>
+    __skipRetrieveOnEmptyTrackedIdsAndNewIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">idsResult</span>) </span>{
+      <span class="hljs-keyword">if</span> (_.isEmpty(idsResult) &amp;&amp; _.isEmpty(<span class="hljs-keyword">this</span>.data.privateCollection.getTrackedIds())) {
+        <span class="hljs-keyword">return</span> { <span class="hljs-attr">skipObjectRetrieval</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">forceFetchedEvent</span>: <span class="hljs-literal">true</span> };
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> idsResult;
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Adds listeners when the view is activated.
      * @private
-     */
-    _activate: function() {
-      this.listenToIdsPropertyChangeEvent();
-      this._delegateUpdateEvents();
-      this.data.activate();
+     */</span>
+    _activate: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.listenToIdsPropertyChangeEvent();
+      <span class="hljs-keyword">this</span>._delegateUpdateEvents();
+      <span class="hljs-keyword">this</span>.data.activate();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Stops listening when the view is deactivated.
      * @private
-     */
-    _deactivate: function() {
-      this.stopListeningToIdsPropertyChangeEvent();
-      this._undelegateUpdateEvents();
-      this.data.deactivate();
+     */</span>
+    _deactivate: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.stopListeningToIdsPropertyChangeEvent();
+      <span class="hljs-keyword">this</span>._undelegateUpdateEvents();
+      <span class="hljs-keyword">this</span>.data.deactivate();
     }
   });
 
-  /**
+  <span class="hljs-comment">/**
    * @module Torso.behaviors.DataBehavior
    * @namespace Torso.behaviors.DataBehavior
-   */
+   */</span>
 
-  /**
+  <span class="hljs-comment">/**
    * Data object used to create the .data property of the DataBehavior.
    * @class Data
    * @constructor
-   */
-  var Data = function(options) {
-    this.initialize(options);
+   */</span>
+  <span class="hljs-keyword">var</span> Data = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
+    <span class="hljs-keyword">this</span>.initialize(options);
   };
 
   _.extend(Data.prototype, Events, {
-    /**
+    <span class="hljs-comment">/**
      * Instantiates the data objects and binds it to this behavior instance.
      * @param {Object} options to pass to the initialize methods.
      *   @param {DataBehavior} options.parentBehavior the data behavior instance that this Data object should be bound to.
      *   @param {Collection} options.privateCollection the private collection that this data represents.
-     */
-    initialize: function(options) {
-      /**
+     */</span>
+    initialize: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
+      <span class="hljs-comment">/**
        * The dataBehavior instance that owns this data object.
        * @property {DataBehavior} parentBehavior
-       */
-      this.parentBehavior = options.parentBehavior;
-      /**
+       */</span>
+      <span class="hljs-keyword">this</span>.parentBehavior = options.parentBehavior;
+      <span class="hljs-comment">/**
        * The private collection that this data object manages.
        * @property {Collection} privateCollection
-       */
-      this.privateCollection = options.privateCollection;
+       */</span>
+      <span class="hljs-keyword">this</span>.privateCollection = options.privateCollection;
 
-      _.bindAll(this, 'dispose');
+      _.bindAll(<span class="hljs-keyword">this</span>, <span class="hljs-string">'dispose'</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Determine if behavior is loading ids or objects.
      * @return {boolean} true - the behavior is loading objects or ids.
      *                   false - the behavior is not loading objects or ids.
-     */
-    isLoading: function() {
-      return this.parentBehavior.isLoading();
+     */</span>
+    isLoading: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.parentBehavior.isLoading();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Determine if the behavior is loading ids.
      * @return {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
-     */
-    isLoadingIds: function() {
-      return this.parentBehavior.isLoadingIds();
+     */</span>
+    isLoadingIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.parentBehavior.isLoadingIds();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Determine if the behavior is loading objects.
      * @return {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
-     */
-    isLoadingObjects: function() {
-      return this.parentBehavior.isLoadingObjects();
+     */</span>
+    isLoadingObjects: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.parentBehavior.isLoadingObjects();
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
      * @return {Object|Object[]} containing the full contents of either the collection or model.
-     */
-    toJSON: function() {
-      var privateCollection = this.privateCollection;
-      if (!this.parentBehavior.returnSingleResult) {
-        return privateCollection.toJSON();
+     */</span>
+    toJSON: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> privateCollection = <span class="hljs-keyword">this</span>.privateCollection;
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.parentBehavior.returnSingleResult) {
+        <span class="hljs-keyword">return</span> privateCollection.toJSON();
       }
 
-      if (privateCollection.length === 0) {
-        return undefined;
-      } else if (privateCollection.length === 1) {
-        var singleResultModel = privateCollection.at(0);
-        return singleResultModel.toJSON();
-      } else {
-        throw new Error('Multiple results found, but single result expected: ' + JSON.stringify(privateCollection.toJSON()));
+      <span class="hljs-keyword">if</span> (privateCollection.length === <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (privateCollection.length === <span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">var</span> singleResultModel = privateCollection.at(<span class="hljs-number">0</span>);
+        <span class="hljs-keyword">return</span> singleResultModel.toJSON();
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Multiple results found, but single result expected: '</span> + <span class="hljs-built_in">JSON</span>.stringify(privateCollection.toJSON()));
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Get the full data object contents (either an array of model attributes or a single model attribute based on the
      * value of propertyName) or the value of a specific property if a single result is expected.
      *
@@ -1091,90 +1253,90 @@ remove leading .
      * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
      * @param {string} [propertyName] the property to get from the model(s).
      * @return {Object|Object[]} containing the full contents of either the collection or model.
-     */
-    get: function(propertyName) {
-      var privateCollection = this.privateCollection;
-      if (!this.parentBehavior.returnSingleResult) {
-        if (_.isString(propertyName)) {
-          return privateCollection.pluck(propertyName);
-        } else {
-          return privateCollection.toJSON();
+     */</span>
+    get: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">propertyName</span>) </span>{
+      <span class="hljs-keyword">var</span> privateCollection = <span class="hljs-keyword">this</span>.privateCollection;
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.parentBehavior.returnSingleResult) {
+        <span class="hljs-keyword">if</span> (_.isString(propertyName)) {
+          <span class="hljs-keyword">return</span> privateCollection.pluck(propertyName);
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> privateCollection.toJSON();
         }
       }
 
-      var singleResultModel = this.getModel();
-      if (singleResultModel) {
-        if (_.isString(propertyName)) {
-          return singleResultModel.get(propertyName);
+      <span class="hljs-keyword">var</span> singleResultModel = <span class="hljs-keyword">this</span>.getModel();
+      <span class="hljs-keyword">if</span> (singleResultModel) {
+        <span class="hljs-keyword">if</span> (_.isString(propertyName)) {
+          <span class="hljs-keyword">return</span> singleResultModel.get(propertyName);
         }
-        return singleResultModel.toJSON();
+        <span class="hljs-keyword">return</span> singleResultModel.toJSON();
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @param {number|string} modelId The id of the model to get from the collection.
      * @return {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
      * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
-     */
-    getModel: function(modelId) {
-      var privateCollection = this.privateCollection;
-      if (!this.parentBehavior.returnSingleResult && _.isUndefined(modelId)) {
-        throw new Error('data.getModel() of a DataBehavior is only valid if the behavior is set to returnSingleResult === true');
+     */</span>
+    getModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelId</span>) </span>{
+      <span class="hljs-keyword">var</span> privateCollection = <span class="hljs-keyword">this</span>.privateCollection;
+      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.parentBehavior.returnSingleResult &amp;&amp; _.isUndefined(modelId)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'data.getModel() of a DataBehavior is only valid if the behavior is set to returnSingleResult === true'</span>);
       }
 
-      if (!_.isUndefined(modelId)) {
-        return privateCollection.get(modelId);
+      <span class="hljs-keyword">if</span> (!_.isUndefined(modelId)) {
+        <span class="hljs-keyword">return</span> privateCollection.get(modelId);
       }
 
-      if (privateCollection.length === 0) {
-        return undefined;
-      } else if (privateCollection.length === 1) {
-        return privateCollection.at(0);
-      } else {
-        throw new Error('Multiple results found, but single result expected: ' + JSON.stringify(privateCollection.toJSON()));
+      <span class="hljs-keyword">if</span> (privateCollection.length === <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (privateCollection.length === <span class="hljs-number">1</span>) {
+        <span class="hljs-keyword">return</span> privateCollection.at(<span class="hljs-number">0</span>);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Multiple results found, but single result expected: '</span> + <span class="hljs-built_in">JSON</span>.stringify(privateCollection.toJSON()));
       }
     },
 
-    /**
+    <span class="hljs-comment">/**
      * @return {Backbone.Model[]} new array containing all the models in the data's private collection.
-     */
-    getModels: function() {
-      return this.privateCollection.models.slice(0);
+     */</span>
+    getModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.privateCollection.models.slice(<span class="hljs-number">0</span>);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Adds the listeners to the private collection.
-     */
-    activate: function() {
-      this.listenTo(this.privateCollection, 'all', this.trigger);
+     */</span>
+    activate: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.privateCollection, <span class="hljs-string">'all'</span>, <span class="hljs-keyword">this</span>.trigger);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Removes the listeners on the private collection.
-     */
-    deactivate: function() {
-      this.stopListening(this.privateCollection, 'all', this.trigger);
+     */</span>
+    deactivate: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.stopListening(<span class="hljs-keyword">this</span>.privateCollection, <span class="hljs-string">'all'</span>, <span class="hljs-keyword">this</span>.trigger);
     },
 
-    /**
+    <span class="hljs-comment">/**
      * Dispose of the data events.
-     */
-    dispose: function() {
-      this.off();
-      this.stopListening();
-      this.privateCollection.dispose();
+     */</span>
+    dispose: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.off();
+      <span class="hljs-keyword">this</span>.stopListening();
+      <span class="hljs-keyword">this</span>.privateCollection.dispose();
     }
   });
 
   DataBehavior.prototype.Data = Data;
   DataBehavior.FETCHED_STATUSES = FETCHED_STATUSES;
 
-  return DataBehavior;
-}));
-
-
-```
-
-
-
-
+  <span class="hljs-keyword">return</span> DataBehavior;
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
