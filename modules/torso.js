@@ -6,8 +6,8 @@
  */
 /**
  * @namespace Torso
- * @property {module:modules/Behavior} Behavior
- * @property {module:modules/View} View
+ * @property {Behavior} Behavior
+ * @property {View} View
  */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
