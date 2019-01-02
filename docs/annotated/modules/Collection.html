@@ -1,222 +1,51 @@
-<!DOCTYPE html>
 
-<html>
-<head>
-  <title>Collection.js</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-  <link rel="stylesheet" media="all" href="../docco.css" />
-</head>
-<body>
-  <div id="container">
-    <div id="background"></div>
-    
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
-          <div id="jump_page_wrapper">
-            <div id="jump_page">
-              
-                
-                <a class="source" href="Behavior.html">
-                  modules/Behavior.js
-                </a>
-              
-                
-                <a class="source" href="Cell.html">
-                  modules/Cell.js
-                </a>
-              
-                
-                <a class="source" href="Collection.html">
-                  modules/Collection.js
-                </a>
-              
-                
-                <a class="source" href="Events.html">
-                  modules/Events.js
-                </a>
-              
-                
-                <a class="source" href="FormModel.html">
-                  modules/FormModel.js
-                </a>
-              
-                
-                <a class="source" href="FormView.html">
-                  modules/FormView.js
-                </a>
-              
-                
-                <a class="source" href="ListView.html">
-                  modules/ListView.js
-                </a>
-              
-                
-                <a class="source" href="Model.html">
-                  modules/Model.js
-                </a>
-              
-                
-                <a class="source" href="NestedCell.html">
-                  modules/NestedCell.js
-                </a>
-              
-                
-                <a class="source" href="NestedModel.html">
-                  modules/NestedModel.js
-                </a>
-              
-                
-                <a class="source" href="Router.html">
-                  modules/Router.js
-                </a>
-              
-                
-                <a class="source" href="ServiceCell.html">
-                  modules/ServiceCell.js
-                </a>
-              
-                
-                <a class="source" href="View.html">
-                  modules/View.js
-                </a>
-              
-                
-                <a class="source" href="behaviors/DataBehavior.html">
-                  modules/behaviors/DataBehavior.js
-                </a>
-              
-                
-                <a class="source" href="configure.html">
-                  modules/configure.js
-                </a>
-              
-                
-                <a class="source" href="handlebarsUtils.html">
-                  modules/handlebarsUtils.js
-                </a>
-              
-                
-                <a class="source" href="history.html">
-                  modules/history.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cacheMixin.html">
-                  modules/mixins/cacheMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cellMixin.html">
-                  modules/mixins/cellMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/loadingMixin.html">
-                  modules/mixins/loadingMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/modelMixin.html">
-                  modules/mixins/modelMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/pollingMixin.html">
-                  modules/mixins/pollingMixin.js
-                </a>
-              
-                
-                <a class="source" href="registry.html">
-                  modules/registry.js
-                </a>
-              
-                
-                <a class="source" href="stickitUtils.html">
-                  modules/stickitUtils.js
-                </a>
-              
-                
-                <a class="source" href="templateRenderer.html">
-                  modules/templateRenderer.js
-                </a>
-              
-                
-                <a class="source" href="torso.html">
-                  modules/torso.js
-                </a>
-              
-                
-                <a class="source" href="validation.html">
-                  modules/validation.js
-                </a>
-              
-            </div>
-          </div>
-        </li>
-      </ul>
-    
-    <ul class="sections">
-        
-          <li id="title">
-              <div class="annotation">
-                  <h1>Collection.js</h1>
-              </div>
-          </li>
-        
-        
-        
-        <li id="section-1">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-1">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
-    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'./mixins/pollingMixin'</span>, <span class="hljs-string">'./mixins/cacheMixin'</span>, <span class="hljs-string">'./mixins/loadingMixin'</span>], factory);
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
-    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./mixins/pollingMixin'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./mixins/cacheMixin'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./mixins/loadingMixin'</span>));
-  } <span class="hljs-keyword">else</span> {
+
+
+
+
+
+  
+
+```
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/cacheMixin', './mixins/loadingMixin'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./mixins/pollingMixin'), require('./mixins/cacheMixin'), require('./mixins/loadingMixin'));
+  } else {
     root.Torso = root.Torso || {};
     root.Torso.Collection = factory(root._, root.Backbone, root.Torso.Mixins.polling, root.Torso.Mixins.cache, root.Torso.Mixins.loading);
   }
-}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone, pollingMixin, cacheMixin, loadingMixin</span>) </span>{
-<span class="hljs-meta">  'use strict'</span>;
+}(this, function(_, Backbone, pollingMixin, cacheMixin, loadingMixin) {
+  'use strict';
 
-  <span class="hljs-comment">/**
+  /**
    * Generic Collection
    * @module    Torso
    * @class     Collection
    * @constructor
    * @author kent.willis@vecna.com
-   */</span>
-  <span class="hljs-keyword">var</span> Collection = Backbone.Collection.extend({
-      <span class="hljs-comment">/**
+   */
+  var Collection = Backbone.Collection.extend({
+      /**
        * The default filter.  Always returns itself.
        * @return {Collection} a new instance of this collection
-       */</span>
-      filterDefault: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.constructor(<span class="hljs-keyword">this</span>);
+       */
+      filterDefault: function() {
+        return this.constructor(this);
       },
 
-      <span class="hljs-comment">/**
+      /**
        * Will abolish all listeners and events that are hooked
        * to this collection.
-       */</span>
-      dispose: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>.unbind();
-        <span class="hljs-keyword">this</span>.off();
-        <span class="hljs-keyword">this</span>.stopListening();
-        <span class="hljs-keyword">this</span>.stopPolling();
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isRequester) {
-          <span class="hljs-keyword">this</span>.requesterDispose();
+       */
+      dispose: function() {
+        this.unbind();
+        this.off();
+        this.stopListening();
+        this.stopPolling();
+        if (this.isRequester) {
+          this.requesterDispose();
         }
       }
   });
@@ -224,12 +53,12 @@
   Collection = Collection.extend(loadingMixin(Collection));
   Collection = Collection.extend(cacheMixin(Collection));
 
-  <span class="hljs-keyword">return</span> Collection;
-}));</pre></div></div>
-            
-        </li>
-        
-    </ul>
-  </div>
-</body>
-</html>
+  return Collection;
+}));
+
+
+```
+
+
+
+

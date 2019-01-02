@@ -1,261 +1,90 @@
-<!DOCTYPE html>
 
-<html>
-<head>
-  <title>View.js</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-  <link rel="stylesheet" media="all" href="../docco.css" />
-</head>
-<body>
-  <div id="container">
-    <div id="background"></div>
-    
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
-          <div id="jump_page_wrapper">
-            <div id="jump_page">
-              
-                
-                <a class="source" href="Behavior.html">
-                  modules/Behavior.js
-                </a>
-              
-                
-                <a class="source" href="Cell.html">
-                  modules/Cell.js
-                </a>
-              
-                
-                <a class="source" href="Collection.html">
-                  modules/Collection.js
-                </a>
-              
-                
-                <a class="source" href="Events.html">
-                  modules/Events.js
-                </a>
-              
-                
-                <a class="source" href="FormModel.html">
-                  modules/FormModel.js
-                </a>
-              
-                
-                <a class="source" href="FormView.html">
-                  modules/FormView.js
-                </a>
-              
-                
-                <a class="source" href="ListView.html">
-                  modules/ListView.js
-                </a>
-              
-                
-                <a class="source" href="Model.html">
-                  modules/Model.js
-                </a>
-              
-                
-                <a class="source" href="NestedCell.html">
-                  modules/NestedCell.js
-                </a>
-              
-                
-                <a class="source" href="NestedModel.html">
-                  modules/NestedModel.js
-                </a>
-              
-                
-                <a class="source" href="Router.html">
-                  modules/Router.js
-                </a>
-              
-                
-                <a class="source" href="ServiceCell.html">
-                  modules/ServiceCell.js
-                </a>
-              
-                
-                <a class="source" href="View.html">
-                  modules/View.js
-                </a>
-              
-                
-                <a class="source" href="behaviors/DataBehavior.html">
-                  modules/behaviors/DataBehavior.js
-                </a>
-              
-                
-                <a class="source" href="configure.html">
-                  modules/configure.js
-                </a>
-              
-                
-                <a class="source" href="handlebarsUtils.html">
-                  modules/handlebarsUtils.js
-                </a>
-              
-                
-                <a class="source" href="history.html">
-                  modules/history.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cacheMixin.html">
-                  modules/mixins/cacheMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cellMixin.html">
-                  modules/mixins/cellMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/loadingMixin.html">
-                  modules/mixins/loadingMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/modelMixin.html">
-                  modules/mixins/modelMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/pollingMixin.html">
-                  modules/mixins/pollingMixin.js
-                </a>
-              
-                
-                <a class="source" href="registry.html">
-                  modules/registry.js
-                </a>
-              
-                
-                <a class="source" href="stickitUtils.html">
-                  modules/stickitUtils.js
-                </a>
-              
-                
-                <a class="source" href="templateRenderer.html">
-                  modules/templateRenderer.js
-                </a>
-              
-                
-                <a class="source" href="torso.html">
-                  modules/torso.js
-                </a>
-              
-                
-                <a class="source" href="validation.html">
-                  modules/validation.js
-                </a>
-              
-            </div>
-          </div>
-        </li>
-      </ul>
-    
-    <ul class="sections">
-        
-          <li id="title">
-              <div class="annotation">
-                  <h1>View.js</h1>
-              </div>
-          </li>
-        
-        
-        
-        <li id="section-1">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-1">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+
+
+
+
+
+  
+
+```
+/**
  * The backbone View reference
  * @external "Backbone.View"
  * @see {@link http://backbonejs.org/#View|Backbone.View}
- */</span>
+ */
 
-<span class="hljs-comment">/** @module modules/View */</span>
-(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
-    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'./templateRenderer'</span>, <span class="hljs-string">'./Cell'</span>, <span class="hljs-string">'./NestedCell'</span>, <span class="hljs-string">'./registry'</span>], factory);
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
-    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./templateRenderer'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Cell'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./NestedCell'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./registry'</span>));
-  } <span class="hljs-keyword">else</span> {
+/** @module modules/View */
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell', './registry'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./templateRenderer'), require('./Cell'), require('./NestedCell'), require('./registry'));
+  } else {
     root.Torso = root.Torso || {};
     root.Torso.View = factory(root._, root.Backbone, root.Torso.Utils.templateRenderer, root.Torso.Cell, root.Torso.NestedCell, root.Torso.registry);
   }
-}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone, templateRenderer, Cell, NestedCell, registry</span>) </span>{
-<span class="hljs-meta">  'use strict'</span>;
+}(this, function(_, Backbone, templateRenderer, Cell, NestedCell, registry) {
+  'use strict';
 
-  <span class="hljs-keyword">var</span> $ = Backbone.$;
+  var $ = Backbone.$;
 
-  <span class="hljs-comment">/**
+  /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
    * change events. These changes events will propogate up and trigger on the view
    * as well.
    * @class
-   */</span>
-  <span class="hljs-keyword">var</span> ViewStateCell = NestedCell.extend(<span class="hljs-comment">/** @lends ViewStateCell.prototype */</span>{
-    <span class="hljs-comment">/**
+   */
+  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
+    /**
      * @constructs
-     */</span>
-    initialize: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attrs, opts</span>) </span>{
+     */
+    initialize: function(attrs, opts) {
       opts = opts || {};
-      <span class="hljs-keyword">this</span>.view = opts.view;
+      this.view = opts.view;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Retrigger view state change events on the view as well.
      * @override
-     */</span>
-    trigger: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name</span>) </span>{
-      <span class="hljs-keyword">if</span> (name === <span class="hljs-string">'change'</span> || name.indexOf(<span class="hljs-string">'change:'</span>) === <span class="hljs-number">0</span>) {
-        View.prototype.trigger.apply(<span class="hljs-keyword">this</span>.view, <span class="hljs-built_in">arguments</span>);
+     */
+    trigger: function(name) {
+      if (name === 'change' || name.indexOf('change:') === 0) {
+        View.prototype.trigger.apply(this.view, arguments);
       }
-      <span class="hljs-keyword">if</span> (name.indexOf(<span class="hljs-string">'change:hide:'</span>) === <span class="hljs-number">0</span>) {
-        <span class="hljs-keyword">this</span>.view.render();
+      if (name.indexOf('change:hide:') === 0) {
+        this.view.render();
       }
-      NestedCell.prototype.trigger.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+      NestedCell.prototype.trigger.apply(this, arguments);
     }
   });
 
-  <span class="hljs-comment">/**
+  /**
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
    * @class
    * @extends external:"Backbone.View"
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */</span>
-  <span class="hljs-keyword">var</span> View = Backbone.View.extend(<span class="hljs-comment">/** @lends View.prototype */</span>{
-    <span class="hljs-attr">viewState</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">template</span>: <span class="hljs-literal">undefined</span>,
-    <span class="hljs-attr">feedback</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">feedbackCell</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">behaviors</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">templateRendererOptions</span>: <span class="hljs-literal">undefined</span>,
-    <span class="hljs-attr">prepareFields</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">injectionSites</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">__behaviorInstances</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">__childViews</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">__sharedViews</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">__isActive</span>: <span class="hljs-literal">false</span>,
-    <span class="hljs-attr">__isAttachedToParent</span>: <span class="hljs-literal">false</span>,
-    <span class="hljs-attr">__isDisposed</span>: <span class="hljs-literal">false</span>,
-    <span class="hljs-attr">__attachedCallbackInvoked</span>: <span class="hljs-literal">false</span>,
-    <span class="hljs-attr">__feedbackOnEvents</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-attr">__feedbackListenToEvents</span>: <span class="hljs-literal">null</span>,
-    <span class="hljs-comment">/**
+   */
+  var View = Backbone.View.extend(/** @lends View.prototype */{
+    viewState: null,
+    template: undefined,
+    feedback: null,
+    feedbackCell: null,
+    behaviors: null,
+    templateRendererOptions: undefined,
+    prepareFields: null,
+    injectionSites: null,
+    __behaviorInstances: null,
+    __childViews: null,
+    __sharedViews: null,
+    __isActive: false,
+    __isAttachedToParent: false,
+    __isDisposed: false,
+    __attachedCallbackInvoked: false,
+    __feedbackOnEvents: null,
+    __feedbackListenToEvents: null,
+    /**
      * Array of feedback when-then-to's. Example:
      * [{
      *   when: {'@fullName': ['change']},
@@ -264,129 +93,131 @@
      * }]
      * @private
      * @property {Array} feedback
-     */</span>
+     */
 
-    <span class="hljs-comment">/**
+    /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
      * @constructs
-     */</span>
-    <span class="hljs-keyword">constructor</span>: function(options) {
+     */
+    constructor: function(options) {
       options = options || {};
-      <span class="hljs-keyword">this</span>.viewState = <span class="hljs-keyword">new</span> ViewStateCell({}, { <span class="hljs-attr">view</span>: <span class="hljs-keyword">this</span> });
-      <span class="hljs-keyword">this</span>.feedbackCell = <span class="hljs-keyword">new</span> Cell();
-      <span class="hljs-keyword">this</span>.__childViews = {};
-      <span class="hljs-keyword">this</span>.__sharedViews = {};
-      <span class="hljs-keyword">this</span>.__injectionSiteMap = {};
-      <span class="hljs-keyword">this</span>.__feedbackOnEvents = [];
-      <span class="hljs-keyword">this</span>.__feedbackListenToEvents = [];
-      <span class="hljs-keyword">this</span>.template = options.template || <span class="hljs-keyword">this</span>.template;
-      <span class="hljs-keyword">this</span>.templateRendererOptions = options.templateRendererOptions || <span class="hljs-keyword">this</span>.templateRendererOptions;
-      <span class="hljs-keyword">this</span>.__initializeBehaviors(options);
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'initialize:begin'</span>);
-      Backbone.View.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'initialize:complete'</span>);
-      <span class="hljs-keyword">if</span> (!options.noActivate) {
-        <span class="hljs-keyword">this</span>.activate();
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>Register by default.</p>
+      this.viewState = new ViewStateCell({}, { view: this });
+      this.feedbackCell = new Cell();
+      this.__childViews = {};
+      this.__sharedViews = {};
+      this.__injectionSiteMap = {};
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
+      this.template = options.template || this.template;
+      this.templateRendererOptions = options.templateRendererOptions || this.templateRendererOptions;
+      this.__initializeBehaviors(options);
+      this.trigger('initialize:begin');
+      Backbone.View.apply(this, arguments);
+      this.trigger('initialize:complete');
+      if (!options.noActivate) {
+        this.activate();
+      }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> shouldRegister = _.isUndefined(options.register) || _.isNull(options.register) || options.register;
-      <span class="hljs-keyword">if</span> (shouldRegister) {
-        registry.viewInitialized(<span class="hljs-keyword">this</span>);
+```
+
+
+
+
+
+
+
+Register by default.
+
+
+  
+
+```
+      var shouldRegister = _.isUndefined(options.register) || _.isNull(options.register) || options.register;
+      if (shouldRegister) {
+        registry.viewInitialized(this);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Alias to this.viewState.get()
-     */</span>
-    get: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.viewState.get.apply(<span class="hljs-keyword">this</span>.viewState, <span class="hljs-built_in">arguments</span>);
+     */
+    get: function() {
+      return this.viewState.get.apply(this.viewState, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Alias to this.viewState.set()
-     */</span>
-    set: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.viewState.set.apply(<span class="hljs-keyword">this</span>.viewState, <span class="hljs-built_in">arguments</span>);
+     */
+    set: function() {
+      return this.viewState.set.apply(this.viewState, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Alias to this.viewState.has()
-     */</span>
-    has: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.viewState.has.apply(<span class="hljs-keyword">this</span>.viewState, <span class="hljs-built_in">arguments</span>);
+     */
+    has: function() {
+      return this.viewState.has.apply(this.viewState, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Alias to this.viewState.unset()
-     */</span>
-    unset: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.viewState.unset.apply(<span class="hljs-keyword">this</span>.viewState, <span class="hljs-built_in">arguments</span>);
+     */
+    unset: function() {
+      return this.viewState.unset.apply(this.viewState, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Alias to this.viewState.toJSON()
-     */</span>
-    toJSON: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.viewState.toJSON();
+     */
+    toJSON: function() {
+      return this.viewState.toJSON();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @param {string} alias the name/alias of the behavior
      * @return {Torso.Behavior} the behavior instance if one exists with that alias
-     */</span>
-    getBehavior: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">alias</span>) </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.__behaviorInstances) {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__behaviorInstances[alias];
+     */
+    getBehavior: function(alias) {
+      if (this.__behaviorInstances) {
+        return this.__behaviorInstances[alias];
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * prepareFields can be used to augment the default render method contents.
      * See __getPrepareFieldsContext() for more details on how to configure them.
      *
      * @return {Object} context for a render method. Defaults to:
      *    {view: this.viewState.toJSON(), model: this.model.toJSON()}
-     */</span>
-    prepare: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__getPrepareFieldsContext();
+     */
+    prepare: function() {
+      return this.__getPrepareFieldsContext();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Augments the context with custom content.
      * @param context the context you can modify
      * @return {Object} [Optional] If you return an object, it will be merged with the context
-     */</span>
-    _prepare: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">context</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>no changes by default</p>
+     */
+    _prepare: function(context) {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    },
+```
 
-    <span class="hljs-comment">/**
+
+
+
+
+
+
+no changes by default
+
+
+  
+
+```
+    },
+
+    /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
      * Defaults to using this.templateRender. Assumes that this.template is a javascript
      * function that accepted a single JSON context.
@@ -394,121 +225,121 @@
      * is synchronous and the rendering is complete upon completion of the method. However, when utilizing
      * transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.
      * @return {Promise} a promise that when resolved signifies that the rendering process is complete.
-     */</span>
-    render: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isDisposed()) {
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Render called on a view that has already been disposed.'</span>);
+     */
+    render: function() {
+      if (this.isDisposed()) {
+        throw new Error('Render called on a view that has already been disposed.');
       }
-      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'render:begin'</span>);
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.prerender() === <span class="hljs-literal">false</span>) {
-        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'render:aborted'</span>);
-        <span class="hljs-keyword">return</span> $.Deferred().resolve().promise();
+      var view = this;
+      this.trigger('render:begin');
+      if (this.prerender() === false) {
+        this.trigger('render:aborted');
+        return $.Deferred().resolve().promise();
       }
-      <span class="hljs-keyword">this</span>.__updateInjectionSiteMap();
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'render:before-dom-update'</span>);
-      <span class="hljs-keyword">this</span>.detachTrackedViews();
-      <span class="hljs-keyword">this</span>.updateDOM();
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.__pendingAttachInfo) {
-        <span class="hljs-keyword">this</span>.__performPendingAttach();
+      this.__updateInjectionSiteMap();
+      this.trigger('render:before-dom-update');
+      this.detachTrackedViews();
+      this.updateDOM();
+      if (this.__pendingAttachInfo) {
+        this.__performPendingAttach();
       }
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'render:after-dom-update'</span>);
-      <span class="hljs-keyword">this</span>.delegateEvents();
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'render:after-delegate-events'</span>);
-      <span class="hljs-keyword">this</span>.unregisterTrackedViews({ <span class="hljs-attr">shared</span>: <span class="hljs-literal">true</span> });
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'render:before-attach-tracked-views'</span>);
-      <span class="hljs-keyword">this</span>.__attachViewsFromInjectionSites();
-      <span class="hljs-keyword">var</span> promises = <span class="hljs-keyword">this</span>.attachTrackedViews();
-      <span class="hljs-keyword">return</span> $.when.apply($, _.flatten([promises])).done(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      this.trigger('render:after-dom-update');
+      this.delegateEvents();
+      this.trigger('render:after-delegate-events');
+      this.unregisterTrackedViews({ shared: true });
+      this.trigger('render:before-attach-tracked-views');
+      this.__attachViewsFromInjectionSites();
+      var promises = this.attachTrackedViews();
+      return $.when.apply($, _.flatten([promises])).done(function() {
         view.postrender();
-        view.trigger(<span class="hljs-string">'render:complete'</span>);
+        view.trigger('render:complete');
         view.__injectionSiteMap = {};
         view.__lastTrackedViews = {};
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Hook during render that is invoked before any DOM rendering is performed.
-     * This method can be overwritten as usual OR extended using &lt;baseClass&gt;.prototype.prerender.apply(this, arguments);
-     * <span class="hljs-doctag">NOTE:</span> if you require the view to be detached from the DOM, consider using _detach callback
-     * @return {Promise|Array&lt;Promise&gt;} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
-     */</span>
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);
+     * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
+     * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
+     */
     prerender: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.
      * Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);
      * this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.
      * Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.
-     */</span>
-    updateDOM: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.template) {
-        <span class="hljs-keyword">var</span> templateRendererOptions = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'templateRendererOptions'</span>);
-        <span class="hljs-keyword">this</span>.templateRender(<span class="hljs-keyword">this</span>.$el, <span class="hljs-keyword">this</span>.template, <span class="hljs-keyword">this</span>.prepare(), templateRendererOptions);
+     */
+    updateDOM: function() {
+      if (this.template) {
+        var templateRendererOptions = _.result(this, 'templateRendererOptions');
+        this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Updates this view element's class attribute with the value provided.
      * If no value provided, removes the class attribute of this view element.
      * @param {string} newClassName the new value of the class attribute
-     */</span>
-    updateClassName: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newClassName</span>) </span>{
-      <span class="hljs-keyword">if</span> (newClassName === <span class="hljs-literal">undefined</span>) {
-        <span class="hljs-keyword">this</span>.$el.removeAttr(<span class="hljs-string">'class'</span>);
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">this</span>.$el.attr(<span class="hljs-string">'class'</span>, newClassName);
+     */
+    updateClassName: function(newClassName) {
+      if (newClassName === undefined) {
+        this.$el.removeAttr('class');
+      } else {
+        this.$el.attr('class', newClassName);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Hook during render that is invoked after all DOM rendering is done and tracked views attached.
-     * This method can be overwritten as usual OR extended using &lt;baseClass&gt;.prototype.postrender.apply(this, arguments);
-     * <span class="hljs-doctag">NOTE:</span> if you require the view to be attached to the DOM, consider using _attach callback
-     * @return {Promise|Array&lt;Promise&gt;} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
-     */</span>
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);
+     * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
+     * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
+     */
     postrender: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * Hotswap rendering system reroute method.
      * See Torso.templateRenderer#render for params
-     */</span>
-    templateRender: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">el, template, context, opts</span>) </span>{
+     */
+    templateRender: function(el, template, context, opts) {
       opts = opts || {};
-      <span class="hljs-keyword">if</span> (_.isString(template)) {
+      if (_.isString(template)) {
         opts.newHTML = template;
       }
       templateRenderer.render(el, template, context, opts);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Overrides the base delegateEvents
      * Binds DOM events with the view using events hash while also adding feedback event bindings
-     */</span>
-    delegateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.undelegateEvents(); <span class="hljs-comment">// always undelegate events - backbone sometimes doesn't.</span>
-      Backbone.View.prototype.delegateEvents.call(<span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">this</span>.__generateFeedbackBindings();
-      <span class="hljs-keyword">this</span>.__generateFeedbackCellCallbacks();
-      _.each(<span class="hljs-keyword">this</span>.getTrackedViews(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
-        <span class="hljs-keyword">if</span> (view.isAttachedToParent()) {
+     */
+    delegateEvents: function() {
+      this.undelegateEvents(); // always undelegate events - backbone sometimes doesn't.
+      Backbone.View.prototype.delegateEvents.call(this);
+      this.__generateFeedbackBindings();
+      this.__generateFeedbackCellCallbacks();
+      _.each(this.getTrackedViews(), function(view) {
+        if (view.isAttachedToParent()) {
           view.delegateEvents();
         }
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Overrides undelegateEvents
      * Unbinds DOM events from the view.
-     */</span>
-    undelegateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      Backbone.View.prototype.undelegateEvents.call(<span class="hljs-keyword">this</span>);
-      _.each(<span class="hljs-keyword">this</span>.getTrackedViews(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
+     */
+    undelegateEvents: function() {
+      Backbone.View.prototype.undelegateEvents.call(this);
+      _.each(this.getTrackedViews(), function(view) {
         view.undelegateEvents();
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * If detached, will replace the element passed in with this view's element and activate the view.
      * @param {jQuery} [$el] the element to attach to. This element will be replaced with this view.
      *                       If options.replaceMethod is provided, then this parameter is ignored.
@@ -518,26 +349,26 @@
      * @param   {Booleon} [options.discardInjectionSite=false] if set to true, the injection site is not saved.
      * @return {Promise} promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can
      *                   make it asynchronous.
-     */</span>
-    attachTo: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$el, options</span>) </span>{
+     */
+    attachTo: function($el, options) {
       options = options || {};
-      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isAttachedToParent()) {
-        <span class="hljs-keyword">this</span>.__pendingAttachInfo = {
-          <span class="hljs-attr">$el</span>: $el,
-          <span class="hljs-attr">options</span>: options
+      var view = this;
+      if (!this.isAttachedToParent()) {
+        this.__pendingAttachInfo = {
+          $el: $el,
+          options: options
         };
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.render().done(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-          <span class="hljs-keyword">if</span> (!view.__attachedCallbackInvoked &amp;&amp; view.isAttached()) {
+        return this.render().done(function() {
+          if (!view.__attachedCallbackInvoked && view.isAttached()) {
             view.__invokeAttached();
           }
-          view.__isAttachedToParent = <span class="hljs-literal">true</span>;
+          view.__isAttachedToParent = true;
         });
       }
-      <span class="hljs-keyword">return</span> $.Deferred().resolve().promise();
+      return $.Deferred().resolve().promise();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument
      * The element argument can be a String that references an element with the corresponding "inject" attribute.
      * When using attachView with options.useTransition:
@@ -546,7 +377,7 @@
      *   If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even
      *   though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.
      *   If the previous view is the same as the new view, it is injected normally without transitioning in.
-     *   The previous view must has used an injection site with the standard "inject=&lt;name of injection site&gt;" attribute to be found.
+     *   The previous view must has used an injection site with the standard "inject=<name of injection site>" attribute to be found.
      *   When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields
      *   will be added to the options parameter to allow better handling of the transitions. These include:
      *   {
@@ -554,7 +385,7 @@
      *     previousView: the previous view (can be undefined)
      *     parentView: the parent view transitioning in or out the tracked view
      *   }
-     * @param {jQuery|string} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=&lt;name of injection site&gt;" will be used.
+     * @param {jQuery|string} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
      * @param {View}   view   The instantiated view object to be attached
      * @param {Object} [options] optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
      * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
@@ -564,313 +395,323 @@
      * @param   {View} [options.previousView] if using options.useTransition, then you can explicitly define the view that should be transitioned out.
      *                                        If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.
-     */</span>
-    attachView: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$el, view, options</span>) </span>{
+     */
+    attachView: function($el, view, options) {
       options = options || {};
-      <span class="hljs-keyword">var</span> injectionSite, injectionSiteName,
+      var injectionSite, injectionSiteName,
         usesInjectionSiteName = _.isString($el);
-      <span class="hljs-keyword">if</span> (usesInjectionSiteName) {
+      if (usesInjectionSiteName) {
         injectionSiteName = $el;
-        injectionSite = <span class="hljs-keyword">this</span>.$(<span class="hljs-string">'[inject='</span> + injectionSiteName + <span class="hljs-string">']'</span>);
-        <span class="hljs-keyword">if</span> (!injectionSite) {
-          <span class="hljs-keyword">throw</span> <span class="hljs-string">'View.attachView: No injection site found with which to attach this view. View.cid='</span> + <span class="hljs-keyword">this</span>.cid;
+        injectionSite = this.$('[inject=' + injectionSiteName + ']');
+        if (!injectionSite) {
+          throw 'View.attachView: No injection site found with which to attach this view. View.cid=' + this.cid;
         }
-      } <span class="hljs-keyword">else</span> {
+      } else {
         injectionSite = $el;
       }
-      <span class="hljs-keyword">if</span> (options.useTransition) {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__transitionNewViewIntoSite(injectionSiteName, view, options);
+      if (options.useTransition) {
+        return this.__transitionNewViewIntoSite(injectionSiteName, view, options);
       }
       view.detach();
-      <span class="hljs-keyword">this</span>.registerTrackedView(view, options);
+      this.registerTrackedView(view, options);
       view.attachTo(injectionSite, options);
-      <span class="hljs-keyword">if</span> (!options.noActivate) {
+      if (!options.noActivate) {
         view.activate();
       }
-      <span class="hljs-keyword">return</span> $.Deferred().resolve().promise();
+      return $.Deferred().resolve().promise();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.
-     * This method can be overwritten as usual OR extended using &lt;baseClass&gt;.prototype.attachTrackedViews.apply(this, arguments);
-     * @return {Promise|Array&lt;Promise&gt;} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
-     */</span>
+     * This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
+     * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
+     */
     attachTrackedViews: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
      * after the DOM has been attached to the document. The default implementation is a no-op.
-     */</span>
+     */
     _attached: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * @return {boolean} true if the view is attached to a parent
-     */</span>
-    isAttachedToParent: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__isAttachedToParent;
+     */
+    isAttachedToParent: function() {
+      return this.__isAttachedToParent;
     },
 
-    <span class="hljs-comment">/**
-     * <span class="hljs-doctag">NOTE:</span> depends on a global variable "document"
+    /**
+     * NOTE: depends on a global variable "document"
      * @return {boolean} true if the view is attached to the DOM
-     */</span>
-    isAttached: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.$el &amp;&amp; $.contains(<span class="hljs-built_in">document</span>, <span class="hljs-keyword">this</span>.$el[<span class="hljs-number">0</span>]);
+     */
+    isAttached: function() {
+      return this.$el && $.contains(document, this.$el[0]);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * If attached, will detach the view from the DOM.
      * This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach
      * callback on each tracked view recursively.
-     */</span>
-    detach: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> wasAttached;
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isAttachedToParent()) {
-         wasAttached = <span class="hljs-keyword">this</span>.isAttached();</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>Detach view from DOM</p>
+     */
+    detach: function() {
+      var wasAttached;
+      if (this.isAttachedToParent()) {
+         wasAttached = this.isAttached();
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-dom-detach'</span>);
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.injectionSite) {
-          <span class="hljs-keyword">this</span>.$el.replaceWith(<span class="hljs-keyword">this</span>.injectionSite);
-          <span class="hljs-keyword">this</span>.injectionSite = <span class="hljs-literal">undefined</span>;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">this</span>.$el.detach();
+```
+
+
+
+
+
+
+
+Detach view from DOM
+
+
+  
+
+```
+        this.trigger('before-dom-detach');
+        if (this.injectionSite) {
+          this.$el.replaceWith(this.injectionSite);
+          this.injectionSite = undefined;
+        } else {
+          this.$el.detach();
         }
-        <span class="hljs-keyword">if</span> (wasAttached) {
-          <span class="hljs-keyword">this</span>.__invokeDetached();
+        if (wasAttached) {
+          this.__invokeDetached();
         }
-        <span class="hljs-keyword">this</span>.undelegateEvents();
-        <span class="hljs-keyword">this</span>.__isAttachedToParent = <span class="hljs-literal">false</span>;
+        this.undelegateEvents();
+        this.__isAttachedToParent = false;
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Detach all tracked views or a subset of them based on the options parameter.
-     * <span class="hljs-doctag">NOTE:</span> this is not recursive - it will not separate the entire view tree.
+     * NOTE: this is not recursive - it will not separate the entire view tree.
      * @param {}] {Object}[options=  Optional options.
      *   @param {boolean} [options.shared=false] If true, detach only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     */</span>
-    detachTrackedViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      <span class="hljs-keyword">var</span> trackedViewsHash = <span class="hljs-keyword">this</span>.getTrackedViews(options);
-      _.each(trackedViewsHash, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
+     */
+    detachTrackedViews: function(options) {
+      var trackedViewsHash = this.getTrackedViews(options);
+      _.each(trackedViewsHash, function(view) {
         view.detach();
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
      * after the view has been removed from the document. The default implementation is a no-op.
-     */</span>
+     */
     _detached: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * Resets listeners and events in order for the view to be reattached to the visible DOM
-     */</span>
-    activate: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.__activateTrackedViews();
-      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.isActive()) {
-        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-activate-callback'</span>);
-        <span class="hljs-keyword">this</span>._activate();
-        <span class="hljs-keyword">this</span>.__isActive = <span class="hljs-literal">true</span>;
+     */
+    activate: function() {
+      this.__activateTrackedViews();
+      if (!this.isActive()) {
+        this.trigger('before-activate-callback');
+        this._activate();
+        this.__isActive = true;
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Method to be invoked when activate is called. Use this method to turn on any
      * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
-     */</span>
+     */
     _activate: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * @return {boolean} true if the view is active
-     */</span>
-    isActive: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__isActive;
+     */
+    isActive: function() {
+      return this.__isActive;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Maintains view state and DOM but prevents view from becoming a zombie by removing listeners
      * and events that may affect user experience. Recursively invokes deactivate on child views
-     */</span>
-    deactivate: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.__deactivateTrackedViews();
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isActive()) {
-        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-deactivate-callback'</span>);
-        <span class="hljs-keyword">this</span>._deactivate();
-        <span class="hljs-keyword">this</span>.__isActive = <span class="hljs-literal">false</span>;
+     */
+    deactivate: function() {
+      this.__deactivateTrackedViews();
+      if (this.isActive()) {
+        this.trigger('before-deactivate-callback');
+        this._deactivate();
+        this.__isActive = false;
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Method to be invoked when deactivate is called. Use this method to turn off any
      * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
-     */</span>
+     */
     _deactivate: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * Removes all listeners, disposes children views, stops listening to events, removes DOM.
      * After dispose is called, the view can be safely garbage collected. Called while
      * recursively removing views from the hierarchy.
-     */</span>
-    dispose: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-dispose'</span>);
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-dispose-callback'</span>);
-      <span class="hljs-keyword">this</span>._dispose();</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>Detach DOM and deactivate the view</p>
+     */
+    dispose: function() {
+      this.trigger('before-dispose');
+      this.trigger('before-dispose-callback');
+      this._dispose();
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.detach();
-      <span class="hljs-keyword">this</span>.deactivate();</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>Clean up child views first</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.__disposeChildViews();</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Remove view from DOM</p>
+```
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.$el) {
-        <span class="hljs-keyword">this</span>.remove();
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>Unbind all local event bindings</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.off();
-      <span class="hljs-keyword">this</span>.stopListening();
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.viewState) {
-        <span class="hljs-keyword">this</span>.viewState.off();
-        <span class="hljs-keyword">this</span>.viewState.stopListening();
+
+
+
+
+
+Detach DOM and deactivate the view
+
+
+  
+
+```
+      this.detach();
+      this.deactivate();
+
+
+```
+
+
+
+
+
+
+
+Clean up child views first
+
+
+  
+
+```
+      this.__disposeChildViews();
+
+
+```
+
+
+
+
+
+
+
+Remove view from DOM
+
+
+  
+
+```
+      if (this.$el) {
+        this.remove();
       }
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.feedbackCell) {
-        <span class="hljs-keyword">this</span>.feedbackCell.off();
-        <span class="hljs-keyword">this</span>.feedbackCell.stopListening();
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>Delete the dom references</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.$el;
-      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.el;
 
-      <span class="hljs-keyword">this</span>.__isDisposed = <span class="hljs-literal">true</span>;
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'after-dispose'</span>);
+```
+
+
+
+
+
+
+
+Unbind all local event bindings
+
+
+  
+
+```
+      this.off();
+      this.stopListening();
+      if (this.viewState) {
+        this.viewState.off();
+        this.viewState.stopListening();
+      }
+      if (this.feedbackCell) {
+        this.feedbackCell.off();
+        this.feedbackCell.stopListening();
+      }
+
+```
+
+
+
+
+
+
+
+Delete the dom references
+
+
+  
+
+```
+      delete this.$el;
+      delete this.el;
+
+      this.__isDisposed = true;
+      this.trigger('after-dispose');
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Method to be invoked when dispose is called. By default calling dispose will remove the
      * view's element, its on's, listenTo's, and any registered children.
      * Override this method to destruct any extra
-     */</span>
+     */
     _dispose: _.noop,
 
-    <span class="hljs-comment">/**
+    /**
      * @return {boolean} true if the view was disposed
-     */</span>
-    isDisposed: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__isDisposed;
+     */
+    isDisposed: function() {
+      return this.__isDisposed;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @return {boolean} true if this view has tracked views (limited by the options parameter)
      * @param {}] {Object}[options=  Optional options.
      *   @param {boolean} [options.shared=false] If true, only check the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     */</span>
-    hasTrackedViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      <span class="hljs-keyword">return</span> !_.isEmpty(<span class="hljs-keyword">this</span>.getTrackedViews(options));
+     */
+    hasTrackedViews: function(options) {
+      return !_.isEmpty(this.getTrackedViews(options));
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns all tracked views, both child views and shared views.
      * @param {}] {Object}[options=  Optional options.
      *   @param {boolean} [options.shared=false] If true, get only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
-     * @return {List&lt;View&gt;} all tracked views (filtered by options parameter)
-     */</span>
-    getTrackedViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      <span class="hljs-keyword">return</span> _.values(<span class="hljs-keyword">this</span>.__getTrackedViewsHash(options));
+     * @return {List<View>} all tracked views (filtered by options parameter)
+     */
+    getTrackedViews: function(options) {
+      return _.values(this.__getTrackedViewsHash(options));
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @return the view with the given cid.  Will look in both shared and child views.
      * @param {string} viewCID the cid of the view
-     */</span>
-    getTrackedView: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">viewCID</span>) </span>{
-      <span class="hljs-keyword">var</span> childView = <span class="hljs-keyword">this</span>.__childViews[viewCID],
-          sharedView = <span class="hljs-keyword">this</span>.__sharedViews[viewCID];
-      <span class="hljs-keyword">return</span> childView || sharedView;
+     */
+    getTrackedView: function(viewCID) {
+      var childView = this.__childViews[viewCID],
+          sharedView = this.__sharedViews[viewCID];
+      return childView || sharedView;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will
      * be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the
      * view as a child view unless specified by options.shared.
@@ -879,30 +720,30 @@
      *   @param {boolean} [options.shared=false] If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.
      * @return {View} the tracked view
-     */</span>
-    registerTrackedView: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view, options</span>) </span>{
+     */
+    registerTrackedView: function(view, options) {
       options = options || {};
-      <span class="hljs-keyword">this</span>.unregisterTrackedView(view);
-      <span class="hljs-keyword">if</span> (options.child || !options.shared) {
-        <span class="hljs-keyword">this</span>.__childViews[view.cid] = view;
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">this</span>.__sharedViews[view.cid] = view;
+      this.unregisterTrackedView(view);
+      if (options.child || !options.shared) {
+        this.__childViews[view.cid] = view;
+      } else {
+        this.__sharedViews[view.cid] = view;
       }
-      <span class="hljs-keyword">return</span> view;
+      return view;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Unbinds the tracked view - no recursive calls will be made to this shared view
      * @param {View} view the shared view
      * @return {View} the tracked view
-     */</span>
-    unregisterTrackedView: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
-      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__childViews[view.cid];
-      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__sharedViews[view.cid];
-      <span class="hljs-keyword">return</span> view;
+     */
+    unregisterTrackedView: function(view) {
+      delete this.__childViews[view.cid];
+      delete this.__sharedViews[view.cid];
+      return view;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Unbinds all tracked view - no recursive calls will be made to this shared view
      * You can limit the types of views that will be unregistered by using the options parameter.
      * @param {}] {Object}[options=  Optional options.
@@ -910,15 +751,15 @@
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return {View} the tracked view
-     */</span>
-    unregisterTrackedViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      <span class="hljs-keyword">var</span> trackedViewsHash = <span class="hljs-keyword">this</span>.getTrackedViews(options);
-      _.each(trackedViewsHash, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
-        <span class="hljs-keyword">this</span>.unregisterTrackedView(view, options);
-      }, <span class="hljs-keyword">this</span>);
+     */
+    unregisterTrackedViews: function(options) {
+      var trackedViewsHash = this.getTrackedViews(options);
+      _.each(trackedViewsHash, function(view) {
+        this.unregisterTrackedView(view, options);
+      }, this);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Override to provide your own transition out logic. Default logic is to just detach from the page.
      * The method is passed a callback that should be invoked when the transition out has fully completed.
      * @param {Function} done callback that MUST be invoked when the transition is complete.
@@ -926,13 +767,13 @@
      * @param   {View} options.currentView the view that is being transitioned in.
      * @param   {View} options.previousView the view that is being transitioned out. Typically this view.
      * @param   {View} options.parentView the view that is invoking the transition.
-     */</span>
-    transitionOut: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">done, options</span>) </span>{
-      <span class="hljs-keyword">this</span>.detach();
+     */
+    transitionOut: function(done, options) {
+      this.detach();
       done();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Override to provide your own transition in logic. Default logic is to just attach to the page.
      * The method is passed a callback that should be invoked when the transition in has fully completed.
      * @param {Function} attach callback to be invoked when you want this view to be attached to the dom.
@@ -942,53 +783,55 @@
      * @param   {View} options.currentView the view that is being transitioned in.
      * @param   {View} options.previousView the view that is being transitioned out. Typically this view.
      * @param   {View} options.parentView the view that is invoking the transition.
-     */</span>
-    transitionIn: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attach, done, options</span>) </span>{
+     */
+    transitionIn: function(attach, done, options) {
       attach();
       done();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Invokes a feedback entry's "then" method
      * @param {string} to the "to" field corresponding to the feedback entry to be invoked.
      * @param {Event} [evt] the event to be passed to the "then" method
      * @param {Object} [indexMap] a map from index variable name to index value. Needed for "to" fields with array notation.
-     */</span>
-    invokeFeedback: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">to, evt, indexMap</span>) </span>{
-      <span class="hljs-keyword">var</span> result,
-        feedbackToInvoke = _.find(<span class="hljs-keyword">this</span>.feedback, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">feedback</span>) </span>{
-          <span class="hljs-keyword">var</span> toToCheck = feedback.to;
-          <span class="hljs-keyword">if</span> (_.isArray(toToCheck)) {
-            <span class="hljs-keyword">return</span> _.contains(toToCheck, to);
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> to === toToCheck;
+     */
+    invokeFeedback: function(to, evt, indexMap) {
+      var result,
+        feedbackToInvoke = _.find(this.feedback, function(feedback) {
+          var toToCheck = feedback.to;
+          if (_.isArray(toToCheck)) {
+            return _.contains(toToCheck, to);
+          } else {
+            return to === toToCheck;
           }
         }),
         feedbackCellField = to;
-      <span class="hljs-keyword">if</span> (feedbackToInvoke) {
-        <span class="hljs-keyword">if</span> (indexMap) {
-          feedbackCellField = <span class="hljs-keyword">this</span>.__substituteIndicesUsingMap(to, indexMap);
+      if (feedbackToInvoke) {
+        if (indexMap) {
+          feedbackCellField = this.__substituteIndicesUsingMap(to, indexMap);
         }
-        result = feedbackToInvoke.then.call(<span class="hljs-keyword">this</span>, evt, indexMap);
-        <span class="hljs-keyword">this</span>.__processFeedbackThenResult(result, feedbackCellField);
+        result = feedbackToInvoke.then.call(this, evt, indexMap);
+        this.__processFeedbackThenResult(result, feedbackCellField);
       }
-    },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p><strong><strong><strong>**</strong></strong></strong> Private methods <strong><strong><strong>**</strong></strong></strong>//</p>
+    },
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-    <span class="hljs-comment">/**
+
+```
+
+
+
+
+
+
+
+************** Private methods **************//
+
+
+  
+
+```
+
+    /**
      * Attaches views using this.injectionSites. The API for injectionSites looks like:
      * injectionSites: {
      *   foo: fooView,  // foo is injectionSite, fooView is the view
@@ -1004,39 +847,39 @@
      * To create dynamic show/hide logic, perform the logic in a function that returns the correct view, or you can
      * call this.set('hide:foo', true) or this.set('hide:foo', false)
      * @private
-     */</span>
-    __attachViewsFromInjectionSites: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> injectionSites = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'injectionSites'</span>);
-      _.each(injectionSites, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">config, injectionSiteName</span>) </span>{
-        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.get(<span class="hljs-string">'hide:'</span> + injectionSiteName)) {
-          <span class="hljs-keyword">var</span> options = {};
-          <span class="hljs-keyword">var</span> trackedView;
-          <span class="hljs-keyword">if</span> (_.isFunction(config)) {
-            config = config.call(<span class="hljs-keyword">this</span>);
+     */
+    __attachViewsFromInjectionSites: function() {
+      var injectionSites = _.result(this, 'injectionSites');
+      _.each(injectionSites, function(config, injectionSiteName) {
+        if (!this.get('hide:' + injectionSiteName)) {
+          var options = {};
+          var trackedView;
+          if (_.isFunction(config)) {
+            config = config.call(this);
           }
-          <span class="hljs-keyword">if</span> (config <span class="hljs-keyword">instanceof</span> Backbone.View) {
+          if (config instanceof Backbone.View) {
             trackedView = config;
-          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isObject(config)) {
+          } else if (_.isObject(config)) {
             options = config.options;
             config = config.view;
           }
-          <span class="hljs-keyword">if</span> (!trackedView) {
-            <span class="hljs-keyword">if</span> (_.isString(config)) {
-              trackedView = _.result(<span class="hljs-keyword">this</span>, config);
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (config <span class="hljs-keyword">instanceof</span> Backbone.View) {
+          if (!trackedView) {
+            if (_.isString(config)) {
+              trackedView = _.result(this, config);
+            } else if (config instanceof Backbone.View) {
               trackedView = config;
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isFunction(config)) {
-              trackedView = config.call(<span class="hljs-keyword">this</span>);
+            } else if (_.isFunction(config)) {
+              trackedView = config.call(this);
             }
           }
-          <span class="hljs-keyword">if</span> (trackedView) {
-            <span class="hljs-keyword">this</span>.attachView(injectionSiteName, trackedView, options);
+          if (trackedView) {
+            this.attachView(injectionSiteName, trackedView, options);
           }
         }
-      }, <span class="hljs-keyword">this</span>);
+      }, this);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Parses the combined arrays from the defaultPrepareFields array and the prepareFields array (or function
      * returning an array).
      *
@@ -1074,156 +917,160 @@
      *
      * @return {Object} context composed of { modelName: model.toJSON() } for every model identified.
      * @private
-     */</span>
-    __getPrepareFieldsContext: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> prepareFieldsContext = {};
-      <span class="hljs-keyword">var</span> prepareFields = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'prepareFields'</span>);
-      <span class="hljs-keyword">if</span> (prepareFields &amp;&amp; _.isObject(prepareFields) &amp;&amp; !_.isArray(prepareFields)) {
-        <span class="hljs-keyword">var</span> keys = _.keys(prepareFields);
-        prepareFields = _.map(keys, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>) </span>{
-          <span class="hljs-keyword">return</span> { <span class="hljs-attr">name</span>: key, <span class="hljs-attr">value</span>: prepareFields[key] };
+     */
+    __getPrepareFieldsContext: function() {
+      var prepareFieldsContext = {};
+      var prepareFields = _.result(this, 'prepareFields');
+      if (prepareFields && _.isObject(prepareFields) && !_.isArray(prepareFields)) {
+        var keys = _.keys(prepareFields);
+        prepareFields = _.map(keys, function(key) {
+          return { name: key, value: prepareFields[key] };
         });
       }
-      <span class="hljs-keyword">var</span> defaultPrepareFields = [ { <span class="hljs-attr">name</span>: <span class="hljs-string">'view'</span>, <span class="hljs-attr">value</span>: <span class="hljs-string">'viewState'</span> }, <span class="hljs-string">'model'</span> ];
+      var defaultPrepareFields = [ { name: 'view', value: 'viewState' }, 'model' ];
       prepareFields = _.union(prepareFields, defaultPrepareFields);
-      <span class="hljs-keyword">if</span> (prepareFields &amp;&amp; prepareFields.length &gt; <span class="hljs-number">0</span>) {
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> fieldIndex = <span class="hljs-number">0</span>; fieldIndex &lt; prepareFields.length; fieldIndex++) {
-          <span class="hljs-keyword">var</span> prepareField = prepareFields[fieldIndex];
-          <span class="hljs-keyword">var</span> prepareFieldIsSimpleString = _.isString(prepareField);
+      if (prepareFields && prepareFields.length > 0) {
+        for (var fieldIndex = 0; fieldIndex < prepareFields.length; fieldIndex++) {
+          var prepareField = prepareFields[fieldIndex];
+          var prepareFieldIsSimpleString = _.isString(prepareField);
 
-          <span class="hljs-keyword">var</span> prepareFieldName = prepareField;
-          <span class="hljs-keyword">var</span> prepareFieldValue = prepareField;
+          var prepareFieldName = prepareField;
+          var prepareFieldValue = prepareField;
 
-          <span class="hljs-keyword">if</span> (!prepareFieldIsSimpleString) {
-            <span class="hljs-keyword">if</span> (!_.isString(prepareField.name)) {
-              <span class="hljs-keyword">throw</span> <span class="hljs-string">"prepareFields items need to either be a string or define a .name property that is a simple string to use for the key in the template context."</span>;
+          if (!prepareFieldIsSimpleString) {
+            if (!_.isString(prepareField.name)) {
+              throw "prepareFields items need to either be a string or define a .name property that is a simple string to use for the key in the template context.";
             }
 
-            <span class="hljs-keyword">if</span> (_.isUndefined(prepareField.value)) {
-              <span class="hljs-keyword">throw</span> <span class="hljs-string">"prepareFields items need a value property if it is not a string."</span>;
+            if (_.isUndefined(prepareField.value)) {
+              throw "prepareFields items need a value property if it is not a string.";
             }
 
             prepareFieldName = prepareField.name;
             prepareFieldValue = prepareField.value;
           }
-          <span class="hljs-keyword">if</span> (!_.isUndefined(prepareFieldsContext[prepareFieldName])) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-string">"duplicate prepareFields name ("</span> + prepareFieldName + <span class="hljs-string">").  Note 'view' and 'model' are reserved names."</span>;
+          if (!_.isUndefined(prepareFieldsContext[prepareFieldName])) {
+            throw "duplicate prepareFields name (" + prepareFieldName + ").  Note 'view' and 'model' are reserved names.";
           }
 
-          <span class="hljs-keyword">var</span> prepareFieldValueIsDefinedOnView = <span class="hljs-literal">false</span>;
-          <span class="hljs-keyword">if</span> (_.isFunction(prepareFieldValue)) {
-            prepareFieldValue = prepareFieldValue.call(<span class="hljs-keyword">this</span>);
-          } <span class="hljs-keyword">else</span> {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Note _.result() also returns undefined if the 2nd argument is not a string.</p>
+          var prepareFieldValueIsDefinedOnView = false;
+          if (_.isFunction(prepareFieldValue)) {
+            prepareFieldValue = prepareFieldValue.call(this);
+          } else {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">var</span> prepareFieldValueFromView = _.result(<span class="hljs-keyword">this</span>, prepareFieldValue);
+```
+
+
+
+
+
+
+
+Note _.result() also returns undefined if the 2nd argument is not a string.
+
+
+  
+
+```
+            var prepareFieldValueFromView = _.result(this, prepareFieldValue);
             prepareFieldValueIsDefinedOnView = !_.isUndefined(prepareFieldValueFromView);
-            <span class="hljs-keyword">if</span> (prepareFieldValueIsDefinedOnView) {
+            if (prepareFieldValueIsDefinedOnView) {
               prepareFieldValue = prepareFieldValueFromView;
             }
           }
 
-          <span class="hljs-keyword">if</span> (prepareFieldValue &amp;&amp; _.isFunction(prepareFieldValue.toJSON)) {
+          if (prepareFieldValue && _.isFunction(prepareFieldValue.toJSON)) {
             prepareFieldsContext[prepareFieldName] = prepareFieldValue.toJSON();
-          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!prepareFieldIsSimpleString || prepareFieldValueIsDefinedOnView) {
+          } else if (!prepareFieldIsSimpleString || prepareFieldValueIsDefinedOnView) {
             prepareFieldsContext[prepareFieldName] = prepareFieldValue;
           }
         }
       }
-      <span class="hljs-keyword">var</span> context = <span class="hljs-keyword">this</span>._prepare(prepareFieldsContext);
-      <span class="hljs-keyword">if</span> (_.isUndefined(context)) {
+      var context = this._prepare(prepareFieldsContext);
+      if (_.isUndefined(context)) {
         context = prepareFieldsContext;
-      } <span class="hljs-keyword">else</span> {
+      } else {
         context = _.extend(prepareFieldsContext, context);
       }
-      <span class="hljs-keyword">return</span> context;
+      return context;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Initializes the behaviors
-     */</span>
-    __initializeBehaviors: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">viewOptions</span>) </span>{
-      <span class="hljs-keyword">var</span> view = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">if</span> (!_.isEmpty(<span class="hljs-keyword">this</span>.behaviors)) {
+     */
+    __initializeBehaviors: function(viewOptions) {
+      var view = this;
+      if (!_.isEmpty(this.behaviors)) {
         view.__behaviorInstances = {};
-        _.each(<span class="hljs-keyword">this</span>.behaviors, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">behaviorDefinition, alias</span>) </span>{
-          <span class="hljs-keyword">if</span> (!_.has(behaviorDefinition, <span class="hljs-string">'behavior'</span>)) {
-            behaviorDefinition = {<span class="hljs-attr">behavior</span>: behaviorDefinition};
+        _.each(this.behaviors, function(behaviorDefinition, alias) {
+          if (!_.has(behaviorDefinition, 'behavior')) {
+            behaviorDefinition = {behavior: behaviorDefinition};
           }
-          <span class="hljs-keyword">var</span> BehaviorClass = behaviorDefinition.behavior;
-          <span class="hljs-keyword">if</span> (!(BehaviorClass &amp;&amp; _.isFunction(BehaviorClass))) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Incorrect behavior definition. Expected key "behavior" to be a class but instead got '</span> +
-              <span class="hljs-built_in">String</span>(BehaviorClass));
+          var BehaviorClass = behaviorDefinition.behavior;
+          if (!(BehaviorClass && _.isFunction(BehaviorClass))) {
+            throw new Error('Incorrect behavior definition. Expected key "behavior" to be a class but instead got ' +
+              String(BehaviorClass));
           }
 
-          <span class="hljs-keyword">var</span> behaviorOptions = _.pick(behaviorDefinition, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, key</span>) </span>{
-            <span class="hljs-keyword">return</span> key !== <span class="hljs-string">'behavior'</span>;
+          var behaviorOptions = _.pick(behaviorDefinition, function(value, key) {
+            return key !== 'behavior';
           });
           behaviorOptions.view = view;
           behaviorOptions.alias = alias;
-          <span class="hljs-keyword">var</span> behaviorAttributes = behaviorDefinition.attributes || {};
-          <span class="hljs-keyword">var</span> behaviorInstance = view.__behaviorInstances[alias] = <span class="hljs-keyword">new</span> BehaviorClass(behaviorAttributes, behaviorOptions, viewOptions);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>Add the behavior’s mixin fields to the view’s public API</p>
+          var behaviorAttributes = behaviorDefinition.attributes || {};
+          var behaviorInstance = view.__behaviorInstances[alias] = new BehaviorClass(behaviorAttributes, behaviorOptions, viewOptions);
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">if</span> (behaviorInstance.mixin) {
-            <span class="hljs-keyword">var</span> mixin = _.result(behaviorInstance, <span class="hljs-string">'mixin'</span>);
-            _.each(mixin, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, fieldName</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Default to a view’s field over a behavior mixin</p>
+```
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>              <span class="hljs-keyword">if</span> (_.isUndefined(view[fieldName])) {
-                <span class="hljs-keyword">if</span> (_.isFunction(field)) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>Behavior mixin functions will be behavior-scoped - the context will be the behavior.</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                  view[fieldName] = _.bind(field, behaviorInstance);
-                } <span class="hljs-keyword">else</span> {
+
+
+
+
+
+Add the behavior's mixin fields to the view's public API
+
+
+  
+
+```
+          if (behaviorInstance.mixin) {
+            var mixin = _.result(behaviorInstance, 'mixin');
+            _.each(mixin, function(field, fieldName) {
+
+```
+
+
+
+
+
+
+
+Default to a view's field over a behavior mixin
+
+
+  
+
+```
+              if (_.isUndefined(view[fieldName])) {
+                if (_.isFunction(field)) {
+
+```
+
+
+
+
+
+
+
+Behavior mixin functions will be behavior-scoped - the context will be the behavior.
+
+
+  
+
+```
+                  view[fieldName] = _.bind(field, behaviorInstance);
+                } else {
                   view[fieldName] = field;
                 }
               }
@@ -1233,62 +1080,62 @@
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * If the view is attaching during the render process, then it replaces the injection site
      * with the view's element after the view has generated its DOM.
      * @private
-     */</span>
-    __performPendingAttach: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-dom-attach'</span>);
-      <span class="hljs-keyword">this</span>.__replaceInjectionSite(<span class="hljs-keyword">this</span>.__pendingAttachInfo.$el, <span class="hljs-keyword">this</span>.__pendingAttachInfo.options);
-      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__pendingAttachInfo;
+     */
+    __performPendingAttach: function() {
+      this.trigger('before-dom-attach');
+      this.__replaceInjectionSite(this.__pendingAttachInfo.$el, this.__pendingAttachInfo.options);
+      delete this.__pendingAttachInfo;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Deactivates all tracked views or a subset of them based on the options parameter.
      * @param {}] {Object}[options=  Optional options.
      *   @param {boolean} [options.shared=false] If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, deactivate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @private
-     */</span>
-    __deactivateTrackedViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      _.each(<span class="hljs-keyword">this</span>.getTrackedViews(options), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
+     */
+    __deactivateTrackedViews: function(options) {
+      _.each(this.getTrackedViews(options), function(view) {
         view.deactivate();
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Activates all tracked views or a subset of them based on the options parameter.
      * @param {}] {Object}[options=  Optional options.
      *   @param {boolean} [options.shared=false] If true, activate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, activate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @private
-     */</span>
-    __activateTrackedViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      _.each(<span class="hljs-keyword">this</span>.getTrackedViews(options), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
+     */
+    __activateTrackedViews: function(options) {
+      _.each(this.getTrackedViews(options), function(view) {
         view.activate();
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Disposes all child views recursively
      * @private
-     */</span>
-    __disposeChildViews: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      _.each(<span class="hljs-keyword">this</span>.__childViews, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
+     */
+    __disposeChildViews: function() {
+      _.each(this.__childViews, function(view) {
         view.dispose();
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view
      * previously had another view at this injections site, this previous view will be removed with that view's transitionOut.
      * If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even
      * though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.
      * If the previous view is the same as the new view, it is injected normally without transitioning in.
-     * The previous view must has used an injection site with the standard "inject=&lt;name of injection site&gt;" attribute to be found.
+     * The previous view must has used an injection site with the standard "inject=<name of injection site>" attribute to be found.
      * @private
      * @param {string} injectionSiteName The name of the injection site in the template. This is the value corresponding to the attribute "inject".
      * @param {View} newView The instantiated view object to be transitioned into the injection site
@@ -1305,73 +1152,76 @@
      *   previousView: the previous view (can be undefined)
      *   parentView: the parent view transitioning in or out the tracked view
      * }
-     */</span>
-    __transitionNewViewIntoSite: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">injectionSiteName, newView, options</span>) </span>{
-      <span class="hljs-keyword">var</span> previousView, injectionSite;
-      options = options || {};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>find previous view that used this injection site.</p>
+     */
+    __transitionNewViewIntoSite: function(injectionSiteName, newView, options) {
+      var previousView, injectionSite;
+      options = options || {};
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      previousView = options.previousView;
-      <span class="hljs-keyword">if</span> (!previousView) {
-        previousView = <span class="hljs-keyword">this</span>.__injectionSiteMap[injectionSiteName];
+```
+
+
+
+
+
+
+
+find previous view that used this injection site.
+
+
+  
+
+```
+      previousView = options.previousView;
+      if (!previousView) {
+        previousView = this.__injectionSiteMap[injectionSiteName];
       }
       _.defaults(options, {
-        <span class="hljs-attr">parentView</span>: <span class="hljs-keyword">this</span>,
-        <span class="hljs-attr">newView</span>: newView,
-        <span class="hljs-attr">previousView</span>: previousView
+        parentView: this,
+        newView: newView,
+        previousView: previousView
       });
-      options.useTransition = <span class="hljs-literal">false</span>;
-      <span class="hljs-keyword">if</span> (previousView == newView) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>Inject this view like normal if it’s already the last one there</p>
+      options.useTransition = false;
+      if (previousView == newView) {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.attachView(injectionSiteName, newView, options);
-      }
-      <span class="hljs-keyword">if</span> (!previousView) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>Only transition in the new current view and find the injection site.</p>
+```
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        injectionSite = <span class="hljs-keyword">this</span>.$(<span class="hljs-string">'[inject='</span> + injectionSiteName + <span class="hljs-string">']'</span>);
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__transitionInView(injectionSite, newView, options);
+
+
+
+
+
+
+Inject this view like normal if it's already the last one there
+
+
+  
+
+```
+        return this.attachView(injectionSiteName, newView, options);
       }
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__performTwoWayTransition(injectionSiteName, previousView, newView, options);
+      if (!previousView) {
+
+```
+
+
+
+
+
+
+
+Only transition in the new current view and find the injection site.
+
+
+  
+
+```
+        injectionSite = this.$('[inject=' + injectionSiteName + ']');
+        return this.__transitionInView(injectionSite, newView, options);
+      }
+      return this.__performTwoWayTransition(injectionSiteName, previousView, newView, options);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Will transition out previousView at the same time as transitioning in newView.
      * @param {string} injectionSiteName The name of the injection site in the template. This is the value corresponding to the attribute "inject".
      * @param {View} previousView the view that should be transitioned out.
@@ -1380,81 +1230,88 @@
      * @param   {boolean} [options.addBefore=false] if true, the new view's element will be added before the previous view's element. Defaults to after.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
      * @private
-     */</span>
-    __performTwoWayTransition: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">injectionSiteName, previousView, newView, options</span>) </span>{
-      <span class="hljs-keyword">var</span> newInjectionSite, currentPromise,
+     */
+    __performTwoWayTransition: function(injectionSiteName, previousView, newView, options) {
+      var newInjectionSite, currentPromise,
         previousDeferred = $.Deferred();
-      <span class="hljs-keyword">this</span>.attachView(injectionSiteName, previousView, options);
+      this.attachView(injectionSiteName, previousView, options);
       options.cachedInjectionSite = previousView.injectionSite;
-      newInjectionSite = options.newInjectionSite = $(<span class="hljs-string">'&lt;span inject="'</span> + injectionSiteName + <span class="hljs-string">'"&gt;'</span>);
-      <span class="hljs-keyword">if</span> (options.addBefore) {
+      newInjectionSite = options.newInjectionSite = $('<span inject="' + injectionSiteName + '">');
+      if (options.addBefore) {
         previousView.$el.before(newInjectionSite);
-      } <span class="hljs-keyword">else</span> {
+      } else {
         previousView.$el.after(newInjectionSite);
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-18">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
-              </div>
-              <p>clear the injections site so it isn’t replaced back into the dom.</p>
+      }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      previousView.injectionSite = <span class="hljs-literal">undefined</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>transition previous view out</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      previousView.transitionOut(previousDeferred.resolve, options);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-20">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
-              </div>
-              <p>transition new current view in</p>
+```
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      currentPromise = <span class="hljs-keyword">this</span>.__transitionInView(newInjectionSite, newView, options);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <p>return a combined promise</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> $.when(previousDeferred.promise(), currentPromise);
+
+
+
+
+
+clear the injections site so it isn't replaced back into the dom.
+
+
+  
+
+```
+      previousView.injectionSite = undefined;
+
+
+```
+
+
+
+
+
+
+
+transition previous view out
+
+
+  
+
+```
+      previousView.transitionOut(previousDeferred.resolve, options);
+
+```
+
+
+
+
+
+
+
+transition new current view in
+
+
+  
+
+```
+      currentPromise = this.__transitionInView(newInjectionSite, newView, options);
+
+
+```
+
+
+
+
+
+
+
+return a combined promise
+
+
+  
+
+```
+      return $.when(previousDeferred.promise(), currentPromise);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
      * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
      * @param {jQuery} $el the element to attach to.
@@ -1464,24 +1321,24 @@
      * @param   {boolean} [options.shared=false] if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
      * @return {Promise} resolved when transition is complete. No payload is provided upon resolution.
      * @private
-     */</span>
-    __transitionInView: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$el, newView, options</span>) </span>{
-      <span class="hljs-keyword">var</span> currentDeferred = $.Deferred(),
-        parentView = <span class="hljs-keyword">this</span>;
+     */
+    __transitionInView: function($el, newView, options) {
+      var currentDeferred = $.Deferred(),
+        parentView = this;
       options = _.extend({}, options);
       _.defaults(options, {
-        <span class="hljs-attr">parentView</span>: <span class="hljs-keyword">this</span>,
-        <span class="hljs-attr">newView</span>: newView
+        parentView: this,
+        newView: newView
       });
-      newView.transitionIn(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      newView.transitionIn(function() {
         parentView.attachView($el, newView, options);
       }, currentDeferred.resolve, options);
-      <span class="hljs-keyword">return</span> currentDeferred.promise();
+      return currentDeferred.promise();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.
-     * <span class="hljs-doctag">NOTE:</span> returns READ-ONLY snapshots. Updates to the returned cid-&gt;view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.
+     * NOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.
      * This means that you can add "add" or "remove" tracked view using this method, however you can interact with the views inside the map completely.
      * @param {}] {Object}[options=  Optional options.
      *   @param {boolean} [options.shared=false] If true, will add the shared views. These are views not owned by this parent. As compared to a child view
@@ -1489,118 +1346,120 @@
      *   @param {boolean} [options.child=false] If true, will add child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return READ-ONLY snapshot of the object maps cotaining tracked views keyed by their cid (filtered by optional options parameter).
      * @private
-     */</span>
-    __getTrackedViewsHash: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      <span class="hljs-keyword">var</span> views = {};
+     */
+    __getTrackedViewsHash: function(options) {
+      var views = {};
       options = options || {};
-      <span class="hljs-keyword">if</span> (options.shared) {
-        views = _.extend(views, <span class="hljs-keyword">this</span>.__sharedViews);
+      if (options.shared) {
+        views = _.extend(views, this.__sharedViews);
       }
-      <span class="hljs-keyword">if</span> (options.child) {
-        views = _.extend(views, <span class="hljs-keyword">this</span>.__childViews);
+      if (options.child) {
+        views = _.extend(views, this.__childViews);
       }
-      <span class="hljs-keyword">if</span> (!options.child &amp;&amp; !options.shared) {
-        views = _.extend(views, <span class="hljs-keyword">this</span>.__sharedViews, <span class="hljs-keyword">this</span>.__childViews);
+      if (!options.child && !options.shared) {
+        views = _.extend(views, this.__sharedViews, this.__childViews);
       }
-      <span class="hljs-keyword">return</span> views;
+      return views;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Used internally by Torso.View to keep a cache of tracked views and their current injection sites before detaching during render logic.
      * @private
-     */</span>
-    __updateInjectionSiteMap: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> parentView = <span class="hljs-keyword">this</span>;
-      <span class="hljs-keyword">this</span>.__injectionSiteMap = {};
-      <span class="hljs-keyword">this</span>.__lastTrackedViews = {};
-      _.each(<span class="hljs-keyword">this</span>.getTrackedViews(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
-        <span class="hljs-keyword">if</span> (view.isAttachedToParent() &amp;&amp; view.injectionSite) {
-          parentView.__injectionSiteMap[view.injectionSite.attr(<span class="hljs-string">'inject'</span>)] = view;
+     */
+    __updateInjectionSiteMap: function() {
+      var parentView = this;
+      this.__injectionSiteMap = {};
+      this.__lastTrackedViews = {};
+      _.each(this.getTrackedViews(), function(view) {
+        if (view.isAttachedToParent() && view.injectionSite) {
+          parentView.__injectionSiteMap[view.injectionSite.attr('inject')] = view;
         }
         parentView.__lastTrackedViews[view.cid] = view;
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method
      * @param {jQuery} $el the injection site element to be replaced
      * @param {Object} [options] Optional options
      * @param   {Function} [options.replaceMethod] use an alternative replace method. Invoked with the view's element as the argument.
      * @param   {boolean} [options.discardInjectionSite=false] if true, the view will not save a reference to the injection site after replacement.
      * @private
-     */</span>
-    __replaceInjectionSite: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">$el, options</span>) </span>{
+     */
+    __replaceInjectionSite: function($el, options) {
       options = options || {};
-      <span class="hljs-keyword">this</span>.injectionSite = options.replaceMethod ? options.replaceMethod(<span class="hljs-keyword">this</span>.$el) : $el.replaceWith(<span class="hljs-keyword">this</span>.$el);
-      <span class="hljs-keyword">if</span> (options.discardInjectionSite) {
-        <span class="hljs-keyword">this</span>.injectionSite = <span class="hljs-literal">undefined</span>;
+      this.injectionSite = options.replaceMethod ? options.replaceMethod(this.$el) : $el.replaceWith(this.$el);
+      if (options.discardInjectionSite) {
+        this.injectionSite = undefined;
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Call this method when a view is attached to the DOM. It is recursive to child views, but checks whether each child view is attached.
      * @private
-     */</span>
-    __invokeAttached: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-22">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
-              </div>
-              <p>Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.</p>
+     */
+    __invokeAttached: function() {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.__attachedCallbackInvoked) {
-        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-attached-callback'</span>);
-        <span class="hljs-keyword">this</span>._attached();
-        <span class="hljs-keyword">this</span>.__attachedCallbackInvoked = <span class="hljs-literal">true</span>;
-        _.each(<span class="hljs-keyword">this</span>.getTrackedViews(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{
-          <span class="hljs-keyword">if</span> (view.isAttachedToParent()) {
+```
+
+
+
+
+
+
+
+Need to check if each view is attached because there is no guarentee that if parent is attached, child is attached.
+
+
+  
+
+```
+      if (!this.__attachedCallbackInvoked) {
+        this.trigger('before-attached-callback');
+        this._attached();
+        this.__attachedCallbackInvoked = true;
+        _.each(this.getTrackedViews(), function(view) {
+          if (view.isAttachedToParent()) {
             view.__invokeAttached();
           }
         });
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Call this method when a view is detached from the DOM. It is recursive to child views.
-     */</span>
-    __invokeDetached: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.__attachedCallbackInvoked) {
-        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-detached-callback'</span>);
-        <span class="hljs-keyword">this</span>._detached();
-        <span class="hljs-keyword">this</span>.__attachedCallbackInvoked = <span class="hljs-literal">false</span>;
+     */
+    __invokeDetached: function() {
+      if (this.__attachedCallbackInvoked) {
+        this.trigger('before-detached-callback');
+        this._detached();
+        this.__attachedCallbackInvoked = false;
       }
-      _.each(<span class="hljs-keyword">this</span>.getTrackedViews(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-23">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
-              </div>
-              <p>If the tracked view is currently attached to the parent, then invoke detatched on it.</p>
+      _.each(this.getTrackedViews(), function(view) {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (view.isAttachedToParent()) {
+```
+
+
+
+
+
+
+
+If the tracked view is currently attached to the parent, then invoke detatched on it.
+
+
+  
+
+```
+        if (view.isAttachedToParent()) {
           view.__invokeDetached();
         }
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Generates callbacks for changes in feedback cell fields
-     * 'change fullName' -&gt; invokes all the jQuery (or $) methods on the element as stored by the feedback cell
+     * 'change fullName' -> invokes all the jQuery (or $) methods on the element as stored by the feedback cell
      * If feedbackCell.get('fullName') returns:
      * { text: 'my text',
      *   attr: {class: 'newClass'}
@@ -1608,291 +1467,307 @@
      * ...}
      * Then it will invoke $element.text('my text'), $element.attr({class: 'newClass'}), etc.
      * @private
-     */</span>
-    __generateFeedbackCellCallbacks: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-24">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
-              </div>
-              <p>Feedback one-way bindings</p>
+     */
+    __generateFeedbackCellCallbacks: function() {
+      var self = this;
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      self.feedbackCell.off();
-      _.each(<span class="hljs-keyword">this</span>.$(<span class="hljs-string">'[data-feedback]'</span>), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element</span>) </span>{
-        <span class="hljs-keyword">var</span> attr = $(element).data(<span class="hljs-string">'feedback'</span>);
-        self.feedbackCell.on(<span class="hljs-string">'change:'</span> + attr, (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field</span>) </span>{
-          <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-            <span class="hljs-keyword">var</span> $element,
+```
+
+
+
+
+
+
+
+Feedback one-way bindings
+
+
+  
+
+```
+      self.feedbackCell.off();
+      _.each(this.$('[data-feedback]'), function(element) {
+        var attr = $(element).data('feedback');
+        self.feedbackCell.on('change:' + attr, (function(field) {
+          return function() {
+            var $element,
               state = self.feedbackCell.get(field);
-            <span class="hljs-keyword">if</span> (!state) {
-              <span class="hljs-keyword">return</span>;
+            if (!state) {
+              return;
             }
-            $element = self.$el.find(<span class="hljs-string">'[data-feedback="'</span> + field + <span class="hljs-string">'"]'</span>);
-            _.each(state, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, key</span>) </span>{
-              <span class="hljs-keyword">var</span> target;
-              <span class="hljs-keyword">if</span> (_.first(key) === <span class="hljs-string">'_'</span>) {
-                target = self[key.slice(<span class="hljs-number">1</span>)];
-              } <span class="hljs-keyword">else</span> {
+            $element = self.$el.find('[data-feedback="' + field + '"]');
+            _.each(state, function(value, key) {
+              var target;
+              if (_.first(key) === '_') {
+                target = self[key.slice(1)];
+              } else {
                 target = $element[key];
               }
-              <span class="hljs-keyword">if</span> (_.isArray(value)) {
+              if (_.isArray(value)) {
                 target.apply($element, value);
-              } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (value !== <span class="hljs-literal">undefined</span>) {
+              } else if (value !== undefined) {
                 target.call($element, value);
               }
             });
           };
         })(attr));
       });
-      _.each(self.feedbackCell.attributes, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, attr</span>) </span>{
-        self.feedbackCell.trigger(<span class="hljs-string">'change:'</span> + attr);
+      _.each(self.feedbackCell.attributes, function(value, attr) {
+        self.feedbackCell.trigger('change:' + attr);
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Processes the result of the then method. Adds to the feedback cell.
      * @param result the result of the then method
      * @param feedbackCellField the name of the feedbackCellField, typically the "to" value.
      * @private
-     */</span>
-    __processFeedbackThenResult: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">result, feedbackCellField</span>) </span>{
-      <span class="hljs-keyword">var</span> newState = $.extend({}, result);
-      <span class="hljs-keyword">this</span>.feedbackCell.set(feedbackCellField, newState, {<span class="hljs-attr">silent</span>: <span class="hljs-literal">true</span>});
-      <span class="hljs-keyword">this</span>.feedbackCell.trigger(<span class="hljs-string">'change:'</span> + feedbackCellField);
+     */
+    __processFeedbackThenResult: function(result, feedbackCellField) {
+      var newState = $.extend({}, result);
+      this.feedbackCell.set(feedbackCellField, newState, {silent: true});
+      this.feedbackCell.trigger('change:' + feedbackCellField);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Creates the "when" bindings, and collates and invokes the "then" methods for all feedbacks
      * Finds all feedback zones that match the "to" field, and binds the "when" events to invoke the "then" method
      * @private
-     */</span>
-    __generateFeedbackBindings: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> i,
-          self = <span class="hljs-keyword">this</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-25">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
-              </div>
-              <p>Cleanup previous “on” and “listenTo” events</p>
+     */
+    __generateFeedbackBindings: function() {
+      var i,
+          self = this;
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.__feedbackOnEvents.length; i++) {
-        <span class="hljs-keyword">this</span>.off(<span class="hljs-literal">null</span>, <span class="hljs-keyword">this</span>.__feedbackOnEvents[i]);
-      }
-      <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.__feedbackListenToEvents.length; i++) {
-        <span class="hljs-keyword">var</span> feedbackListenToConfig = <span class="hljs-keyword">this</span>.__feedbackListenToEvents[i];
-        <span class="hljs-keyword">this</span>.stopListening(feedbackListenToConfig.obj, feedbackListenToConfig.name, feedbackListenToConfig.callback);
-      }
-      <span class="hljs-keyword">this</span>.__feedbackOnEvents = [];
-      <span class="hljs-keyword">this</span>.__feedbackListenToEvents = [];</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-26">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
-              </div>
-              <p>For each feedback configuration</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      _.each(<span class="hljs-keyword">this</span>.feedback, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">declaration</span>) </span>{
-        <span class="hljs-keyword">var</span> toEntries = [declaration.to];
-        <span class="hljs-keyword">if</span> (_.isArray(declaration.to)) {
+```
+
+
+
+
+
+
+
+Cleanup previous "on" and "listenTo" events
+
+
+  
+
+```
+      for (i = 0; i < this.__feedbackOnEvents.length; i++) {
+        this.off(null, this.__feedbackOnEvents[i]);
+      }
+      for (i = 0; i < this.__feedbackListenToEvents.length; i++) {
+        var feedbackListenToConfig = this.__feedbackListenToEvents[i];
+        this.stopListening(feedbackListenToConfig.obj, feedbackListenToConfig.name, feedbackListenToConfig.callback);
+      }
+      this.__feedbackOnEvents = [];
+      this.__feedbackListenToEvents = [];
+
+
+```
+
+
+
+
+
+
+
+For each feedback configuration
+
+
+  
+
+```
+      _.each(this.feedback, function(declaration) {
+        var toEntries = [declaration.to];
+        if (_.isArray(declaration.to)) {
           toEntries = declaration.to;
         }
-        _.each(toEntries, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">to</span>) </span>{
-          <span class="hljs-keyword">var</span> destinations = self.__getFeedbackDestinations(to),
-            destIndexTokens = self.__getAllIndexTokens(to);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-27">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
-              </div>
-              <p>Iterate over all destinations</p>
+        _.each(toEntries, function(to) {
+          var destinations = self.__getFeedbackDestinations(to),
+            destIndexTokens = self.__getAllIndexTokens(to);
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          _.each(destinations, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">dest</span>) </span>{
-            <span class="hljs-keyword">var</span> fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
+
+```
+
+
+
+
+
+
+
+Iterate over all destinations
+
+
+  
+
+```
+          _.each(destinations, function(dest) {
+            var fieldName, indices, indexMap, then, args, method, whenEvents, bindInfo;
             dest = $(dest);
-            fieldName = dest.data(<span class="hljs-string">'feedback'</span>);
+            fieldName = dest.data('feedback');
             indices = self.__getAllIndexTokens(fieldName);
-            indexMap = {};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-28">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
-              </div>
-              <p>Generates a mapping from variable name to value:
-If the destination “to” mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
-then the map would look like: {x: 1, y: 4}</p>
+            indexMap = {};
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            _.each(destIndexTokens, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">indexToken, i</span>) </span>{
+```
+
+
+
+
+
+
+
+Generates a mapping from variable name to value:
+If the destination "to" mapping is: my-feedback-element[x][y] and this particular destination is: my-feedback-element[1][4]
+then the map would look like: {x: 1, y: 4}
+
+
+  
+
+```
+            _.each(destIndexTokens, function(indexToken, i) {
               indexMap[indexToken] = indices[i];
             });
-            then = declaration.then;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-29">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
-              </div>
-              <p>If the “then” clause is a string, assume it’s a view method</p>
+            then = declaration.then;
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (_.isString(then)) {
+
+```
+
+
+
+
+
+
+
+If the "then" clause is a string, assume it's a view method
+
+
+  
+
+```
+            if (_.isString(then)) {
               then = self[then];
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isArray(then)) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>If the “then” clause is an array, assume it’s [viewMethod, arg[0], arg[1], …]</p>
+            } else if (_.isArray(then)) {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>              args = then.slice();
-              method = args[<span class="hljs-number">0</span>];
+```
+
+
+
+
+
+
+
+If the "then" clause is an array, assume it's [viewMethod, arg[0], arg[1], ...]
+
+
+  
+
+```
+              args = then.slice();
+              method = args[0];
               args.shift();
               then = self[method].apply(self, args);
-            }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-31">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
-              </div>
-              <p>track the indices for binding</p>
+            }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            bindInfo = {
-              <span class="hljs-attr">feedbackCellField</span>: fieldName,
-              <span class="hljs-attr">fn</span>: then,
-              <span class="hljs-attr">indices</span>: indexMap
-            };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-32">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
-              </div>
-              <p>Iterate over all “when” clauses</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            whenEvents = self.__generateWhenEvents(declaration.when, indexMap);
-            _.each(whenEvents, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventKey</span>) </span>{
-              <span class="hljs-keyword">var</span> match, delegateEventSplitter,
-                invokeThen = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">evt</span>) </span>{
-                  <span class="hljs-keyword">var</span> i, args, result, newState;
+```
+
+
+
+
+
+
+
+track the indices for binding
+
+
+  
+
+```
+            bindInfo = {
+              feedbackCellField: fieldName,
+              fn: then,
+              indices: indexMap
+            };
+
+```
+
+
+
+
+
+
+
+Iterate over all "when" clauses
+
+
+  
+
+```
+            whenEvents = self.__generateWhenEvents(declaration.when, indexMap);
+            _.each(whenEvents, function(eventKey) {
+              var match, delegateEventSplitter,
+                invokeThen = function(evt) {
+                  var i, args, result, newState;
                   args = [evt];
                   newState = {};
                   args.push(bindInfo.indices);
                   result = bindInfo.fn.apply(self, args);
                   self.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
                 };
-              delegateEventSplitter = <span class="hljs-regexp">/^(\S+)\s*(.*)$/</span>;
+              delegateEventSplitter = /^(\S+)\s*(.*)$/;
               match = eventKey.match(delegateEventSplitter);
-              self.$el.on(match[<span class="hljs-number">1</span>] + <span class="hljs-string">'.delegateEvents'</span> + self.cid, match[<span class="hljs-number">2</span>], _.bind(invokeThen, self));
-            });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-33">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
-              </div>
-              <p>Special “on” listeners</p>
+              self.$el.on(match[1] + '.delegateEvents' + self.cid, match[2], _.bind(invokeThen, self));
+            });
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            _.each(declaration.when.on, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventKey</span>) </span>{
-              <span class="hljs-keyword">var</span> invokeThen = self.__generateThenCallback(bindInfo, eventKey);
+```
+
+
+
+
+
+
+
+Special "on" listeners
+
+
+  
+
+```
+            _.each(declaration.when.on, function(eventKey) {
+              var invokeThen = self.__generateThenCallback(bindInfo, eventKey);
               self.on(eventKey, invokeThen, self);
               self.__feedbackOnEvents.push(invokeThen);
-            });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-34">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
-              </div>
-              <p>Special “listenTo” listeners</p>
+            });
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            _.each(declaration.when.listenTo, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">listenToConfig</span>) </span>{
-              <span class="hljs-keyword">var</span> obj = listenToConfig.object;
-              <span class="hljs-keyword">if</span> (_.isFunction(obj)) {
+```
+
+
+
+
+
+
+
+Special "listenTo" listeners
+
+
+  
+
+```
+            _.each(declaration.when.listenTo, function(listenToConfig) {
+              var obj = listenToConfig.object;
+              if (_.isFunction(obj)) {
                 obj = _.bind(listenToConfig.object, self)();
-              } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isString(obj)) {
+              } else if (_.isString(obj)) {
                 obj = _.result(self, listenToConfig.object);
               }
-              <span class="hljs-keyword">if</span> (obj) {
-                <span class="hljs-keyword">var</span> invokeThen = _.bind(self.__generateThenCallback(bindInfo, listenToConfig.events), self);
+              if (obj) {
+                var invokeThen = _.bind(self.__generateThenCallback(bindInfo, listenToConfig.events), self);
                 self.listenTo(obj, listenToConfig.events, invokeThen);
                 self.__feedbackListenToEvents.push({
-                  <span class="hljs-attr">object</span>: obj,
-                  <span class="hljs-attr">name</span>: listenToConfig.events,
-                  <span class="hljs-attr">callback</span>: invokeThen
+                  object: obj,
+                  name: listenToConfig.events,
+                  callback: invokeThen
                 });
               }
             });
@@ -1902,7 +1777,7 @@ then the map would look like: {x: 1, y: 4}</p>
     },
 
 
-    <span class="hljs-comment">/**
+    /**
      * Returns a properly wrapped "then" using a configuration object "bindInfo" and an "eventKey" that will be passed as the type
      * @param bindInfo
      * @param   bindInfo.feedbackCellField the property name of the feedback cell to store the "then" instructions
@@ -1910,247 +1785,253 @@ then the map would look like: {x: 1, y: 4}</p>
      * @param   [bindInfo.indices] the index map
      * @return {Function} the properly wrapped "then" function
      * @private
-     */</span>
-    __generateThenCallback: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">bindInfo, eventKey</span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">var</span> result,
+     */
+    __generateThenCallback: function(bindInfo, eventKey) {
+      return function() {
+        var result,
             args = [{
-              <span class="hljs-attr">args</span>: <span class="hljs-built_in">arguments</span>,
-              <span class="hljs-attr">type</span>: eventKey
+              args: arguments,
+              type: eventKey
             }];
         args.push(bindInfo.indices);
-        result = bindInfo.fn.apply(<span class="hljs-keyword">this</span>, args);
-        <span class="hljs-keyword">this</span>.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
+        result = bindInfo.fn.apply(this, args);
+        this.__processFeedbackThenResult(result, bindInfo.feedbackCellField);
       };
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns all elements on the page that match the feedback mapping
      * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
      * @param {string} dest the string of the data-feedback
      * @return {jQuery} all elements on the page that match the feedback mapping
      * @private
-     */</span>
-    __getFeedbackDestinations: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">dest</span>) </span>{
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>,
-          strippedField = <span class="hljs-keyword">this</span>.__stripAllAttribute(dest),
+     */
+    __getFeedbackDestinations: function(dest) {
+      var self = this,
+          strippedField = this.__stripAllAttribute(dest),
           destPrefix = dest,
-          firstArrayIndex = dest.indexOf(<span class="hljs-string">'['</span>);
-      <span class="hljs-keyword">if</span> (firstArrayIndex &gt; <span class="hljs-number">0</span>) {
-        destPrefix = dest.substring(<span class="hljs-number">0</span>, firstArrayIndex);
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-35">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
-              </div>
-              <p>Tries to match as much as possible by using a prefix (the string before the array notation)</p>
+          firstArrayIndex = dest.indexOf('[');
+      if (firstArrayIndex > 0) {
+        destPrefix = dest.substring(0, firstArrayIndex);
+      }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.$(<span class="hljs-string">'[data-feedback^="'</span> + destPrefix + <span class="hljs-string">'"]'</span>).filter(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-36">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
-              </div>
-              <p>Only take the elements that actually match after the array notation is converted to open notation ([x] -&gt; [])</p>
+```
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> self.__stripAllAttribute($(<span class="hljs-keyword">this</span>).data(<span class="hljs-string">'feedback'</span>)) === strippedField;
+
+
+
+
+
+
+Tries to match as much as possible by using a prefix (the string before the array notation)
+
+
+  
+
+```
+      return this.$('[data-feedback^="' + destPrefix + '"]').filter(function() {
+
+```
+
+
+
+
+
+
+
+Only take the elements that actually match after the array notation is converted to open notation ([x] -> [])
+
+
+  
+
+```
+        return self.__stripAllAttribute($(this).data('feedback')) === strippedField;
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Generates the events needed to listen to the feedback's when methods. A when event is only created
      * if the appropriate element exist on the page
      * @param whenMap the collection of "when"'s for a given feedback
      * @param indexMap map from variable names to values when substituting array notation
      * @return the events that were generated
      * @private
-     */</span>
-    __generateWhenEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">whenMap, indexMap</span>) </span>{
-      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span>,
+     */
+    __generateWhenEvents: function(whenMap, indexMap) {
+      var self = this,
           events = [];
-      _.each(whenMap, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">whenEvents, whenField</span>) </span>{
-        <span class="hljs-keyword">var</span> substitutedWhenField,
+      _.each(whenMap, function(whenEvents, whenField) {
+        var substitutedWhenField,
             qualifiedFields = [whenField],
-            useAtNotation = (whenField.charAt(<span class="hljs-number">0</span>) === <span class="hljs-string">'@'</span>);
+            useAtNotation = (whenField.charAt(0) === '@');
 
-        <span class="hljs-keyword">if</span> (whenField !== <span class="hljs-string">'on'</span> || whenField !== <span class="hljs-string">'listenTo'</span>) {
-          <span class="hljs-keyword">if</span> (useAtNotation) {
-            whenField = whenField.substring(<span class="hljs-number">1</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-37">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
-              </div>
-              <p>substitute indices in to “when” placeholders
-[] -&gt; to all, [0] -&gt; to specific, [x] -&gt; [x’s value]</p>
+        if (whenField !== 'on' || whenField !== 'listenTo') {
+          if (useAtNotation) {
+            whenField = whenField.substring(1);
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            substitutedWhenField = self.__substituteIndicesUsingMap(whenField, indexMap);
+```
+
+
+
+
+
+
+
+substitute indices in to "when" placeholders
+[] -> to all, [0] -> to specific, [x] -> [x's value]
+
+
+  
+
+```
+            substitutedWhenField = self.__substituteIndicesUsingMap(whenField, indexMap);
             qualifiedFields = _.flatten(self.__generateSubAttributes(substitutedWhenField, self.model));
-          }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-38">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
-              </div>
-              <p>For each qualified field</p>
+          }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>          _.each(qualifiedFields, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">qualifiedField</span>) </span>{
-            _.each(whenEvents, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventType</span>) </span>{
-              <span class="hljs-keyword">var</span> backboneEvent = eventType + <span class="hljs-string">' '</span> + qualifiedField;
-              <span class="hljs-keyword">if</span> (useAtNotation) {
-                backboneEvent = eventType + <span class="hljs-string">' [data-model="'</span> + qualifiedField + <span class="hljs-string">'"]'</span>;
+```
+
+
+
+
+
+
+
+For each qualified field
+
+
+  
+
+```
+          _.each(qualifiedFields, function(qualifiedField) {
+            _.each(whenEvents, function(eventType) {
+              var backboneEvent = eventType + ' ' + qualifiedField;
+              if (useAtNotation) {
+                backboneEvent = eventType + ' [data-model="' + qualifiedField + '"]';
               }
               events.push(backboneEvent);
             });
           });
         }
       });
-      <span class="hljs-keyword">return</span> events;
+      return events;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns an array of all the values and variables used within the array notations in a string
      * Example: foo.bar[x].baz[0][1].taz[y] will return ['x', 0, 1, 'y']. It will parse integers if they are numbers
      * This does not handle or return any "open" array notations: []
      * @private
-     */</span>
-    __getAllIndexTokens: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attr</span>) </span>{
-      <span class="hljs-keyword">return</span> _.reduce(attr.match(<span class="hljs-regexp">/\[.+?\]/g</span>), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">result, arrayNotation</span>) </span>{
-        <span class="hljs-keyword">var</span> token = arrayNotation.substring(<span class="hljs-number">1</span>, arrayNotation.length - <span class="hljs-number">1</span>);
-        <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">isNaN</span>(token)) {
-          result.push(<span class="hljs-built_in">parseInt</span>(token, <span class="hljs-number">10</span>));
-        } <span class="hljs-keyword">else</span> {
+     */
+    __getAllIndexTokens: function(attr) {
+      return _.reduce(attr.match(/\[.+?\]/g), function(result, arrayNotation) {
+        var token = arrayNotation.substring(1, arrayNotation.length - 1);
+        if (!isNaN(token)) {
+          result.push(parseInt(token, 10));
+        } else {
           result.push(token);
         }
-        <span class="hljs-keyword">return</span> result;
+        return result;
       }, []);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Replaces all array notations with open array notations.
      * Example: foo.bar[x].baz[0][1].taz[y] will return as foo.bar[].baz[][].taz[]
      * @private
-     */</span>
-    __stripAllAttribute: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attr</span>) </span>{
-      attr = attr.replace(<span class="hljs-regexp">/\[.+?\]/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-string">'[]'</span>;
+     */
+    __stripAllAttribute: function(attr) {
+      attr = attr.replace(/\[.+?\]/g, function() {
+        return '[]';
       });
-      <span class="hljs-keyword">return</span> attr;
+      return attr;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Takes a map from variable name to value to be replaced and processes a string with them.
      * Example: foo.bar[x].baz[0][1].taz[y] and {x: 5, y: 9} will return as foo.bar[5].baz[0][1].taz[9]
      * Also supports objects:
      * Example: foo.bar and {bar: someString} will return as foo.someString
      * @private
-     */</span>
-    __substituteIndicesUsingMap : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">dest, indexMap</span>) </span>{
-      <span class="hljs-keyword">var</span> newIndex;
-      <span class="hljs-keyword">return</span> dest.replace(<span class="hljs-regexp">/\[[^\]]*\]/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">arrayNotation</span>) </span>{
-        <span class="hljs-keyword">if</span> (arrayNotation.match(<span class="hljs-regexp">/\[\d+\]/g</span>) || arrayNotation.match(<span class="hljs-regexp">/\[\]/g</span>)) {
-          <span class="hljs-keyword">return</span> arrayNotation;
-        } <span class="hljs-keyword">else</span> {
-          newIndex = indexMap[arrayNotation.substring(<span class="hljs-number">1</span>, arrayNotation.length - <span class="hljs-number">1</span>)];
-          <span class="hljs-keyword">if</span> (_.isString(newIndex)) {
-            <span class="hljs-keyword">return</span> <span class="hljs-string">'.'</span> + newIndex;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-string">'['</span> + (newIndex === <span class="hljs-literal">undefined</span> ? <span class="hljs-string">''</span> : newIndex) + <span class="hljs-string">']'</span>;
+     */
+    __substituteIndicesUsingMap : function(dest, indexMap) {
+      var newIndex;
+      return dest.replace(/\[[^\]]*\]/g, function(arrayNotation) {
+        if (arrayNotation.match(/\[\d+\]/g) || arrayNotation.match(/\[\]/g)) {
+          return arrayNotation;
+        } else {
+          newIndex = indexMap[arrayNotation.substring(1, arrayNotation.length - 1)];
+          if (_.isString(newIndex)) {
+            return '.' + newIndex;
+          } else {
+            return '[' + (newIndex === undefined ? '' : newIndex) + ']';
           }
         }
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Generates an array of all the possible field accessors and their indices when using
      * the "open" array notation:
-     *    foo[] -&gt; ['foo[0]', 'foo[1]'].
+     *    foo[] -> ['foo[0]', 'foo[1]'].
      * Will also perform nested arrays:
-     *    foo[][] -&gt; ['foo[0][0]', foo[1][0]']
+     *    foo[][] -> ['foo[0][0]', foo[1][0]']
      * Supports both foo[x] and foo.bar
      * @private
      * @param {string} attr The name of the attribute to expand according to the bound model
-     * @return {Array&lt;string&gt;} The fully expanded subattribute names
-     */</span>
-    __generateSubAttributes: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attr, model</span>) </span>{
-      <span class="hljs-keyword">var</span> firstBracket = attr.indexOf(<span class="hljs-string">'[]'</span>);
-      <span class="hljs-keyword">if</span> (firstBracket === <span class="hljs-number">-1</span>) {
-        <span class="hljs-keyword">return</span> [attr];
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">var</span> attrName = attr.substring(<span class="hljs-number">0</span>, firstBracket);
-        <span class="hljs-keyword">var</span> remainder = attr.substring(firstBracket + <span class="hljs-number">2</span>);
-        <span class="hljs-keyword">var</span> subAttrs = [];
-        <span class="hljs-keyword">var</span> values = model.get(attrName);
-        <span class="hljs-keyword">if</span> (!values) {
-          <span class="hljs-keyword">return</span> [attr];
+     * @return {Array<string>} The fully expanded subattribute names
+     */
+    __generateSubAttributes: function(attr, model) {
+      var firstBracket = attr.indexOf('[]');
+      if (firstBracket === -1) {
+        return [attr];
+      } else {
+        var attrName = attr.substring(0, firstBracket);
+        var remainder = attr.substring(firstBracket + 2);
+        var subAttrs = [];
+        var values = model.get(attrName);
+        if (!values) {
+          return [attr];
         }
-        <span class="hljs-keyword">var</span> indexes;
-        <span class="hljs-keyword">if</span> (_.isArray(values)) {
+        var indexes;
+        if (_.isArray(values)) {
           indexes = _.range(values.length);
-        } <span class="hljs-keyword">else</span> {
+        } else {
           indexes = _.keys(values);
         }
-        _.each(indexes, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">index</span>) </span>{
-          <span class="hljs-keyword">var</span> indexToken = <span class="hljs-string">'['</span> + index + <span class="hljs-string">']'</span>;
-          <span class="hljs-keyword">if</span> (_.isString(index)) {
-            indexToken = <span class="hljs-string">'.'</span> + index;
+        _.each(indexes, function(index) {
+          var indexToken = '[' + index + ']';
+          if (_.isString(index)) {
+            indexToken = '.' + index;
           }
-          subAttrs.push(<span class="hljs-keyword">this</span>.__generateSubAttributes(attrName + indexToken + remainder, model));
-        }, <span class="hljs-keyword">this</span>);
-        <span class="hljs-keyword">return</span> subAttrs;
+          subAttrs.push(this.__generateSubAttributes(attrName + indexToken + remainder, model));
+        }, this);
+        return subAttrs;
       }
-    }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-39">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
-              </div>
-              <p><strong><strong><strong>**</strong></strong></strong> End Private methods <strong><strong><strong>**</strong></strong></strong>//</p>
+    }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  });
 
-  <span class="hljs-keyword">return</span> View;
-}));</pre></div></div>
-            
-        </li>
-        
-    </ul>
-  </div>
-</body>
-</html>
+```
+
+
+
+
+
+
+
+************** End Private methods **************//
+
+
+  
+
+```
+  });
+
+  return View;
+}));
+
+
+```
+
+
+
+

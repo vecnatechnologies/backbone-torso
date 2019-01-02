@@ -1,250 +1,79 @@
-<!DOCTYPE html>
 
-<html>
-<head>
-  <title>FormModel.js</title>
-  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
-  <link rel="stylesheet" media="all" href="../docco.css" />
-</head>
-<body>
-  <div id="container">
-    <div id="background"></div>
-    
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
-          <div id="jump_page_wrapper">
-            <div id="jump_page">
-              
-                
-                <a class="source" href="Behavior.html">
-                  modules/Behavior.js
-                </a>
-              
-                
-                <a class="source" href="Cell.html">
-                  modules/Cell.js
-                </a>
-              
-                
-                <a class="source" href="Collection.html">
-                  modules/Collection.js
-                </a>
-              
-                
-                <a class="source" href="Events.html">
-                  modules/Events.js
-                </a>
-              
-                
-                <a class="source" href="FormModel.html">
-                  modules/FormModel.js
-                </a>
-              
-                
-                <a class="source" href="FormView.html">
-                  modules/FormView.js
-                </a>
-              
-                
-                <a class="source" href="ListView.html">
-                  modules/ListView.js
-                </a>
-              
-                
-                <a class="source" href="Model.html">
-                  modules/Model.js
-                </a>
-              
-                
-                <a class="source" href="NestedCell.html">
-                  modules/NestedCell.js
-                </a>
-              
-                
-                <a class="source" href="NestedModel.html">
-                  modules/NestedModel.js
-                </a>
-              
-                
-                <a class="source" href="Router.html">
-                  modules/Router.js
-                </a>
-              
-                
-                <a class="source" href="ServiceCell.html">
-                  modules/ServiceCell.js
-                </a>
-              
-                
-                <a class="source" href="View.html">
-                  modules/View.js
-                </a>
-              
-                
-                <a class="source" href="behaviors/DataBehavior.html">
-                  modules/behaviors/DataBehavior.js
-                </a>
-              
-                
-                <a class="source" href="configure.html">
-                  modules/configure.js
-                </a>
-              
-                
-                <a class="source" href="handlebarsUtils.html">
-                  modules/handlebarsUtils.js
-                </a>
-              
-                
-                <a class="source" href="history.html">
-                  modules/history.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cacheMixin.html">
-                  modules/mixins/cacheMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cellMixin.html">
-                  modules/mixins/cellMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/loadingMixin.html">
-                  modules/mixins/loadingMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/modelMixin.html">
-                  modules/mixins/modelMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/pollingMixin.html">
-                  modules/mixins/pollingMixin.js
-                </a>
-              
-                
-                <a class="source" href="registry.html">
-                  modules/registry.js
-                </a>
-              
-                
-                <a class="source" href="stickitUtils.html">
-                  modules/stickitUtils.js
-                </a>
-              
-                
-                <a class="source" href="templateRenderer.html">
-                  modules/templateRenderer.js
-                </a>
-              
-                
-                <a class="source" href="torso.html">
-                  modules/torso.js
-                </a>
-              
-                
-                <a class="source" href="validation.html">
-                  modules/validation.js
-                </a>
-              
-            </div>
-          </div>
-        </li>
-      </ul>
-    
-    <ul class="sections">
-        
-          <li id="title">
-              <div class="annotation">
-                  <h1>FormModel.js</h1>
-              </div>
-          </li>
-        
-        
-        
-        <li id="section-1">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-1">&#182;</a>
-              </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
-    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'./NestedModel'</span>, <span class="hljs-string">'./validation'</span>], factory);
-  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
-    <span class="hljs-built_in">module</span>.exports = factory(<span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'backbone'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./NestedModel'</span>), <span class="hljs-built_in">require</span>(<span class="hljs-string">'./validation'</span>));
-  } <span class="hljs-keyword">else</span> {
+
+
+
+
+
+  
+
+```
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', 'backbone', './NestedModel', './validation'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('backbone'), require('./NestedModel'), require('./validation'));
+  } else {
     root.Torso = root.Torso || {};
     root.Torso.FormModel = factory(root._, root.Backbone, root.Torso.NestedModel, root.Torso.validation);
   }
-}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, Backbone, NestedModel, validation</span>) </span>{
-<span class="hljs-meta">  'use strict'</span>;
+}(this, function(_, Backbone, NestedModel, validation) {
+  'use strict';
 
-  <span class="hljs-keyword">var</span> $ = Backbone.$;
+  var $ = Backbone.$;
 
-  <span class="hljs-comment">/**
+  /**
    * Generic Form Model
    * @module    Torso
    * @class     FormModel
    * @constructor
    * @author kent.willis@vecna.com
-   */</span>
-  <span class="hljs-keyword">var</span> FormModel = NestedModel.extend({
-    <span class="hljs-comment">/**
+   */
+  var FormModel = NestedModel.extend({
+    /**
      * @private
      * @property __currentMappings
      * @type Object
-     **/</span>
-    <span class="hljs-comment">/**
+     **/
+    /**
      * @private
      * @property __cache
      * @type Object
-     **/</span>
-    <span class="hljs-comment">/**
+     **/
+    /**
      * @private
      * @property __currentObjectModels
      * @type Object
-     **/</span>
-    <span class="hljs-comment">/**
+     **/
+    /**
      * @private
      * @property __currentUpdateEvents
      * @type Array
-     **/</span>
-    <span class="hljs-comment">/**
+     **/
+    /**
      * @property validation
      * @type Object
-     **/</span>
-    <span class="hljs-comment">/**
+     **/
+    /**
      * @property labels
      * @type Object
-     **/</span>
-    <span class="hljs-comment">/**
+     **/
+    /**
      * Map from aliases (either model names or computed value names) to mappings.
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property mapping
      * @type Object
-     **/</span>
-    mapping: <span class="hljs-literal">undefined</span>,
+     **/
+    mapping: undefined,
 
-    <span class="hljs-comment">/**
+    /**
      * Map from model aliases to model instances.
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property models
      * @type Object
-     **/</span>
-    models: <span class="hljs-literal">undefined</span>,
+     **/
+    models: undefined,
 
-    <span class="hljs-comment">/**
+    /**
      * Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models
      * on initialization. On initialization the object model's values will be pulled once.
      * For the options, here are needed definitions:
@@ -274,101 +103,109 @@
      *     model as the object model updates. You can always toggle this state with startUpdating() and stopUpdating().
      *   @param {Object} [options.validation] A Backbone.Validation plugin hash to dictate the validation rules
      *   @param {Object} [options.labels] A Backbone.Validation plugin hash to dictate the attribute labels
-     */</span>
-    <span class="hljs-keyword">constructor</span>: function(attributes, options) {
+     */
+    constructor: function(attributes, options) {
       options = options || {};
-      <span class="hljs-keyword">this</span>.__cache = {};
-      <span class="hljs-keyword">this</span>.__currentUpdateEvents = [];
-      <span class="hljs-keyword">this</span>.__currentMappings = {};
-      <span class="hljs-keyword">this</span>.__currentObjectModels = {};</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>override + extend the validation and labels hashes</p>
+      this.__cache = {};
+      this.__currentUpdateEvents = [];
+      this.__currentMappings = {};
+      this.__currentObjectModels = {};
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.validation = _.extend({}, <span class="hljs-keyword">this</span>.validation, options.validation);
-      <span class="hljs-keyword">this</span>.labels = _.extend({}, <span class="hljs-keyword">this</span>.labels, options.labels);
 
-      NestedModel.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+```
 
-      <span class="hljs-keyword">this</span>.__initMappings(options);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Do an initial pull</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>.pull();</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>The pull may have overridden default attributes</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (attributes) {
-        <span class="hljs-keyword">this</span>.set(attributes);
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>Begin updating if requested</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (options.startUpdating) {
-        <span class="hljs-keyword">this</span>.startUpdating();
+
+
+
+override + extend the validation and labels hashes
+
+
+  
+
+```
+      this.validation = _.extend({}, this.validation, options.validation);
+      this.labels = _.extend({}, this.labels, options.labels);
+
+      NestedModel.apply(this, arguments);
+
+      this.__initMappings(options);
+
+
+```
+
+
+
+
+
+
+
+Do an initial pull
+
+
+  
+
+```
+      this.pull();
+
+
+```
+
+
+
+
+
+
+
+The pull may have overridden default attributes
+
+
+  
+
+```
+      if (attributes) {
+        this.set(attributes);
       }
-      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'initialization-complete'</span>);
+
+
+```
+
+
+
+
+
+
+
+Begin updating if requested
+
+
+  
+
+```
+      if (options.startUpdating) {
+        this.startUpdating();
+      }
+      this.trigger('initialization-complete');
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @param {string} alias the alias of the mapping - either a model mapping or a computed mapping
      * @return the mapping config for that alias
-     */</span>
-    getMapping: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">alias</span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__currentMappings[alias];
+     */
+    getMapping: function(alias) {
+      return this.__currentMappings[alias];
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @return all the current mapping configs
-     */</span>
-    getMappings: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__currentMappings;
+     */
+    getMappings: function() {
+      return this.__currentMappings;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Define or redefine how the form model pull/pushes or otherwise tracks properties between an object model(s).
      * Examples:
      * this.setMapping('modelAlias', true, optional model instance);
@@ -393,44 +230,44 @@
      * @param {Object or Backbone.Model instance} [models] Provides instances to use for this mapping. If mapping is a computed,
      *   provide a map from alias to model instance. If mapping is for a single model, just provide the model instance for that alias.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
-     */</span>
-    setMapping: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">alias, mapping, models, copy</span>) </span>{
-      <span class="hljs-keyword">var</span> computed, fields,
+     */
+    setMapping: function(alias, mapping, models, copy) {
+      var computed, fields,
         config = {};
-      <span class="hljs-keyword">if</span> (_.isString(mapping)) {
-        fields = mapping.split(<span class="hljs-string">' '</span>);
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (mapping === <span class="hljs-literal">true</span>) {
-        fields = <span class="hljs-literal">undefined</span>;
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isObject(mapping)) {
+      if (_.isString(mapping)) {
+        fields = mapping.split(' ');
+      } else if (mapping === true) {
+        fields = undefined;
+      } else if (_.isObject(mapping)) {
         mapping = _.clone(mapping);
-        computed = <span class="hljs-literal">true</span>;
+        computed = true;
       }
       config.computed = computed;
-      <span class="hljs-keyword">if</span> (computed) {
+      if (computed) {
         config.mapping = mapping;
-        _.each(<span class="hljs-keyword">this</span>.__getModelAliases(config), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelAlias</span>) </span>{
-          <span class="hljs-keyword">var</span> configMappingForAlias = config.mapping[modelAlias];
-          <span class="hljs-keyword">if</span> (_.isString(configMappingForAlias)) {
-            configMappingForAlias = configMappingForAlias.split(<span class="hljs-string">' '</span>);
-          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (configMappingForAlias === <span class="hljs-literal">true</span>) {
-            configMappingForAlias = <span class="hljs-literal">undefined</span>;
+        _.each(this.__getModelAliases(config), function(modelAlias) {
+          var configMappingForAlias = config.mapping[modelAlias];
+          if (_.isString(configMappingForAlias)) {
+            configMappingForAlias = configMappingForAlias.split(' ');
+          } else if (configMappingForAlias === true) {
+            configMappingForAlias = undefined;
           }
           config.mapping[modelAlias] = configMappingForAlias;
         });
-      } <span class="hljs-keyword">else</span> {
+      } else {
         config.mapping = fields;
       }
-      <span class="hljs-keyword">this</span>.__currentMappings[alias] = config;
-      <span class="hljs-keyword">if</span> (models) {
-        <span class="hljs-keyword">if</span> (computed) {
-          <span class="hljs-keyword">this</span>.trackModels(models, copy);
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">this</span>.trackModel(alias, models, copy);
+      this.__currentMappings[alias] = config;
+      if (models) {
+        if (computed) {
+          this.trackModels(models, copy);
+        } else {
+          this.trackModel(alias, models, copy);
         }
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Sets multiple mappings (both model mappings and computed value mappings) with one call.
      * Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.
      * Here is an example:
@@ -447,185 +284,185 @@
      * @param {Object} mappings Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.
      * @param {Object} [models] this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are backbone model instances.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
-     */</span>
-    setMappings: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">mappings, models, copy</span>) </span>{
-      _.each(mappings, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">mapping, alias</span>) </span>{
-        <span class="hljs-keyword">this</span>.setMapping(alias, mapping);
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">if</span> (models) {
-        <span class="hljs-keyword">this</span>.trackModels(models, copy);
+     */
+    setMappings: function(mappings, models, copy) {
+      _.each(mappings, function(mapping, alias) {
+        this.setMapping(alias, mapping);
+      }, this);
+      if (models) {
+        this.trackModels(models, copy);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Remove a mapping (model or computed) by alias
      * @param {string or Backbone.Model instance} aliasOrModel if a String is provided, it will unset the mapping with that alias.
      *   If a Backbone Model instance is provided, it will remove the model mapping that was bound to that model.
      * @param {boolean} [removeModelIfUntracked=false] If true, after the mapping is removed, the model will also be unset but only if
      *   no other mappings reference it. Note, setting this to true will not remove any computed mappings that also use that model.
-     */</span>
-    unsetMapping: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">aliasOrModel, removeModelIfUntracked</span>) </span>{
-      <span class="hljs-keyword">var</span> alias = <span class="hljs-keyword">this</span>.__findAlias(aliasOrModel);
-      <span class="hljs-keyword">if</span> (alias) {
-        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__currentMappings[alias];
+     */
+    unsetMapping: function(aliasOrModel, removeModelIfUntracked) {
+      var alias = this.__findAlias(aliasOrModel);
+      if (alias) {
+        delete this.__currentMappings[alias];
       }
-      <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.getTrackedModel(alias);
-      <span class="hljs-keyword">if</span> (removeModelIfUntracked &amp;&amp; model &amp;&amp; _.isEmpty(<span class="hljs-keyword">this</span>.__getTrackedModelFields(model))) {
-        <span class="hljs-keyword">this</span>.untrackModel(model);
+      var model = this.getTrackedModel(alias);
+      if (removeModelIfUntracked && model && _.isEmpty(this.__getTrackedModelFields(model))) {
+        this.untrackModel(model);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Removes all current mappings
      * Does NOT remove current model being tracked. Call this.untrackModels afterwards if you wish this behavior.
-     */</span>
-    unsetMappings: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.__currentMappings = {};
-      <span class="hljs-keyword">this</span>.resetUpdating();
+     */
+    unsetMappings: function() {
+      this.__currentMappings = {};
+      this.resetUpdating();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns the object model currently bound to the given name/alias.
      * @param {string} alias the name/alias used by the mappings.
      * @return {Backbone Model instance} the model currently bound to the alias
-     */</span>
-    getTrackedModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">alias</span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__currentObjectModels[alias];
+     */
+    getTrackedModel: function(alias) {
+      return this.__currentObjectModels[alias];
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns all the currently tracked object models
      * @return all the currently tracked object models
-     */</span>
-    getTrackedModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> _.values(<span class="hljs-keyword">this</span>.__currentObjectModels);
+     */
+    getTrackedModels: function() {
+      return _.values(this.__currentObjectModels);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * See {{#crossLink "FormModel/trackModel:method"}}.trackModel(){{/crossLink}}
      * @deprecated use .trackModel() instead.
-     */</span>
-    setTrackedModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.trackModel.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+     */
+    setTrackedModel: function() {
+      this.trackModel.apply(this, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Update or create a binding between an object model and an alias.
      * @param {string} alias the alias/name to bind to.
      * @param {Backbone Model instance} model the model to be bound. Mappings referencing this alias will start applying to this model.
      * @param {boolean} [copy=false] if true, the form model will perform a pull on any mappings using this alias.
-     */</span>
-    trackModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">alias, model, copy</span>) </span>{
-      <span class="hljs-keyword">this</span>.__currentObjectModels[alias] = model;
-      <span class="hljs-keyword">this</span>.__updateCache(model);
-      <span class="hljs-keyword">this</span>.resetUpdating();
-      <span class="hljs-keyword">if</span> (copy) {
-        _.each(<span class="hljs-keyword">this</span>.getMappings(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">config, mappingAlias</span>) </span>{
-          <span class="hljs-keyword">var</span> modelAliases;
-          <span class="hljs-keyword">if</span> (alias === mappingAlias) {
-            <span class="hljs-keyword">this</span>.__pull(mappingAlias);
+     */
+    trackModel: function(alias, model, copy) {
+      this.__currentObjectModels[alias] = model;
+      this.__updateCache(model);
+      this.resetUpdating();
+      if (copy) {
+        _.each(this.getMappings(), function(config, mappingAlias) {
+          var modelAliases;
+          if (alias === mappingAlias) {
+            this.__pull(mappingAlias);
           }
-          <span class="hljs-keyword">if</span> (config.computed) {
-            modelAliases = <span class="hljs-keyword">this</span>.__getModelAliases(mappingAlias);
-            <span class="hljs-keyword">if</span> (_.contains(modelAliases, alias)) {
-              <span class="hljs-keyword">this</span>.__pull(mappingAlias);
+          if (config.computed) {
+            modelAliases = this.__getModelAliases(mappingAlias);
+            if (_.contains(modelAliases, alias)) {
+              this.__pull(mappingAlias);
             }
           }
-        }, <span class="hljs-keyword">this</span>);
+        }, this);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * See {{#crossLink "FormModel/trackModels:method"}}.trackModels(){{/crossLink}}
      * @deprecated use .trackModels() instead.
-     */</span>
-    setTrackedModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.trackModels.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+     */
+    setTrackedModels: function() {
+      this.trackModels.apply(this, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Binds multiple models to their aliases.
      * @param {Map from String to Backbone Model instances} models A map from alias/name to model to be bound to that alias.
      * @param {boolean} [copy=false] if true, the form model will perform a pull on any mapping using these models.
-     */</span>
-    trackModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">models, copy</span>) </span>{
-      _.each(models, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">instance, alias</span>) </span>{
-        <span class="hljs-keyword">this</span>.trackModel(alias, instance, copy);
-      }, <span class="hljs-keyword">this</span>);
+     */
+    trackModels: function(models, copy) {
+      _.each(models, function(instance, alias) {
+        this.trackModel(alias, instance, copy);
+      }, this);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * See {{#crossLink "FormModel/untrackModel:method"}}.untrackModel(){{/crossLink}}
      * @deprecated use .untrackModel() instead.
-     */</span>
-    unsetTrackedModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.untrackModel.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+     */
+    unsetTrackedModel: function() {
+      this.untrackModel.apply(this, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Removes the binding between a model alias and a model instance. Effectively stops tracking that model.
      * @param {string or Backbone Model instance} aliasOrModel If a string is given, it will unset the model using that alias. If a model instance
      *   is given, it will unbind whatever alias is currently bound to it.
-     */</span>
-    untrackModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">aliasOrModel</span>) </span>{
-      <span class="hljs-keyword">var</span> model,
-        alias = <span class="hljs-keyword">this</span>.__findAlias(aliasOrModel);
-      <span class="hljs-keyword">if</span> (alias) {
-        model = <span class="hljs-keyword">this</span>.__currentObjectModels[alias];
-        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.__currentObjectModels[alias];
-        <span class="hljs-keyword">this</span>.__updateCache(model);
+     */
+    untrackModel: function(aliasOrModel) {
+      var model,
+        alias = this.__findAlias(aliasOrModel);
+      if (alias) {
+        model = this.__currentObjectModels[alias];
+        delete this.__currentObjectModels[alias];
+        this.__updateCache(model);
       }
-      <span class="hljs-keyword">this</span>.resetUpdating();
+      this.resetUpdating();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * See {{#crossLink "FormModel/untrackModels:method"}}.untrackModels(){{/crossLink}}
      * @deprecated use .untrackModels() instead.
-     */</span>
-    unsetTrackedModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.untrackModels.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+     */
+    unsetTrackedModels: function() {
+      this.untrackModels.apply(this, arguments);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.
-     */</span>
-    untrackModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">this</span>.__currentObjectModels = [];
-      <span class="hljs-keyword">this</span>.__updateCache();
-      <span class="hljs-keyword">this</span>.resetUpdating();
+     */
+    untrackModels: function() {
+      this.__currentObjectModels = [];
+      this.__updateCache();
+      this.resetUpdating();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Pushes values from this form model back to the object models it is tracking. This includes invoking the push callbacks from
      * computed values
-     */</span>
-    push: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      _.each(<span class="hljs-keyword">this</span>.getMappings(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">config, alias</span>) </span>{
-        <span class="hljs-keyword">this</span>.__push(alias);
-      }, <span class="hljs-keyword">this</span>);
+     */
+    push: function() {
+      _.each(this.getMappings(), function(config, alias) {
+        this.__push(alias);
+      }, this);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Pulls the most recent values of every object model that this form model tracks including computed values
-     * <span class="hljs-doctag">NOTE:</span> using this method can override user-submitted data from an HTML form. Use caution.
-     */</span>
-    pull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      _.each(<span class="hljs-keyword">this</span>.getMappings(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">config, alias</span>) </span>{
-        <span class="hljs-keyword">this</span>.__pull(alias);
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">this</span>.__updateCache();
+     * NOTE: using this method can override user-submitted data from an HTML form. Use caution.
+     */
+    pull: function() {
+      _.each(this.getMappings(), function(config, alias) {
+        this.__pull(alias);
+      }, this);
+      this.__updateCache();
     },
 
-    <span class="hljs-comment">/**
+    /**
      * If FormModel has a "url" property defined, it will invoke a save on the form model, and after successfully
      * saving, will perform a push.
      * If no "url" property is defined then the following behavior is used:
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
-     * <span class="hljs-doctag">NOTE:</span> if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise
+     * NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise
      * with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}
      * @param {Object} [options]
      *   @param {boolean} [options.rollback=true] if true, when any object model fails to save, it will revert the object
-     *     model attributes to the state they were before calling save. <span class="hljs-doctag">NOTE:</span> if there are updates that happen
+     *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
      *     to object models within the timing of this save method, the updates could be lost.
      *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
@@ -635,281 +472,285 @@
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
-     */</span>
-    save: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      <span class="hljs-keyword">var</span> notTrackingResponse, url,
-        deferred = <span class="hljs-keyword">new</span> $.Deferred(),
-        formModel = <span class="hljs-keyword">this</span>;
+     */
+    save: function(options) {
+      var notTrackingResponse, url,
+        deferred = new $.Deferred(),
+        formModel = this;
       options = options || {};
       _.defaults(options, {
-        <span class="hljs-attr">rollback</span>: <span class="hljs-literal">true</span>,
-        <span class="hljs-attr">force</span>: <span class="hljs-literal">true</span>
+        rollback: true,
+        force: true
       });
-      <span class="hljs-keyword">try</span> {
-        url = _.result(formModel, <span class="hljs-string">'url'</span>);
-      } <span class="hljs-keyword">catch</span> (e) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>no url attached to this form model. Continue by pushing to models.</p>
+      try {
+        url = _.result(formModel, 'url');
+      } catch (e) {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      }
-      <span class="hljs-keyword">if</span> (url) {
-        <span class="hljs-keyword">return</span> NestedModel.prototype.save.apply(formModel, <span class="hljs-built_in">arguments</span>).done(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+```
+
+
+
+
+
+
+
+no url attached to this form model. Continue by pushing to models.
+
+
+  
+
+```
+      }
+      if (url) {
+        return NestedModel.prototype.save.apply(formModel, arguments).done(function() {
           formModel.push();
         });
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isTrackingAnyObjectModel()) {
-        <span class="hljs-keyword">this</span>.__saveToModels(deferred, options);
-        <span class="hljs-keyword">return</span> deferred.promise();
-      } <span class="hljs-keyword">else</span> {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Return a response that is generated when this form model is not tracking an object model</p>
+      } else if (this.isTrackingAnyObjectModel()) {
+        this.__saveToModels(deferred, options);
+        return deferred.promise();
+      } else {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        notTrackingResponse = {
-          <span class="hljs-string">'none'</span>: {
-            <span class="hljs-attr">success</span>: <span class="hljs-literal">false</span>,
-            <span class="hljs-attr">response</span>: [{
-              <span class="hljs-attr">responseJSON</span>: {
-                <span class="hljs-attr">generalReasons</span>: [{<span class="hljs-attr">messageKey</span>: <span class="hljs-string">'no.models.were.bound.to.form'</span>}]
+```
+
+
+
+
+
+
+
+Return a response that is generated when this form model is not tracking an object model
+
+
+  
+
+```
+        notTrackingResponse = {
+          'none': {
+            success: false,
+            response: [{
+              responseJSON: {
+                generalReasons: [{messageKey: 'no.models.were.bound.to.form'}]
               }
             }]
           }
         };
-        <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'save-fail'</span>, notTrackingResponse);
-        <span class="hljs-keyword">return</span> (<span class="hljs-keyword">new</span> $.Deferred()).reject(notTrackingResponse).promise();
+        this.trigger('save-fail', notTrackingResponse);
+        return (new $.Deferred()).reject(notTrackingResponse).promise();
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @return true if this form model is backed by an Object model. That means that at least one object model was bound to an mapping alias.
-     */</span>
-    isTrackingAnyObjectModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> _.size(<span class="hljs-keyword">this</span>.__currentObjectModels) &gt; <span class="hljs-number">0</span>;
+     */
+    isTrackingAnyObjectModel: function() {
+      return _.size(this.__currentObjectModels) > 0;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @return true if any updates to an object model will immediately copy new values into this form model.
-     */</span>
-    isUpdating: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__currentUpdateEvents.length &gt; <span class="hljs-number">0</span>;
+     */
+    isUpdating: function() {
+      return this.__currentUpdateEvents.length > 0;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Will add listeners that will automatically pull new updates from this form's object models.
      * @param {boolean} [pullFirst=false] if true, the form model will pull most recent values then start listening
-     */</span>
-    startUpdating: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pullFirst</span>) </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isTrackingAnyObjectModel() &amp;&amp; !<span class="hljs-keyword">this</span>.isUpdating()) {
-        <span class="hljs-keyword">if</span> (pullFirst) {
-          <span class="hljs-keyword">this</span>.pull();
+     */
+    startUpdating: function(pullFirst) {
+      if (this.isTrackingAnyObjectModel() && !this.isUpdating()) {
+        if (pullFirst) {
+          this.pull();
         }
-        <span class="hljs-keyword">this</span>.__setupListeners();
+        this.__setupListeners();
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * This will stop the form model from listening to its object models.
-     */</span>
-    stopUpdating: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      _.each(<span class="hljs-keyword">this</span>.__currentUpdateEvents, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventConfig</span>) </span>{
-        <span class="hljs-keyword">this</span>.stopListening(eventConfig.model, eventConfig.eventName);
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">this</span>.__currentUpdateEvents = [];
+     */
+    stopUpdating: function() {
+      _.each(this.__currentUpdateEvents, function(eventConfig) {
+        this.stopListening(eventConfig.model, eventConfig.eventName);
+      }, this);
+      this.__currentUpdateEvents = [];
     },
 
-    <span class="hljs-comment">/**
+    /**
      * If updating, it will reset the updating events to match the current mappings.
-     */</span>
-    resetUpdating: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.isUpdating()) {
-        <span class="hljs-keyword">this</span>.stopUpdating();
-        <span class="hljs-keyword">this</span>.startUpdating();
+     */
+    resetUpdating: function() {
+      if (this.isUpdating()) {
+        this.stopUpdating();
+        this.startUpdating();
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @param {Backbone.Model} model the backbone model that is being checked
-     * @param {Object} [staleModels] a hash that will be updated to contain this model if it is stale in the form: cid -&gt; model.
+     * @param {Object} [staleModels] a hash that will be updated to contain this model if it is stale in the form: cid -> model.
      * @param {Object} [currentHashValues] If passed an object, it will look in this cache for the current value of the object model
      *   instead of calculating it. It should be key'ed by the model's cid
      * @return {boolean} true if the model passed in has been changed since the last pull from the object model.
-     */</span>
-    isModelStale: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, staleModels, currentHashValues</span>) </span>{
-      <span class="hljs-keyword">var</span> hashValue;
+     */
+    isModelStale: function(model, staleModels, currentHashValues) {
+      var hashValue;
       currentHashValues = currentHashValues || {};
-      <span class="hljs-keyword">if</span> (!currentHashValues[model.cid]) {
-        currentHashValues[model.cid] = <span class="hljs-keyword">this</span>.__generateHashValue(model);
+      if (!currentHashValues[model.cid]) {
+        currentHashValues[model.cid] = this.__generateHashValue(model);
       }
       hashValue = currentHashValues[model.cid];
-      <span class="hljs-keyword">var</span> isStaleModel = <span class="hljs-keyword">this</span>.__cache[model.cid] !== hashValue;
-      <span class="hljs-keyword">if</span> (staleModels) {
-        <span class="hljs-keyword">if</span> (isStaleModel) {
+      var isStaleModel = this.__cache[model.cid] !== hashValue;
+      if (staleModels) {
+        if (isStaleModel) {
           staleModels[model.cid] = model;
-        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (staleModels[model.cid]) {
-          <span class="hljs-keyword">delete</span> staleModels[model.cid];
+        } else if (staleModels[model.cid]) {
+          delete staleModels[model.cid];
         }
       }
-      <span class="hljs-keyword">return</span> isStaleModel;
+      return isStaleModel;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @return {Array} an array of the object models that have been updated since the last pull from this form model
-     */</span>
-    checkIfModelsAreStale: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> staleModels = {},
-        currentHashValues = <span class="hljs-keyword">this</span>.__generateAllHashValues();
-      _.each(<span class="hljs-keyword">this</span>.getTrackedModels(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-        <span class="hljs-keyword">this</span>.isModelStale(model, staleModels, currentHashValues);
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">return</span> _.values(staleModels);
-    },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p><strong><strong><strong>**</strong></strong></strong> Private methods <strong><strong><strong>**</strong></strong></strong>//</p>
+     */
+    checkIfModelsAreStale: function() {
+      var staleModels = {},
+        currentHashValues = this.__generateAllHashValues();
+      _.each(this.getTrackedModels(), function(model) {
+        this.isModelStale(model, staleModels, currentHashValues);
+      }, this);
+      return _.values(staleModels);
+    },
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>
-    <span class="hljs-comment">/**
+
+```
+
+
+
+
+
+
+
+************** Private methods **************//
+
+
+  
+
+```
+
+    /**
      * Sets up a listener to update the form model if the model's field (or any field) changes.
      * @param {Backbone.Model} model the object model from which this form model will start listen to changes
      * @param {string} [field] the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
      * @private
-     */</span>
-    __listenToModelField: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, field</span>) </span>{
-      <span class="hljs-keyword">var</span> callback, eventName;
-      <span class="hljs-keyword">if</span> (field) {
-        eventName = <span class="hljs-string">'change:'</span> + field;
-        callback = _.bind(<span class="hljs-keyword">this</span>.__updateFormField, {
-          <span class="hljs-attr">formModel</span>: <span class="hljs-keyword">this</span>,
-          <span class="hljs-attr">field</span>: field
+     */
+    __listenToModelField: function(model, field) {
+      var callback, eventName;
+      if (field) {
+        eventName = 'change:' + field;
+        callback = _.bind(this.__updateFormField, {
+          formModel: this,
+          field: field
         });
-      } <span class="hljs-keyword">else</span> {
-        eventName = <span class="hljs-string">'change'</span>;
-        callback = <span class="hljs-keyword">this</span>.__updateFormModel;
+      } else {
+        eventName = 'change';
+        callback = this.__updateFormModel;
       }
-      <span class="hljs-keyword">this</span>.listenTo(model, eventName, callback);
-      <span class="hljs-keyword">this</span>.__currentUpdateEvents.push({<span class="hljs-attr">model</span>: model, <span class="hljs-attr">eventName</span>: eventName});
+      this.listenTo(model, eventName, callback);
+      this.__currentUpdateEvents.push({model: model, eventName: eventName});
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Sets up a listener on one (or all) of the fields that is needed to update a computed value
      * @param {Backbone.Model} model the object model from which this form model will start listen to changes
      * @param {string} [field] the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
      * @param {string} computedAlias the name/alias of the computed mapping being used.
      * @private
-     */</span>
-    __listenToComputedValuesDependency: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, field, computedAlias</span>) </span>{
-      <span class="hljs-keyword">var</span> callback, eventName;
-      <span class="hljs-keyword">if</span> (field) {
-        eventName = <span class="hljs-string">'change:'</span> + field;
-      } <span class="hljs-keyword">else</span> {
-        eventName = <span class="hljs-string">'change'</span>;
+     */
+    __listenToComputedValuesDependency: function(model, field, computedAlias) {
+      var callback, eventName;
+      if (field) {
+        eventName = 'change:' + field;
+      } else {
+        eventName = 'change';
       }
-      callback = _.bind(<span class="hljs-keyword">this</span>.__invokeComputedPull, {
-        <span class="hljs-attr">formModel</span>: <span class="hljs-keyword">this</span>,
-        <span class="hljs-attr">alias</span>: computedAlias
+      callback = _.bind(this.__invokeComputedPull, {
+        formModel: this,
+        alias: computedAlias
       });
-      <span class="hljs-keyword">this</span>.listenTo(model, eventName, callback);
-      <span class="hljs-keyword">this</span>.__currentUpdateEvents.push({<span class="hljs-attr">model</span>: model, <span class="hljs-attr">eventName</span>: eventName});
+      this.listenTo(model, eventName, callback);
+      this.__currentUpdateEvents.push({model: model, eventName: eventName});
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns the models that a currently being tracked that are part of a computed mapping
      * If there is a missing model (a model alias is referenced but no model instance is bound to that alias), then it will return undefined.
      * @param {string} computedAlias the name/alias of the computed mapping
      * @return {Object} a map from model name/alias to model instance. If there is a missing model (an model alias is referenced but no model
      *   instance is bound to that alias), then it will return undefined.
      * @private
-     */</span>
-    __getComputedModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">computedAlias</span>) </span>{
-      <span class="hljs-keyword">var</span> hasAllModels = !_.isUndefined(<span class="hljs-keyword">this</span>.getMapping(computedAlias)),
+     */
+    __getComputedModels: function(computedAlias) {
+      var hasAllModels = !_.isUndefined(this.getMapping(computedAlias)),
         models = {};
-      _.each(<span class="hljs-keyword">this</span>.__getModelAliases(computedAlias), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelAlias</span>) </span>{
-        <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.getTrackedModel(modelAlias);
-        <span class="hljs-keyword">if</span> (model) {
+      _.each(this.__getModelAliases(computedAlias), function(modelAlias) {
+        var model = this.getTrackedModel(modelAlias);
+        if (model) {
           models[modelAlias] = model;
-        } <span class="hljs-keyword">else</span> {
-          hasAllModels = <span class="hljs-literal">false</span>;
+        } else {
+          hasAllModels = false;
         }
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">return</span> hasAllModels ? models : <span class="hljs-literal">undefined</span>;
+      }, this);
+      return hasAllModels ? models : undefined;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns the aliases/names of models referenced in the computed mapping with the given alias
      * @param {string|Object} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
      *   an object if it hasn't been added as a mapping yet.
      * @return {Array of Strings} an array of the model names/aliases referenced inside the computed mapping
      * @private
-     */</span>
-    __getModelAliases: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">computedAliasOrConfig</span>) </span>{
-      <span class="hljs-keyword">var</span> config,
+     */
+    __getModelAliases: function(computedAliasOrConfig) {
+      var config,
         modelAliases = [];
-      <span class="hljs-keyword">if</span> (_.isString(computedAliasOrConfig)) {
-        config = <span class="hljs-keyword">this</span>.getMapping(computedAliasOrConfig);
-      } <span class="hljs-keyword">else</span> {
+      if (_.isString(computedAliasOrConfig)) {
+        config = this.getMapping(computedAliasOrConfig);
+      } else {
         config = computedAliasOrConfig;
       }
-      <span class="hljs-keyword">return</span> _.filter(_.keys(config.mapping), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>) </span>{
-        <span class="hljs-keyword">return</span> key != <span class="hljs-string">'pull'</span> &amp;&amp; key != <span class="hljs-string">'push'</span>;
+      return _.filter(_.keys(config.mapping), function(key) {
+        return key != 'pull' && key != 'push';
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Repackages a computed mapping to be easier consumed by methods wanting the model mappings tied to the model instances.
      * Returns a list of objects that contain the model instance and the mapping for that model.
      * @param {string} computedAlias the name/alias used for this computed
      * @return {Array of Objects} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
-     */</span>
-    __getComputedModelConfigs: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">computedAlias</span>) </span>{
-      <span class="hljs-keyword">var</span> hasAllModels = <span class="hljs-literal">true</span>,
-        config = <span class="hljs-keyword">this</span>.getMapping(computedAlias),
+     */
+    __getComputedModelConfigs: function(computedAlias) {
+      var hasAllModels = true,
+        config = this.getMapping(computedAlias),
         modelConfigs = [];
-      _.each(<span class="hljs-keyword">this</span>.__getModelAliases(computedAlias), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelAlias</span>) </span>{
-        <span class="hljs-keyword">var</span> modelConfig = <span class="hljs-keyword">this</span>.__createModelConfig(modelAlias, config.mapping[modelAlias]);
-        <span class="hljs-keyword">if</span> (modelConfig) {
+      _.each(this.__getModelAliases(computedAlias), function(modelAlias) {
+        var modelConfig = this.__createModelConfig(modelAlias, config.mapping[modelAlias]);
+        if (modelConfig) {
           modelConfigs.push(modelConfig);
-        } <span class="hljs-keyword">else</span> {
-          hasAllModels = <span class="hljs-literal">false</span>;
+        } else {
+          hasAllModels = false;
         }
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">return</span> hasAllModels ? modelConfigs : <span class="hljs-literal">undefined</span>;
+      }, this);
+      return hasAllModels ? modelConfigs : undefined;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
      * @param {Object} [options]
      *   @param {boolean} [options.rollback=true] if true, when any object model fails to save, it will revert the object
-     *     model attributes to the state they were before calling save. <span class="hljs-doctag">NOTE:</span> if there are updates that happen
+     *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
      *     to object models within the timing of this save method, the updates could be lost.
      *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
@@ -919,376 +760,384 @@
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
      * @private
-     */</span>
-    __saveToModels: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">deferred, options</span>) </span>{
-      <span class="hljs-keyword">var</span> staleModels,
-        formModel = <span class="hljs-keyword">this</span>,
-        responsesSucceeded = <span class="hljs-number">0</span>,
-        responsesFailed = <span class="hljs-number">0</span>,
+     */
+    __saveToModels: function(deferred, options) {
+      var staleModels,
+        formModel = this,
+        responsesSucceeded = 0,
+        responsesFailed = 0,
         responses = {},
         oldValues = {},
         models = formModel.getTrackedModels(),
-        numberOfSaves = models.length;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>If we’re not forcing a save, then throw an error if the models are stale</p>
+        numberOfSaves = models.length;
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (!options.force) {
+```
+
+
+
+
+
+
+
+If we're not forcing a save, then throw an error if the models are stale
+
+
+  
+
+```
+      if (!options.force) {
         staleModels = formModel.checkIfModelsAreStale();
-        <span class="hljs-keyword">if</span> (staleModels.length &gt; <span class="hljs-number">0</span>) {
-          <span class="hljs-keyword">throw</span> {
-            <span class="hljs-attr">name</span>: <span class="hljs-string">'Stale data'</span>,
-            <span class="hljs-attr">staleModels</span>: staleModels
+        if (staleModels.length > 0) {
+          throw {
+            name: 'Stale data',
+            staleModels: staleModels
           };
         }
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <p>Callback for each response</p>
+      }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">responseCallback</span>(<span class="hljs-params">response, model, success</span>) </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Add response to a hash that will eventually be returned through the promise</p>
+```
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        responses[model.cid] = {
-            <span class="hljs-attr">success</span>: success,
-            <span class="hljs-attr">response</span>: response
-          };</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <p>If we have reached the total of number of expected responses, then resolve or reject the promise</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span> (responsesFailed + responsesSucceeded === numberOfSaves) {
-          <span class="hljs-keyword">if</span> (responsesFailed &gt; <span class="hljs-number">0</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p>Rollback if any responses have failed</p>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">if</span> (options.rollback) {
-              _.each(formModel.getTrackedModels(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+
+
+
+
+Callback for each response
+
+
+  
+
+```
+      function responseCallback(response, model, success) {
+
+```
+
+
+
+
+
+
+
+Add response to a hash that will eventually be returned through the promise
+
+
+  
+
+```
+        responses[model.cid] = {
+            success: success,
+            response: response
+          };
+
+```
+
+
+
+
+
+
+
+If we have reached the total of number of expected responses, then resolve or reject the promise
+
+
+  
+
+```
+        if (responsesFailed + responsesSucceeded === numberOfSaves) {
+          if (responsesFailed > 0) {
+
+```
+
+
+
+
+
+
+
+Rollback if any responses have failed
+
+
+  
+
+```
+            if (options.rollback) {
+              _.each(formModel.getTrackedModels(), function(model) {
                 model.set(oldValues[model.cid]);
-                <span class="hljs-keyword">if</span> (responses[model.cid].success) {
+                if (responses[model.cid].success) {
                   model.save();
                 }
               });
             }
-            formModel.trigger(<span class="hljs-string">'save-fail'</span>, responses);
+            formModel.trigger('save-fail', responses);
             deferred.reject(responses);
-          } <span class="hljs-keyword">else</span> {
-            formModel.trigger(<span class="hljs-string">'save-success'</span>, responses);
+          } else {
+            formModel.trigger('save-success', responses);
             deferred.resolve(responses);
           }
         }
-      }</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>Grab the current values of the object models</p>
+      }
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      _.each(models, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
+```
+
+
+
+
+
+
+
+Grab the current values of the object models
+
+
+  
+
+```
+      _.each(models, function(model) {
         oldValues[model.cid] = formModel.__getTrackedModelFields(model);
-      });</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
-              </div>
-              <p>Push the form model values to the object models</p>
+      });
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      formModel.push();</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-16">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
-              </div>
-              <p>Call save on each object model</p>
+```
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      _.each(models, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-        model.save().fail(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+
+
+
+
+
+
+Push the form model values to the object models
+
+
+  
+
+```
+      formModel.push();
+
+```
+
+
+
+
+
+
+
+Call save on each object model
+
+
+  
+
+```
+      _.each(models, function(model) {
+        model.save().fail(function() {
           responsesFailed++;
-          responseCallback(<span class="hljs-built_in">arguments</span>, model, <span class="hljs-literal">false</span>);
-        }).done(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+          responseCallback(arguments, model, false);
+        }).done(function() {
           responsesSucceeded++;
-          responseCallback(<span class="hljs-built_in">arguments</span>, model, <span class="hljs-literal">true</span>);
+          responseCallback(arguments, model, true);
         });
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Pulls in new information from tracked models using the mapping defined by the given alias.
      * This works for both model mappings and computed value mappings
      * @param {string} alias the name of the mapping that will be used during the pull
      * @private
-     */</span>
-    __pull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">alias</span>) </span>{
-      <span class="hljs-keyword">var</span> config = <span class="hljs-keyword">this</span>.getMapping(alias);
-      <span class="hljs-keyword">if</span> (config.computed &amp;&amp; config.mapping.pull) {
-        <span class="hljs-keyword">this</span>.__invokeComputedPull.call({<span class="hljs-attr">formModel</span>: <span class="hljs-keyword">this</span>, <span class="hljs-attr">alias</span>: alias});
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (config.computed) {
-        <span class="hljs-keyword">var</span> modelAliases = <span class="hljs-keyword">this</span>.__getModelAliases(alias);
-        _.each(modelAliases, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelAlias</span>) </span>{
-          <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.getTrackedModel(modelAlias);
-          <span class="hljs-keyword">if</span> (model) {
-            <span class="hljs-keyword">this</span>.__copyFields(config.mapping[modelAlias], <span class="hljs-keyword">this</span>, model);
+     */
+    __pull: function(alias) {
+      var config = this.getMapping(alias);
+      if (config.computed && config.mapping.pull) {
+        this.__invokeComputedPull.call({formModel: this, alias: alias});
+      } else if (config.computed) {
+        var modelAliases = this.__getModelAliases(alias);
+        _.each(modelAliases, function(modelAlias) {
+          var model = this.getTrackedModel(modelAlias);
+          if (model) {
+            this.__copyFields(config.mapping[modelAlias], this, model);
           }
-        }, <span class="hljs-keyword">this</span>);
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.getTrackedModel(alias);
-        <span class="hljs-keyword">if</span> (model) {
-          <span class="hljs-keyword">this</span>.__copyFields(config.mapping, <span class="hljs-keyword">this</span>, model);
+        }, this);
+      } else {
+        var model = this.getTrackedModel(alias);
+        if (model) {
+          this.__copyFields(config.mapping, this, model);
         }
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Pushes form model information to tracked models using the mapping defined by the given alias.
      * This works for both model mappings and computed value mappings
      * @param {string} alias the name of the mapping that will be used during the push
      * @private
-     */</span>
-    __push: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">alias</span>) </span>{
-      <span class="hljs-keyword">var</span> config = <span class="hljs-keyword">this</span>.getMapping(alias);
-      <span class="hljs-keyword">if</span> (config.computed &amp;&amp; config.mapping.push) {
-        <span class="hljs-keyword">var</span> models = <span class="hljs-keyword">this</span>.__getComputedModels(alias);
-        <span class="hljs-keyword">if</span> (models) {
-          config.mapping.push.call(<span class="hljs-keyword">this</span>, models);
+     */
+    __push: function(alias) {
+      var config = this.getMapping(alias);
+      if (config.computed && config.mapping.push) {
+        var models = this.__getComputedModels(alias);
+        if (models) {
+          config.mapping.push.call(this, models);
         }
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (config.computed) {
-        <span class="hljs-keyword">var</span> modelAliases = <span class="hljs-keyword">this</span>.__getModelAliases(alias);
-        _.each(modelAliases, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelAlias</span>) </span>{
-          <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.getTrackedModel(modelAlias);
-          <span class="hljs-keyword">if</span> (model) {
-            <span class="hljs-keyword">this</span>.__copyFields(config.mapping[modelAlias], model, <span class="hljs-keyword">this</span>);
+      } else if (config.computed) {
+        var modelAliases = this.__getModelAliases(alias);
+        _.each(modelAliases, function(modelAlias) {
+          var model = this.getTrackedModel(modelAlias);
+          if (model) {
+            this.__copyFields(config.mapping[modelAlias], model, this);
           }
-        }, <span class="hljs-keyword">this</span>);
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.getTrackedModel(alias);
-        <span class="hljs-keyword">if</span> (model) {
-          <span class="hljs-keyword">this</span>.__copyFields(config.mapping, model, <span class="hljs-keyword">this</span>);
+        }, this);
+      } else {
+        var model = this.getTrackedModel(alias);
+        if (model) {
+          this.__copyFields(config.mapping, model, this);
         }
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Updates a single attribute in this form model.
-     * <span class="hljs-doctag">NOTE:</span> requires the context of this function to be:
+     * NOTE: requires the context of this function to be:
      * {
-     *  formModel: &lt;this form model&gt;,
-     *  field: &lt;the field being updated&gt;
+     *  formModel: <this form model>,
+     *  field: <the field being updated>
      * }
      * NOT the form model itself like if you called this.__updateFormField.
      * @private
-     */</span>
-    __updateFormField: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model, value</span>) </span>{
-      <span class="hljs-keyword">this</span>.formModel.set(<span class="hljs-keyword">this</span>.field, value);
-      <span class="hljs-keyword">this</span>.formModel.__updateCache(model);
+     */
+    __updateFormField: function(model, value) {
+      this.formModel.set(this.field, value);
+      this.formModel.__updateCache(model);
     },
 
-    <span class="hljs-comment">/**
-     * <span class="hljs-doctag">NOTE:</span> When looking to update the form model manually, call this.pull().
+    /**
+     * NOTE: When looking to update the form model manually, call this.pull().
      * Updates this form model with the changed attributes of a given object model
      * @param {Backbone.Model instance} model the object model that has been changed
      * @private
-     */</span>
-    __updateFormModel: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-      _.each(model.changedAttributes(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, fieldName</span>) </span>{
-        <span class="hljs-keyword">this</span>.set(fieldName, <span class="hljs-keyword">this</span>.__cloneVal(value));
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">this</span>.__updateCache(model);
+     */
+    __updateFormModel: function(model) {
+      _.each(model.changedAttributes(), function(value, fieldName) {
+        this.set(fieldName, this.__cloneVal(value));
+      }, this);
+      this.__updateCache(model);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Updates the form model's snapshot of the model's attributes to use later
      * @param {Backbone.Model instance} model the object model
      * @param {Object} [cache=this.__cache] if passed an object (can be empty), this method will fill
      *   this cache object instead of this form model's __cache field
      * @private
-     */</span>
-    __updateCache: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-      <span class="hljs-keyword">if</span> (!model) {
-        <span class="hljs-keyword">this</span>.__cache = {};
-        _.each(<span class="hljs-keyword">this</span>.getTrackedModels(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-          <span class="hljs-keyword">if</span> (model) {
-            <span class="hljs-keyword">this</span>.__updateCache(model);
+     */
+    __updateCache: function(model) {
+      if (!model) {
+        this.__cache = {};
+        _.each(this.getTrackedModels(), function(model) {
+          if (model) {
+            this.__updateCache(model);
           }
-        }, <span class="hljs-keyword">this</span>);
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">this</span>.__cache[model.cid] = <span class="hljs-keyword">this</span>.__generateHashValue(model);
+        }, this);
+      } else {
+        this.__cache[model.cid] = this.__generateHashValue(model);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Create a hash value of a simple object
      * @param {Object} obj simple object with no functions
      * @return a hash value of the object
      * @private
-     */</span>
-    __hashValue: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) </span>{
-      <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.stringify(obj);
+     */
+    __hashValue: function(obj) {
+      return JSON.stringify(obj);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.
      * @param {string or Backbone.Model instance} aliasOrModel If string, just returns this string. If a model instance, then the alias
      *   that is bound to the tracked model passed in will be found and returned.
      * @return {string} the alias
      * @private
-     */</span>
-    __findAlias: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">aliasOrModel</span>) </span>{
-      <span class="hljs-keyword">var</span> alias, objectModel;
-      <span class="hljs-keyword">if</span> (_.isString(aliasOrModel)) {
+     */
+    __findAlias: function(aliasOrModel) {
+      var alias, objectModel;
+      if (_.isString(aliasOrModel)) {
         alias = aliasOrModel;
-      } <span class="hljs-keyword">else</span> {
+      } else {
         objectModel = aliasOrModel;
-        alias = _.find(<span class="hljs-keyword">this</span>.__currentObjectModels, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-          <span class="hljs-keyword">return</span> model == objectModel;
+        alias = _.find(this.__currentObjectModels, function(model) {
+          return model == objectModel;
         });
       }
-      <span class="hljs-keyword">return</span> alias;
+      return alias;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @param {Backbone.Model instance} model the model to create the hash value from
      * @return {string} the hash value of the model making sure to only use the tracked fields
      * @private
-     */</span>
-    __generateHashValue: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-      <span class="hljs-keyword">var</span> modelFields = <span class="hljs-keyword">this</span>.__getTrackedModelFields(model);
-      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__hashValue(modelFields);
+     */
+    __generateHashValue: function(model) {
+      var modelFields = this.__getTrackedModelFields(model);
+      return this.__hashValue(modelFields);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
      * @private
-     */</span>
-    __generateAllHashValues: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> currentHashValues = {};
-      _.each(<span class="hljs-keyword">this</span>.getTrackedModels(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-        currentHashValues[model.cid] = <span class="hljs-keyword">this</span>.__generateHashValue(model);
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">return</span> currentHashValues;
+     */
+    __generateAllHashValues: function() {
+      var currentHashValues = {};
+      _.each(this.getTrackedModels(), function(model) {
+        currentHashValues[model.cid] = this.__generateHashValue(model);
+      }, this);
+      return currentHashValues;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Deep clones the attributes. There should be no functions in the attributes
      * @param {Object|Array|Basic Data Type} val a non-function value
      * @return the clone
      * @private
-     */</span>
-    __cloneVal: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">val</span>) </span>{
-      <span class="hljs-keyword">var</span> seed;
-      <span class="hljs-keyword">if</span> (_.isArray(val)) {
+     */
+    __cloneVal: function(val) {
+      var seed;
+      if (_.isArray(val)) {
         seed = [];
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isObject(val)) {
+      } else if (_.isObject(val)) {
         seed = {};
-      } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">return</span> val;
+      } else {
+        return val;
       }
-      <span class="hljs-keyword">return</span> $.extend(<span class="hljs-literal">true</span>, seed, val);
+      return $.extend(true, seed, val);
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Attaches listeners to the tracked object models with callbacks that will copy new properties into this form model.
      * @private
-     */</span>
-    __setupListeners: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> model, modelConfigs,
-        formModel = <span class="hljs-keyword">this</span>;
-      _.each(formModel.getMappings(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">config, alias</span>) </span>{
-        <span class="hljs-keyword">if</span> (config.computed) {
+     */
+    __setupListeners: function() {
+      var model, modelConfigs,
+        formModel = this;
+      _.each(formModel.getMappings(), function(config, alias) {
+        if (config.computed) {
           modelConfigs = formModel.__getComputedModelConfigs(alias);
-          _.each(modelConfigs, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelConfig</span>) </span>{
-            <span class="hljs-keyword">var</span> model = modelConfig.model;
-            <span class="hljs-keyword">if</span> (modelConfig.fields) {
-              _.each(modelConfig.fields, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field</span>) </span>{
+          _.each(modelConfigs, function(modelConfig) {
+            var model = modelConfig.model;
+            if (modelConfig.fields) {
+              _.each(modelConfig.fields, function(field) {
                 formModel.__listenToComputedValuesDependency(model, field, alias);
               });
-            } <span class="hljs-keyword">else</span> {
-              formModel.__listenToComputedValuesDependency(model, <span class="hljs-string">''</span>, alias);
+            } else {
+              formModel.__listenToComputedValuesDependency(model, '', alias);
             }
           });
-        } <span class="hljs-keyword">else</span> {
+        } else {
           model = formModel.getTrackedModel(alias);
-          <span class="hljs-keyword">if</span> (model) {
-            <span class="hljs-keyword">if</span> (config.mapping) {
-              _.each(config.mapping, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field</span>) </span>{
+          if (model) {
+            if (config.mapping) {
+              _.each(config.mapping, function(field) {
                 formModel.__listenToModelField(model, field);
               });
-            } <span class="hljs-keyword">else</span> {
+            } else {
               formModel.__listenToModelField(model);
             }
           }
@@ -1296,7 +1145,7 @@
       });
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Copies fields from one backbone model to another. Is useful during a pull or push to/from Object models. The values will
      * be deep cloned from the origin to the destination.
      * @param {Array} [fields] a string of attribute names on the origin model that will be copied. Leave null if all attributes
@@ -1304,90 +1153,91 @@
      * @param {Backbone.Model} destination the backbone model that will have values copied into
      * @param {Backbone.Model} origin the backbone model that will be used to grab values.
      * @private
-     */</span>
-    __copyFields: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fields, destination, origin</span>) </span>{
-      <span class="hljs-keyword">if</span> ((!fields || fields === <span class="hljs-literal">true</span>) &amp;&amp; <span class="hljs-keyword">this</span> === origin &amp;&amp; _.size(<span class="hljs-keyword">this</span>.getTrackedModels()) &gt; <span class="hljs-number">1</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-17">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p>only copy attributes that exist on object model when the form model is tracking all the properties
-of that object model, but is also tracking other models as well.</p>
+     */
+    __copyFields: function(fields, destination, origin) {
+      if ((!fields || fields === true) && this === origin && _.size(this.getTrackedModels()) > 1) {
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        fields = _.keys(destination.attributes);
+```
+
+
+
+
+
+
+
+only copy attributes that exist on object model when the form model is tracking all the properties
+of that object model, but is also tracking other models as well.
+
+
+  
+
+```
+        fields = _.keys(destination.attributes);
       }
-      <span class="hljs-keyword">if</span> (fields) {
-        _.each(fields, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field</span>) </span>{
-          destination.set(field, <span class="hljs-keyword">this</span>.__cloneVal(origin.get(field)));
-        }, <span class="hljs-keyword">this</span>);
-      } <span class="hljs-keyword">else</span> {
-        destination.set(<span class="hljs-keyword">this</span>.__cloneVal(origin.attributes));
+      if (fields) {
+        _.each(fields, function(field) {
+          destination.set(field, this.__cloneVal(origin.get(field)));
+        }, this);
+      } else {
+        destination.set(this.__cloneVal(origin.attributes));
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Sets the mapping using the form model's default mapping or the options.mappings if available.
      * Also sets the tracked models if the form model's default models or the options.models is provided.
      * @param {Object} [options] See initialize options: 'mapping' and 'models'.
      * @private
-     */</span>
-    __initMappings: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-      <span class="hljs-keyword">var</span> mapping,
+     */
+    __initMappings: function(options) {
+      var mapping,
         models,
-        defaultMapping = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'mapping'</span>),
-        defaultModels = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'models'</span>);
+        defaultMapping = _.result(this, 'mapping'),
+        defaultModels = _.result(this, 'models');
       mapping = options.mapping || defaultMapping;
       models = options.models || defaultModels;
-      <span class="hljs-keyword">if</span> (mapping) {
-        <span class="hljs-keyword">this</span>.setMappings(mapping, models);
+      if (mapping) {
+        this.setMappings(mapping, models);
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns a map where the keys are the fields that are being tracked on tracked model and values are
      * the with current values of those fields.
      * @param {Backbone.Model instance} model the object model
      * @return {Object} aa map where the keys are the fields that are being tracked on tracked model and
      *   values are the with current values of those fields.
      * @private
-     */</span>
-    __getTrackedModelFields: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-      <span class="hljs-keyword">var</span> allFields,
+     */
+    __getTrackedModelFields: function(model) {
+      var allFields,
         fieldsUsed = {},
         modelFields = {},
         modelConfigs = [];
-      _.each(<span class="hljs-keyword">this</span>.__getAllModelConfigs(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelConfig</span>) </span>{
-        <span class="hljs-keyword">if</span> (modelConfig.model &amp;&amp; modelConfig.model.cid === model.cid) {
+      _.each(this.__getAllModelConfigs(), function(modelConfig) {
+        if (modelConfig.model && modelConfig.model.cid === model.cid) {
           modelConfigs.push(modelConfig);
         }
       });
-      allFields = _.reduce(modelConfigs, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">result, modelConfig</span>) </span>{
-        <span class="hljs-keyword">return</span> result || !modelConfig.fields;
-      }, <span class="hljs-literal">false</span>);
-      <span class="hljs-keyword">if</span> (allFields) {
-        modelFields = <span class="hljs-keyword">this</span>.__cloneVal(model.attributes);
-      } <span class="hljs-keyword">else</span> {
-        _.each(modelConfigs, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelConfig</span>) </span>{
-          _.each(modelConfig.fields, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field</span>) </span>{
-            <span class="hljs-keyword">if</span> (!fieldsUsed[field]) {
-              fieldsUsed[field] = <span class="hljs-literal">true</span>;
-              modelFields[field] = <span class="hljs-keyword">this</span>.__cloneVal(model.get(field));
+      allFields = _.reduce(modelConfigs, function(result, modelConfig) {
+        return result || !modelConfig.fields;
+      }, false);
+      if (allFields) {
+        modelFields = this.__cloneVal(model.attributes);
+      } else {
+        _.each(modelConfigs, function(modelConfig) {
+          _.each(modelConfig.fields, function(field) {
+            if (!fieldsUsed[field]) {
+              fieldsUsed[field] = true;
+              modelFields[field] = this.__cloneVal(model.get(field));
             }
-          }, <span class="hljs-keyword">this</span>);
-        }, <span class="hljs-keyword">this</span>);
+          }, this);
+        }, this);
       }
-      <span class="hljs-keyword">return</span> modelFields;
+      return modelFields;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns a useful data structure that binds a tracked model to the fields being tracked on a mapping.
      * @param modelAlias
      * @param {Array of Strings or undefined} fields the fields that the model is tracking. Can be undefined if tracking all fields.
@@ -1395,44 +1245,44 @@ of that object model, but is also tracking other models as well.</p>
      * @return {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
      *   it will return undefined.
      * @private
-     */</span>
-    __createModelConfig: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelAlias, fields</span>) </span>{
-      <span class="hljs-keyword">var</span> model = <span class="hljs-keyword">this</span>.getTrackedModel(modelAlias);
-      <span class="hljs-keyword">if</span> (model) {
-        <span class="hljs-keyword">return</span> {
-          <span class="hljs-attr">fields</span>: fields,
-          <span class="hljs-attr">model</span>: model
+     */
+    __createModelConfig: function(modelAlias, fields) {
+      var model = this.getTrackedModel(modelAlias);
+      if (model) {
+        return {
+          fields: fields,
+          model: model
         };
       }
     },
 
-    <span class="hljs-comment">/**
+    /**
      * Returns an array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      * including model mappings inside computed mappings. There will be a model config for each tracked model on a computed mapping
      * meaning there can be multiple model configs for the same tracked model.
      * @return {Array} array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      *   including model mappings inside computed mappings.
      * @private
-     */</span>
-    __getAllModelConfigs: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">var</span> modelConfigs = [];
-      _.each(<span class="hljs-keyword">this</span>.getMappings(), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">config, alias</span>) </span>{
-        <span class="hljs-keyword">if</span> (config.computed) {
-          <span class="hljs-keyword">var</span> computedModelConfigs = <span class="hljs-keyword">this</span>.__getComputedModelConfigs(alias);
-          <span class="hljs-keyword">if</span> (computedModelConfigs) {
+     */
+    __getAllModelConfigs: function() {
+      var modelConfigs = [];
+      _.each(this.getMappings(), function(config, alias) {
+        if (config.computed) {
+          var computedModelConfigs = this.__getComputedModelConfigs(alias);
+          if (computedModelConfigs) {
             modelConfigs = modelConfigs.concat(computedModelConfigs);
           }
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-keyword">var</span> modelConfig = <span class="hljs-keyword">this</span>.__createModelConfig(alias, config.mapping);
-          <span class="hljs-keyword">if</span> (modelConfig) {
+        } else {
+          var modelConfig = this.__createModelConfig(alias, config.mapping);
+          if (modelConfig) {
             modelConfigs.push(modelConfig);
           }
         }
-      }, <span class="hljs-keyword">this</span>);
-      <span class="hljs-keyword">return</span> modelConfigs;
+      }, this);
+      return modelConfigs;
     },
 
-    <span class="hljs-comment">/**
+    /**
      * A wrapper function that can invoke the pull callback on a computed mapping during an event callback.
      * Because an event callback predetermines the argument list, this method assumes the necessary computed configuration is
      * bound as the part of the function context.
@@ -1447,60 +1297,60 @@ of that object model, but is also tracking other models as well.</p>
      * }
      * If any model mapping is tracking all fields by passing true as its config, a copy of all the attributes for that model will be provided.
      * @param {Backbone.Model} [model] the model that was updated. If provided, the cache will be updated
-     * <span class="hljs-doctag">NOTE:</span> requires the context of this function to be:
+     * NOTE: requires the context of this function to be:
      * {
-     *  formModel: &lt;this form model&gt;,
-     *  alias: &lt;the computed alias&gt;,
+     *  formModel: <this form model>,
+     *  alias: <the computed alias>,
      * }
      * @private
-     */</span>
-    __invokeComputedPull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
-      <span class="hljs-keyword">if</span> (model) {
-        <span class="hljs-keyword">this</span>.formModel.__updateCache(model);
+     */
+    __invokeComputedPull: function(model) {
+      if (model) {
+        this.formModel.__updateCache(model);
       }
-      (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">formModel, alias</span>) </span>{
-        <span class="hljs-keyword">var</span> hasAllModels = <span class="hljs-literal">true</span>,
+      (function(formModel, alias) {
+        var hasAllModels = true,
           config = formModel.getMapping(alias),
           modelAliases = formModel.__getModelAliases(alias),
           models = {};
-        <span class="hljs-keyword">if</span> (!config.mapping.pull) {
-          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">console</span> &amp;&amp; _.isFunction(<span class="hljs-built_in">console</span>.log)) {
-            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Not pulling the computed: '</span> + alias + <span class="hljs-string">', because no pull method was defined for this computed.'</span>);
+        if (!config.mapping.pull) {
+          if (console && _.isFunction(console.log)) {
+            console.log('Not pulling the computed: ' + alias + ', because no pull method was defined for this computed.');
           }
-          <span class="hljs-keyword">return</span>;
+          return;
         }
-        _.each(modelAliases, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">modelAlias</span>) </span>{
-          <span class="hljs-keyword">var</span> fields = config.mapping[modelAlias],
+        _.each(modelAliases, function(modelAlias) {
+          var fields = config.mapping[modelAlias],
             model = formModel.getTrackedModel(modelAlias),
             modelCopy = {};
-          <span class="hljs-keyword">if</span> (!model) {
-            hasAllModels = <span class="hljs-literal">false</span>;
-          } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">if</span> (fields) {
-              _.each(fields, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field</span>) </span>{
+          if (!model) {
+            hasAllModels = false;
+          } else {
+            if (fields) {
+              _.each(fields, function(field) {
                 modelCopy[field] = formModel.__cloneVal(model.get(field));
               });
-            } <span class="hljs-keyword">else</span> {
+            } else {
               modelCopy = formModel.__cloneVal(model.attributes);
             }
             models[modelAlias] = modelCopy;
           }
         });
-        <span class="hljs-keyword">if</span> (hasAllModels) {
+        if (hasAllModels) {
           config.mapping.pull.call(formModel, models);
         }
-      })(<span class="hljs-keyword">this</span>.formModel, <span class="hljs-keyword">this</span>.alias);
+      })(this.formModel, this.alias);
     }
   });
 
   _.extend(FormModel.prototype, validation.mixin);
 
-  <span class="hljs-keyword">return</span> FormModel;
-}));</pre></div></div>
-            
-        </li>
-        
-    </ul>
-  </div>
-</body>
-</html>
+  return FormModel;
+}));
+
+
+```
+
+
+
+
