@@ -98,7 +98,7 @@
    * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
    * @see <a href="../modules/behaviors/DATA_BEHAVIOR.html">Detailed docs</a> for more in-depth documentation and details.
    */
-  var DataBehavior = Behavior.extend({
+  var DataBehavior = Behavior.extend(/** @lends DataBehavior */{
     /**
      * The torso collection that is acting as a cache used to create the private collections.
      * This property/option is required.  Instantiation will fail if it is not set.
@@ -898,13 +898,14 @@
   /**
    * Data object used to create the .data property of the DataBehavior.
    * @class Data
-   * @constructor
+   * @inner
+   * @memberof DataBehavior
    */
   var Data = function(options) {
     this.initialize(options);
   };
 
-  _.extend(Data.prototype, Events, {
+  _.extend(Data.prototype, Events, /** @lends Data */ {
     /**
      * Instantiates the data objects and binds it to this behavior instance.
      * @param {Object} options to pass to the initialize methods.

@@ -317,7 +317,7 @@
    * @see &lt;a href="../annotated/modules/Collection.html"&gt;Collection Annotated Source&lt;/a&gt;
    * @see &lt;a href="../modules/behaviors/DATA_BEHAVIOR.html"&gt;Detailed docs&lt;/a&gt; for more in-depth documentation and details.
    */</span>
-  <span class="hljs-keyword">var</span> DataBehavior = Behavior.extend({
+  <span class="hljs-keyword">var</span> DataBehavior = Behavior.extend(<span class="hljs-comment">/** @lends DataBehavior */</span>{
     <span class="hljs-comment">/**
      * The torso collection that is acting as a cache used to create the private collections.
      * This property/option is required.  Instantiation will fail if it is not set.
@@ -1167,13 +1167,14 @@ When a view is attached it is rendered anyway.</p>
   <span class="hljs-comment">/**
    * Data object used to create the .data property of the DataBehavior.
    * @class Data
-   * @constructor
+   * @inner
+   * @memberof DataBehavior
    */</span>
   <span class="hljs-keyword">var</span> Data = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
     <span class="hljs-keyword">this</span>.initialize(options);
   };
 
-  _.extend(Data.prototype, Events, {
+  _.extend(Data.prototype, Events, <span class="hljs-comment">/** @lends Data */</span> {
     <span class="hljs-comment">/**
      * Instantiates the data objects and binds it to this behavior instance.
      * @param {Object} options to pass to the initialize methods.
