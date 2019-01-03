@@ -738,9 +738,8 @@
    * - safe disposal methods for memory + event management
    * - special functional overrides to support ID registration for different views
    *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  cacheMixin
+   * @mixin cacheMixin
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */
   var mixin = function(base) {
@@ -751,7 +750,9 @@
      * Returns a new class of collection that inherits from the parent but not the cacheMixin
      * and adds a requesterMixin that connects this cache to it's parent
      *
-     * @param {Backbone Collection instance} parent the parent of the private collection
+     * @class PrivateCollection
+     * @extends Collection
+     * @param {external:Backbone-Collection} parent the parent of the private collection
      * @param {string} guid the unique code of the owner of this private collection
      */
     createRequesterCollectionClass = function(parent, guid) {
@@ -760,6 +761,7 @@
         /**
          * A mixin that overrides base collection methods meant for cache's and tailors them
          * to a requester.
+         * @alias PrivateCollection.prototype
          */
         var requesterMixin = {
 
@@ -815,7 +817,7 @@
 
           /**
            * Adds a new model to the requester collection and tracks the model.id
-           * @param {Backbone Model} model the model to be added
+           * @param {external:Backbone-Model} model the model to be added
            */
           addModelAndTrack: function(model) {
             this.add(model);
@@ -922,6 +924,7 @@
 
     /**
      * Adds functions to manage state of requesters
+     *
      * @param {Collection} collection the collection to add this mixin
      */
     cacheMixin = function(collection) {
@@ -929,6 +932,7 @@
       //************* PRIVATE METHODS ************//
 
       /**
+       * @alias cacheMixin.setRequestedIds
        * @private
        * @param {string} guid the global unique identifier for the requester
        * @param {Array} array the array of ids the requester wants
@@ -943,6 +947,7 @@
       //*********** PUBLIC METHODS ************//
 
       /**
+       * @alias cacheMixin.getRequesterIds
        * @param {string} the global unique id of the requester
        * @return {Array} an array of the ids the requester with the guid has requested
        */
@@ -952,6 +957,7 @@
 
       /**
        * This method is used for quick look up of a certain id within the list of requested ids
+       * @alias cacheMixin.getRequesterIdsAsDictionary
        * @param {string} guid the global unique id of the requester
        * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
        */
@@ -961,6 +967,7 @@
 
       /**
        * Removes a requester from this cache. No longer receives updates
+       * @alias cacheMixin.removeRequester
        * @param {string} guid the global unique id of the requester
        */
       collection.removeRequester = function(guid) {
@@ -971,6 +978,7 @@
       /**
        * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
        * TODO: should this return just the knownPrivateCollections
+       * @alias cacheMixin.getRequesters
        * @return {Array} an array of the all requesters in the form of their GUID's
        */
       collection.getRequesters = function()  {
@@ -979,6 +987,7 @@
 
       /**
        * Return the list of Ids requested by this collection
+       * @alias cacheMixin.getAllRequestedIds
        * @return {Array} the corresponding requested Ids
        */
       collection.getAllRequestedIds = function() {
@@ -990,8 +999,9 @@
        * Binds a custom "resized" event to the private collections.
        * Overrides the fetch method to call the parent collection's fetchByIds method.
        * Overrides the registerIds method to redirect to its parent collection.
+       * @alias cacheMixin.createPrivateCollection
        * @param {string} guid Identifier for the requesting view
-       * @return {Collection} an new empty collection of the same type as "this"
+       * @return {PrivateCollection} an new empty collection of the same type as "this"
        */
       collection.createPrivateCollection = function(guid, args) {
         args = args || {};
@@ -1010,6 +1020,7 @@
        * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
        * is overriden such that it no longer routes through Backbone's fetch all,
        * but rather a custom "fetchByIds" method.
+       * @alias cacheMixin.registerIds
        * @param {Array} newIds  - New ids to register under the requester
        * @param {string} guid   - The GUID of the object that wants the ids
        */
@@ -1067,6 +1078,8 @@
        * Overrides the base fetch call if this.fetchUsingTrackedIds is true
        * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
        * it will pass through to the default fetch.
+       * @alias cacheMixin.fetch
+       * @param {Object} options
        */
       collection.fetch = function(options) {
         options = options || {};
@@ -1081,6 +1094,7 @@
 
       /**
        * A custom fetch operation to only fetch the requested Ids.
+       * @alias cacheMixin.fetchByIds
        * @param [options] - argument options
        * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
        * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
@@ -1175,16 +1189,17 @@
       };
     };
 
-    return {
+    return /** @lends cacheMixin */ {
       /**
        * The constructor constructor / initialize method for collections.
        * Allocate new memory for the local references if they
        * were null when this method was called.
+       *
        * @param {Object} [options] - optional options object
        * @param   [options.fetchHttpAction='POST'] {string} http action used to get objects by ids
        * @param   [options.getByIdsUrl='/ids'] {string} path appended to collection.url to get objects by a list of ids
        * @param   {boolean} [options.fetchUsingTrackedIds=true] if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
-                                                               but will rather call the default fetch method.
+       *                                                       but will rather call the default fetch method.
        */
       constructor: function(models, options) {
         options = options || {};
@@ -1237,12 +1252,11 @@
   'use strict';
   /**
    * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellMixin
+   *
+   * @mixin cellMixin
    * @author kent.willis@vecna.com
    */
-  return {
+  return /** @lends cellMixin */ {
     /**
      * Whether a cell can pass as a model or not.
      * If true, the cell will not fail is persisted functions are invoked
@@ -1252,24 +1266,36 @@
      */
     isModelCompatible: false,
 
+    /**
+     * Override and disable the save function
+     */
     save: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have save';
       }
     },
 
+    /**
+     * Override and disable the fetch function
+     */
     fetch: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have fetch';
       }
     },
 
+    /**
+     * Override and disable the sync function
+     */
     sync: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have sync';
       }
     },
 
+    /**
+     * Override and disable the url
+     */
     url: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have url';
@@ -1527,9 +1553,11 @@
   'use strict';
   /**
    * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @class  Cell
-   * @constructor
+   *
+   * @class Cell
+   * @extends {external:Backbone-Model}
+   * @mixes cellMixin
+   *
    * @param {Object} attributes the initial attributes to use for this cell.
    * @param {Object} [options={}] the options for setting up this cell.
    *   @param {boolean} [options.register=false] whether to register this cell in the app-level registry.
@@ -1537,8 +1565,10 @@
    *                                             we have not mechanism that will make sure the cells get removed from the registry
    *                                             at the appropriate times.
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/Cell.html">Cell Annotated Source</a>
    */
-  var Cell = Model.extend({
+  var Cell = Model.extend(/** @lends Cell.prototype */{
     /**
      * Register this item with the cell registry after initialize.
      * @private
@@ -1553,6 +1583,11 @@
   return Cell;
 }));
 
+/**
+ * The backbone Collection reference
+ * @external Backbone-Collection
+ * @see {@link http://backbonejs.org/#Collection|Backbone.Collection}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/cacheMixin', './mixins/loadingMixin'], factory);
@@ -1567,12 +1602,18 @@
 
   /**
    * Generic Collection
-   * @module    Torso
-   * @class     Collection
-   * @constructor
+   *
+   * @class Collection
+   * @extends {external:Backbone-Collection}
+   * @mixes pollingMixin
+   * @mixes loadingMixin
+   * @mixes cacheMixin
+   *
    * @author kent.willis@vecna.com
+     *
+     * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
    */
-  var Collection = Backbone.Collection.extend({
+  var Collection = Backbone.Collection.extend(/** @lends Collection.prototype */{
       /**
        * The default filter.  Always returns itself.
        * @return {Collection} a new instance of this collection
@@ -1602,6 +1643,11 @@
   return Collection;
 }));
 
+/**
+ * The backbone Model reference
+ * @external Backbone-Model
+ * @see {@link http://backbonejs.org/#Model|Backbone.Model}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/modelMixin'], factory);
@@ -1617,9 +1663,12 @@
 
   /**
    * Generic Model
-   * @module    Torso
-   * @class     Model
-   * @constructor
+   *
+   * @class Model
+   * @extends {external:Backbone-Model}
+   * @mixes pollingMixin
+   * @mixes modelMixin
+   *
    * @param {Object} attributes the initial attributes to use for this model.
    * @param {Object} [options={}] the options for setting up this model.
    *   @param {boolean} [options.register=false] whether to register this model in the app-level registry.
@@ -1627,8 +1676,10 @@
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/Model.html">Model Annotated Source</a>
    */
-  var Model = Backbone.Model.extend({
+  var Model = Backbone.Model.extend(/** @lends Model.prototype */{
     constructor: function(attributes, options) {
       Backbone.Model.apply(this, arguments);
       options = options || {};
@@ -1784,11 +1835,13 @@
      * Allows abstraction of common view logic into separate object
      *
      * @class Behavior
+     *
      * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
      * @param {Object} behaviorOptions
-     *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
-     *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
+     *   @param {external:Backbone-View} behaviorOptions.view that Behavior is attached to
+     *   @param {string} behaviorOptions.alias the alias for the behavior in this view.
      * @param {Object} [viewOptions] options passed to View's initialize
+     *
      * @author  deena.wang@vecna.com
      *
      * @see <a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a>
@@ -1952,51 +2005,6 @@
 }));
 
 
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['underscore', './Cell', './registry'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('./Cell'), require('./registry'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root._, root.Torso.Cell, root.Torso.registry);
-  }
-}(this, function(_, Cell, registry) {
-  'use strict';
-  /**
-   * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @constructor
-   * @param {Object} attributes the initial attributes to use for this service.
-   * @param {Object} [options={}] the options for setting up this service.
-   *   @param {boolean} [options.register=true] whether to register this service in the app-level registry.
-   *                                            By default this WILL add it to the registry unless set to false because
-   *                                            most services are global so holding on to them beyond
-   * @author kent.willis@vecna.com
-   */
-  var ServiceCell = Cell.extend({
-    constructor: function() {
-      var args = Array.prototype.slice.call(arguments);
-      args[1] = args[1] || {};
-      // Register by default.
-      args[1].register = _.isUndefined(args[1].register) || _.isNull(args[1].register) || args[1].register;
-      Cell.apply(this, args);
-    },
-
-    /**
-     * Register this item with the service registry after initialize.
-     * @private
-     * @override
-     */
-    __register: function() {
-      registry.serviceInitialized(this);
-    }
-  });
-
-  return ServiceCell;
-}));
-
 /**
  * The backbone View reference
  * @external Backbone-View
@@ -2018,19 +2026,19 @@
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
-   * change events. These changes events will propogate up and trigger on the view
+   * change events. These change events will propogate up and trigger on the view
    * as well.
    *
-   * @class
+   * @class ViewStateCell
    * @extends {NestedCell}
-   * @memberof View
-   * @inner
    *
    * @param {Object} attrs the initial values to set on the cell - inherited from {@link NestedCell}.
    * @param {Object} opts options for the cell.
    *    @param {external:Backbone-View} opts.view the view that these options are tied to.
+   *
+   * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
    */
-  var ViewStateCell = NestedCell.extend(/** @lends View~ViewStateCell.prototype */{
+  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
     initialize: function(attrs, opts) {
       opts = opts || {};
       this.view = opts.view;
@@ -2052,6 +2060,10 @@
   });
 
   var View = Backbone.View.extend(/** @lends View.prototype */{
+    /**
+     * Cell that can be used to save state for rendering the view.
+     * @type {ViewStateCell}
+     */
     viewState: null,
     template: undefined,
     feedback: null,
@@ -2175,13 +2187,12 @@
     },
 
     /**
-     * Augments the context with custom content.
+     * Extension point to augment the template context with custom content.
+     * @function
      * @param context the context you can modify
      * @return {Object} [Optional] If you return an object, it will be merged with the context
      */
-    _prepare: function(context) {
-      // no changes by default
-    },
+    _prepare: _.noop,
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
@@ -2851,6 +2862,7 @@
 
     /**
      * Initializes the behaviors
+     * @private
      */
     __initializeBehaviors: function(viewOptions) {
       var view = this;
@@ -3128,6 +3140,7 @@
 
     /**
      * Call this method when a view is detached from the DOM. It is recursive to child views.
+     * @private
      */
     __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {
@@ -3489,6 +3502,51 @@
   });
 
   return View;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', './Cell', './registry'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('./Cell'), require('./registry'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.ServiceCell = factory(root._, root.Torso.Cell, root.Torso.registry);
+  }
+}(this, function(_, Cell, registry) {
+  'use strict';
+  /**
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
+   * @module    Torso
+   * @class  ServiceCell
+   * @constructor
+   * @param {Object} attributes the initial attributes to use for this service.
+   * @param {Object} [options={}] the options for setting up this service.
+   *   @param {boolean} [options.register=true] whether to register this service in the app-level registry.
+   *                                            By default this WILL add it to the registry unless set to false because
+   *                                            most services are global so holding on to them beyond
+   * @author kent.willis@vecna.com
+   */
+  var ServiceCell = Cell.extend({
+    constructor: function() {
+      var args = Array.prototype.slice.call(arguments);
+      args[1] = args[1] || {};
+      // Register by default.
+      args[1].register = _.isUndefined(args[1].register) || _.isNull(args[1].register) || args[1].register;
+      Cell.apply(this, args);
+    },
+
+    /**
+     * Register this item with the service registry after initialize.
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.serviceInitialized(this);
+    }
+  });
+
+  return ServiceCell;
 }));
 
 (function(root, factory) {
@@ -5801,7 +5859,7 @@
     /**
      * Creates an item view and stores a reference to it
      * @private
-     * @param {Backbone Model} model the model to create the view from
+     * @param {external:Backbone-Model} model the model to create the view from
      * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
      * @return {Backbone View} the new item view
      */
@@ -6084,20 +6142,17 @@
   }
 
   /**
-   * Behaviors defined in Torso.
-   * @module Torso.behaviors
-   * @namespace Torso.behaviors
-   */
-
-  /**
    * This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
    * This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
    * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
    *
-   * See https://tonicdev.com/torso/databehavior for more in-depth documentation and details.
-   *
    * @class DataBehavior
+   * @extends Behavior
+   *
    * @author  jyoung@vecna.com
+   *
+   * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
+   * @see <a href="../modules/behaviors/DATA_BEHAVIOR.html">Detailed docs</a> for more in-depth documentation and details.
    */
   var DataBehavior = Behavior.extend({
     /**
@@ -6463,7 +6518,7 @@
 
     /**
      * Parses this.updateEvents configuration.
-     * @return {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
+     * @return {Object[]} {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
      * @private
      */
     __parseUpdateEvents: function() {
@@ -6476,7 +6531,7 @@
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
-     * @return {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     * @return {Object[]|undefined} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */
