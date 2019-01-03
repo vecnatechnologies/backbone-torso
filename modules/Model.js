@@ -17,7 +17,7 @@
    * @class     Model
    * @constructor
    * @param {Object} attributes the initial attributes to use for this model.
-   * @param {}] {Object}[options= the options for setting up this model.
+   * @param {Object} [options={}] the options for setting up this model.
    *   @param {boolean} [options.register=false] whether to register this model in the app-level registry.
    *                                             By default this will NOT add it to the registry unless set to true because
    *                                             we have not mechanism that will make sure the models get removed from the registry

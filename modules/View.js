@@ -1,6 +1,6 @@
 /**
  * The backbone View reference
- * @external "Backbone.View"
+ * @external Backbone-View
  * @see {@link http://backbonejs.org/#View|Backbone.View}
  */
 (function(root, factory) {
@@ -21,12 +21,17 @@
    * ViewStateCell is a NestedCell that holds view state data and can trigger
    * change events. These changes events will propogate up and trigger on the view
    * as well.
+   *
    * @class
+   * @extends {NestedCell}
+   * @memberof View
+   * @inner
+   *
+   * @param {Object} attrs the initial values to set on the cell - inherited from {@link NestedCell}.
+   * @param {Object} opts options for the cell.
+   *    @param {external:Backbone-View} opts.view the view that these options are tied to.
    */
-  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
-    /**
-     * @constructs
-     */
+  var ViewStateCell = NestedCell.extend(/** @lends View~ViewStateCell.prototype */{
     initialize: function(attrs, opts) {
       opts = opts || {};
       this.view = opts.view;
@@ -47,17 +52,11 @@
     }
   });
 
-  /**
-   * Generic View that deals with:
-   * - Creation of private collections
-   * - Lifecycle of a view
-   * @class View
-   * @extends external:"Backbone.View"
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   *
-   * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
-   */
   var View = Backbone.View.extend(/** @lends View.prototype */{
+    /**
+     * Cell that can be used to save state for rendering the view.
+     * @type {ViewStateCell}
+     */
     viewState: null,
     template: undefined,
     feedback: null,
@@ -88,7 +87,16 @@
 
     /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
-     * @constructs
+     *
+     * Generic View that deals with:
+     * - Creation of private collections
+     * - Lifecycle of a view
+     *
+     * @class View
+     * @extends {external:Backbone-View}
+     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+     *
+     * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
      */
     constructor: function(options) {
       options = options || {};
@@ -172,13 +180,12 @@
     },
 
     /**
-     * Augments the context with custom content.
+     * Extension point to augment the template context with custom content.
+     * @function
      * @param context the context you can modify
      * @return {Object} [Optional] If you return an object, it will be merged with the context
      */
-    _prepare: function(context) {
-      // no changes by default
-    },
+    _prepare: _.noop,
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
@@ -440,7 +447,7 @@
     /**
      * Detach all tracked views or a subset of them based on the options parameter.
      * NOTE: this is not recursive - it will not separate the entire view tree.
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, detach only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
@@ -559,7 +566,7 @@
 
     /**
      * @return {boolean} true if this view has tracked views (limited by the options parameter)
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, only check the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
@@ -570,7 +577,7 @@
 
     /**
      * Returns all tracked views, both child views and shared views.
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, get only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
@@ -595,7 +602,7 @@
      * be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the
      * view as a child view unless specified by options.shared.
      * @param {View} view the tracked view
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.
      * @return {View} the tracked view
@@ -625,7 +632,7 @@
     /**
      * Unbinds all tracked view - no recursive calls will be made to this shared view
      * You can limit the types of views that will be unregistered by using the options parameter.
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
@@ -848,6 +855,7 @@
 
     /**
      * Initializes the behaviors
+     * @private
      */
     __initializeBehaviors: function(viewOptions) {
       var view = this;
@@ -902,7 +910,7 @@
 
     /**
      * Deactivates all tracked views or a subset of them based on the options parameter.
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, deactivate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
@@ -916,7 +924,7 @@
 
     /**
      * Activates all tracked views or a subset of them based on the options parameter.
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, activate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, activate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
@@ -1051,7 +1059,7 @@
      * Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.
      * NOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.
      * This means that you can add "add" or "remove" tracked view using this method, however you can interact with the views inside the map completely.
-     * @param {}] {Object}[options=  Optional options.
+     * @param {Object} [options={}]  Optional options.
      *   @param {boolean} [options.shared=false] If true, will add the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
      *   @param {boolean} [options.child=false] If true, will add child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
@@ -1125,6 +1133,7 @@
 
     /**
      * Call this method when a view is detached from the DOM. It is recursive to child views.
+     * @private
      */
     __invokeDetached: function() {
       if (this.__attachedCallbackInvoked) {

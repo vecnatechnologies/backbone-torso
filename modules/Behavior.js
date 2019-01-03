@@ -26,19 +26,6 @@
     'initialize:complete': 'postinitialize'
   };
 
-  /**
-   * Allows abstraction of common view logic into separate object
-   *
-   * @class Behavior
-   * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
-   * @param {Object} behaviorOptions
-   *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
-   *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
-   * @param {Object} [viewOptions] options passed to View's initialize
-   * @author  deena.wang@vecna.com
-   *
-   * @see <a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a>
-   */
   var Behavior = NestedCell.extend(/** @lends Behavior.prototype */{
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
@@ -54,18 +41,31 @@
 
     /**
      * Add functions to be added to the view's public API. They will be behavior-scoped.
+     * @type {Object}
      */
     mixin: {},
 
     /**
      * The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
-     * effectively: { <behaviorName>: behavior.prepare() } will be combined with the view's prepare result.
+     * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
+     *
+     * @function
      * @return {Object} a prepare context suitable to being added to the view's prepare result.
      */
     prepare: _.noop,
 
     /**
-     * @constructs
+     * Allows abstraction of common view logic into separate object
+     *
+     * @class Behavior
+     * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
+     * @param {Object} behaviorOptions
+     *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
+     *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
+     * @param {Object} [viewOptions] options passed to View's initialize
+     * @author  deena.wang@vecna.com
+     *
+     * @see <a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a>
      */
     constructor: function(behaviorAttributes, behaviorOptions, viewOptions) {
       behaviorOptions = behaviorOptions || {};
@@ -196,6 +196,7 @@
      * Removes all listeners, stops listening to events.
      * After dispose is called, the behavior can be safely garbage collected.
      * Called when the owning view is disposed.
+     * @private
      */
     __dispose: function() {
       this.trigger('before-dispose-callback');
@@ -209,6 +210,7 @@
      * Method to be invoked when dispose is called. By default calling dispose will remove the
      * behavior's on's and listenTo's.
      * Override this method to destruct any extra
+     * @function
      */
     _dispose: _.noop,
 

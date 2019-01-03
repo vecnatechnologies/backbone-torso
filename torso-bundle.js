@@ -91,7 +91,7 @@
      * Generates: for="field-name_abc_sub-demo"
      * @param {string} field The field name to convert to a compliant "for" attribute
      * @param {<Handlebars context>} options Always passed in as final argument
-     * @param [option.hash.value] {string} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @return {string} Compliant HTML generating the "for" attribute
      */
     Handlebars.registerHelper('labelFor', function(field, options) {
@@ -110,7 +110,7 @@
                   id="field-name_abc_sub-demo" value="demo"
      * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
      * @param {<Handlebars context>} options Always passed in as final argument
-     * @param [options.hash.value] {string} The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
      */
     Handlebars.registerHelper('bindModel', function(field, options) {
@@ -140,8 +140,8 @@
      * Generates: id="field-name_abc_sub-demo" for="field-name_abc_sub-demo" value="demo"
      * @param {string} field The field name to convert to a compliant data-feedback attribute
      * @param {<Handlebars context>} options Always passed in as final argument
-     * @param [options.hash.value] {string} The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @param [options.noValueAttr] {boolean} when options.noValueAttr is set to true,
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
                                               then it will not generate the "value" attribute in the DOM.
      * @return {string} Compliant HTML generating the data-feedback attribute
      */
@@ -210,7 +210,7 @@
      * @param {string} field The field name
      * @param {Object} indexMap A map of variables
      * @param {Object} options named parameters
-     *   @param [options.forceArrayNotation=false] {boolean} Force the usage of [] insetad of . for string values.
+     *   @param {boolean} [options.forceArrayNotation=false] Force the usage of [] insetad of . for string values.
      * @return {string} the field string with array variables substituted
      */
     Handlebars.registerHelper('injectFieldIndices', function(field, indexMap, options) {
@@ -318,7 +318,7 @@
     /**
      * Initialize the given object in the given cache.
      * @param {Backbone.Events} obj any object that implements/extends backbone events.
-     *   @param obj.cid {string} the unique identifier for the object.
+     *   @param {string} obj.cid the unique identifier for the object.
      * @param {Object} cache the cache to add the object to.
      * @private
      */
@@ -584,13 +584,13 @@
   var templateRenderer = {
     /**
      * Performs efficient re-rendering of a template.
-     * @param  $el {jQueryObject} The Element to render into
-     * @param  template {Handlebars Template} The HBS template to apply
-     * @param  context {Object} The context object to pass to the template
-     * @param  [opts] {Object} Other options
-     * @param  [opts.force=false] {boolean} Will forcefully do a fresh render and not a diff-render
-     * @param  [opts.newHTML] {string} If you pass in newHTML, it will not use the template or context, but use this instead.
-     * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
+     * @param  {jQueryObject} $el The Element to render into
+     * @param  {Handlebars Template} template The HBS template to apply
+     * @param  {Object} context The context object to pass to the template
+     * @param  {Object} [opts] Other options
+     * @param  {boolean} [opts.force=false] Will forcefully do a fresh render and not a diff-render
+     * @param  {string} [opts.newHTML] If you pass in newHTML, it will not use the template or context, but use this instead.
+     * @param  {Array} [opts.ignoreElements] jQuery selectors of DOM elements to ignore during render. Can be an expensive check
      */
     render: function($el, template, context, opts) {
       var newDOM, newHTML,
@@ -773,8 +773,8 @@
           /**
            * Will force the cache to fetch just the registered ids of this collection
            * @param [options] - argument options
-           * @param [options.idsToFetch=collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
-           * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
+           * @param {Array} [options.idsToFetch=collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+           * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           fetch: function(options) {
@@ -793,7 +793,7 @@
           /**
            * Will force the cache to fetch a subset of this collection's tracked ids
            * @param {Array} ids array of model ids
-           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           fetchByIds: function(ids, options) {
@@ -825,7 +825,7 @@
 
           /**
            * Tracks a new id
-           * @param {string or Number} id the id attribute of the model
+           * @param {string|Number} id the id attribute of the model
            */
           trackNewId: function(id) {
             this.trackIds(this.getTrackedIds().concat(id));
@@ -851,7 +851,7 @@
            * The resulting promise is resolved when ALL items in the process of being fetched have completed.
            * The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.
            *
-           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
            *                   Will only resolve once all ids have attempted to be fetched from the server.
            */
@@ -1082,8 +1082,8 @@
       /**
        * A custom fetch operation to only fetch the requested Ids.
        * @param [options] - argument options
-       * @param [options.idsToFetch=collection.collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
-       * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
+       * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+       * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
        * @return {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(options) {
@@ -1180,10 +1180,10 @@
        * The constructor constructor / initialize method for collections.
        * Allocate new memory for the local references if they
        * were null when this method was called.
-       * @param [options] {Object} - optional options object
+       * @param {Object} [options] - optional options object
        * @param   [options.fetchHttpAction='POST'] {string} http action used to get objects by ids
        * @param   [options.getByIdsUrl='/ids'] {string} path appended to collection.url to get objects by a list of ids
-       * @param   [options.fetchUsingTrackedIds=true] {boolean} if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
+       * @param   {boolean} [options.fetchUsingTrackedIds=true] if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
                                                                but will rather call the default fetch method.
        */
       constructor: function(models, options) {
@@ -1466,7 +1466,7 @@
      * Starts polling Model/Collection by calling fetch every pollInterval.
      * Note: Each Model/Collection will only allow a singleton of polling to occur so
      * as not to have duplicate threads updating Model/Collection.
-     * @param  pollInterval {Integer} interval between each poll in ms.
+     * @param  {Integer} pollInterval interval between each poll in ms.
      */
     startPolling: function(pollInterval) {
       var self = this;
@@ -1531,8 +1531,8 @@
    * @class  Cell
    * @constructor
    * @param {Object} attributes the initial attributes to use for this cell.
-   * @param [options={}] {Object} the options for setting up this cell.
-   *   @param [options.register=false] {boolean} whether to register this cell in the app-level registry.
+   * @param {Object} [options={}] the options for setting up this cell.
+   *   @param {boolean} [options.register=false] whether to register this cell in the app-level registry.
    *                                             By default this will NOT add it to the registry unless set to true because
    *                                             we have not mechanism that will make sure the cells get removed from the registry
    *                                             at the appropriate times.
@@ -1621,8 +1621,8 @@
    * @class     Model
    * @constructor
    * @param {Object} attributes the initial attributes to use for this model.
-   * @param [options={}] {Object} the options for setting up this model.
-   *   @param [options.register=false] {boolean} whether to register this model in the app-level registry.
+   * @param {Object} [options={}] the options for setting up this model.
+   *   @param {boolean} [options.register=false] whether to register this model in the app-level registry.
    *                                             By default this will NOT add it to the registry unless set to true because
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
@@ -1661,8 +1661,8 @@
    * @class     NestedCell
    * @constructor
    * @param {Object} attributes the initial attributes to use for this cell.
-   * @param [options={}] {Object} the options for setting up this cell.
-   *   @param [options.register=false] {boolean} whether to register this cell in the app-level registry.
+   * @param {Object} [options={}] the options for setting up this cell.
+   *   @param {boolean} [options.register=false] whether to register this cell in the app-level registry.
    *                                             By default this will NOT add it to the registry unless set to true because
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
@@ -1702,8 +1702,8 @@
    * @class     NestedModel
    * @constructor
    * @param {Object} attributes the initial attributes to use for this model.
-   * @param [options={}] {Object} the options for setting up this model.
-   *   @param [options.register=false] {boolean} whether to register this model in the app-level registry.
+   * @param {Object} [options={}] the options for setting up this model.
+   *   @param {boolean} [options.register=false] whether to register this model in the app-level registry.
    *                                             By default this will NOT add it to the registry unless set to true because
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
@@ -1724,7 +1724,6 @@
   return NestedModel;
 }));
 
-/** @module torso/modules/Behavior */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', './NestedCell'], factory);
@@ -1753,16 +1752,6 @@
     'initialize:complete': 'postinitialize'
   };
 
-  /**
-   * Allows abstraction of common view logic into separate object
-   *
-   * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
-   * @param {Object} behaviorOptions
-   *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
-   *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
-   * @param {Object} [viewOptions] options passed to View's initialize
-   * @author  deena.wang@vecna.com
-   */
   var Behavior = NestedCell.extend(/** @lends Behavior.prototype */{
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
@@ -1778,18 +1767,31 @@
 
     /**
      * Add functions to be added to the view's public API. They will be behavior-scoped.
+     * @type {Object}
      */
     mixin: {},
 
     /**
      * The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
-     * effectively: { <behaviorName>: behavior.prepare() } will be combined with the view's prepare result.
+     * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
+     *
+     * @function
      * @return {Object} a prepare context suitable to being added to the view's prepare result.
      */
     prepare: _.noop,
 
     /**
-     * @constructs
+     * Allows abstraction of common view logic into separate object
+     *
+     * @class Behavior
+     * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
+     * @param {Object} behaviorOptions
+     *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
+     *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
+     * @param {Object} [viewOptions] options passed to View's initialize
+     * @author  deena.wang@vecna.com
+     *
+     * @see <a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a>
      */
     constructor: function(behaviorAttributes, behaviorOptions, viewOptions) {
       behaviorOptions = behaviorOptions || {};
@@ -1920,6 +1922,7 @@
      * Removes all listeners, stops listening to events.
      * After dispose is called, the behavior can be safely garbage collected.
      * Called when the owning view is disposed.
+     * @private
      */
     __dispose: function() {
       this.trigger('before-dispose-callback');
@@ -1933,6 +1936,7 @@
      * Method to be invoked when dispose is called. By default calling dispose will remove the
      * behavior's on's and listenTo's.
      * Override this method to destruct any extra
+     * @function
      */
     _dispose: _.noop,
 
@@ -1965,8 +1969,8 @@
    * @class  ServiceCell
    * @constructor
    * @param {Object} attributes the initial attributes to use for this service.
-   * @param [options={}] {Object} the options for setting up this service.
-   *   @param [options.register=true] {boolean} whether to register this service in the app-level registry.
+   * @param {Object} [options={}] the options for setting up this service.
+   *   @param {boolean} [options.register=true] whether to register this service in the app-level registry.
    *                                            By default this WILL add it to the registry unless set to false because
    *                                            most services are global so holding on to them beyond
    * @author kent.willis@vecna.com
@@ -1995,10 +1999,9 @@
 
 /**
  * The backbone View reference
- * @external Backbone.View
+ * @external Backbone-View
  * @see {@link http://backbonejs.org/#View|Backbone.View}
  */
-/** @module torso/modules/View */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell', './registry'], factory);
@@ -2017,12 +2020,17 @@
    * ViewStateCell is a NestedCell that holds view state data and can trigger
    * change events. These changes events will propogate up and trigger on the view
    * as well.
+   *
    * @class
+   * @extends {NestedCell}
+   * @memberof View
+   * @inner
+   *
+   * @param {Object} attrs the initial values to set on the cell - inherited from {@link NestedCell}.
+   * @param {Object} opts options for the cell.
+   *    @param {external:Backbone-View} opts.view the view that these options are tied to.
    */
-  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
-    /**
-     * @constructs
-     */
+  var ViewStateCell = NestedCell.extend(/** @lends View~ViewStateCell.prototype */{
     initialize: function(attrs, opts) {
       opts = opts || {};
       this.view = opts.view;
@@ -2043,13 +2051,6 @@
     }
   });
 
-  /**
-   * Generic View that deals with:
-   * - Creation of private collections
-   * - Lifecycle of a view
-   * @extends external:Backbone.View
-   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-   */
   var View = Backbone.View.extend(/** @lends View.prototype */{
     viewState: null,
     template: undefined,
@@ -2081,7 +2082,16 @@
 
     /**
      * Overrides constructor to create needed fields and invoke activate/render after initialization
-     * @constructs
+     *
+     * Generic View that deals with:
+     * - Creation of private collections
+     * - Lifecycle of a view
+     *
+     * @class View
+     * @extends {external:Backbone-View}
+     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+     *
+     * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
      */
     constructor: function(options) {
       options = options || {};
@@ -2297,12 +2307,12 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param [$el] {jQuery element} the element to attach to. This element will be replaced with this view.
-     *                               If options.replaceMethod is provided, then this parameter is ignored.
-     * @param [options] {Object} optional options
-     * @param   [options.replaceMethod] {Fucntion} if given, this view will invoke replaceMethod function
+     * @param {jQuery} [$el] the element to attach to. This element will be replaced with this view.
+     *                       If options.replaceMethod is provided, then this parameter is ignored.
+     * @param {Object} [options] optional options
+     * @param   {Fucntion} [options.replaceMethod] if given, this view will invoke replaceMethod function
      *                                             in order to attach the view's DOM to the parent instead of calling $el.replaceWith
-     * @param   [options.discardInjectionSite=false] {Booleon} if set to true, the injection site is not saved.
+     * @param   {Booleon} [options.discardInjectionSite=false] if set to true, the injection site is not saved.
      * @return {Promise} promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can
      *                   make it asynchronous.
      */
@@ -2341,14 +2351,14 @@
      *     previousView: the previous view (can be undefined)
      *     parentView: the parent view transitioning in or out the tracked view
      *   }
-     * @param $el {jQuery element or String} the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
-     * @param view   {View}   The instantiated view object to be attached
-     * @param [options] {Object} optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
-     * @param   [options.noActivate=false] {boolean} if set to true, the view will not be activated upon attaching.
-     * @param   [options.shared=false] {boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
-     * @param   [options.useTransition=false] {boolean} if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite
-     * @param   [options.addBefore=false] {boolean} if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.
-     * @param   [options.previousView] {View} if using options.useTransition, then you can explicitly define the view that should be transitioned out.
+     * @param {jQuery|string} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
+     * @param {View}   view   The instantiated view object to be attached
+     * @param {Object} [options] optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
+     * @param   {boolean} [options.shared=false] if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @param   {boolean} [options.useTransition=false] if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite
+     * @param   {boolean} [options.addBefore=false] if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param   {View} [options.previousView] if using options.useTransition, then you can explicitly define the view that should be transitioned out.
      *                                        If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.
      */
@@ -2433,10 +2443,10 @@
     /**
      * Detach all tracked views or a subset of them based on the options parameter.
      * NOTE: this is not recursive - it will not separate the entire view tree.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, detach only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, detach only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {boolean} If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      */
     detachTrackedViews: function(options) {
       var trackedViewsHash = this.getTrackedViews(options);
@@ -2552,10 +2562,10 @@
 
     /**
      * @return {boolean} true if this view has tracked views (limited by the options parameter)
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, only check the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, only check the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {boolean} If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      */
     hasTrackedViews: function(options) {
       return !_.isEmpty(this.getTrackedViews(options));
@@ -2563,10 +2573,10 @@
 
     /**
      * Returns all tracked views, both child views and shared views.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, get only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, get only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {boolean} If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return {List<View>} all tracked views (filtered by options parameter)
      */
     getTrackedViews: function(options) {
@@ -2588,8 +2598,8 @@
      * be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the
      * view as a child view unless specified by options.shared.
      * @param {View} view the tracked view
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.
      * @return {View} the tracked view
      */
@@ -2618,10 +2628,10 @@
     /**
      * Unbinds all tracked view - no recursive calls will be made to this shared view
      * You can limit the types of views that will be unregistered by using the options parameter.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {boolean} If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return {View} the tracked view
      */
     unregisterTrackedViews: function(options) {
@@ -2636,9 +2646,9 @@
      * The method is passed a callback that should be invoked when the transition out has fully completed.
      * @param {Function} done callback that MUST be invoked when the transition is complete.
      * @param options optionals options object
-     * @param   options.currentView {View} the view that is being transitioned in.
-     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
-     * @param   options.parentView {View} the view that is invoking the transition.
+     * @param   {View} options.currentView the view that is being transitioned in.
+     * @param   {View} options.previousView the view that is being transitioned out. Typically this view.
+     * @param   {View} options.parentView the view that is invoking the transition.
      */
     transitionOut: function(done, options) {
       this.detach();
@@ -2652,9 +2662,9 @@
                                 If you are trying to transition in a tracked view, consider using this.transitionInView()
      * @param {Function} done callback that MUST be invoked when the transition is complete.
      * @param options optionals options object
-     * @param   options.currentView {View} the view that is being transitioned in.
-     * @param   options.previousView {View} the view that is being transitioned out. Typically this view.
-     * @param   options.parentView {View} the view that is invoking the transition.
+     * @param   {View} options.currentView the view that is being transitioned in.
+     * @param   {View} options.previousView the view that is being transitioned out. Typically this view.
+     * @param   {View} options.parentView the view that is invoking the transition.
      */
     transitionIn: function(attach, done, options) {
       attach();
@@ -2664,8 +2674,8 @@
     /**
      * Invokes a feedback entry's "then" method
      * @param {string} to the "to" field corresponding to the feedback entry to be invoked.
-     * @param [evt] {Event} the event to be passed to the "then" method
-     * @param [indexMap] {Object} a map from index variable name to index value. Needed for "to" fields with array notation.
+     * @param {Event} [evt] the event to be passed to the "then" method
+     * @param {Object} [indexMap] a map from index variable name to index value. Needed for "to" fields with array notation.
      */
     invokeFeedback: function(to, evt, indexMap) {
       var result,
@@ -2895,10 +2905,10 @@
 
     /**
      * Deactivates all tracked views or a subset of them based on the options parameter.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, deactivate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {boolean} If true, deactivate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, deactivate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @private
      */
     __deactivateTrackedViews: function(options) {
@@ -2909,10 +2919,10 @@
 
     /**
      * Activates all tracked views or a subset of them based on the options parameter.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, activate only the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, activate only the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {boolean} If true, activate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, activate only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @private
      */
     __activateTrackedViews: function(options) {
@@ -2941,11 +2951,11 @@
      * @private
      * @param {string} injectionSiteName The name of the injection site in the template. This is the value corresponding to the attribute "inject".
      * @param {View} newView The instantiated view object to be transitioned into the injection site
-     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
-     * @param   [options.previousView] {View} the view that should be transitioned out. If none is provided, it will look to see if a view already
+     * @param {Object} [options] optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   {View} [options.previousView] the view that should be transitioned out. If none is provided, it will look to see if a view already
      *                                 is at this injection site and uses that by default.
-     * @param   [options.addBefore=false] {boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
-     * @param   [options.shared=false] {boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @param   {boolean} [options.addBefore=false] if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param   {boolean} [options.shared=false] if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
      * When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields
      * will be added to the options parameter to allow better handling of the transitions. These include:
@@ -2986,8 +2996,8 @@
      * @param {string} injectionSiteName The name of the injection site in the template. This is the value corresponding to the attribute "inject".
      * @param {View} previousView the view that should be transitioned out.
      * @param {View} newView The view that should be transitioned into the injection site
-     * @param [options] {Object} optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
-     * @param   [options.addBefore=false] {boolean} if true, the new view's element will be added before the previous view's element. Defaults to after.
+     * @param {Object} [options] optional options object. This options object will be passed on to the transitionIn and transitionOut methods as well.
+     * @param   {boolean} [options.addBefore=false] if true, the new view's element will be added before the previous view's element. Defaults to after.
      * @return {Promise} resolved when all transitions are complete. No payload is provided upon resolution.
      * @private
      */
@@ -3018,11 +3028,11 @@
     /**
      * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
      * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
-     * @param $el {jQuery element} the element to attach to.
+     * @param {jQuery} $el the element to attach to.
      * @param {View} newView the view to be transitioned in.
-     * @param [options] {Object} optional options object
-     * @param   [options.noActivate=false] {boolean} if set to true, the view will not be activated upon attaching.
-     * @param   [options.shared=false] {boolean} if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
+     * @param {Object} [options] optional options object
+     * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
+     * @param   {boolean} [options.shared=false] if set to true, the view will be treated as a shared view and not disposed during parent view disposing.
      * @return {Promise} resolved when transition is complete. No payload is provided upon resolution.
      * @private
      */
@@ -3044,10 +3054,10 @@
      * Gets the hash from id to tracked views. You can limit the subset of views returned based on the options passed in.
      * NOTE: returns READ-ONLY snapshots. Updates to the returned cid->view map will not be saved nor will updates to the underlying maps be reflected later in returned objects.
      * This means that you can add "add" or "remove" tracked view using this method, however you can interact with the views inside the map completely.
-     * @param [options={}] {Object}  Optional options.
-     *   @param [options.shared=false] {boolean} If true, will add the shared views. These are views not owned by this parent. As compared to a child view
+     * @param {Object} [options={}]  Optional options.
+     *   @param {boolean} [options.shared=false] If true, will add the shared views. These are views not owned by this parent. As compared to a child view
      *                                           which are disposed when the parent is disposed.
-     *   @param [options.child=false] {boolean} If true, will add child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
+     *   @param {boolean} [options.child=false] If true, will add child views. These are views that are owned by the parent and dispose of them if the parent is disposed.
      * @return READ-ONLY snapshot of the object maps cotaining tracked views keyed by their cid (filtered by optional options parameter).
      * @private
      */
@@ -3084,10 +3094,10 @@
 
     /**
      * Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method
-     * @param $el {jQuery Element} the injection site element to be replaced
-     * @param [options] {Object} Optional options
-     * @param   [options.replaceMethod] {Function} use an alternative replace method. Invoked with the view's element as the argument.
-     * @param   [options.discardInjectionSite=false] {boolean} if true, the view will not save a reference to the injection site after replacement.
+     * @param {jQuery} $el the injection site element to be replaced
+     * @param {Object} [options] Optional options
+     * @param   {Function} [options.replaceMethod] use an alternative replace method. Invoked with the view's element as the argument.
+     * @param   {boolean} [options.discardInjectionSite=false] if true, the view will not save a reference to the injection site after replacement.
      * @private
      */
     __replaceInjectionSite: function($el, options) {
@@ -3831,7 +3841,7 @@
          * you can pass in different values to use in the validation process instead.
          * @param {string or Object or Array} attr Either the name of the attribute, an array containing many attribute names, or
          * on object with attribute name to values
-         * @param [value] {Any} a value to use for the attribute value instead of using the model's value.
+         * @param {Any} [value] a value to use for the attribute value instead of using the model's value.
          * @return undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
          * and the error as the value
          */
@@ -4300,17 +4310,17 @@
      *   modelName: modelInstance,  // optionally, provide a set of model instance to model name (aliases) to start tracking
      *   modelName2: modelInstance2 // provide as many aliases to model instances as you'd like
      * }
-     * @param [options] {Object}
-     *   @param [options.mapping] {Object} map from aliases (either model names or computed value names) to mappings.
+     * @param {Object} [options]
+     *   @param {Object} [options.mapping] map from aliases (either model names or computed value names) to mappings.
      *     A model mapping can bind an alias to a space seperated list of fields to track as a String  r the boolean true if it is mapping all the
      *     fields. A computed mapping can bind an alias to a set of model mappings required for this computed value and both a pull and/or push method
      *     that are used to compute different values to or from object model(s).
-     *   @param [options.models] {Object} Because the options.mapping parameter only allows you to define the mappings to aliases, this options allows
+     *   @param {Object} [options.models] Because the options.mapping parameter only allows you to define the mappings to aliases, this options allows
      *     you to bind model instances to aliases. Setting model instances to aliases are required to actually begin pulling/pushing values.
-     *   @param [options.startUpdating=false] {boolean} set to true if you want to immediately set up listeners to update this form
+     *   @param {boolean} [options.startUpdating=false] set to true if you want to immediately set up listeners to update this form
      *     model as the object model updates. You can always toggle this state with startUpdating() and stopUpdating().
-     *   @param [options.validation] {Object} A Backbone.Validation plugin hash to dictate the validation rules
-     *   @param [options.labels] {Object} A Backbone.Validation plugin hash to dictate the attribute labels
+     *   @param {Object} [options.validation] A Backbone.Validation plugin hash to dictate the validation rules
+     *   @param {Object} [options.labels] A Backbone.Validation plugin hash to dictate the attribute labels
      */
     constructor: function(attributes, options) {
       options = options || {};
@@ -4379,7 +4389,7 @@
      *  a computed value, then provide a map from model alias to model mapping for all the fields needed for the computed and a pull method
      *  if you want to change/combine/split object model properties before bringing them into the form model and a push method if you want to
      *  change/combine/split form model properties before pushing them to the object models.
-     * @param [models] {Object or Backbone.Model instance} Provides instances to use for this mapping. If mapping is a computed,
+     * @param {Object or Backbone.Model instance} [models] Provides instances to use for this mapping. If mapping is a computed,
      *   provide a map from alias to model instance. If mapping is for a single model, just provide the model instance for that alias.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
@@ -4434,7 +4444,7 @@
      *   }
      * }, optional model map)
      * @param {Object} mappings Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.
-     * @param [models] {Object} this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are backbone model instances.
+     * @param {Object} [models] this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are backbone model instances.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
     setMappings: function(mappings, models, copy) {
@@ -4450,7 +4460,7 @@
      * Remove a mapping (model or computed) by alias
      * @param {string or Backbone.Model instance} aliasOrModel if a String is provided, it will unset the mapping with that alias.
      *   If a Backbone Model instance is provided, it will remove the model mapping that was bound to that model.
-     * @param [removeModelIfUntracked=false] {boolean} If true, after the mapping is removed, the model will also be unset but only if
+     * @param {boolean} [removeModelIfUntracked=false] If true, after the mapping is removed, the model will also be unset but only if
      *   no other mappings reference it. Note, setting this to true will not remove any computed mappings that also use that model.
      */
     unsetMapping: function(aliasOrModel, removeModelIfUntracked) {
@@ -4502,7 +4512,7 @@
      * Update or create a binding between an object model and an alias.
      * @param {string} alias the alias/name to bind to.
      * @param {Backbone Model instance} model the model to be bound. Mappings referencing this alias will start applying to this model.
-     * @param [copy=false] {boolean} if true, the form model will perform a pull on any mappings using this alias.
+     * @param {boolean} [copy=false] if true, the form model will perform a pull on any mappings using this alias.
      */
     trackModel: function(alias, model, copy) {
       this.__currentObjectModels[alias] = model;
@@ -4535,7 +4545,7 @@
     /**
      * Binds multiple models to their aliases.
      * @param {Map from String to Backbone Model instances} models A map from alias/name to model to be bound to that alias.
-     * @param [copy=false] {boolean} if true, the form model will perform a pull on any mapping using these models.
+     * @param {boolean} [copy=false] if true, the form model will perform a pull on any mapping using these models.
      */
     trackModels: function(models, copy) {
       _.each(models, function(instance, alias) {
@@ -4612,11 +4622,11 @@
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
      * NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise
      * with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}
-     * @param [options] {Object}
-     *   @param [options.rollback=true] {boolean} if true, when any object model fails to save, it will revert the object
+     * @param {Object} [options]
+     *   @param {boolean} [options.rollback=true] if true, when any object model fails to save, it will revert the object
      *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
      *     to object models within the timing of this save method, the updates could be lost.
-     *   @param [options.force=true] {boolean} if false, the form model will check to see if an update has been made
+     *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
      * @return when using a "url", a promise is returned for the save on this form model.
@@ -4679,7 +4689,7 @@
 
     /**
      * Will add listeners that will automatically pull new updates from this form's object models.
-     * @param [pullFirst=false] {boolean} if true, the form model will pull most recent values then start listening
+     * @param {boolean} [pullFirst=false] if true, the form model will pull most recent values then start listening
      */
     startUpdating: function(pullFirst) {
       if (this.isTrackingAnyObjectModel() && !this.isUpdating()) {
@@ -4712,8 +4722,8 @@
 
     /**
      * @param {Backbone.Model} model the backbone model that is being checked
-     * @param [staleModels] {Object} a hash that will be updated to contain this model if it is stale in the form: cid -> model.
-     * @param [currentHashValues] {Object} If passed an object, it will look in this cache for the current value of the object model
+     * @param {Object} [staleModels] a hash that will be updated to contain this model if it is stale in the form: cid -> model.
+     * @param {Object} [currentHashValues] If passed an object, it will look in this cache for the current value of the object model
      *   instead of calculating it. It should be key'ed by the model's cid
      * @return {boolean} true if the model passed in has been changed since the last pull from the object model.
      */
@@ -4752,7 +4762,7 @@
     /**
      * Sets up a listener to update the form model if the model's field (or any field) changes.
      * @param {Backbone.Model} model the object model from which this form model will start listen to changes
-     * @param [field] {string} the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
+     * @param {string} [field] the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
      * @private
      */
     __listenToModelField: function(model, field) {
@@ -4774,7 +4784,7 @@
     /**
      * Sets up a listener on one (or all) of the fields that is needed to update a computed value
      * @param {Backbone.Model} model the object model from which this form model will start listen to changes
-     * @param [field] {string} the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
+     * @param {string} [field] the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
      * @param {string} computedAlias the name/alias of the computed mapping being used.
      * @private
      */
@@ -4817,7 +4827,7 @@
 
     /**
      * Returns the aliases/names of models referenced in the computed mapping with the given alias
-     * @param {string or Object} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
+     * @param {string|Object} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
      *   an object if it hasn't been added as a mapping yet.
      * @return {Array of Strings} an array of the model names/aliases referenced inside the computed mapping
      * @private
@@ -4858,11 +4868,11 @@
 
     /**
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
-     * @param [options] {Object}
-     *   @param [options.rollback=true] {boolean} if true, when any object model fails to save, it will revert the object
+     * @param {Object} [options]
+     *   @param {boolean} [options.rollback=true] if true, when any object model fails to save, it will revert the object
      *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
      *     to object models within the timing of this save method, the updates could be lost.
-     *   @param [options.force=true] {boolean} if false, the form model will check to see if an update has been made
+     *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
      * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
@@ -5021,7 +5031,7 @@
     /**
      * Updates the form model's snapshot of the model's attributes to use later
      * @param {Backbone.Model instance} model the object model
-     * @param [cache=this.__cache] {Object} if passed an object (can be empty), this method will fill
+     * @param {Object} [cache=this.__cache] if passed an object (can be empty), this method will fill
      *   this cache object instead of this form model's __cache field
      * @private
      */
@@ -5146,7 +5156,7 @@
     /**
      * Copies fields from one backbone model to another. Is useful during a pull or push to/from Object models. The values will
      * be deep cloned from the origin to the destination.
-     * @param [fields] {Array} a string of attribute names on the origin model that will be copied. Leave null if all attributes
+     * @param {Array} [fields] a string of attribute names on the origin model that will be copied. Leave null if all attributes
      *   are to be copied
      * @param {Backbone.Model} destination the backbone model that will have values copied into
      * @param {Backbone.Model} origin the backbone model that will be used to grab values.
@@ -5170,7 +5180,7 @@
     /**
      * Sets the mapping using the form model's default mapping or the options.mappings if available.
      * Also sets the tracked models if the form model's default models or the options.models is provided.
-     * @param [options] {Object} See initialize options: 'mapping' and 'models'.
+     * @param {Object} [options] See initialize options: 'mapping' and 'models'.
      * @private
      */
     __initMappings: function(options) {
@@ -5280,7 +5290,7 @@
      *   }
      * }
      * If any model mapping is tracking all fields by passing true as its config, a copy of all the attributes for that model will be provided.
-     * @param [model] {Backbone.Model} the model that was updated. If provided, the cache will be updated
+     * @param {Backbone.Model} [model] the model that was updated. If provided, the cache will be updated
      * NOTE: requires the context of this function to be:
      * {
      *  formModel: <this form model>,
@@ -5407,8 +5417,8 @@
      * with the model and an item view as the payload.
      * @private
      * @param {Backbone View instance} itemView the view being removed
-     * @param {string or Number} modelId the id used for the model
-     * @param [model] {Backbone Model instance} the model
+     * @param {string|Number} modelId the id used for the model
+     * @param {Backbone Model instance} [model] the model
      */
     _removeItemView = function(itemView, modelId, model) {
       itemView.dispose();
@@ -5525,14 +5535,14 @@
     /**
      * Constructor for the list view object.
      * @param {Object} args - options argument
-     *   @param args.itemView {Backbone.View definition or Function} - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
-     *   @param args.collection {Backbone.Collection instance} - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
-     *   @param [args.itemContext] {Object or Function} - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
-     *   @param [args.template] {HTML Template} - allows a list view to hold it's own HTML like filter buttons, etc.
-     *   @param [args.itemContainer] {string}  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     *   @param [args.emptyTemplate] {HTML Template} - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
-     *   @param [args.modelsToRender] {Function} - If provided, this function will override the modelsToRender() method with custom functionality.
-     *   @param [args.renderWait=0] {number} - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
+     *   @param {Backbone.View definition or Function} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
+     *   @param {Backbone.Collection instance} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
+     *   @param {Object|Function} [args.itemContext] - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
+     *   @param {HTML Template} [args.template] - allows a list view to hold it's own HTML like filter buttons, etc.
+     *   @param {string} [args.itemContainer]  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
+     *   @param {HTML Template} [args.emptyTemplate] - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
+     *   @param {Function} [args.modelsToRender] - If provided, this function will override the modelsToRender() method with custom functionality.
+     *   @param {number} [args.renderWait=0] - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
      *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
      *   @param [args.modelName='model'] {string} - name of the model argument passed to the item view during initialization
      */
@@ -5935,7 +5945,7 @@
     /**
      * Updates the internal list of model ids that correspond to the models used for the current
      * list of item views. The order is the same order of the item views.
-     * @param [newIdsList] {Array of ids} - if passed the array, it will use that instead of finding the list.
+     * @param {Array of ids} [newIdsList] - if passed the array, it will use that instead of finding the list.
      * @private
      */
     __updateOrderedModelIdList: function(newIdsList) {
@@ -5975,8 +5985,8 @@
 
     /**
      * @private
-     * @param {string or Number} modelId id of model
-     * @return {string or Number} view cid that was built from corresponding model
+     * @param {string|Number} modelId id of model
+     * @return {string|Number} view cid that was built from corresponding model
      */
     __getViewIdFromModelId: function(modelId) {
       return this.__modelToViewMap[modelId];
@@ -6019,7 +6029,7 @@
    * If the input is not a string, number, array, or info about the ids then undefined is returned.
    * This is a private helper method used internally by this behavior and is not exposed in any way.
    * @param {string|number|string[]|number[]|Object} ids the ids to convert.
-   *   @param [ids.skipObjectRetrieval] {boolean} set if this is a meta-info object about the ids.
+   *   @param {boolean} [ids.skipObjectRetrieval] set if this is a meta-info object about the ids.
    * @return {string[]|number[]|Object} an array of strings or numbers.
    * @private
    */
@@ -6211,17 +6221,17 @@
 
     /**
      * @override
-     * @param [behaviorState] {Object} the initial state of the behavior.
+     * @param {Object} [behaviorState] the initial state of the behavior.
      * @param {Object} behaviorOptions
-     *   @param behaviorOptions.cache {Collection} see cache property.
-     *   @param [behaviorOptions.renderOnFetch=false] {boolean} see renderOnFetch property.
-     *   @param [behaviorOptions.skipInitialLoad=false] {boolean} see skipInitialLoad property.
-     *   @param [behaviorOptions.returnSingleResult=false] {boolean} see returnSingleResult property.
-     *   @param [behaviorOptions.alwaysFetch=false] {boolean} see alwaysFetch property.
-     *   @param [behaviorOptions.id=behaviorOptions.ids] {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} see id property.
-     *   @param [behaviorOptions.ids=behaviorOptions.id] {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} see ids property.
-     *   @param [behaviorOptions.updateEvents] {string|string[]|Object|Object[]} see updateEvents property.
-     * @param [viewOptions] {Object} options passed to View's initialize
+     *   @param {Collection} behaviorOptions.cache see cache property.
+     *   @param {boolean} [behaviorOptions.renderOnFetch=false] see renderOnFetch property.
+     *   @param {boolean} [behaviorOptions.skipInitialLoad=false] see skipInitialLoad property.
+     *   @param {boolean} [behaviorOptions.returnSingleResult=false] see returnSingleResult property.
+     *   @param {boolean} [behaviorOptions.alwaysFetch=false] see alwaysFetch property.
+     *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.id=behaviorOptions.ids] see id property.
+     *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.ids=behaviorOptions.id] see ids property.
+     *   @param {string|string[]|Object|Object[]} [behaviorOptions.updateEvents] see updateEvents property.
+     * @param {Object} [viewOptions] options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
       _.bindAll(this, '__skipRetrieveOnEmptyTrackedIdsAndNewIds', '__completeLoadingIds', '__fetchSuccess', '__fetchFailed', '__abortIfDisposed');
@@ -6781,8 +6791,8 @@
     /**
      * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
      * @param {Object} response the response from the server.
-     *   @param [response.skipObjectRetrieval=false] {boolean} if we retrieved objects, then trigger fetch event.
-     *   @param [response.forceFetchedEvent=false] {boolean} if true then trigger fetch no matter what.
+     *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
+     *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
      * @private
      */
     __fetchSuccess: function(response) {
@@ -6805,10 +6815,10 @@
 
     /**
      * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
-     * @param [response] {Object} the response from the server.
-     *   @param [response.skipObjectRetrieval=false] {boolean} if we retrieved objects, then trigger fetch event.
-     *   @param [response.forceFetchedEvent=false] {boolean} if true then trigger fetch no matter what.
-     *   @param [response.emptyIds=false] {boolean} true if were are no ids retrieved.  False otherwise.
+     * @param {Object} [response] the response from the server.
+     *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
+     *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
+     *   @param {boolean} [response.emptyIds=false] true if were are no ids retrieved.  False otherwise.
      * @private
      */
     __fetchFailed: function(response) {
@@ -6835,8 +6845,8 @@
     /**
      * Determines if the 'fetched' event should be triggered in the __fetchFailed or __fetchSuccess methods.
      * @param {Object} response to use to determine if the fetched event should be triggered.
-     *   @param [response.skipObjectRetrieval=false] {boolean} if we retrieved objects, then trigger fetch event.
-     *   @param [response.forceFetchedEvent=false] {boolean} if true then trigger fetch no matter what.
+     *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
+     *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
      * @return {boolean} true if the fetched event should be triggered, false otherwise.
      * @private
      */
@@ -6899,8 +6909,8 @@
     /**
      * Instantiates the data objects and binds it to this behavior instance.
      * @param {Object} options to pass to the initialize methods.
-     *   @param options.parentBehavior {DataBehavior} the data behavior instance that this Data object should be bound to.
-     *   @param options.privateCollection {Collection} the private collection that this data represents.
+     *   @param {DataBehavior} options.parentBehavior the data behavior instance that this Data object should be bound to.
+     *   @param {Collection} options.privateCollection the private collection that this data represents.
      */
     initialize: function(options) {
       /**
@@ -6970,7 +6980,7 @@
      *
      * If returnSingleResult is true then this will return the given property from the model (if that model exists).
      * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
-     * @param [propertyName] {string} the property to get from the model(s).
+     * @param {string} [propertyName] the property to get from the model(s).
      * @return {Object|Object[]} containing the full contents of either the collection or model.
      */
     get: function(propertyName) {
@@ -7128,10 +7138,10 @@
                                                                     model or instantiates a FormModelClass
      * @param [args.FormModelClass=Torso.FormModel] - the class that will be used as the FormModel. Defaults to a class-level
                                                       definition or Torso.FormModel if none is provided
-     * @param [args.template]  {HTML Template} - overrides the template used by this view
-     * @param [args.events]    {Events Hash} - merge + override the events hash used by this view
-     * @param [args.fields]    {Field Hash} - merge + override automated two-way binding field hash used by this view
-     * @param [args.bindings]  {Binding Hash} - merge + override custom epoxy binding hash used by this view
+     * @param {HTML Template}  [args.template] - overrides the template used by this view
+     * @param {Events Hash}    [args.events] - merge + override the events hash used by this view
+     * @param {Field Hash}    [args.fields] - merge + override automated two-way binding field hash used by this view
+     * @param {Binding Hash}  [args.bindings] - merge + override custom epoxy binding hash used by this view
      */
     constructor: function(args) {
       args = args || {};
@@ -7183,7 +7193,7 @@
      * Resets the form model with the passed in model. Stops listening to current form model
      * and sets up listeners on the new one.
      * @param {Torso.FormModel} model the new form model
-     * @param [stopListening=false] {boolean} if true, it will stop listening to the previous form model
+     * @param {boolean} [stopListening=false] if true, it will stop listening to the previous form model
      */
     resetModelListeners: function(model, stopListening) {
       if (this.model && stopListening) {
@@ -7230,7 +7240,7 @@
      * and all fields need to be valid for success).
      * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
      * @param {string} className the class name to add or remove
-     * @param [onValid] {boolean} if true, will reverse the logic operator
+     * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
      */
     _thenAddClassIfInvalid: function(fieldName, className, onValid) {
@@ -7254,7 +7264,7 @@
      * and all fields need to be valid for success).
      * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
      * @param {string} text the text to set
-     * @param [onValid] {boolean} if true, will reverse the logic operator
+     * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
      */
     _thenSetTextIfInvalid: function(fieldName, text, onValid) {
@@ -7308,9 +7318,9 @@
     /**
      * @param {string} field A specific model field
      * @param {Object} options Additional behavior options for the bindings
-     * @param [options.modelFormat] {Object} The function called before setting model values
-     * @param [options.viewFormat] {Object} The function called before setting view values
-     * @param [options.stickit] {Object} Any options fields that stickit accepts
+     * @param {Object} [options.modelFormat] The function called before setting model values
+     * @param {Object} [options.viewFormat] The function called before setting view values
+     * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
      * @return {<Stickit Binding Hash>}
      */
@@ -7341,8 +7351,8 @@
     /**
      * @param {Element} element The select element to generate options for
      * @param {Object} opts Additional behavior options for the bindings
-     * @param [opts.modelFormat] {Object} The function called before setting model values
-     * @param [opts.stickit.selectOptions] {Object} stickit's selectOptions fields. Overrides what Torso does by default
+     * @param {Object} [opts.modelFormat] The function called before setting model values
+     * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
      * @return {<Stickit select options hash>}
      */

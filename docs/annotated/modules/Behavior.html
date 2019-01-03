@@ -218,19 +218,6 @@
     <span class="hljs-string">'initialize:complete'</span>: <span class="hljs-string">'postinitialize'</span>
   };
 
-  <span class="hljs-comment">/**
-   * Allows abstraction of common view logic into separate object
-   *
-   * @class Behavior
-   * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
-   * @param {Object} behaviorOptions
-   *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
-   *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
-   * @param {Object} [viewOptions] options passed to View's initialize
-   * @author  deena.wang@vecna.com
-   *
-   * @see &lt;a href="../annotated/modules/Behavior.html"&gt;Behavior Annotated Source&lt;/a&gt;
-   */</span>
   <span class="hljs-keyword">var</span> Behavior = NestedCell.extend(<span class="hljs-comment">/** @lends Behavior.prototype */</span>{
     <span class="hljs-comment">/**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
@@ -246,18 +233,31 @@
 
     <span class="hljs-comment">/**
      * Add functions to be added to the view's public API. They will be behavior-scoped.
+     * @type {Object}
      */</span>
     mixin: {},
 
     <span class="hljs-comment">/**
      * The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
-     * effectively: { &lt;behaviorName&gt;: behavior.prepare() } will be combined with the view's prepare result.
+     * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
+     *
+     * @function
      * @return {Object} a prepare context suitable to being added to the view's prepare result.
      */</span>
     prepare: _.noop,
 
     <span class="hljs-comment">/**
-     * @constructs
+     * Allows abstraction of common view logic into separate object
+     *
+     * @class Behavior
+     * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
+     * @param {Object} behaviorOptions
+     *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
+     *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
+     * @param {Object} [viewOptions] options passed to View's initialize
+     * @author  deena.wang@vecna.com
+     *
+     * @see &lt;a href="../annotated/modules/Behavior.html"&gt;Behavior Annotated Source&lt;/a&gt;
      */</span>
     <span class="hljs-keyword">constructor</span>: function(behaviorAttributes, behaviorOptions, viewOptions) {
       behaviorOptions = behaviorOptions || {};
@@ -401,6 +401,7 @@
      * Removes all listeners, stops listening to events.
      * After dispose is called, the behavior can be safely garbage collected.
      * Called when the owning view is disposed.
+     * @private
      */</span>
     __dispose: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-dispose-callback'</span>);
@@ -414,6 +415,7 @@
      * Method to be invoked when dispose is called. By default calling dispose will remove the
      * behavior's on's and listenTo's.
      * Override this method to destruct any extra
+     * @function
      */</span>
     _dispose: _.noop,
 

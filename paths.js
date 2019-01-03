@@ -28,6 +28,7 @@
     testTemplatesSrc: testSource + allHandlebarsExtension,
     bundleDest: '.',
     docsApiDest: './docs/api',
+    docsApiMdDest: './docs/apimd',
     docsAnnotatedDest: './docs/annotated',
     testSandbox: testSandbox,
     testTemplatesDest: testSandbox + '/templates',
