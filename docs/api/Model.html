@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Behavior - Documentation</title>
+    <title>Model - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -33,7 +33,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Behavior</h1>
+    <h1 class="page-title">Model</h1>
     
 
     
@@ -46,7 +46,7 @@
 <header>
     
         <h2>
-        Behavior
+        Model
         </h2>
         
     
@@ -60,7 +60,7 @@
 
     
 
-    <h4 class="name" id="Behavior"><span class="type-signature"></span>new Behavior<span class="signature">(behaviorAttributes, behaviorOptions, viewOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Model"><span class="type-signature"></span>new Model<span class="signature">(attributes, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -72,7 +72,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line57">line 57</a>
+        <a href="Model.js.html">Model.js</a>, <a href="Model.js.html#line19">line 19</a>
     </li></ul></dd>
     
 
@@ -89,6 +89,16 @@
     
 
     
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li>pollingMixin</li>
+        
+            <li>modelMixin</li>
+        
+        </ul></dd>
+    
 
     
 
@@ -96,7 +106,7 @@
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>deena.wang@vecna.com</li>
+            <li>kent.willis@vecna.com</li>
         </ul>
     </dd>
     
@@ -113,7 +123,7 @@
     <dt class="tag-see">See:</dt>
     <dd class="tag-see">
         <ul>
-            <li><a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a></li>
+            <li><a href="../annotated/modules/Model.html">Model Annotated Source</a></li>
         </ul>
     </dd>
     
@@ -126,7 +136,7 @@
 
 
 <div class="description">
-    Allows abstraction of common view logic into separate object
+    Generic Model
 </div>
 
 
@@ -156,6 +166,8 @@
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -166,7 +178,7 @@
 
         <tr>
             
-                <td class="name"><code>behaviorAttributes</code></td>
+                <td class="name"><code>attributes</code></td>
             
 
             <td class="type">
@@ -189,118 +201,19 @@
             
 
             
-
-            <td class="description last">the initial value of the behavior's attributes.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>behaviorOptions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
+                <td class="default">
                 
                 </td>
             
 
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>view</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="external-Backbone-View.html">external:Backbone-View</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">that Behavior is attached to</td>
+            <td class="description last">the initial attributes to use for this model.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>alias</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the alias for the behavior in this view.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>viewOptions</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
@@ -325,8 +238,86 @@
             
 
             
+                <td class="default">
+                
+                    <code>{}</code>
+                
+                </td>
+            
 
-            <td class="description last">options passed to View's initialize</td>
+            <td class="description last">the options for setting up this model.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>register</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last">whether to register this model in the app-level registry.
+                                            By default this will NOT add it to the registry unless set to true because
+                                            we have not mechanism that will make sure the models get removed from the registry
+                                            at the appropriate times.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -353,6 +344,17 @@
     
 
     
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="external-Backbone-Model.html">external:Backbone-Model</a></li>
+    </ul>
+
+
+    
 
     
 
@@ -363,529 +365,7 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
 
-        
-            
-<h4 class="name" id="alias"><span class="type-signature"></span>alias<span class="type-signature"> :string</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line34">line 34</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Unique name of the behavior instance w/in a view.  More human readable than the cid.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="cidPrefix"><span class="type-signature"></span>cidPrefix<span class="type-signature"> :string</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line40">line 40</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    cidPrefix of Behaviors
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="mixin"><span class="type-signature"></span>mixin<span class="type-signature"> :Object</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line46">line 46</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Add functions to be added to the view's public API. They will be behavior-scoped.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id="_dispose"><span class="type-signature"></span>_dispose<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line217">line 217</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    Method to be invoked when dispose is called. By default calling dispose will remove the
-behavior's on's and listenTo's.
-Override this method to destruct any extra
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="isDisposed"><span class="type-signature"></span>isDisposed<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line222">line 222</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    true if the view was disposed
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="prepare"><span class="type-signature"></span>prepare<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line55">line 55</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
-effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    a prepare context suitable to being added to the view's prepare result.
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-        
     
 
     

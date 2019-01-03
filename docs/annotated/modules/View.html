@@ -51,19 +51,19 @@
 
   <span class="hljs-comment">/**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
-   * change events. These changes events will propogate up and trigger on the view
+   * change events. These change events will propogate up and trigger on the view
    * as well.
    *
-   * @class
+   * @class ViewStateCell
    * @extends {NestedCell}
-   * @memberof View
-   * @inner
    *
    * @param {Object} attrs the initial values to set on the cell - inherited from {@link NestedCell}.
    * @param {Object} opts options for the cell.
    *    @param {external:Backbone-View} opts.view the view that these options are tied to.
+   *
+   * @see &lt;a href="../annotated/modules/View.html"&gt;View Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> ViewStateCell = NestedCell.extend(<span class="hljs-comment">/** @lends View~ViewStateCell.prototype */</span>{
+  <span class="hljs-keyword">var</span> ViewStateCell = NestedCell.extend(<span class="hljs-comment">/** @lends ViewStateCell.prototype */</span>{
     <span class="hljs-attr">initialize</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attrs, opts</span>) </span>{
       opts = opts || {};
       <span class="hljs-keyword">this</span>.view = opts.view;

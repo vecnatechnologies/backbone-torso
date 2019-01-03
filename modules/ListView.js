@@ -457,7 +457,7 @@
     /**
      * Creates an item view and stores a reference to it
      * @private
-     * @param {Backbone Model} model the model to create the view from
+     * @param {external:Backbone-Model} model the model to create the view from
      * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
      * @return {Backbone View} the new item view
      */

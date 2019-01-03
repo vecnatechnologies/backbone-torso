@@ -11,154 +11,6 @@
   <div id="container">
     <div id="background"></div>
     
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
-          <div id="jump_page_wrapper">
-            <div id="jump_page">
-              
-                
-                <a class="source" href="Behavior.html">
-                  modules/Behavior.js
-                </a>
-              
-                
-                <a class="source" href="Cell.html">
-                  modules/Cell.js
-                </a>
-              
-                
-                <a class="source" href="Collection.html">
-                  modules/Collection.js
-                </a>
-              
-                
-                <a class="source" href="Events.html">
-                  modules/Events.js
-                </a>
-              
-                
-                <a class="source" href="FormModel.html">
-                  modules/FormModel.js
-                </a>
-              
-                
-                <a class="source" href="FormView.html">
-                  modules/FormView.js
-                </a>
-              
-                
-                <a class="source" href="ListView.html">
-                  modules/ListView.js
-                </a>
-              
-                
-                <a class="source" href="Model.html">
-                  modules/Model.js
-                </a>
-              
-                
-                <a class="source" href="NestedCell.html">
-                  modules/NestedCell.js
-                </a>
-              
-                
-                <a class="source" href="NestedModel.html">
-                  modules/NestedModel.js
-                </a>
-              
-                
-                <a class="source" href="Router.html">
-                  modules/Router.js
-                </a>
-              
-                
-                <a class="source" href="ServiceCell.html">
-                  modules/ServiceCell.js
-                </a>
-              
-                
-                <a class="source" href="View.html">
-                  modules/View.js
-                </a>
-              
-                
-                <a class="source" href="behaviors/DataBehavior.html">
-                  modules/behaviors/DataBehavior.js
-                </a>
-              
-                
-                <a class="source" href="configure.html">
-                  modules/configure.js
-                </a>
-              
-                
-                <a class="source" href="handlebarsUtils.html">
-                  modules/handlebarsUtils.js
-                </a>
-              
-                
-                <a class="source" href="history.html">
-                  modules/history.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cacheMixin.html">
-                  modules/mixins/cacheMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/cellMixin.html">
-                  modules/mixins/cellMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/loadingMixin.html">
-                  modules/mixins/loadingMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/modelMixin.html">
-                  modules/mixins/modelMixin.js
-                </a>
-              
-                
-                <a class="source" href="mixins/pollingMixin.html">
-                  modules/mixins/pollingMixin.js
-                </a>
-              
-                
-                <a class="source" href="registry.html">
-                  modules/registry.js
-                </a>
-              
-                
-                <a class="source" href="stickitUtils.html">
-                  modules/stickitUtils.js
-                </a>
-              
-                
-                <a class="source" href="templateRenderer.html">
-                  modules/templateRenderer.js
-                </a>
-              
-                
-                <a class="source" href="torso.html">
-                  modules/torso.js
-                </a>
-              
-                
-                <a class="source" href="validation.html">
-                  modules/validation.js
-                </a>
-              
-            </div>
-          </div>
-        </li>
-      </ul>
-    
     <ul class="sections">
         
           <li id="title">
@@ -183,6 +35,41 @@
  * @external Backbone
  * @property {external:Backbone-View} View
  * @see {@link http://backbonejs.org/|Backbone}
+ */</span>
+<span class="hljs-comment">/**
+ * Module containing all dependencies that exports a single object with everything attached (same format as the global).
+ *
+ * @constant torso
+ *
+ * @property {Behavior} Behavior The {@link Behavior} prototype.
+ * @property {Object} behaviors Collection of behaviors that ship with Torso.
+ *   @property {DataBehavior} behaviors.DataBehavior The {@link DataBehavior} prototype.
+ * @property {Cell} Cell The {@link Cell} prototype.
+ * @property {Collection} Collection The {@link Collection} prototype.
+ * @property {Events} Events The {@link Events} prototype.
+ * @property {Object} Mixins Collection of mixins that are used by Torso.
+ *   @property {loadingMixin} Mixins.loading The {@link loadingMixin}.
+ *   @property {cacheMixin} Mixins.cache The {@link cacheMixin}.
+ *   @property {pollingMixin} Mixins.polling The {@link pollingMixin}.
+ *   @property {validation.mixin} Mixins.validation The {@link validation.mixin}.
+ *   @property {cellMixin} Mixins.cell The {@link cellMixin}.
+ * @property {Model} Model The {@link Model} prototype.
+ * @property {NestedCell} NestedCell The {@link NestedCell} prototype.
+ * @property {NestedModel} NestedModel The {@link NestedModel} prototype.
+ * @property {FormModel} FormModel The {@link FormModel} prototype.
+ * @property {ServiceCell} ServiceCell The {@link ServiceCell} prototype.
+ * @property {Router} Router The {@link Router} prototype.
+ * @property {history} history Convient access to backbone history.
+ * @property {registry} registry The torso object registry.
+ * @property {Utils} Utils Collection of utilities used by Torso.
+ *   @property {templateRenderer} Utils.loading Template renderer used by Torso.
+ *   @property {handlebarsUtils} Utils.loading Handlebars utilities used by Torso.
+ * @property {validation} validation The {@link validation} prototype.
+ * @property {View} View The {@link View} prototype.
+ * @property {ListView} ListView The {@link ListView} prototype.
+ * @property {FormView} FormView The {@link FormView} prototype.
+ *
+ * @author    jyoung@vecna.com
  */</span>
 (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
@@ -240,41 +127,6 @@
                  templateRenderer,
                  handlebarsUtils</span>) </span>{
 
-  <span class="hljs-comment">/**
-   * Module containing all dependencies that exports a single object with everything attached (same format as the global).
-   *
-   * @module modules/torso
-   *
-   * @property {Behavior} Behavior The {@link Behavior} prototype.
-   * @property {Object} behaviors Collection of behaviors that ship with Torso.
-   *   @property {DataBehavior} behaviors.DataBehavior The {@link DataBehavior} prototype.
-   * @property {Cell} Cell The {@link Cell} prototype.
-   * @property {Collection} Collection The {@link Collection} prototype.
-   * @property {Events} Events The {@link Events} prototype.
-   * @property {Object} Mixins Collection of mixins that are used by Torso.
-   *   @property {loadingMixin} Mixins.loading The {@link loadingMixin}.
-   *   @property {cacheMixin} Mixins.cache The {@link cacheMixin}.
-   *   @property {pollingMixin} Mixins.polling The {@link pollingMixin}.
-   *   @property {validation.mixin} Mixins.validation The {@link validation.mixin}.
-   *   @property {cellMixin} Mixins.cell The {@link cellMixin}.
-   * @property {Model} Model The {@link Model} prototype.
-   * @property {NestedCell} NestedCell The {@link NestedCell} prototype.
-   * @property {NestedModel} NestedModel The {@link NestedModel} prototype.
-   * @property {FormModel} FormModel The {@link FormModel} prototype.
-   * @property {ServiceCell} ServiceCell The {@link ServiceCell} prototype.
-   * @property {Router} Router The {@link Router} prototype.
-   * @property {history} history Convient access to backbone history.
-   * @property {registry} registry The torso object registry.
-   * @property {Utils} Utils Collection of utilities used by Torso.
-   *   @property {templateRenderer} Utils.loading Template renderer used by Torso.
-   *   @property {handlebarsUtils} Utils.loading Handlebars utilities used by Torso.
-   * @property {validation} validation The {@link validation} prototype.
-   * @property {View} View The {@link View} prototype.
-   * @property {ListView} ListView The {@link ListView} prototype.
-   * @property {FormView} FormView The {@link FormView} prototype.
-   *
-   * @author    jyoung@vecna.com
-   */</span>
   <span class="hljs-keyword">return</span> {
     <span class="hljs-attr">Behavior</span>: Behavior,
     <span class="hljs-attr">behaviors</span>: {

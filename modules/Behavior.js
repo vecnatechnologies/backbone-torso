@@ -58,11 +58,13 @@
      * Allows abstraction of common view logic into separate object
      *
      * @class Behavior
+     *
      * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
      * @param {Object} behaviorOptions
-     *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
-     *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
+     *   @param {external:Backbone-View} behaviorOptions.view that Behavior is attached to
+     *   @param {string} behaviorOptions.alias the alias for the behavior in this view.
      * @param {Object} [viewOptions] options passed to View's initialize
+     *
      * @author  deena.wang@vecna.com
      *
      * @see <a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a>

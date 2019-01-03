@@ -11,154 +11,6 @@
   <div id="container">
     <div id="background"></div>
     
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
-          <div id="jump_page_wrapper">
-            <div id="jump_page">
-              
-                
-                <a class="source" href="../Behavior.html">
-                  modules/Behavior.js
-                </a>
-              
-                
-                <a class="source" href="../Cell.html">
-                  modules/Cell.js
-                </a>
-              
-                
-                <a class="source" href="../Collection.html">
-                  modules/Collection.js
-                </a>
-              
-                
-                <a class="source" href="../Events.html">
-                  modules/Events.js
-                </a>
-              
-                
-                <a class="source" href="../FormModel.html">
-                  modules/FormModel.js
-                </a>
-              
-                
-                <a class="source" href="../FormView.html">
-                  modules/FormView.js
-                </a>
-              
-                
-                <a class="source" href="../ListView.html">
-                  modules/ListView.js
-                </a>
-              
-                
-                <a class="source" href="../Model.html">
-                  modules/Model.js
-                </a>
-              
-                
-                <a class="source" href="../NestedCell.html">
-                  modules/NestedCell.js
-                </a>
-              
-                
-                <a class="source" href="../NestedModel.html">
-                  modules/NestedModel.js
-                </a>
-              
-                
-                <a class="source" href="../Router.html">
-                  modules/Router.js
-                </a>
-              
-                
-                <a class="source" href="../ServiceCell.html">
-                  modules/ServiceCell.js
-                </a>
-              
-                
-                <a class="source" href="../View.html">
-                  modules/View.js
-                </a>
-              
-                
-                <a class="source" href="../behaviors/DataBehavior.html">
-                  modules/behaviors/DataBehavior.js
-                </a>
-              
-                
-                <a class="source" href="../configure.html">
-                  modules/configure.js
-                </a>
-              
-                
-                <a class="source" href="../handlebarsUtils.html">
-                  modules/handlebarsUtils.js
-                </a>
-              
-                
-                <a class="source" href="../history.html">
-                  modules/history.js
-                </a>
-              
-                
-                <a class="source" href="cacheMixin.html">
-                  modules/mixins/cacheMixin.js
-                </a>
-              
-                
-                <a class="source" href="cellMixin.html">
-                  modules/mixins/cellMixin.js
-                </a>
-              
-                
-                <a class="source" href="loadingMixin.html">
-                  modules/mixins/loadingMixin.js
-                </a>
-              
-                
-                <a class="source" href="modelMixin.html">
-                  modules/mixins/modelMixin.js
-                </a>
-              
-                
-                <a class="source" href="pollingMixin.html">
-                  modules/mixins/pollingMixin.js
-                </a>
-              
-                
-                <a class="source" href="../registry.html">
-                  modules/registry.js
-                </a>
-              
-                
-                <a class="source" href="../stickitUtils.html">
-                  modules/stickitUtils.js
-                </a>
-              
-                
-                <a class="source" href="../templateRenderer.html">
-                  modules/templateRenderer.js
-                </a>
-              
-                
-                <a class="source" href="../torso.html">
-                  modules/torso.js
-                </a>
-              
-                
-                <a class="source" href="../validation.html">
-                  modules/validation.js
-                </a>
-              
-            </div>
-          </div>
-        </li>
-      </ul>
-    
     <ul class="sections">
         
           <li id="title">
@@ -197,9 +49,8 @@
    * - safe disposal methods for memory + event management
    * - special functional overrides to support ID registration for different views
    *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  cacheMixin
+   * @mixin cacheMixin
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
    */</span>
   <span class="hljs-keyword">var</span> mixin = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">base</span>) </span>{
@@ -210,7 +61,9 @@
      * Returns a new class of collection that inherits from the parent but not the cacheMixin
      * and adds a requesterMixin that connects this cache to it's parent
      *
-     * @param {Backbone Collection instance} parent the parent of the private collection
+     * @class PrivateCollection
+     * @extends Collection
+     * @param {external:Backbone-Collection} parent the parent of the private collection
      * @param {string} guid the unique code of the owner of this private collection
      */</span>
     createRequesterCollectionClass = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">parent, guid</span>) </span>{
@@ -219,6 +72,7 @@
         <span class="hljs-comment">/**
          * A mixin that overrides base collection methods meant for cache's and tailors them
          * to a requester.
+         * @alias PrivateCollection.prototype
          */</span>
         <span class="hljs-keyword">var</span> requesterMixin = {
 
@@ -274,7 +128,7 @@
 
           <span class="hljs-comment">/**
            * Adds a new model to the requester collection and tracks the model.id
-           * @param {Backbone Model} model the model to be added
+           * @param {external:Backbone-Model} model the model to be added
            */</span>
           addModelAndTrack: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">model</span>) </span>{
             <span class="hljs-keyword">this</span>.add(model);
@@ -456,6 +310,7 @@
 
     <span class="hljs-comment">/**
      * Adds functions to manage state of requesters
+     *
      * @param {Collection} collection the collection to add this mixin
      */</span>
     cacheMixin = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">collection</span>) </span>{</pre></div></div>
@@ -475,6 +330,7 @@
             
             <div class="content"><div class='highlight'><pre>
       <span class="hljs-comment">/**
+       * @alias cacheMixin.setRequestedIds
        * @private
        * @param {string} guid the global unique identifier for the requester
        * @param {Array} array the array of ids the requester wants
@@ -501,6 +357,7 @@
             
             <div class="content"><div class='highlight'><pre>
       <span class="hljs-comment">/**
+       * @alias cacheMixin.getRequesterIds
        * @param {string} the global unique id of the requester
        * @return {Array} an array of the ids the requester with the guid has requested
        */</span>
@@ -510,6 +367,7 @@
 
       <span class="hljs-comment">/**
        * This method is used for quick look up of a certain id within the list of requested ids
+       * @alias cacheMixin.getRequesterIdsAsDictionary
        * @param {string} guid the global unique id of the requester
        * @return {Object} an dictionary of id -&gt; id of the requester ids for a given requester.
        */</span>
@@ -519,6 +377,7 @@
 
       <span class="hljs-comment">/**
        * Removes a requester from this cache. No longer receives updates
+       * @alias cacheMixin.removeRequester
        * @param {string} guid the global unique id of the requester
        */</span>
       collection.removeRequester = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid</span>) </span>{
@@ -529,6 +388,7 @@
       <span class="hljs-comment">/**
        * <span class="hljs-doctag">NOTE:</span> this methods returns only the guids for requester collections that are currently tracking ids
        * <span class="hljs-doctag">TODO:</span> should this return just the knownPrivateCollections
+       * @alias cacheMixin.getRequesters
        * @return {Array} an array of the all requesters in the form of their GUID's
        */</span>
       collection.getRequesters = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)  </span>{
@@ -537,6 +397,7 @@
 
       <span class="hljs-comment">/**
        * Return the list of Ids requested by this collection
+       * @alias cacheMixin.getAllRequestedIds
        * @return {Array} the corresponding requested Ids
        */</span>
       collection.getAllRequestedIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
@@ -548,8 +409,9 @@
        * Binds a custom "resized" event to the private collections.
        * Overrides the fetch method to call the parent collection's fetchByIds method.
        * Overrides the registerIds method to redirect to its parent collection.
+       * @alias cacheMixin.createPrivateCollection
        * @param {string} guid Identifier for the requesting view
-       * @return {Collection} an new empty collection of the same type as "this"
+       * @return {PrivateCollection} an new empty collection of the same type as "this"
        */</span>
       collection.createPrivateCollection = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid, args</span>) </span>{
         args = args || {};
@@ -568,6 +430,7 @@
        * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
        * is overriden such that it no longer routes through Backbone's fetch all,
        * but rather a custom "fetchByIds" method.
+       * @alias cacheMixin.registerIds
        * @param {Array} newIds  - New ids to register under the requester
        * @param {string} guid   - The GUID of the object that wants the ids
        */</span>
@@ -697,6 +560,8 @@
        * Overrides the base fetch call if this.fetchUsingTrackedIds is true
        * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
        * it will pass through to the default fetch.
+       * @alias cacheMixin.fetch
+       * @param {Object} options
        */</span>
       collection.fetch = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
         options = options || {};
@@ -711,6 +576,7 @@
 
       <span class="hljs-comment">/**
        * A custom fetch operation to only fetch the requested Ids.
+       * @alias cacheMixin.fetchByIds
        * @param [options] - argument options
        * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
        * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
@@ -944,16 +810,17 @@ Pulls will not generate new promises for the given ids (if there are ids being f
       };
     };
 
-    <span class="hljs-keyword">return</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-comment">/** @lends cacheMixin */</span> {
       <span class="hljs-comment">/**
        * The constructor constructor / initialize method for collections.
        * Allocate new memory for the local references if they
        * were null when this method was called.
+       *
        * @param {Object} [options] - optional options object
        * @param   [options.fetchHttpAction='POST'] {string} http action used to get objects by ids
        * @param   [options.getByIdsUrl='/ids'] {string} path appended to collection.url to get objects by a list of ids
        * @param   {boolean} [options.fetchUsingTrackedIds=true] if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
-                                                               but will rather call the default fetch method.
+       *                                                       but will rather call the default fetch method.
        */</span>
       <span class="hljs-keyword">constructor</span>: function(models, options) {
         options = options || {};

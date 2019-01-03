@@ -11,9 +11,11 @@
   'use strict';
   /**
    * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @class  Cell
-   * @constructor
+   *
+   * @class Cell
+   * @extends {external:Backbone-Model}
+   * @mixes cellMixin
+   *
    * @param {Object} attributes the initial attributes to use for this cell.
    * @param {Object} [options={}] the options for setting up this cell.
    *   @param {boolean} [options.register=false] whether to register this cell in the app-level registry.
@@ -21,8 +23,10 @@
    *                                             we have not mechanism that will make sure the cells get removed from the registry
    *                                             at the appropriate times.
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/Cell.html">Cell Annotated Source</a>
    */
-  var Cell = Model.extend({
+  var Cell = Model.extend(/** @lends Cell.prototype */{
     /**
      * Register this item with the cell registry after initialize.
      * @private

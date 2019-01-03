@@ -7,7 +7,7 @@
   },
   "paths": {
     "src": "modules/*.js modules/**/*.js",
-    "src2": "docs/README.md modules/View.js modules/Behavior.js modules/torso.js",
+    "src2": "docs/README.md modules/torso.js modules/View.js modules/Model.js modules/Collection.js modules/behaviors/*.js modules/Behavior.js modules/Cell.js modules/mixins/cellMixin.js modules/mixins/cacheMixin.js",
     "docs": {
       "annotated": "docs/annotated",
       "api": "docs/api",

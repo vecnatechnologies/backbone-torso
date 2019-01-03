@@ -19,19 +19,19 @@
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
-   * change events. These changes events will propogate up and trigger on the view
+   * change events. These change events will propogate up and trigger on the view
    * as well.
    *
-   * @class
+   * @class ViewStateCell
    * @extends {NestedCell}
-   * @memberof View
-   * @inner
    *
    * @param {Object} attrs the initial values to set on the cell - inherited from {@link NestedCell}.
    * @param {Object} opts options for the cell.
    *    @param {external:Backbone-View} opts.view the view that these options are tied to.
+   *
+   * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
    */
-  var ViewStateCell = NestedCell.extend(/** @lends View~ViewStateCell.prototype */{
+  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
     initialize: function(attrs, opts) {
       opts = opts || {};
       this.view = opts.view;

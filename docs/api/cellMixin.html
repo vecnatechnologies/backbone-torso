@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Behavior - Documentation</title>
+    <title>cellMixin - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -33,7 +33,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Behavior</h1>
+    <h1 class="page-title">cellMixin</h1>
     
 
     
@@ -46,7 +46,7 @@
 <header>
     
         <h2>
-        Behavior
+        cellMixin
         </h2>
         
     
@@ -58,21 +58,12 @@
         
             
 
-    
-
-    <h4 class="name" id="Behavior"><span class="type-signature"></span>new Behavior<span class="signature">(behaviorAttributes, behaviorOptions, viewOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-
-    
-
-
-
-
 <dl class="details">
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line57">line 57</a>
+        <a href="mixins_cellMixin.js.html">mixins/cellMixin.js</a>, <a href="mixins_cellMixin.js.html#line13">line 13</a>
     </li></ul></dd>
     
 
@@ -96,7 +87,7 @@
     <dt class="tag-author">Author:</dt>
     <dd class="tag-author">
         <ul>
-            <li>deena.wang@vecna.com</li>
+            <li>kent.willis@vecna.com</li>
         </ul>
     </dd>
     
@@ -109,13 +100,6 @@
 
     
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a></li>
-        </ul>
-    </dd>
     
 
     
@@ -124,230 +108,11 @@
 
 
 
-
-<div class="description">
-    Allows abstraction of common view logic into separate object
-</div>
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
             
-                <td class="name"><code>behaviorAttributes</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
+                <div class="description">An non-persistable object that can listen to and emit events like a models.</div>
             
 
             
-
-            <td class="description last">the initial value of the behavior's attributes.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>behaviorOptions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-                
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>view</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="external-Backbone-View.html">external:Backbone-View</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">that Behavior is attached to</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>alias</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the alias for the behavior in this view.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>viewOptions</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">options passed to View's initialize</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
         </div>
     
@@ -367,7 +132,7 @@
 
         
             
-<h4 class="name" id="alias"><span class="type-signature"></span>alias<span class="type-signature"> :string</span></h4>
+<h4 class="name" id=".isModelCompatible"><span class="type-signature">(static) </span>isModelCompatible<span class="type-signature"></span></h4>
 
 
 
@@ -378,7 +143,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line34">line 34</a>
+        <a href="mixins_cellMixin.js.html">mixins/cellMixin.js</a>, <a href="mixins_cellMixin.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -405,6 +170,11 @@
     
 
     
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>false</li>
+        </ul></dd>
+    
 
     
 
@@ -415,169 +185,67 @@
 
 
 
+    <h5 class="subsection-title">Properties:</h5>
 
+    
 
-<div class="description">
-    Unique name of the behavior instance w/in a view.  More human readable than the cid.
-</div>
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
+        <th>Type</th>
 
         
-            
-<h4 class="name" id="cidPrefix"><span class="type-signature"></span>cidPrefix<span class="type-signature"> :string</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line40">line 40</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    cidPrefix of Behaviors
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
 
         
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
             
-<h4 class="name" id="mixin"><span class="type-signature"></span>mixin<span class="type-signature"> :Object</span></h4>
+                <td class="name"><code>isModelCompatible</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
 
 
+            
+            </td>
 
+            
 
+            
 
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line46">line 46</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
+            <td class="description last"></td>
+        </tr>
 
     
+    </tbody>
+</table>
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
 
 
 
 
 
 <div class="description">
-    Add functions to be added to the view's public API. They will be behavior-scoped.
+    Whether a cell can pass as a model or not.
+If true, the cell will not fail is persisted functions are invoked
+If false, the cell will throw exceptions if persisted function are invoked
 </div>
 
 
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
 
 
 
@@ -595,7 +263,7 @@
 
     
 
-    <h4 class="name" id="_dispose"><span class="type-signature"></span>_dispose<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".fetch"><span class="type-signature">(static) </span>fetch<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -607,7 +275,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line217">line 217</a>
+        <a href="mixins_cellMixin.js.html">mixins/cellMixin.js</a>, <a href="mixins_cellMixin.js.html#line41">line 41</a>
     </li></ul></dd>
     
 
@@ -647,9 +315,7 @@
 
 
 <div class="description">
-    Method to be invoked when dispose is called. By default calling dispose will remove the
-behavior's on's and listenTo's.
-Override this method to destruct any extra
+    Override and disable the fetch function
 </div>
 
 
@@ -681,7 +347,7 @@ Override this method to destruct any extra
 
     
 
-    <h4 class="name" id="isDisposed"><span class="type-signature"></span>isDisposed<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id=".save"><span class="type-signature">(static) </span>save<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -693,109 +359,7 @@ Override this method to destruct any extra
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line222">line 222</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    true if the view was disposed
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="prepare"><span class="type-signature"></span>prepare<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Behavior.js.html">Behavior.js</a>, <a href="Behavior.js.html#line55">line 55</a>
+        <a href="mixins_cellMixin.js.html">mixins/cellMixin.js</a>, <a href="mixins_cellMixin.js.html#line32">line 32</a>
     </li></ul></dd>
     
 
@@ -835,8 +399,7 @@ Override this method to destruct any extra
 
 
 <div class="description">
-    The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
-effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
+    Override and disable the save function
 </div>
 
 
@@ -861,28 +424,174 @@ effectively: { [behaviorName]: behavior.prepare() } will be combined with the vi
 
 
 
-<h5>Returns:</h5>
+
 
         
-<div class="param-desc">
-    a prepare context suitable to being added to the view's prepare result.
-</div>
-
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-    </dd>
-</dl>
+            
 
     
+
+    <h4 class="name" id=".sync"><span class="type-signature">(static) </span>sync<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cellMixin.js.html">mixins/cellMixin.js</a>, <a href="mixins_cellMixin.js.html#line50">line 50</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Override and disable the sync function
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".url"><span class="type-signature">(static) </span>url<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cellMixin.js.html">mixins/cellMixin.js</a>, <a href="mixins_cellMixin.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Override and disable the url
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         

@@ -12,12 +12,11 @@
   'use strict';
   /**
    * An non-persistable object that can listen to and emit events like a models.
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  cellMixin
+   *
+   * @mixin cellMixin
    * @author kent.willis@vecna.com
    */
-  return {
+  return /** @lends cellMixin */ {
     /**
      * Whether a cell can pass as a model or not.
      * If true, the cell will not fail is persisted functions are invoked
@@ -27,24 +26,36 @@
      */
     isModelCompatible: false,
 
+    /**
+     * Override and disable the save function
+     */
     save: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have save';
       }
     },
 
+    /**
+     * Override and disable the fetch function
+     */
     fetch: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have fetch';
       }
     },
 
+    /**
+     * Override and disable the sync function
+     */
     sync: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have sync';
       }
     },
 
+    /**
+     * Override and disable the url
+     */
     url: function() {
       if (!this.isModelCompatible) {
         throw 'Cell does not have url';

@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Collection - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/vecnatechnologies/backbone-torso" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h2><a href="../README.md" class="menu-item" id="all_docs_index_link" >Documentation Index</a></h2><h2><a href="../ANNOTATED.md" class="menu-item" id="annotated_link" >Annotated Source</a></h2><h2><a href="../interactive/index.html" class="menu-item" id="interactive_docs_link" >Interactive Docs</a></h2><h3>Classes</h3><ul><li><a href="Behavior.html">Behavior</a><ul class='methods'><li data-type='method'><a href="Behavior.html#_dispose">_dispose</a></li><li data-type='method'><a href="Behavior.html#isDisposed">isDisposed</a></li><li data-type='method'><a href="Behavior.html#prepare">prepare</a></li></ul></li><li><a href="Cell.html">Cell</a><ul class='methods'><li data-type='method'><a href="Cell.html#fetch">fetch</a></li><li data-type='method'><a href="Cell.html#save">save</a></li><li data-type='method'><a href="Cell.html#sync">sync</a></li><li data-type='method'><a href="Cell.html#url">url</a></li></ul></li><li><a href="Collection.html">Collection</a><ul class='methods'><li data-type='method'><a href="Collection.html#constructor">constructor</a></li><li data-type='method'><a href="Collection.html#createPrivateCollection">createPrivateCollection</a></li><li data-type='method'><a href="Collection.html#dispose">dispose</a></li><li data-type='method'><a href="Collection.html#fetch">fetch</a></li><li data-type='method'><a href="Collection.html#fetchByIds">fetchByIds</a></li><li data-type='method'><a href="Collection.html#filterDefault">filterDefault</a></li><li data-type='method'><a href="Collection.html#getAllRequestedIds">getAllRequestedIds</a></li><li data-type='method'><a href="Collection.html#getRequesterIds">getRequesterIds</a></li><li data-type='method'><a href="Collection.html#getRequesterIdsAsDictionary">getRequesterIdsAsDictionary</a></li><li data-type='method'><a href="Collection.html#getRequesters">getRequesters</a></li><li data-type='method'><a href="Collection.html#registerIds">registerIds</a></li><li data-type='method'><a href="Collection.html#removeRequester">removeRequester</a></li></ul></li><li><a href="DataBehavior.html">DataBehavior</a><ul class='methods'><li data-type='method'><a href="DataBehavior.html#_dispose">_dispose</a></li><li data-type='method'><a href="DataBehavior.html#isDisposed">isDisposed</a></li><li data-type='method'><a href="DataBehavior.html#prepare">prepare</a></li></ul></li><li><a href="Model.html">Model</a></li><li><a href="PrivateCollection.html">PrivateCollection</a><ul class='methods'><li data-type='method'><a href="PrivateCollection.html#addModelAndTrack">addModelAndTrack</a></li><li data-type='method'><a href="PrivateCollection.html#constructor">constructor</a></li><li data-type='method'><a href="PrivateCollection.html#createPrivateCollection">createPrivateCollection</a></li><li data-type='method'><a href="PrivateCollection.html#dispose">dispose</a></li><li data-type='method'><a href="PrivateCollection.html#fetch">fetch</a></li><li data-type='method'><a href="PrivateCollection.html#fetchByIds">fetchByIds</a></li><li data-type='method'><a href="PrivateCollection.html#filterDefault">filterDefault</a></li><li data-type='method'><a href="PrivateCollection.html#getAllRequestedIds">getAllRequestedIds</a></li><li data-type='method'><a href="PrivateCollection.html#getRequesterIds">getRequesterIds</a></li><li data-type='method'><a href="PrivateCollection.html#getRequesterIdsAsDictionary">getRequesterIdsAsDictionary</a></li><li data-type='method'><a href="PrivateCollection.html#getRequesters">getRequesters</a></li><li data-type='method'><a href="PrivateCollection.html#getTrackedIds">getTrackedIds</a></li><li data-type='method'><a href="PrivateCollection.html#pull">pull</a></li><li data-type='method'><a href="PrivateCollection.html#registerIds">registerIds</a></li><li data-type='method'><a href="PrivateCollection.html#remove">remove</a></li><li data-type='method'><a href="PrivateCollection.html#removeRequester">removeRequester</a></li><li data-type='method'><a href="PrivateCollection.html#requesterDispose">requesterDispose</a></li><li data-type='method'><a href="PrivateCollection.html#trackAndFetch">trackAndFetch</a></li><li data-type='method'><a href="PrivateCollection.html#trackAndPull">trackAndPull</a></li><li data-type='method'><a href="PrivateCollection.html#trackIds">trackIds</a></li><li data-type='method'><a href="PrivateCollection.html#trackNewId">trackNewId</a></li></ul></li><li><a href="View.html">View</a><ul class='methods'><li data-type='method'><a href="View.html#_prepare">_prepare</a></li><li data-type='method'><a href="View.html#activate">activate</a></li><li data-type='method'><a href="View.html#attachTo">attachTo</a></li><li data-type='method'><a href="View.html#attachView">attachView</a></li><li data-type='method'><a href="View.html#deactivate">deactivate</a></li><li data-type='method'><a href="View.html#delegateEvents">delegateEvents</a></li><li data-type='method'><a href="View.html#detach">detach</a></li><li data-type='method'><a href="View.html#detachTrackedViews">detachTrackedViews</a></li><li data-type='method'><a href="View.html#dispose">dispose</a></li><li data-type='method'><a href="View.html#get">get</a></li><li data-type='method'><a href="View.html#getBehavior">getBehavior</a></li><li data-type='method'><a href="View.html#getTrackedView">getTrackedView</a></li><li data-type='method'><a href="View.html#getTrackedViews">getTrackedViews</a></li><li data-type='method'><a href="View.html#has">has</a></li><li data-type='method'><a href="View.html#hasTrackedViews">hasTrackedViews</a></li><li data-type='method'><a href="View.html#invokeFeedback">invokeFeedback</a></li><li data-type='method'><a href="View.html#isActive">isActive</a></li><li data-type='method'><a href="View.html#isAttached">isAttached</a></li><li data-type='method'><a href="View.html#isAttachedToParent">isAttachedToParent</a></li><li data-type='method'><a href="View.html#isDisposed">isDisposed</a></li><li data-type='method'><a href="View.html#prepare">prepare</a></li><li data-type='method'><a href="View.html#registerTrackedView">registerTrackedView</a></li><li data-type='method'><a href="View.html#render">render</a></li><li data-type='method'><a href="View.html#set">set</a></li><li data-type='method'><a href="View.html#templateRender">templateRender</a></li><li data-type='method'><a href="View.html#toJSON">toJSON</a></li><li data-type='method'><a href="View.html#transitionIn">transitionIn</a></li><li data-type='method'><a href="View.html#transitionOut">transitionOut</a></li><li data-type='method'><a href="View.html#undelegateEvents">undelegateEvents</a></li><li data-type='method'><a href="View.html#unregisterTrackedView">unregisterTrackedView</a></li><li data-type='method'><a href="View.html#unregisterTrackedViews">unregisterTrackedViews</a></li><li data-type='method'><a href="View.html#unset">unset</a></li><li data-type='method'><a href="View.html#updateClassName">updateClassName</a></li><li data-type='method'><a href="View.html#updateDOM">updateDOM</a></li></ul></li><li><a href="ViewStateCell.html">ViewStateCell</a><ul class='methods'><li data-type='method'><a href="ViewStateCell.html#trigger">trigger</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-Backbone.html">Backbone</a></li><li><a href="external-Backbone-Collection.html">Backbone-Collection</a></li><li><a href="external-Backbone-Model.html">Backbone-Model</a></li><li><a href="external-Backbone-View.html">Backbone-View</a></li></ul><h3>Namespaces</h3><ul><li><a href="Torso.behaviors.DataBehavior.html">DataBehavior</a></li></ul><h3>Mixins</h3><ul><li><a href="cacheMixin.html">cacheMixin</a><ul class='methods'><li data-type='method'><a href="cacheMixin.html#.constructor">constructor</a></li><li data-type='method'><a href="cacheMixin.html#.createPrivateCollection">createPrivateCollection</a></li><li data-type='method'><a href="cacheMixin.html#.fetch">fetch</a></li><li data-type='method'><a href="cacheMixin.html#.fetchByIds">fetchByIds</a></li><li data-type='method'><a href="cacheMixin.html#.getAllRequestedIds">getAllRequestedIds</a></li><li data-type='method'><a href="cacheMixin.html#.getRequesterIds">getRequesterIds</a></li><li data-type='method'><a href="cacheMixin.html#.getRequesterIdsAsDictionary">getRequesterIdsAsDictionary</a></li><li data-type='method'><a href="cacheMixin.html#.getRequesters">getRequesters</a></li><li data-type='method'><a href="cacheMixin.html#.registerIds">registerIds</a></li><li data-type='method'><a href="cacheMixin.html#.removeRequester">removeRequester</a></li></ul></li><li><a href="cellMixin.html">cellMixin</a><ul class='methods'><li data-type='method'><a href="cellMixin.html#.fetch">fetch</a></li><li data-type='method'><a href="cellMixin.html#.save">save</a></li><li data-type='method'><a href="cellMixin.html#.sync">sync</a></li><li data-type='method'><a href="cellMixin.html#.url">url</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#activate">activate</a></li><li><a href="global.html#alwaysFetch">alwaysFetch</a></li><li><a href="global.html#cache">cache</a></li><li><a href="global.html#constructor">constructor</a></li><li><a href="global.html#data">data</a></li><li><a href="global.html#deactivate">deactivate</a></li><li><a href="global.html#dispose">dispose</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#FETCHED_STATUSES">FETCHED_STATUSES</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#getModel">getModel</a></li><li><a href="global.html#getModels">getModels</a></li><li><a href="global.html#ids">ids</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#isLoading">isLoading</a></li><li><a href="global.html#isLoadingIds">isLoadingIds</a></li><li><a href="global.html#isLoadingObjects">isLoadingObjects</a></li><li><a href="global.html#listenToIdsPropertyChangeEvent">listenToIdsPropertyChangeEvent</a></li><li><a href="global.html#parentBehavior">parentBehavior</a></li><li><a href="global.html#prepare">prepare</a></li><li><a href="global.html#privateCollection">privateCollection</a></li><li><a href="global.html#pull">pull</a></li><li><a href="global.html#renderOnFetch">renderOnFetch</a></li><li><a href="global.html#retrieve">retrieve</a></li><li><a href="global.html#retrieveOncePromise">retrieveOncePromise</a></li><li><a href="global.html#returnSingleResult">returnSingleResult</a></li><li><a href="global.html#skipInitialLoad">skipInitialLoad</a></li><li><a href="global.html#stopListeningToIdsPropertyChangeEvent">stopListeningToIdsPropertyChangeEvent</a></li><li><a href="global.html#toJSON">toJSON</a></li><li><a href="global.html#torso">torso</a></li><li><a href="global.html#updateEvents">updateEvents</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Collection</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Collection
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+
+    <h4 class="name" id="Collection"><span class="type-signature"></span>new Collection<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Collection.js.html">Collection.js</a>, <a href="Collection.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li>pollingMixin</li>
+        
+            <li>loadingMixin</li>
+        
+            <li><a href="cacheMixin.html">cacheMixin</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>kent.willis@vecna.com</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="../annotated/modules/Collection.html">Collection Annotated Source</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Generic Collection
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        </div>
+    
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="external-Backbone-Collection.html">external:Backbone-Collection</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="constructor"><span class="type-signature"></span>constructor<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line483">line 483</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.constructor">cacheMixin.constructor</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    The constructor constructor / initialize method for collections.
+Allocate new memory for the local references if they
+were null when this method was called.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">optional options object
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fetchHttpAction</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'POST'</code>
+                
+                </td>
+            
+
+            <td class="description last">http action used to get objects by ids</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>getByIdsUrl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'/ids'</code>
+                
+                </td>
+            
+
+            <td class="description last">path appended to collection.url to get objects by a list of ids</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fetchUsingTrackedIds</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>true</code>
+                
+                </td>
+            
+
+            <td class="description last">if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
+                                                      but will rather call the default fetch method.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="createPrivateCollection"><span class="type-signature"></span>createPrivateCollection<span class="signature">(guid)</span><span class="type-signature"> &rarr; {<a href="PrivateCollection.html">PrivateCollection</a>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line285">line 285</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.createPrivateCollection">cacheMixin.createPrivateCollection</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Used to return a collection of desired models given the requester object.
+Binds a custom "resized" event to the private collections.
+Overrides the fetch method to call the parent collection's fetchByIds method.
+Overrides the registerIds method to redirect to its parent collection.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>guid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Identifier for the requesting view</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an new empty collection of the same type as "this"
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="PrivateCollection.html">PrivateCollection</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="dispose"><span class="type-signature"></span>dispose<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Collection.js.html">Collection.js</a>, <a href="Collection.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Will abolish all listeners and events that are hooked
+to this collection.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fetch"><span class="type-signature"></span>fetch<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line363">line 363</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.fetch">cacheMixin.fetch</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Overrides the base fetch call if this.fetchUsingTrackedIds is true
+Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
+it will pass through to the default fetch.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="fetchByIds"><span class="type-signature"></span>fetchByIds<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line382">line 382</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.fetchByIds">cacheMixin.fetchByIds</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    A custom fetch operation to only fetch the requested Ids.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">argument options
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>idsToFetch</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>collection.collectionTrackedIds</code>
+                
+                </td>
+            
+
+            <td class="description last">A list of request Ids, will default to current tracked ids</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>setOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">if a set is made, then the setOptions will be passed into the set method</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the promise of the fetch
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="filterDefault"><span class="type-signature"></span>filterDefault<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Collection.html">Collection</a>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Collection.js.html">Collection.js</a>, <a href="Collection.js.html#line36">line 36</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    The default filter.  Always returns itself.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    a new instance of this collection
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Collection.html">Collection</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getAllRequestedIds"><span class="type-signature"></span>getAllRequestedIds<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line272">line 272</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.getAllRequestedIds">cacheMixin.getAllRequestedIds</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Return the list of Ids requested by this collection
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    the corresponding requested Ids
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRequesterIds"><span class="type-signature"></span>getRequesterIds<span class="signature">(the)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line233">line 233</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.getRequesterIds">cacheMixin.getRequesterIds</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>the</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">global unique id of the requester</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an array of the ids the requester with the guid has requested
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRequesterIdsAsDictionary"><span class="type-signature"></span>getRequesterIdsAsDictionary<span class="signature">(guid)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line243">line 243</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.getRequesterIdsAsDictionary">cacheMixin.getRequesterIdsAsDictionary</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    This method is used for quick look up of a certain id within the list of requested ids
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>guid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the global unique id of the requester</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an dictionary of id -> id of the requester ids for a given requester.
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getRequesters"><span class="type-signature"></span>getRequesters<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line263">line 263</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.getRequesters">cacheMixin.getRequesters</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    NOTE: this methods returns only the guids for requester collections that are currently tracking ids
+TODO: should this return just the knownPrivateCollections
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    an array of the all requesters in the form of their GUID's
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="registerIds"><span class="type-signature"></span>registerIds<span class="signature">(newIds, guid)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line306">line 306</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.registerIds">cacheMixin.registerIds</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Registers a list of Ids that a particular object cares about and pushes
+any cached models its way.
+
+This method intelligently updates the "_requestedIds" field to contain all unique
+requests for Ids to be fetched.  Furthermore, the "polledFetch" method
+is overriden such that it no longer routes through Backbone's fetch all,
+but rather a custom "fetchByIds" method.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>newIds</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">New ids to register under the requester</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>guid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The GUID of the object that wants the ids</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="removeRequester"><span class="type-signature"></span>removeRequester<span class="signature">(guid)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="mixins_cacheMixin.js.html">mixins/cacheMixin.js</a>, <a href="mixins_cacheMixin.js.html#line252">line 252</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="mixes">Mixes In:</dt>
+
+        <dd class="mixes"><ul>
+        
+            <li><a href="cacheMixin.html#.removeRequester">cacheMixin.removeRequester</a></li>
+        
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    Removes a requester from this cache. No longer receives updates
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>guid</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the global unique id of the requester</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jan 03 2019 17:05:52 GMT-0500 (Eastern Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+</body>
+</html>

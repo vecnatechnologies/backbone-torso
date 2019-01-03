@@ -1,3 +1,8 @@
+/**
+ * The backbone Collection reference
+ * @external Backbone-Collection
+ * @see {@link http://backbonejs.org/#Collection|Backbone.Collection}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/cacheMixin', './mixins/loadingMixin'], factory);
@@ -12,12 +17,18 @@
 
   /**
    * Generic Collection
-   * @module    Torso
-   * @class     Collection
-   * @constructor
+   *
+   * @class Collection
+   * @extends {external:Backbone-Collection}
+   * @mixes pollingMixin
+   * @mixes loadingMixin
+   * @mixes cacheMixin
+   *
    * @author kent.willis@vecna.com
+     *
+     * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
    */
-  var Collection = Backbone.Collection.extend({
+  var Collection = Backbone.Collection.extend(/** @lends Collection.prototype */{
       /**
        * The default filter.  Always returns itself.
        * @return {Collection} a new instance of this collection

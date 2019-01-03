@@ -11,154 +11,6 @@
   <div id="container">
     <div id="background"></div>
     
-      <ul id="jump_to">
-        <li>
-          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
-          <a class="small" href="javascript:void(0);">+</a>
-          <div id="jump_wrapper">
-          <div id="jump_page_wrapper">
-            <div id="jump_page">
-              
-                
-                <a class="source" href="../Behavior.html">
-                  modules/Behavior.js
-                </a>
-              
-                
-                <a class="source" href="../Cell.html">
-                  modules/Cell.js
-                </a>
-              
-                
-                <a class="source" href="../Collection.html">
-                  modules/Collection.js
-                </a>
-              
-                
-                <a class="source" href="../Events.html">
-                  modules/Events.js
-                </a>
-              
-                
-                <a class="source" href="../FormModel.html">
-                  modules/FormModel.js
-                </a>
-              
-                
-                <a class="source" href="../FormView.html">
-                  modules/FormView.js
-                </a>
-              
-                
-                <a class="source" href="../ListView.html">
-                  modules/ListView.js
-                </a>
-              
-                
-                <a class="source" href="../Model.html">
-                  modules/Model.js
-                </a>
-              
-                
-                <a class="source" href="../NestedCell.html">
-                  modules/NestedCell.js
-                </a>
-              
-                
-                <a class="source" href="../NestedModel.html">
-                  modules/NestedModel.js
-                </a>
-              
-                
-                <a class="source" href="../Router.html">
-                  modules/Router.js
-                </a>
-              
-                
-                <a class="source" href="../ServiceCell.html">
-                  modules/ServiceCell.js
-                </a>
-              
-                
-                <a class="source" href="../View.html">
-                  modules/View.js
-                </a>
-              
-                
-                <a class="source" href="DataBehavior.html">
-                  modules/behaviors/DataBehavior.js
-                </a>
-              
-                
-                <a class="source" href="../configure.html">
-                  modules/configure.js
-                </a>
-              
-                
-                <a class="source" href="../handlebarsUtils.html">
-                  modules/handlebarsUtils.js
-                </a>
-              
-                
-                <a class="source" href="../history.html">
-                  modules/history.js
-                </a>
-              
-                
-                <a class="source" href="../mixins/cacheMixin.html">
-                  modules/mixins/cacheMixin.js
-                </a>
-              
-                
-                <a class="source" href="../mixins/cellMixin.html">
-                  modules/mixins/cellMixin.js
-                </a>
-              
-                
-                <a class="source" href="../mixins/loadingMixin.html">
-                  modules/mixins/loadingMixin.js
-                </a>
-              
-                
-                <a class="source" href="../mixins/modelMixin.html">
-                  modules/mixins/modelMixin.js
-                </a>
-              
-                
-                <a class="source" href="../mixins/pollingMixin.html">
-                  modules/mixins/pollingMixin.js
-                </a>
-              
-                
-                <a class="source" href="../registry.html">
-                  modules/registry.js
-                </a>
-              
-                
-                <a class="source" href="../stickitUtils.html">
-                  modules/stickitUtils.js
-                </a>
-              
-                
-                <a class="source" href="../templateRenderer.html">
-                  modules/templateRenderer.js
-                </a>
-              
-                
-                <a class="source" href="../torso.html">
-                  modules/torso.js
-                </a>
-              
-                
-                <a class="source" href="../validation.html">
-                  modules/validation.js
-                </a>
-              
-            </div>
-          </div>
-        </li>
-      </ul>
-    
     <ul class="sections">
         
           <li id="title">
@@ -305,20 +157,17 @@
   }
 
   <span class="hljs-comment">/**
-   * Behaviors defined in Torso.
-   * @module Torso.behaviors
-   * @namespace Torso.behaviors
-   */</span>
-
-  <span class="hljs-comment">/**
    * This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
    * This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
    * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
    *
-   * See https://tonicdev.com/torso/databehavior for more in-depth documentation and details.
-   *
    * @class DataBehavior
+   * @extends Behavior
+   *
    * @author  jyoung@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/Collection.html"&gt;Collection Annotated Source&lt;/a&gt;
+   * @see &lt;a href="../modules/behaviors/DATA_BEHAVIOR.html"&gt;Detailed docs&lt;/a&gt; for more in-depth documentation and details.
    */</span>
   <span class="hljs-keyword">var</span> DataBehavior = Behavior.extend({
     <span class="hljs-comment">/**
@@ -709,7 +558,7 @@ When a view is attached it is rendered anyway.</p>
 
     <span class="hljs-comment">/**
      * Parses this.updateEvents configuration.
-     * @return {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
+     * @return {Object[]} {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
      * @private
      */</span>
     __parseUpdateEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
@@ -722,7 +571,7 @@ When a view is attached it is rendered anyway.</p>
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
-     * @return {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     * @return {Object[]|undefined} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */</span>
