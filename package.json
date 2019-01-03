@@ -9,7 +9,8 @@
     "src": "modules/*.js modules/**/*.js",
     "docs": {
       "annotated": "docs/annotated",
-      "api": "docs/api"
+      "api": "docs/api",
+      "apimd": "docs/apimd"
     }
   },
   "scripts": {
@@ -19,8 +20,9 @@
     "test-func": "karma start",
     "watch:test-func": "npm run test-func -- karma.conf.dev.js --debug",
     "test-import": "gulp test-vendor-globals && gulp test-vendor-commonJs",
-    "doc": "npm run doc-api && npm run doc-annotate",
+    "doc": "npm run doc-api && npm run doc-api-md && npm run doc-annotate",
     "doc-api": "rm -rf $npm_package_paths_docs_api && mkdir $npm_package_paths_docs_api -p && jsdoc -c jsdoc.json -d $npm_package_paths_docs_api",
+    "doc-api-md": "rm -rf $npm_package_paths_docs_apimd/API.md && jsdoc2md -c jsdoc.json modules/View.js modules/Behavior.js modules/torso.js > $npm_package_paths_docs_apimd/API.md",
     "doc-annotate": "rm -rf $npm_package_paths_docs_annotated && mkdir $npm_package_paths_docs_annotated -p && docco $npm_package_paths_src -o $npm_package_paths_docs_annotated",
     "doc:dev": "npm run doc-api:dev & npm run doc-annotate:dev",
     "doc-api:dev": "npm run doc-api && onchange $npm_package_paths_src -- npm run doc-api",
@@ -28,7 +30,8 @@
     "watch-import": "gulp watch-import & npm run doc:dev",
     "clean": "gulp clean",
     "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev",
-    "blah": "docco --help",
+    "jsdoc2md": "jsdoc2md",
+    "blah2": "jsdoc -X -c jsdoc.json modules/torso.js",
     "blah3": "rm -rf docs/jsdoc && jsdoc -c jsdoc.json",
     "blah3:dev": "npm run blah3 && onchange jsdoc.json $npm_package_paths_src -- npm run blah3"
   },
@@ -67,6 +70,7 @@
     "jquery": "^2.2.4",
     "jquery-mockjax": "2.2.1",
     "jsdoc": "^3.5.5",
+    "jsdoc-to-markdown": "^4.0.1",
     "jshint": "^2.9.7",
     "jshint-stylish": "^1.0.1",
     "karma": "^3.1.4",

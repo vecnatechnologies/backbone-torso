@@ -9,7 +9,7 @@
     "template": "node_modules/docdash",
     "encoding": "utf8",
     "recurse": true,
-    "verbose": true,
+    "verbose": false,
     "access": "all"
   },
   "docdash": {

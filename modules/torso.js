@@ -4,11 +4,6 @@
  * @property {external:"Backbone.View"} View
  * @see {@link http://backbonejs.org/|Backbone}
  */
-/**
- * @namespace Torso
- * @property {Behavior} Behavior
- * @property {View} View
- */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['./behaviors/DataBehavior',
@@ -67,6 +62,10 @@
 
   /**
    * File containing all dependencies that exports a single object with everything attached (same format as the global).
+   *
+   * @namespace Torso
+   * @property {Behavior} Behavior
+   * @property {View} View
    *
    * @author    jyoung@vecna.com
    */
