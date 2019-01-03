@@ -178,8 +178,7 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/** @module modules/Behavior */</span>
-(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
     define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'./NestedCell'</span>], factory);
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
@@ -222,12 +221,15 @@
   <span class="hljs-comment">/**
    * Allows abstraction of common view logic into separate object
    *
+   * @class Behavior
    * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
    * @param {Object} behaviorOptions
    *   @param {Backbone.View} behaviorOptions.view that Behavior is attached to
    *   @param {Backbone.View} behaviorOptions.alias the alias for the behavior in this view.
    * @param {Object} [viewOptions] options passed to View's initialize
    * @author  deena.wang@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/Behavior.html"&gt;Behavior Annotated Source&lt;/a&gt;
    */</span>
   <span class="hljs-keyword">var</span> Behavior = NestedCell.extend(<span class="hljs-comment">/** @lends Behavior.prototype */</span>{
     <span class="hljs-comment">/**

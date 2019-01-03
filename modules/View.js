@@ -3,8 +3,6 @@
  * @external "Backbone.View"
  * @see {@link http://backbonejs.org/#View|Backbone.View}
  */
-
-/** @module modules/View */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './templateRenderer', './Cell', './NestedCell', './registry'], factory);
@@ -53,9 +51,11 @@
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
-   * @class
+   * @class View
    * @extends external:"Backbone.View"
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
    */
   var View = Backbone.View.extend(/** @lends View.prototype */{
     viewState: null,

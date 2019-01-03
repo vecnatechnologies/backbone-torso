@@ -183,8 +183,6 @@
  * @external "Backbone.View"
  * @see {@link http://backbonejs.org/#View|Backbone.View}
  */</span>
-
-<span class="hljs-comment">/** @module modules/View */</span>
 (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
     define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'./templateRenderer'</span>, <span class="hljs-string">'./Cell'</span>, <span class="hljs-string">'./NestedCell'</span>, <span class="hljs-string">'./registry'</span>], factory);
@@ -233,9 +231,11 @@
    * Generic View that deals with:
    * - Creation of private collections
    * - Lifecycle of a view
-   * @class
+   * @class View
    * @extends external:"Backbone.View"
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/View.html"&gt;View Annotated Source&lt;/a&gt;
    */</span>
   <span class="hljs-keyword">var</span> View = Backbone.View.extend(<span class="hljs-comment">/** @lends View.prototype */</span>{
     <span class="hljs-attr">viewState</span>: <span class="hljs-literal">null</span>,
