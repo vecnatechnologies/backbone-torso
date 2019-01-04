@@ -1,3 +1,8 @@
+/**
+ * The backbone Events reference
+ * @external Backbone-Events
+ * @see {@link http://backbonejs.org/#Events|Backbone.Events}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone'], factory);
@@ -12,16 +17,25 @@
 
   /**
    * Generic Events.
-   * @module    Torso
+   *
    * @class     Events
-   * @constructor
+   * @extends {external:Backbone-Events}
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/Events.html">Events Annotated Source</a>
    */
   var Events = _.extend({}, Backbone.Events);
 
   return Events;
 }));
 
+/**
+ * The backbone Router reference
+ * @external Backbone-Router
+ * @extends external:Backbone-Events
+ * @see {@link http://backbonejs.org/#Router|Backbone.Router}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
@@ -35,11 +49,15 @@
   'use strict';
   /**
    * Backbone's router.
-   * @module Torso
+   *
    * @class  Router
+   * @extends external:Backbone-Router
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/Router.html">Router Annotated Source</a>
    */
-  return Backbone.Router.extend({});
+  return Backbone.Router.extend(/** @lends Router.prototype */{});
 }));
 
 (function(root, factory) {
@@ -55,6 +73,16 @@
   Backbone.$ = $;
   return true;
 }));
+/**
+ * The handlebars reference
+ * @external Handlebars
+ * @see {@link https://handlebarsjs.com/|Handlebars}
+ */
+ /**
+ * The handlebars Template reference
+ * @external Handlebars-Template
+ * @see {@link https://handlebarsjs.com/|Handlebars}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore'], factory);
@@ -68,29 +96,40 @@
 }(this, function(_) {
   'use strict';
 
+  /**
+   * Extensions to handlebars helpers.
+   *
+   * Adds additonal helpers to {@link external:Handlebars}
+   *
+   * @function handlebarsUtils
+   * @param {external:Handlebars} Handlebars Add the helpers to this Handlebars object.
+   *
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see {@link HandlebarsHelper} for the added helpers.
+   * @see <a href="../annotated/modules/handlebarsUtils.html">handlebarsUtils Annotated Source</a>
+   */
+  /** @namespace HandlebarsHelper */
   return function(Handlebars) {
-
-    /**
-     * Extensions to handlebars helpers.
-     *
-     * @module    Torso
-     * @namespace Torso.Utils
-     * @class     handlebarsUtils
-     * @static
-     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-     */
-    var FEEDBACK_KEY = 'feedback',
-        MODEL_KEY = 'model';
+    var FEEDBACK_KEY = 'feedback';
+    var MODEL_KEY = 'model';
 
     /**
      * Usage: {{labelFor 'fieldName' value="suffix"}}
+     *
      * Generates: for="field-name-suffix"
+     *
      * Usage: {{labelFor 'fieldName[x].sub' value="demo" x=123}}
+     *
      * Generates: for="field-name-123_sub-demo"
+     *
      * Usage: {{labelFor 'fieldName[bar].sub' value="demo" bar="abc"}}
+     *
      * Generates: for="field-name_abc_sub-demo"
+     *
+     * @method HandlebarsHelper.labelFor
      * @param {string} field The field name to convert to a compliant "for" attribute
-     * @param {<Handlebars context>} options Always passed in as final argument
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @return {string} Compliant HTML generating the "for" attribute
      */
@@ -101,15 +140,22 @@
 
     /**
      * Usage: {{bindModel 'fieldName' value='suffix'}}
+     *
      * Generates: id="field-name-suffix" name="field-name" data-model="fieldName" data-feedback="fieldName" value="demo"
+     *
      * Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}
+     *
      * Generates: data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub"
      *            id="field-name-123_sub-demo" value="demo"
+     *
      * Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}
+     *
      * Generates: data-model="fieldName.abc.sub" data-feedback="fieldName[abc].sub" name="field-name_abc_sub"
                   id="field-name_abc_sub-demo" value="demo"
+     *
+     * @method HandlebarsHelper.bindModel
      * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
-     * @param {<Handlebars context>} options Always passed in as final argument
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
      */
@@ -119,13 +165,20 @@
 
     /**
      * Usage: {{feedback 'fieldName'}}
+     *
      * Generates: data-feedback="fieldName"
+     *
      * Usage: {{feedback 'fieldName[x].sub' value='demo' x=123}}
+     *
      * Generates: data-feedback="fieldName[123].sub"
+     *
      * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     *
      * Generates: data-feedback="fieldName[abc].sub"
+     *
+     * @method HandlebarsHelper.feedback
      * @param {string} field The field name to convert to a compliant data-feedback attribute
-     * @param {<Handlebars context>} options Always passed in as final argument
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @return {string} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('feedback', function(field, options) {
@@ -135,11 +188,16 @@
 
     /**
      * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
+     *
      * Generates: id="field-name-123_sub-demo" for="field-name-123_sub-demo" value="demo"
+     *
      * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     *
      * Generates: id="field-name_abc_sub-demo" for="field-name_abc_sub-demo" value="demo"
+     *
+     * @method HandlebarsHelper.formAttr
      * @param {string} field The field name to convert to a compliant data-feedback attribute
-     * @param {<Handlebars context>} options Always passed in as final argument
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
                                               then it will not generate the "value" attribute in the DOM.
@@ -184,7 +242,10 @@
 
     /**
      * Usage: {{feedback 'fieldName[x].sub'}}
+     *
      * Generates: field-name[x]_sub
+     *
+     * @method HandlebarsHelper.dasherize
      * @param {string} str The input string to make HTML compliant (convert to dashes)
      * @return {string} HTML complicant / dasherized string
      */
@@ -204,9 +265,14 @@
 
     /**
      * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');
+     *
      * Generates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'
+     *
      * if options.forceArrayNotation is set then:
+     *
      * Generates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'
+     *
+     * @method HandlebarsHelper.injectFieldIndices
      * @param {string} field The field name
      * @param {Object} indexMap A map of variables
      * @param {Object} options named parameters
@@ -230,6 +296,12 @@
     });
   };
 }));
+/**
+ * The backbone History reference
+ * @external Backbone-History
+ * @extends external:Backbone-Events
+ * @see {@link http://backbonejs.org/#History|Backbone.History}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
@@ -244,10 +316,13 @@
 
   /**
    * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
+   *
+   * @class history
+   * @extends external:Backbone-History
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/history.html">history Annotated Source</a>
    */
   return Backbone.history;
 }));
@@ -266,21 +341,54 @@
 
   /**
    * Registry of instantiated Torso objects
-   * @module    Torso
-   * @class     registry
-   * @constructor
-   * @author kent.willis@vecna.com
+   *
+   * @class registry
+   * @extends external:Backbone-Events
+   *
+   * @author jyoung@vecna.com
+   *
+   * @see <a href="../annotated/modules/registry.html">registry Annotated Source</a>
    */
-
-  // Registry prototype.
   var Registry = function() {
+    /**
+     * The registered cells keyed by their unique cid.
+     * @name cells
+     * @instance
+     * @type {Object.<string, Cell>}
+     * @memberof registry
+     */
     this.cells = {};
+    /**
+     * The registered models keyed by their unique cid.
+     * @name models
+     * @instance
+     * @type {Object.<string, Model>}
+     * @memberof registry
+     */
     this.models = {};
+    /**
+     * The registered services keyed by their unique cid.
+     * @name services
+     * @instance
+     * @type {Object.<string, ServiceCell>}
+     * @memberof registry
+     */
     this.services = {};
+    /**
+     * The registered views keyed by their unique cid.
+     * @name views
+     * @instance
+     * @type {Object.<string, View>}
+     * @memberof registry
+     */
     this.views = {};
   };
 
-  _.extend(Registry.prototype, Backbone.Events, {
+  _.extend(Registry.prototype, Backbone.Events, /** @lends registry.prototype */{
+    /**
+     * The prefix to use for this object's cid.
+     * @type {string}
+     */
     cidPrefix: 'r',
 
     /**
@@ -398,11 +506,11 @@
   /**
    * Extensions to stickit handlers.
    *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
+   * @function stickitUtils
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/stickitUtils.html">stickitUtils Annotated Source</a>
    */
   Backbone.Stickit.addHandler({
     selector: 'input[type="radio"]',
@@ -417,6 +525,17 @@
   });
 }));
 
+/**
+ * The jQuery reference
+ * @external jQuery
+ * @property {external:jQuery-Deferred} Deferred
+ * @see {@link https://api.jquery.com/category/selectors/|jQuery}
+ */
+/**
+ * The jQuery Deferred reference
+ * @external jQuery-Deferred
+ * @see {@link https://api.jquery.com/category/deferred-object/|jQuery.Deferred}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone'], factory);
@@ -440,6 +559,7 @@
    * Recurses for nested Element Nodes only.
    * There is always room for optimizing this method.
    *
+   * @memberof templateRenderer
    * @param {Node} currentNode The DOM Node corresponding to the existing page content to update
    * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
    * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
@@ -575,17 +695,17 @@
    * Static Template Engine.
    * All template renders should be piped through this method.
    *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     templateRenderer
-   * @static
-   * @author    ariel.wexler@vecna.com
+   * @namespace templateRenderer
+   *
+   * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/templateRenderer.html">templateRenderer Annotated Source</a>
    */
-  var templateRenderer = {
+  var templateRenderer = /** @lends templateRenderer */ {
     /**
      * Performs efficient re-rendering of a template.
-     * @param  {jQueryObject} $el The Element to render into
-     * @param  {Handlebars Template} template The HBS template to apply
+     * @param  {external:jQuery} $el The Element to render into
+     * @param  {external:Handlebars-Template} template The HBS template to apply
      * @param  {Object} context The context object to pass to the template
      * @param  {Object} [opts] Other options
      * @param  {boolean} [opts.force=false] Will forcefully do a fresh render and not a diff-render
@@ -613,7 +733,6 @@
      * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
      * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
      */
-
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret, activeElement,
           currentNodeContainsActiveElement = false;
@@ -741,6 +860,8 @@
    * @mixin cacheMixin
    *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/cacheMixin.html">cacheMixin Annotated Source</a>
    */
   var mixin = function(base) {
 
@@ -827,7 +948,7 @@
 
           /**
            * Tracks a new id
-           * @param {string|Number} id the id attribute of the model
+           * @param {(string|Number)} id the id attribute of the model
            */
           trackNewId: function(id) {
             this.trackIds(this.getTrackedIds().concat(id));
@@ -1255,6 +1376,8 @@
    *
    * @mixin cellMixin
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/cellMixin.html">cellMixin Annotated Source</a>
    */
   return /** @lends cellMixin */ {
     /**
@@ -1321,14 +1444,15 @@
   /**
    * Loading logic.
    *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  loadingMixin
+   * @mixin loadingMixin
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/loadingMixin.html">loadingMixin Annotated Source</a>
    */
   var loadingMixin = function(base) {
 
-    return {
+    return /** @lends loadingMixin */ {
       /**
        * Adds the loading mixin
        * @param {Object} args the arguments to the base constructor method
@@ -1375,6 +1499,8 @@
       /**
        * Base load function that will trigger a "load-begin" and a "load-complete" as
        * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       *
+       * @private
        * @param {Function} fetchMethod - the method to invoke a fetch
        * @param {Object} options - the object to hold the options needed by the fetchMethod
        * @return {Promise} a promise when the fetch method has completed and the events have been triggered
@@ -1418,14 +1544,16 @@
   }
 }(this, function(_, registry) {
   'use strict';
+
   /**
    * The base for a model
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  modelMixin
+   *
+   * @mixin modelMixin
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/modelMixin.html">modelMixin Annotated Source</a>
    */
-  return {
+  return /** @lends modelMixin */ {
     /**
      * Register this item with the model registry after initialize.
      * @private
@@ -1448,6 +1576,7 @@
 
     /**
      * Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.
+     * @function
      */
     _dispose: _.noop
   };
@@ -1468,12 +1597,14 @@
    *
    * The polling functionality should only be used for collections and for models that are not
    * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  pollingMixin
+   *
+   * @mixin pollingMixin
+   *
    * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/pollingMixin.html">pollingMixin Annotated Source</a>
    */
-  var pollingMixin = {
+  var pollingMixin = /** @lends pollingMixin */ {
     /**
      * @property {number} pollTimeoutId The id from when setTimeout was called to start polling.
      */
@@ -1586,6 +1717,7 @@
 /**
  * The backbone Collection reference
  * @external Backbone-Collection
+ * @extends external:Backbone-Events
  * @see {@link http://backbonejs.org/#Collection|Backbone.Collection}
  */
 (function(root, factory) {
@@ -1610,8 +1742,8 @@
    * @mixes cacheMixin
    *
    * @author kent.willis@vecna.com
-     *
-     * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
+   *
+   * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
    */
   var Collection = Backbone.Collection.extend(/** @lends Collection.prototype */{
       /**
@@ -1646,6 +1778,7 @@
 /**
  * The backbone Model reference
  * @external Backbone-Model
+ * @extends external:Backbone-Events
  * @see {@link http://backbonejs.org/#Model|Backbone.Model}
  */
 (function(root, factory) {
@@ -1708,9 +1841,11 @@
 
   /**
    * Generic Nested Cell
-   * @module    Torso
-   * @class     NestedCell
-   * @constructor
+   *
+   * @class NestedCell
+   * @extends NestedModel
+   * @mixes cellMixin
+   *
    * @param {Object} attributes the initial attributes to use for this cell.
    * @param {Object} [options={}] the options for setting up this cell.
    *   @param {boolean} [options.register=false] whether to register this cell in the app-level registry.
@@ -1718,8 +1853,10 @@
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/NestedCell.html">NestedCell Annotated Source</a>
    */
-  var NestedCell = TorsoNestedModel.extend({
+  var NestedCell = TorsoNestedModel.extend(/** @lends NestedCell.prototype */{
     /**
      * Register this item with the cell registry after initialize.
      * @private
@@ -1734,6 +1871,12 @@
   return NestedCell;
 }));
 
+/**
+ * The Backbone-Nested reference
+ * @external Backbone-NestedModel
+ * @extends external:Backbone-Model
+ * @see {@link https://github.com/afeld/backbone-nested|backbone-nested}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './mixins/pollingMixin', './mixins/modelMixin', 'backbone-nested'], factory);
@@ -1749,9 +1892,12 @@
 
   /**
    * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
+   *
+   * @class NestedModel
+   * @extends external:Backbone-NestedModel
+   * @mixes pollingMixin
+   * @mixes modelMixin
+   *
    * @param {Object} attributes the initial attributes to use for this model.
    * @param {Object} [options={}] the options for setting up this model.
    *   @param {boolean} [options.register=false] whether to register this model in the app-level registry.
@@ -1759,8 +1905,10 @@
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/NestedModel.html">NestedModel Annotated Source</a>
    */
-  var NestedModel = Backbone.NestedModel.extend({
+  var NestedModel = Backbone.NestedModel.extend(/** @lends NestedModel.prototype */{
     constructor: function(attributes, options) {
       Backbone.NestedModel.apply(this, arguments);
       options = options || {};
@@ -1806,9 +1954,10 @@
   var Behavior = NestedCell.extend(/** @lends Behavior.prototype */{
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
+     * @name alias
      * @type {string}
+     * @memberof Behavior.prototype
      */
-     alias: null,
 
     /**
      * cidPrefix of Behaviors
@@ -2005,9 +2154,58 @@
 }));
 
 
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['underscore', './Cell', './registry'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('underscore'), require('./Cell'), require('./registry'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.ServiceCell = factory(root._, root.Torso.Cell, root.Torso.registry);
+  }
+}(this, function(_, Cell, registry) {
+  'use strict';
+  /**
+   * A service cell is a event listening and event emitting object that is independent of any model or view.
+   *
+   * @class ServiceCell
+   * @extends Cell
+   *
+   * @param {Object} attributes the initial attributes to use for this service.
+   * @param {Object} [options={}] the options for setting up this service.
+   *   @param {boolean} [options.register=true] whether to register this service in the app-level registry.
+   *                                            By default this WILL add it to the registry unless set to false because
+   *                                            most services are global so holding on to them beyond
+   * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/ServiceCell.html">ServiceCell Annotated Source</a>
+   */
+  var ServiceCell = Cell.extend(/** @lends ServiceCell.prototype */{
+    constructor: function() {
+      var args = Array.prototype.slice.call(arguments);
+      args[1] = args[1] || {};
+      // Register by default.
+      args[1].register = _.isUndefined(args[1].register) || _.isNull(args[1].register) || args[1].register;
+      Cell.apply(this, args);
+    },
+
+    /**
+     * Register this item with the service registry after initialize.
+     * @private
+     * @override
+     */
+    __register: function() {
+      registry.serviceInitialized(this);
+    }
+  });
+
+  return ServiceCell;
+}));
+
 /**
  * The backbone View reference
  * @external Backbone-View
+ * @extends external:Backbone-Events
  * @see {@link http://backbonejs.org/#View|Backbone.View}
  */
 (function(root, factory) {
@@ -2318,7 +2516,7 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param {jQuery} [$el] the element to attach to. This element will be replaced with this view.
+     * @param {external:jQuery} [$el] the element to attach to. This element will be replaced with this view.
      *                       If options.replaceMethod is provided, then this parameter is ignored.
      * @param {Object} [options] optional options
      * @param   {Fucntion} [options.replaceMethod] if given, this view will invoke replaceMethod function
@@ -2362,7 +2560,7 @@
      *     previousView: the previous view (can be undefined)
      *     parentView: the parent view transitioning in or out the tracked view
      *   }
-     * @param {jQuery|string} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
+     * @param {(external:jQuery|string)} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
      * @param {View}   view   The instantiated view object to be attached
      * @param {Object} [options] optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
      * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
@@ -3040,7 +3238,7 @@
     /**
      * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
      * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
-     * @param {jQuery} $el the element to attach to.
+     * @param {external:jQuery} $el the element to attach to.
      * @param {View} newView the view to be transitioned in.
      * @param {Object} [options] optional options object
      * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
@@ -3106,7 +3304,7 @@
 
     /**
      * Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method
-     * @param {jQuery} $el the injection site element to be replaced
+     * @param {external:jQuery} $el the injection site element to be replaced
      * @param {Object} [options] Optional options
      * @param   {Function} [options.replaceMethod] use an alternative replace method. Invoked with the view's element as the argument.
      * @param   {boolean} [options.discardInjectionSite=false] if true, the view will not save a reference to the injection site after replacement.
@@ -3348,7 +3546,7 @@
      * Returns all elements on the page that match the feedback mapping
      * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
      * @param {string} dest the string of the data-feedback
-     * @return {jQuery} all elements on the page that match the feedback mapping
+     * @return {external:jQuery} all elements on the page that match the feedback mapping
      * @private
      */
     __getFeedbackDestinations: function(dest) {
@@ -3506,51 +3704,6 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['underscore', './Cell', './registry'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('underscore'), require('./Cell'), require('./registry'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.ServiceCell = factory(root._, root.Torso.Cell, root.Torso.registry);
-  }
-}(this, function(_, Cell, registry) {
-  'use strict';
-  /**
-   * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @constructor
-   * @param {Object} attributes the initial attributes to use for this service.
-   * @param {Object} [options={}] the options for setting up this service.
-   *   @param {boolean} [options.register=true] whether to register this service in the app-level registry.
-   *                                            By default this WILL add it to the registry unless set to false because
-   *                                            most services are global so holding on to them beyond
-   * @author kent.willis@vecna.com
-   */
-  var ServiceCell = Cell.extend({
-    constructor: function() {
-      var args = Array.prototype.slice.call(arguments);
-      args[1] = args[1] || {};
-      // Register by default.
-      args[1].register = _.isUndefined(args[1].register) || _.isNull(args[1].register) || args[1].register;
-      Cell.apply(this, args);
-    },
-
-    /**
-     * Register this item with the service registry after initialize.
-     * @private
-     * @override
-     */
-    __register: function() {
-      registry.serviceInitialized(this);
-    }
-  });
-
-  return ServiceCell;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
     define(['underscore', './NestedModel'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('./NestedModel'));
@@ -3651,10 +3804,11 @@
   /**
    * Validation object containing validation mixin.
    *
-   * @module    Torso
-   * @namespace Torso
-   * @class  validation
+   * @namespace Validation
+   *
    * @author ariel.wexler@vecna.com, kent.willis@mostlyepic.com
+   *
+   * @see <a href="../annotated/modules/validation.html">validation Annotated Source</a>
    */
   var Validation = (function(){
 
@@ -3890,17 +4044,21 @@
       }
     };
 
-    // Contains the methods that are mixed in on the model when binding
+    /**
+     * Contains the methods that are mixed in on the model when binding
+     *
+     * @mixin validationMixin
+     */
     var mixin = function(options) {
-      return {
+      return /** @lends validationMixin */ {
 
         /**
          * Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but
          * you can pass in different values to use in the validation process instead.
-         * @param {string or Object or Array} attr Either the name of the attribute, an array containing many attribute names, or
+         * @param {(string|Object|string[])} attr Either the name of the attribute, an array containing many attribute names, or
          * on object with attribute name to values
          * @param {Any} [value] a value to use for the attribute value instead of using the model's value.
-         * @return undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
+         * @return {(undefined|string|Object)} undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
          * and the error as the value
          */
         preValidate: function(attr, value) {
@@ -3931,9 +4089,11 @@
           }
         },
 
-        // Check to see if an attribute, an array of attributes or the
-        // entire model is valid. Passing true will force a validation
-        // of the model.
+        /**
+         * Check to see if an attribute, an array of attributes or the
+         * entire model is valid. Passing true will force a validation
+         * of the model.
+         */
         isValid: function(option) {
           var flattened, attrs, error, invalidAttrs;
 
@@ -3970,9 +4130,11 @@
           return attrs ? !invalidAttrs : this.validation ? this._isValid : true;
         },
 
-        // This is called by Backbone when it needs to perform validation.
-        // You can call it manually without any parameters to validate the
-        // entire model.
+        /**
+         * This is called by Backbone when it needs to perform validation.
+         * You can call it manually without any parameters to validate the
+         * entire model.
+         */
         validate: function(attrs, setOptions){
           var model = this;
           var opt = _.extend({}, options, setOptions);
@@ -4002,18 +4164,27 @@
     };
 
     // Returns the public methods on Backbone.Validation
-    return {
+    return /** @lends Validation */ {
 
-      // Current version of the library
+      /**
+       * Current version of the library
+       * @type {string}
+       */
       version: '0.11.3',
 
-      // Called to configure the default options
+      /**
+       * Called to augment configure the default options
+       * @param options
+       */
       configure: function(options) {
         _.extend(defaultOptions, options);
       },
 
-      // Used to extend the Backbone.Model.prototype
-      // with validation
+      /**
+       * Used to extend the Backbone.Model.prototype with validation
+       *
+       * @type {validationMixin}
+       */
       mixin: mixin(defaultOptions)
     };
   }());
@@ -4299,46 +4470,50 @@
 
   /**
    * Generic Form Model
-   * @module    Torso
-   * @class     FormModel
-   * @constructor
+   *
+   * @class FormModel
+   * @extends NestedModel
+   * @mixes validationMixin
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/FormModel.html">FormModel Annotated Source</a>
    */
-  var FormModel = NestedModel.extend({
+  var FormModel = NestedModel.extend(/** @lends FormModel.prototype */{
     /**
      * @private
      * @property __currentMappings
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __cache
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __currentObjectModels
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __currentUpdateEvents
      * @type Array
-     **/
+     */
     /**
      * @property validation
      * @type Object
-     **/
+     */
     /**
      * @property labels
      * @type Object
-     **/
+     */
     /**
      * Map from aliases (either model names or computed value names) to mappings.
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property mapping
      * @type Object
-     **/
+     */
     mapping: undefined,
 
     /**
@@ -4346,7 +4521,7 @@
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property models
      * @type Object
-     **/
+     */
     models: undefined,
 
     /**
@@ -4442,12 +4617,12 @@
      *   },
      * }, optional model map)
      * @param {string} alias the name for the mapping - either a model mapping or a computed mapping
-     * @param {string, Boolean or Object} mapping Provides the mapping for this alias. If trying to map to a model, then either provide
+     * @param {(string|boolean|Object)} mapping Provides the mapping for this alias. If trying to map to a model, then either provide
      *  a space delimited list of fields to track as a String or the boolean true to track all the model's fields. If the mapping is for
      *  a computed value, then provide a map from model alias to model mapping for all the fields needed for the computed and a pull method
      *  if you want to change/combine/split object model properties before bringing them into the form model and a push method if you want to
      *  change/combine/split form model properties before pushing them to the object models.
-     * @param {Object or Backbone.Model instance} [models] Provides instances to use for this mapping. If mapping is a computed,
+     * @param {Object|external:Backbone-Model} [models] Provides instances to use for this mapping. If mapping is a computed,
      *   provide a map from alias to model instance. If mapping is for a single model, just provide the model instance for that alias.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
@@ -4502,7 +4677,7 @@
      *   }
      * }, optional model map)
      * @param {Object} mappings Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.
-     * @param {Object} [models] this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are backbone model instances.
+     * @param {Object} [models] this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are external:Backbone-Models.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
     setMappings: function(mappings, models, copy) {
@@ -4516,8 +4691,8 @@
 
     /**
      * Remove a mapping (model or computed) by alias
-     * @param {string or Backbone.Model instance} aliasOrModel if a String is provided, it will unset the mapping with that alias.
-     *   If a Backbone Model instance is provided, it will remove the model mapping that was bound to that model.
+     * @param {string|external:Backbone-Model} aliasOrModel if a String is provided, it will unset the mapping with that alias.
+     *   If a external:Backbone-Model is provided, it will remove the model mapping that was bound to that model.
      * @param {boolean} [removeModelIfUntracked=false] If true, after the mapping is removed, the model will also be unset but only if
      *   no other mappings reference it. Note, setting this to true will not remove any computed mappings that also use that model.
      */
@@ -4544,7 +4719,7 @@
     /**
      * Returns the object model currently bound to the given name/alias.
      * @param {string} alias the name/alias used by the mappings.
-     * @return {Backbone Model instance} the model currently bound to the alias
+     * @return {external:Backbone-Model} the model currently bound to the alias
      */
     getTrackedModel: function(alias) {
       return this.__currentObjectModels[alias];
@@ -4559,8 +4734,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/trackModel:method"}}.trackModel(){{/crossLink}}
-     * @deprecated use .trackModel() instead.
+     * Use {@link FormModel#trackModel} instead.
+     * @see {@link FormModel#trackModel}
+     * @deprecated
      */
     setTrackedModel: function() {
       this.trackModel.apply(this, arguments);
@@ -4569,7 +4745,7 @@
     /**
      * Update or create a binding between an object model and an alias.
      * @param {string} alias the alias/name to bind to.
-     * @param {Backbone Model instance} model the model to be bound. Mappings referencing this alias will start applying to this model.
+     * @param {external:Backbone-Model} model the model to be bound. Mappings referencing this alias will start applying to this model.
      * @param {boolean} [copy=false] if true, the form model will perform a pull on any mappings using this alias.
      */
     trackModel: function(alias, model, copy) {
@@ -4593,8 +4769,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/trackModels:method"}}.trackModels(){{/crossLink}}
-     * @deprecated use .trackModels() instead.
+     * Use {@link FormModel#trackModels} instead.
+     * @see {@link FormModel#trackModels}
+     * @deprecated
      */
     setTrackedModels: function() {
       this.trackModels.apply(this, arguments);
@@ -4602,7 +4779,7 @@
 
     /**
      * Binds multiple models to their aliases.
-     * @param {Map from String to Backbone Model instances} models A map from alias/name to model to be bound to that alias.
+     * @param {Object.<string, external:Backbone-Model>} models A map from alias/name to model to be bound to that alias.
      * @param {boolean} [copy=false] if true, the form model will perform a pull on any mapping using these models.
      */
     trackModels: function(models, copy) {
@@ -4612,8 +4789,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/untrackModel:method"}}.untrackModel(){{/crossLink}}
-     * @deprecated use .untrackModel() instead.
+     * Use {@link FormModel#untrackModel} instead.
+     * @see {@link FormModel#untrackModel}
+     * @deprecated
      */
     unsetTrackedModel: function() {
       this.untrackModel.apply(this, arguments);
@@ -4621,7 +4799,7 @@
 
     /**
      * Removes the binding between a model alias and a model instance. Effectively stops tracking that model.
-     * @param {string or Backbone Model instance} aliasOrModel If a string is given, it will unset the model using that alias. If a model instance
+     * @param {string|external:Backbone-Model} aliasOrModel If a string is given, it will unset the model using that alias. If a model instance
      *   is given, it will unbind whatever alias is currently bound to it.
      */
     untrackModel: function(aliasOrModel) {
@@ -4636,8 +4814,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/untrackModels:method"}}.untrackModels(){{/crossLink}}
-     * @deprecated use .untrackModels() instead.
+     * Use {@link FormModel#untrackModels} instead.
+     * @see {@link FormModel#untrackModels}
+     * @deprecated
      */
     unsetTrackedModels: function() {
       this.untrackModels.apply(this, arguments);
@@ -4885,9 +5064,9 @@
 
     /**
      * Returns the aliases/names of models referenced in the computed mapping with the given alias
-     * @param {string|Object} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
+     * @param {(string|Object)} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
      *   an object if it hasn't been added as a mapping yet.
-     * @return {Array of Strings} an array of the model names/aliases referenced inside the computed mapping
+     * @return {string[]} an array of the model names/aliases referenced inside the computed mapping
      * @private
      */
     __getModelAliases: function(computedAliasOrConfig) {
@@ -4906,8 +5085,10 @@
     /**
      * Repackages a computed mapping to be easier consumed by methods wanting the model mappings tied to the model instances.
      * Returns a list of objects that contain the model instance and the mapping for that model.
+     *
+     * @private
      * @param {string} computedAlias the name/alias used for this computed
-     * @return {Array of Objects} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
+     * @return {object[]} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
      */
     __getComputedModelConfigs: function(computedAlias) {
       var hasAllModels = true,
@@ -5076,7 +5257,7 @@
     /**
      * NOTE: When looking to update the form model manually, call this.pull().
      * Updates this form model with the changed attributes of a given object model
-     * @param {Backbone.Model instance} model the object model that has been changed
+     * @param {external:Backbone-Model} model the object model that has been changed
      * @private
      */
     __updateFormModel: function(model) {
@@ -5088,7 +5269,7 @@
 
     /**
      * Updates the form model's snapshot of the model's attributes to use later
-     * @param {Backbone.Model instance} model the object model
+     * @param {external:Backbone-Model} model the object model
      * @param {Object} [cache=this.__cache] if passed an object (can be empty), this method will fill
      *   this cache object instead of this form model's __cache field
      * @private
@@ -5118,7 +5299,7 @@
 
     /**
      * Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.
-     * @param {string or Backbone.Model instance} aliasOrModel If string, just returns this string. If a model instance, then the alias
+     * @param {string|external:Backbone-Model} aliasOrModel If string, just returns this string. If a model instance, then the alias
      *   that is bound to the tracked model passed in will be found and returned.
      * @return {string} the alias
      * @private
@@ -5137,7 +5318,7 @@
     },
 
     /**
-     * @param {Backbone.Model instance} model the model to create the hash value from
+     * @param {external:Backbone-Model} model the model to create the hash value from
      * @return {string} the hash value of the model making sure to only use the tracked fields
      * @private
      */
@@ -5160,7 +5341,7 @@
 
     /**
      * Deep clones the attributes. There should be no functions in the attributes
-     * @param {Object|Array|Basic Data Type} val a non-function value
+     * @param {(Object|Array|string|number|boolean)} val a non-function value
      * @return the clone
      * @private
      */
@@ -5256,7 +5437,7 @@
     /**
      * Returns a map where the keys are the fields that are being tracked on tracked model and values are
      * the with current values of those fields.
-     * @param {Backbone.Model instance} model the object model
+     * @param {external:Backbone-Model} model the object model
      * @return {Object} aa map where the keys are the fields that are being tracked on tracked model and
      *   values are the with current values of those fields.
      * @private
@@ -5292,7 +5473,7 @@
     /**
      * Returns a useful data structure that binds a tracked model to the fields being tracked on a mapping.
      * @param modelAlias
-     * @param {Array of Strings or undefined} fields the fields that the model is tracking. Can be undefined if tracking all fields.
+     * @param {(string[]|undefined)} fields the fields that the model is tracking. Can be undefined if tracking all fields.
      *   When creating a model config for a computed mapping, the fields refers to the fields being tracked only for that computed value.
      * @return {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
      *   it will return undefined.
@@ -5458,7 +5639,7 @@
     /**
      * Handles the removal of an item view if a model has been removed from the collection
      * @private
-     * @param {Backbone Model instance} model the model that has been removed
+     * @param {external:Backbone-Model} model the model that has been removed
      */
     removeItemView = function(model) {
       var itemView = this.getItemViewFromModel(model);
@@ -5474,9 +5655,9 @@
      * Disposes of an item view, unregisters, stops tracking and triggers a 'item-view-removed' event
      * with the model and an item view as the payload.
      * @private
-     * @param {Backbone View instance} itemView the view being removed
-     * @param {string|Number} modelId the id used for the model
-     * @param {Backbone Model instance} [model] the model
+     * @param {external:Backbone-View} itemView the view being removed
+     * @param {(string|Number)} modelId the id used for the model
+     * @param {external:Backbone-Model} [model] the model
      */
     _removeItemView = function(itemView, modelId, model) {
       itemView.dispose();
@@ -5508,8 +5689,8 @@
      * or if this item view is the first, it will cause a re-render. This method will break
      * any delayed renders and force a re-render before continuing.
      * @private
-     * @param itemView the view being added
-     * @param indexOfModel - the index of the model into the array of models to render
+     * @param {View} itemView the view being added
+     * @param {number} indexOfModel - the index of the model into the array of models to render
      */
     _addItemView = function(itemView, indexOfModel) {
       var viewAfter, viewBefore, replaceMethod,
@@ -5538,12 +5719,15 @@
 
   /**
    * A view that is backed by a collection that managers views per model in the collection.
-   * @module    Torso
-   * @class     ListView
-   * @constructor
+   *
+   * @class ListView
+   * @extends View
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/ListView.html">ListView Annotated Source</a>
    */
-  var ListView = View.extend({
+  var ListView = View.extend(/** @lends ListView.prototype */{
     /**
      * The collection that holds the models that this list view will track
      * @property collection
@@ -5555,20 +5739,20 @@
      * itemView can also be a function that takes a model and returns a view class. This allows
      * for different view classes depending on the model.
      * @property itemView
-     * @type View or Function
+     * @type {(View|Function)}
      */
     itemView: null,
     /**
      * The template that allows a list view to hold it's own HTML like filter buttons, etc.
      * @property template
-     * @type HTML Template
+     * @type external:Handlebars-Template
      */
     template: null,
     /**
      * If provided, this template that will be shown if the modelsToRender() method returns
      * an empty list. If an itemContainer is provided, the empty template will be rendered there.
      * @property emptyTemplate
-     * @type HTML Template
+     * @type external:Handlebars-Template
      */
     emptyTemplate: null,
     /**
@@ -5593,16 +5777,16 @@
     /**
      * Constructor for the list view object.
      * @param {Object} args - options argument
-     *   @param {Backbone.View definition or Function} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
-     *   @param {Backbone.Collection instance} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
-     *   @param {Object|Function} [args.itemContext] - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
-     *   @param {HTML Template} [args.template] - allows a list view to hold it's own HTML like filter buttons, etc.
+     *   @param {(external:Backbone-View|function)} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
+     *   @param {external:Backbone-Collection} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
+     *   @param {(Object|Function)} [args.itemContext] - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
+     *   @param {external:Handlebars-Template} [args.template] - allows a list view to hold it's own HTML like filter buttons, etc.
      *   @param {string} [args.itemContainer]  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     *   @param {HTML Template} [args.emptyTemplate] - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
-     *   @param {Function} [args.modelsToRender] - If provided, this function will override the modelsToRender() method with custom functionality.
+     *   @param {external:Handlebars-Template} [args.emptyTemplate] - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
+     *   @param {function} [args.modelsToRender] - If provided, this function will override the modelsToRender() method with custom functionality.
      *   @param {number} [args.renderWait=0] - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
-     *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
-     *   @param [args.modelName='model'] {string} - name of the model argument passed to the item view during initialization
+     *   @param {string} [args.modelId='cid'] - one of ('cid' or 'id'): model property used as identifier for a given model. This property is saved and used to find the corresponding view.
+     *   @param {string} [args.modelName='model'] - name of the model argument passed to the item view during initialization
      */
     constructor: function(args) {
       View.apply(this, arguments);
@@ -5639,7 +5823,7 @@
      * and has the option of removing listeners on a previous collection. It will immediately update child
      * views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument
      *
-     * @param {Backbone.Collection instance} collection the new collection that this list view should use.
+     * @param {external:Backbone-Collection} collection the new collection that this list view should use.
      * @param {boolean} preventUpdate if true, the list view will not update the child views nor rerender.
      */
     setCollection: function(collection, preventUpdate) {
@@ -5661,8 +5845,8 @@
     },
 
     /**
-     * Override of View.__updateDOM
      * Builds a single DOM fragment from the item views and attaches it at once.
+     * @override
      */
     updateDOM: function() {
       var injectionSite,
@@ -5826,7 +6010,7 @@
     },
 
     /**
-     * @return {Array of views} Returns unordered list of views generated by this list view
+     * @return {View[]} Returns unordered list of views generated by this list view
      */
     getItemViews: function() {
       var view = this;
@@ -5861,7 +6045,7 @@
      * @private
      * @param {external:Backbone-Model} model the model to create the view from
      * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
-     * @return {Backbone View} the new item view
+     * @return {external:Backbone-View} the new item view
      */
     __createItemView: function(model, noUpdateToIdList) {
       var itemView,
@@ -5882,7 +6066,7 @@
 
     /**
      * Gets all item views that have models that are no longer tracked by modelsToRender
-     * @return {Array} An array of information about stale items. Each object has a 'view' and 'modelId' field
+     * @return {Object[]} An array of information about stale items. Each object has a 'view' and 'modelId' field
      * @private
      */
     __getStaleItemViews: function() {
@@ -5905,11 +6089,11 @@
 
     /**
      * Removes the item views that no longer have models returned by modelsToRender()
-     * @param [staleItemViewInfo] {Array of objects:
+     * @param {Object[]} [staleItemViewInfo] Array of objects:
      *   [{
      *     view: stale item view,
      *     modelId: id of model item
-     *   }]} If provided, stale items will not be found, but this array will be used instead.
+     *   }] If provided, stale items will not be found, but this array will be used instead.
      * @private
      */
     __removeStaleItemViews: function(staleItemViewInfo) {
@@ -5953,9 +6137,11 @@
     /**
      * Attempts to insert new views and remove stale views individually and correctly reorder all views in an
      * attempt to be faster then a full view re-render
-     * @param {Array of Views} oldViews - correctly ordered list of views before making changes to models to render
-     * @param {Array of Views} newViews - the new views created that will be inserted
-     * @param {Array of Views} staleViews - the stale views that will be removed
+     *
+     * @private
+     * @param {View[]} oldViews - correctly ordered list of views before making changes to models to render
+     * @param {View[]} newViews - the new views created that will be inserted
+     * @param {View[]} staleViews - the stale views that will be removed
      */
     __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
       var firstItemViewLeft, injectionSite,
@@ -6003,7 +6189,7 @@
     /**
      * Updates the internal list of model ids that correspond to the models used for the current
      * list of item views. The order is the same order of the item views.
-     * @param {Array of ids} [newIdsList] - if passed the array, it will use that instead of finding the list.
+     * @param {string[]} [newIdsList] - array of ids: if passed the array, it will use that instead of finding the list.
      * @private
      */
     __updateOrderedModelIdList: function(newIdsList) {
@@ -6035,7 +6221,8 @@
     },
 
     /**
-     * Alias method for __generateItemViewArgs()
+     * Alias method for {@link ListView#__generateItemViewArgs}
+     * @private
      */
     __generateChildArgs: function() {
       return this.__generateItemViewArgs.apply(this, arguments);
@@ -6043,8 +6230,8 @@
 
     /**
      * @private
-     * @param {string|Number} modelId id of model
-     * @return {string|Number} view cid that was built from corresponding model
+     * @param {(string|Number)} modelId id of model
+     * @return {(string|Number)} view cid that was built from corresponding model
      */
     __getViewIdFromModelId: function(modelId) {
       return this.__modelToViewMap[modelId];
@@ -6086,9 +6273,9 @@
    * Converts string or number values into an array with a single string or number item.
    * If the input is not a string, number, array, or info about the ids then undefined is returned.
    * This is a private helper method used internally by this behavior and is not exposed in any way.
-   * @param {string|number|string[]|number[]|Object} ids the ids to convert.
+   * @param {(string|number|string[]|number[]|Object)} ids the ids to convert.
    *   @param {boolean} [ids.skipObjectRetrieval] set if this is a meta-info object about the ids.
-   * @return {string[]|number[]|Object} an array of strings or numbers.
+   * @return {(string[]|number[]|Object)} an array of strings or numbers.
    * @private
    */
   function normalizeIds(ids) {
@@ -6151,10 +6338,10 @@
    *
    * @author  jyoung@vecna.com
    *
-   * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
+   * @see <a href="../annotated/modules/behaviors/DataBehavior.html">DataBehavior Annotated Source</a>
    * @see <a href="../modules/behaviors/DATA_BEHAVIOR.html">Detailed docs</a> for more in-depth documentation and details.
    */
-  var DataBehavior = Behavior.extend({
+  var DataBehavior = Behavior.extend(/** @lends DataBehavior */{
     /**
      * The torso collection that is acting as a cache used to create the private collections.
      * This property/option is required.  Instantiation will fail if it is not set.
@@ -6203,8 +6390,8 @@
 
     /**
      * Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).
-     *   - {string|number} - the id to use directly (equivalent to an array of a single id).
-     *   - {string[]|number[]} - the ids to use directly.
+     *   - {(string|number)} - the id to use directly (equivalent to an array of a single id).
+     *   - {(string[]|number[])} - the ids to use directly.
      *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
      *                property on that object to use. The object can fire the change event for the given property
      *                and have a .get('propertyName') method, or it can define the property directly on the idContainer.
@@ -6243,7 +6430,7 @@
      *           var criteria = { ... some criteria ... };
      *           return cache.fetchIdsByCriteria(criteria);
      *         }
-     * @property {string|number|string[]|number[]|Object|Function} ids
+     * @property {(string|number|string[]|number[]|Object|Function)} ids
      */
     ids: undefined,
 
@@ -6257,7 +6444,7 @@
      *   - 'behaviorAlias:eventName' - arbitrary event triggered by another data behavior on this view (eventName can be a change:propertyName event).
      *   - 'behaviorAlias.data:eventName' - arbitrary event triggered by the data of another DataBehavior on this view (eventName can be a change:propertyName event).
      *   - { '<eventName>': < object (or function returning an object) that the event is triggered on > } - arbitrary ('<eventName>') triggered on the supplied object.
-     * @property {string|string[]|Object|Object[]} updateEvents
+     * @property {(string|string[]|Object|Object[])} updateEvents
      */
     updateEvents: undefined,
 
@@ -6285,7 +6472,7 @@
      *   @param {boolean} [behaviorOptions.alwaysFetch=false] see alwaysFetch property.
      *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.id=behaviorOptions.ids] see id property.
      *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.ids=behaviorOptions.id] see ids property.
-     *   @param {string|string[]|Object|Object[]} [behaviorOptions.updateEvents] see updateEvents property.
+     *   @param {(string|string[]|Object|Object[])} [behaviorOptions.updateEvents] see updateEvents property.
      * @param {Object} [viewOptions] options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
@@ -6471,7 +6658,7 @@
      * someDataBehavior.retrieveOncePromise()
      *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
      *
-     * @return {jQuery.Promise} that resolves when the data is successfully fetched and rejects when the fetch fails.
+     * @return {external:jQuery-Deferred} that resolves when the data is successfully fetched and rejects when the fetch fails.
      */
     retrieveOncePromise: function() {
       var retrieveOnceDeferred = $.Deferred();
@@ -6531,7 +6718,7 @@
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
-     * @return {Object[]|undefined} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     * @return {(Object[]|undefined)} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */
@@ -6828,7 +7015,7 @@
 
     /**
      * Rejects the promise chain if this behavior is already disposed.
-     * @return {jQuery.Promise} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @return {external:jQuery-Deferred} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
      * @private
      */
     __abortIfDisposed: function() {
@@ -6911,8 +7098,8 @@
 
     /**
      * Skip retrieving objects if new ids list is empty and existing ids list is empty.
-     * @param {Array|Object} idsResult
-     * @return {Array|Object} either the original idsResult
+     * @param {(Array|Object)} idsResult
+     * @return {(Array|Object)} either the original idsResult
      *                        or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
      *                        and the current ids are empty.
      * @private
@@ -6954,13 +7141,14 @@
   /**
    * Data object used to create the .data property of the DataBehavior.
    * @class Data
-   * @constructor
+   * @inner
+   * @memberof DataBehavior
    */
   var Data = function(options) {
     this.initialize(options);
   };
 
-  _.extend(Data.prototype, Events, {
+  _.extend(Data.prototype, Events, /** @lends Data */ {
     /**
      * Instantiates the data objects and binds it to this behavior instance.
      * @param {Object} options to pass to the initialize methods.
@@ -7011,7 +7199,7 @@
 
     /**
      * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
-     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     * @return {(Object|Object[])} containing the full contents of either the collection or model.
      */
     toJSON: function() {
       var privateCollection = this.privateCollection;
@@ -7036,7 +7224,7 @@
      * If returnSingleResult is true then this will return the given property from the model (if that model exists).
      * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
      * @param {string} [propertyName] the property to get from the model(s).
-     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     * @return {(Object|Object[])} containing the full contents of either the collection or model.
      */
     get: function(propertyName) {
       var privateCollection = this.privateCollection;
@@ -7058,7 +7246,7 @@
     },
 
     /**
-     * @param {number|string} modelId The id of the model to get from the collection.
+     * @param {(number|string)} modelId The id of the model to get from the collection.
      * @return {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
      * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
      */
@@ -7118,7 +7306,6 @@
   return DataBehavior;
 }));
 
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
@@ -7136,67 +7323,79 @@
 
   /**
    * Generic Form View
-   * @module    Torso
-   * @class     FormView
-   * @constructor
+   *
+   * @class FormView
+   * @extends View
+   *
+   * @param {Object} args - options argument
+   * @param {FormModel} [args.model=new this.FormModelClass()] - a form model for binding that defaults to class-level
+                                                                  model or instantiates a FormModelClass
+   * @param {Function} [args.FormModelClass=FormModel] - the class (that extends {@link FormModel}) that will be used as the FormModel. Defaults to a class-level
+                                                    definition or {@link FormModel} if none is provided
+   * @param {external:Handlebars-Template} [args.template] - overrides the template used by this view
+   * @param {Object} [args.events] - events hash: merge + override the events hash used by this view
+   * @param {Object} [args.fields] - field hash: merge + override automated two-way binding field hash used by this view
+   * @param {Object} [args.bindings] - binding hash: merge + override custom epoxy binding hash used by this view
+   *
    * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/FormView.html">FormView Annotated Source</a>
    */
-  var FormView = View.extend({
+  var FormView = View.extend(/** @lends FormView.prototype */{
     /**
      * Validation error hash
      * @private
      * @property _errors
      * @type Object
-     **/
+     */
     /**
      * Validation success
      * @private
      * @property _success
      * @type Boolean
-     **/
+     */
     /**
      * Stickit bindings hash local backup
      * @private
-     * @property _bindings
+     * @name _bindings
+     * @memberof FormView
+     * @instance
      * @type Object
      */
     /**
      * Handlebars template for form
-     * @property template
-     * @type HTMLtemplate
-     **/
+     * @name template
+     * @memberof FormView
+     * @instance
+     * @type external:Handlebars-Template
+     */
     /**
      * Backbone events hash
-     * @property events
+     * @name events
+     * @memberof FormView
+     * @instance
      * @type Object
-     **/
+     */
     /**
      * Two-way binding field customization
-     * @property fields
+     * @name fields
+     * @memberof FormView
+     * @instance
      * @type Object
-     **/
+     */
     /**
      * Stickit bindings hash
-     * @property bindings
+     * @name bindings
+     * @memberof FormView
+     * @instance
      * @type Object
-     **/
+     */
     /**
      * The class to be used when instantiating the form model
-     * @property FormModelClass
-     * @type Torso.FormModel class extension
-     **/
-
-    /**
-     * Constructor the form view object.
-     * @param {Object} args - options argument
-     * @param [args.model=new FormModelClass()] {Torso.FormModel} - a form model for binding that defaults to class-level
-                                                                    model or instantiates a FormModelClass
-     * @param [args.FormModelClass=Torso.FormModel] - the class that will be used as the FormModel. Defaults to a class-level
-                                                      definition or Torso.FormModel if none is provided
-     * @param {HTML Template}  [args.template] - overrides the template used by this view
-     * @param {Events Hash}    [args.events] - merge + override the events hash used by this view
-     * @param {Field Hash}    [args.fields] - merge + override automated two-way binding field hash used by this view
-     * @param {Binding Hash}  [args.bindings] - merge + override custom epoxy binding hash used by this view
+     * @name FormModelClass
+     * @memberof FormView
+     * @instance
+     * @type {FormModel.prototype}
      */
     constructor: function(args) {
       args = args || {};
@@ -7293,7 +7492,7 @@
      * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {(string|string[])} fieldName the name of the form model field or an array of field names
      * @param {string} className the class name to add or remove
      * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
@@ -7317,7 +7516,7 @@
      * If the field is invalid, it removes the text. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {(string|string[])} fieldName the name of the form model field or an array of field names
      * @param {string} text the text to set
      * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
@@ -7362,6 +7561,7 @@
     },
 
     /**
+     * @private
      * @param {string} attr An attribute of the model
      * @return {Object} Any settings that are associates with that attribute
      */
@@ -7377,7 +7577,7 @@
      * @param {Object} [options.viewFormat] The function called before setting view values
      * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
-     * @return {<Stickit Binding Hash>}
+     * @return {Object} Stickit Binding Hash
      */
     __generateModelFieldBinding: function(field, options) {
       var indices = this.__getAllIndexTokens(field);
@@ -7409,7 +7609,7 @@
      * @param {Object} [opts.modelFormat] The function called before setting model values
      * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
-     * @return {<Stickit select options hash>}
+     * @return {Object} Stickit options hash
      */
     __generateSelectOptions: function(element, opts) {
       var collection = [],

@@ -56,7 +56,7 @@
     /**
      * Handles the removal of an item view if a model has been removed from the collection
      * @private
-     * @param {Backbone Model instance} model the model that has been removed
+     * @param {external:Backbone-Model} model the model that has been removed
      */
     removeItemView = function(model) {
       var itemView = this.getItemViewFromModel(model);
@@ -72,9 +72,9 @@
      * Disposes of an item view, unregisters, stops tracking and triggers a 'item-view-removed' event
      * with the model and an item view as the payload.
      * @private
-     * @param {Backbone View instance} itemView the view being removed
-     * @param {string|Number} modelId the id used for the model
-     * @param {Backbone Model instance} [model] the model
+     * @param {external:Backbone-View} itemView the view being removed
+     * @param {(string|Number)} modelId the id used for the model
+     * @param {external:Backbone-Model} [model] the model
      */
     _removeItemView = function(itemView, modelId, model) {
       itemView.dispose();
@@ -106,8 +106,8 @@
      * or if this item view is the first, it will cause a re-render. This method will break
      * any delayed renders and force a re-render before continuing.
      * @private
-     * @param itemView the view being added
-     * @param indexOfModel - the index of the model into the array of models to render
+     * @param {View} itemView the view being added
+     * @param {number} indexOfModel - the index of the model into the array of models to render
      */
     _addItemView = function(itemView, indexOfModel) {
       var viewAfter, viewBefore, replaceMethod,
@@ -136,12 +136,15 @@
 
   /**
    * A view that is backed by a collection that managers views per model in the collection.
-   * @module    Torso
-   * @class     ListView
-   * @constructor
+   *
+   * @class ListView
+   * @extends View
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/ListView.html">ListView Annotated Source</a>
    */
-  var ListView = View.extend({
+  var ListView = View.extend(/** @lends ListView.prototype */{
     /**
      * The collection that holds the models that this list view will track
      * @property collection
@@ -153,20 +156,20 @@
      * itemView can also be a function that takes a model and returns a view class. This allows
      * for different view classes depending on the model.
      * @property itemView
-     * @type View or Function
+     * @type {(View|Function)}
      */
     itemView: null,
     /**
      * The template that allows a list view to hold it's own HTML like filter buttons, etc.
      * @property template
-     * @type HTML Template
+     * @type external:Handlebars-Template
      */
     template: null,
     /**
      * If provided, this template that will be shown if the modelsToRender() method returns
      * an empty list. If an itemContainer is provided, the empty template will be rendered there.
      * @property emptyTemplate
-     * @type HTML Template
+     * @type external:Handlebars-Template
      */
     emptyTemplate: null,
     /**
@@ -191,16 +194,16 @@
     /**
      * Constructor for the list view object.
      * @param {Object} args - options argument
-     *   @param {Backbone.View definition or Function} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
-     *   @param {Backbone.Collection instance} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
-     *   @param {Object|Function} [args.itemContext] - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
-     *   @param {HTML Template} [args.template] - allows a list view to hold it's own HTML like filter buttons, etc.
+     *   @param {(external:Backbone-View|function)} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
+     *   @param {external:Backbone-Collection} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
+     *   @param {(Object|Function)} [args.itemContext] - object or function that's passed to the item view's during initialization under the name "context". Can be used by the item view during their prepare method.
+     *   @param {external:Handlebars-Template} [args.template] - allows a list view to hold it's own HTML like filter buttons, etc.
      *   @param {string} [args.itemContainer]  - (Required if 'template' is provided, ignored otherwise) name of injection site for list of item views
-     *   @param {HTML Template} [args.emptyTemplate] - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
-     *   @param {Function} [args.modelsToRender] - If provided, this function will override the modelsToRender() method with custom functionality.
+     *   @param {external:Handlebars-Template} [args.emptyTemplate] - if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.
+     *   @param {function} [args.modelsToRender] - If provided, this function will override the modelsToRender() method with custom functionality.
      *   @param {number} [args.renderWait=0] - If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.
-     *   @param [args.modelId='cid'] {'cid' or 'id'} - model property used as identifier for a given model. This property is saved and used to find the corresponding view.
-     *   @param [args.modelName='model'] {string} - name of the model argument passed to the item view during initialization
+     *   @param {string} [args.modelId='cid'] - one of ('cid' or 'id'): model property used as identifier for a given model. This property is saved and used to find the corresponding view.
+     *   @param {string} [args.modelName='model'] - name of the model argument passed to the item view during initialization
      */
     constructor: function(args) {
       View.apply(this, arguments);
@@ -237,7 +240,7 @@
      * and has the option of removing listeners on a previous collection. It will immediately update child
      * views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument
      *
-     * @param {Backbone.Collection instance} collection the new collection that this list view should use.
+     * @param {external:Backbone-Collection} collection the new collection that this list view should use.
      * @param {boolean} preventUpdate if true, the list view will not update the child views nor rerender.
      */
     setCollection: function(collection, preventUpdate) {
@@ -259,8 +262,8 @@
     },
 
     /**
-     * Override of View.__updateDOM
      * Builds a single DOM fragment from the item views and attaches it at once.
+     * @override
      */
     updateDOM: function() {
       var injectionSite,
@@ -424,7 +427,7 @@
     },
 
     /**
-     * @return {Array of views} Returns unordered list of views generated by this list view
+     * @return {View[]} Returns unordered list of views generated by this list view
      */
     getItemViews: function() {
       var view = this;
@@ -459,7 +462,7 @@
      * @private
      * @param {external:Backbone-Model} model the model to create the view from
      * @param [noUpdateToIdList=false] if true, the internal order of model ids are not updated
-     * @return {Backbone View} the new item view
+     * @return {external:Backbone-View} the new item view
      */
     __createItemView: function(model, noUpdateToIdList) {
       var itemView,
@@ -480,7 +483,7 @@
 
     /**
      * Gets all item views that have models that are no longer tracked by modelsToRender
-     * @return {Array} An array of information about stale items. Each object has a 'view' and 'modelId' field
+     * @return {Object[]} An array of information about stale items. Each object has a 'view' and 'modelId' field
      * @private
      */
     __getStaleItemViews: function() {
@@ -503,11 +506,11 @@
 
     /**
      * Removes the item views that no longer have models returned by modelsToRender()
-     * @param [staleItemViewInfo] {Array of objects:
+     * @param {Object[]} [staleItemViewInfo] Array of objects:
      *   [{
      *     view: stale item view,
      *     modelId: id of model item
-     *   }]} If provided, stale items will not be found, but this array will be used instead.
+     *   }] If provided, stale items will not be found, but this array will be used instead.
      * @private
      */
     __removeStaleItemViews: function(staleItemViewInfo) {
@@ -551,9 +554,11 @@
     /**
      * Attempts to insert new views and remove stale views individually and correctly reorder all views in an
      * attempt to be faster then a full view re-render
-     * @param {Array of Views} oldViews - correctly ordered list of views before making changes to models to render
-     * @param {Array of Views} newViews - the new views created that will be inserted
-     * @param {Array of Views} staleViews - the stale views that will be removed
+     *
+     * @private
+     * @param {View[]} oldViews - correctly ordered list of views before making changes to models to render
+     * @param {View[]} newViews - the new views created that will be inserted
+     * @param {View[]} staleViews - the stale views that will be removed
      */
     __updateByAddingRemoving: function(oldViews, newViews, staleViews) {
       var firstItemViewLeft, injectionSite,
@@ -601,7 +606,7 @@
     /**
      * Updates the internal list of model ids that correspond to the models used for the current
      * list of item views. The order is the same order of the item views.
-     * @param {Array of ids} [newIdsList] - if passed the array, it will use that instead of finding the list.
+     * @param {string[]} [newIdsList] - array of ids: if passed the array, it will use that instead of finding the list.
      * @private
      */
     __updateOrderedModelIdList: function(newIdsList) {
@@ -633,7 +638,8 @@
     },
 
     /**
-     * Alias method for __generateItemViewArgs()
+     * Alias method for {@link ListView#__generateItemViewArgs}
+     * @private
      */
     __generateChildArgs: function() {
       return this.__generateItemViewArgs.apply(this, arguments);
@@ -641,8 +647,8 @@
 
     /**
      * @private
-     * @param {string|Number} modelId id of model
-     * @return {string|Number} view cid that was built from corresponding model
+     * @param {(string|Number)} modelId id of model
+     * @return {(string|Number)} view cid that was built from corresponding model
      */
     __getViewIdFromModelId: function(modelId) {
       return this.__modelToViewMap[modelId];

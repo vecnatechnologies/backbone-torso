@@ -1,4 +1,3 @@
-
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
@@ -16,67 +15,79 @@
 
   /**
    * Generic Form View
-   * @module    Torso
-   * @class     FormView
-   * @constructor
+   *
+   * @class FormView
+   * @extends View
+   *
+   * @param {Object} args - options argument
+   * @param {FormModel} [args.model=new this.FormModelClass()] - a form model for binding that defaults to class-level
+                                                                  model or instantiates a FormModelClass
+   * @param {Function} [args.FormModelClass=FormModel] - the class (that extends {@link FormModel}) that will be used as the FormModel. Defaults to a class-level
+                                                    definition or {@link FormModel} if none is provided
+   * @param {external:Handlebars-Template} [args.template] - overrides the template used by this view
+   * @param {Object} [args.events] - events hash: merge + override the events hash used by this view
+   * @param {Object} [args.fields] - field hash: merge + override automated two-way binding field hash used by this view
+   * @param {Object} [args.bindings] - binding hash: merge + override custom epoxy binding hash used by this view
+   *
    * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/FormView.html">FormView Annotated Source</a>
    */
-  var FormView = View.extend({
+  var FormView = View.extend(/** @lends FormView.prototype */{
     /**
      * Validation error hash
      * @private
      * @property _errors
      * @type Object
-     **/
+     */
     /**
      * Validation success
      * @private
      * @property _success
      * @type Boolean
-     **/
+     */
     /**
      * Stickit bindings hash local backup
      * @private
-     * @property _bindings
+     * @name _bindings
+     * @memberof FormView
+     * @instance
      * @type Object
      */
     /**
      * Handlebars template for form
-     * @property template
-     * @type HTMLtemplate
-     **/
+     * @name template
+     * @memberof FormView
+     * @instance
+     * @type external:Handlebars-Template
+     */
     /**
      * Backbone events hash
-     * @property events
+     * @name events
+     * @memberof FormView
+     * @instance
      * @type Object
-     **/
+     */
     /**
      * Two-way binding field customization
-     * @property fields
+     * @name fields
+     * @memberof FormView
+     * @instance
      * @type Object
-     **/
+     */
     /**
      * Stickit bindings hash
-     * @property bindings
+     * @name bindings
+     * @memberof FormView
+     * @instance
      * @type Object
-     **/
+     */
     /**
      * The class to be used when instantiating the form model
-     * @property FormModelClass
-     * @type Torso.FormModel class extension
-     **/
-
-    /**
-     * Constructor the form view object.
-     * @param {Object} args - options argument
-     * @param [args.model=new FormModelClass()] {Torso.FormModel} - a form model for binding that defaults to class-level
-                                                                    model or instantiates a FormModelClass
-     * @param [args.FormModelClass=Torso.FormModel] - the class that will be used as the FormModel. Defaults to a class-level
-                                                      definition or Torso.FormModel if none is provided
-     * @param {HTML Template}  [args.template] - overrides the template used by this view
-     * @param {Events Hash}    [args.events] - merge + override the events hash used by this view
-     * @param {Field Hash}    [args.fields] - merge + override automated two-way binding field hash used by this view
-     * @param {Binding Hash}  [args.bindings] - merge + override custom epoxy binding hash used by this view
+     * @name FormModelClass
+     * @memberof FormView
+     * @instance
+     * @type {FormModel.prototype}
      */
     constructor: function(args) {
       args = args || {};
@@ -173,7 +184,7 @@
      * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {(string|string[])} fieldName the name of the form model field or an array of field names
      * @param {string} className the class name to add or remove
      * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
@@ -197,7 +208,7 @@
      * If the field is invalid, it removes the text. When an array is passed in for the fieldName,
      * it will validate all the fields together as if they were one (any failure counts as a total failure,
      * and all fields need to be valid for success).
-     * @param {string or Array<string>} fieldName the name of the form model field or an array of field names
+     * @param {(string|string[])} fieldName the name of the form model field or an array of field names
      * @param {string} text the text to set
      * @param {boolean} [onValid] if true, will reverse the logic operator
      * @private
@@ -242,6 +253,7 @@
     },
 
     /**
+     * @private
      * @param {string} attr An attribute of the model
      * @return {Object} Any settings that are associates with that attribute
      */
@@ -257,7 +269,7 @@
      * @param {Object} [options.viewFormat] The function called before setting view values
      * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
-     * @return {<Stickit Binding Hash>}
+     * @return {Object} Stickit Binding Hash
      */
     __generateModelFieldBinding: function(field, options) {
       var indices = this.__getAllIndexTokens(field);
@@ -289,7 +301,7 @@
      * @param {Object} [opts.modelFormat] The function called before setting model values
      * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
-     * @return {<Stickit select options hash>}
+     * @return {Object} Stickit options hash
      */
     __generateSelectOptions: function(element, opts) {
       var collection = [],

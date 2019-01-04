@@ -1,6 +1,7 @@
 /**
  * The backbone Model reference
  * @external Backbone-Model
+ * @extends external:Backbone-Events
  * @see {@link http://backbonejs.org/#Model|Backbone.Model}
  */
 (function(root, factory) {

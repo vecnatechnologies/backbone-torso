@@ -12,21 +12,54 @@
 
   /**
    * Registry of instantiated Torso objects
-   * @module    Torso
-   * @class     registry
-   * @constructor
-   * @author kent.willis@vecna.com
+   *
+   * @class registry
+   * @extends external:Backbone-Events
+   *
+   * @author jyoung@vecna.com
+   *
+   * @see <a href="../annotated/modules/registry.html">registry Annotated Source</a>
    */
-
-  // Registry prototype.
   var Registry = function() {
+    /**
+     * The registered cells keyed by their unique cid.
+     * @name cells
+     * @instance
+     * @type {Object.<string, Cell>}
+     * @memberof registry
+     */
     this.cells = {};
+    /**
+     * The registered models keyed by their unique cid.
+     * @name models
+     * @instance
+     * @type {Object.<string, Model>}
+     * @memberof registry
+     */
     this.models = {};
+    /**
+     * The registered services keyed by their unique cid.
+     * @name services
+     * @instance
+     * @type {Object.<string, ServiceCell>}
+     * @memberof registry
+     */
     this.services = {};
+    /**
+     * The registered views keyed by their unique cid.
+     * @name views
+     * @instance
+     * @type {Object.<string, View>}
+     * @memberof registry
+     */
     this.views = {};
   };
 
-  _.extend(Registry.prototype, Backbone.Events, {
+  _.extend(Registry.prototype, Backbone.Events, /** @lends registry.prototype */{
+    /**
+     * The prefix to use for this object's cid.
+     * @type {string}
+     */
     cidPrefix: 'r',
 
     /**

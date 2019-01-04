@@ -7,7 +7,6 @@
   },
   "paths": {
     "src": "modules/*.js modules/**/*.js",
-    "src2": "docs/README.md modules/torso.js modules/View.js modules/Model.js modules/Collection.js modules/behaviors/*.js modules/Behavior.js modules/Cell.js modules/mixins/cellMixin.js modules/mixins/cacheMixin.js",
     "docs": {
       "annotated": "docs/annotated",
       "api": "docs/api",
@@ -22,8 +21,8 @@
     "watch:test-func": "npm run test-func -- karma.conf.dev.js --debug",
     "test-import": "gulp test-vendor-globals && gulp test-vendor-commonJs",
     "doc": "npm run doc-api && npm run doc-api-md && npm run doc-annotate",
-    "doc-api": "rm -rf $npm_package_paths_docs_api && mkdir $npm_package_paths_docs_api -p && jsdoc -c jsdoc.json -d $npm_package_paths_docs_api $npm_package_paths_src2",
-    "doc-api-md": "rm -rf $npm_package_paths_docs_apimd/API.md && jsdoc2md $npm_package_paths_src2 --clear && jsdoc2md -c jsdoc.json $npm_package_paths_src2 > $npm_package_paths_docs_apimd/API.md",
+    "doc-api": "rm -rf $npm_package_paths_docs_api && mkdir $npm_package_paths_docs_api -p && jsdoc -c jsdoc.json -d $npm_package_paths_docs_api docs/API-README.md $npm_package_paths_src",
+    "doc-api-md": "rm -rf $npm_package_paths_docs_apimd/API.md && jsdoc2md $npm_package_paths_src --clear && jsdoc2md -c jsdoc.json docs/API-README.md $npm_package_paths_src > $npm_package_paths_docs_apimd/API.md",
     "doc-annotate": "rm -rf $npm_package_paths_docs_annotated && mkdir $npm_package_paths_docs_annotated -p && docco $npm_package_paths_src -o $npm_package_paths_docs_annotated",
     "doc:dev": "npm run doc-api:dev & npm run doc-api-md:dev & npm run doc-annotate:dev",
     "doc-api:dev": "npm run doc-api && onchange package.json jsdoc.json $npm_package_paths_src -- npm run doc-api",
@@ -31,11 +30,7 @@
     "doc-annotate:dev": "npm run doc-annotate && onchange $npm_package_paths_src -- docco {{changed}} -o $npm_package_paths_docs_annotated",
     "watch-import": "gulp watch-import & npm run doc:dev",
     "clean": "gulp clean",
-    "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev",
-    "jsdoc2md": "jsdoc2md -c jsdoc.json $npm_package_paths_src2",
-    "blah2": "jsdoc -X -c jsdoc.json modules/torso.js",
-    "blah3": "rm -rf docs/jsdoc && jsdoc -c jsdoc.json",
-    "blah3:dev": "npm run blah3 && onchange jsdoc.json $npm_package_paths_src -- npm run blah3"
+    "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev"
   },
   "main": "modules/torso.js",
   "dependencies": {

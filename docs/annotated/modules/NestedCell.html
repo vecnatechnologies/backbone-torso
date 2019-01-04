@@ -192,9 +192,11 @@
 
   <span class="hljs-comment">/**
    * Generic Nested Cell
-   * @module    Torso
-   * @class     NestedCell
-   * @constructor
+   *
+   * @class NestedCell
+   * @extends NestedModel
+   * @mixes cellMixin
+   *
    * @param {Object} attributes the initial attributes to use for this cell.
    * @param {Object} [options={}] the options for setting up this cell.
    *   @param {boolean} [options.register=false] whether to register this cell in the app-level registry.
@@ -202,8 +204,10 @@
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
    * @author kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/NestedCell.html"&gt;NestedCell Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> NestedCell = TorsoNestedModel.extend({
+  <span class="hljs-keyword">var</span> NestedCell = TorsoNestedModel.extend(<span class="hljs-comment">/** @lends NestedCell.prototype */</span>{
     <span class="hljs-comment">/**
      * Register this item with the cell registry after initialize.
      * @private

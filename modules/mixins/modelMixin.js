@@ -10,14 +10,16 @@
   }
 }(this, function(_, registry) {
   'use strict';
+
   /**
    * The base for a model
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  modelMixin
+   *
+   * @mixin modelMixin
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/modelMixin.html">modelMixin Annotated Source</a>
    */
-  return {
+  return /** @lends modelMixin */ {
     /**
      * Register this item with the model registry after initialize.
      * @private
@@ -40,6 +42,7 @@
 
     /**
      * Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.
+     * @function
      */
     _dispose: _.noop
   };

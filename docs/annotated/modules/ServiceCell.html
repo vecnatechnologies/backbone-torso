@@ -191,17 +191,20 @@
 <span class="hljs-meta">  'use strict'</span>;
   <span class="hljs-comment">/**
    * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @constructor
+   *
+   * @class ServiceCell
+   * @extends Cell
+   *
    * @param {Object} attributes the initial attributes to use for this service.
    * @param {Object} [options={}] the options for setting up this service.
    *   @param {boolean} [options.register=true] whether to register this service in the app-level registry.
    *                                            By default this WILL add it to the registry unless set to false because
    *                                            most services are global so holding on to them beyond
    * @author kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/ServiceCell.html"&gt;ServiceCell Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> ServiceCell = Cell.extend({
+  <span class="hljs-keyword">var</span> ServiceCell = Cell.extend(<span class="hljs-comment">/** @lends ServiceCell.prototype */</span>{
     <span class="hljs-attr">constructor</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">var</span> args = <span class="hljs-built_in">Array</span>.prototype.slice.call(<span class="hljs-built_in">arguments</span>);
       args[<span class="hljs-number">1</span>] = args[<span class="hljs-number">1</span>] || {};</pre></div></div>

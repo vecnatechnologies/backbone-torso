@@ -181,6 +181,7 @@
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
  * The backbone Collection reference
  * @external Backbone-Collection
+ * @extends external:Backbone-Events
  * @see {@link http://backbonejs.org/#Collection|Backbone.Collection}
  */</span>
 (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
@@ -205,8 +206,8 @@
    * @mixes cacheMixin
    *
    * @author kent.willis@vecna.com
-     *
-     * @see &lt;a href="../annotated/modules/Collection.html"&gt;Collection Annotated Source&lt;/a&gt;
+   *
+   * @see &lt;a href="../annotated/modules/Collection.html"&gt;Collection Annotated Source&lt;/a&gt;
    */</span>
   <span class="hljs-keyword">var</span> Collection = Backbone.Collection.extend(<span class="hljs-comment">/** @lends Collection.prototype */</span>{
       <span class="hljs-comment">/**

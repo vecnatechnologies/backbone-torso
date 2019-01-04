@@ -29,9 +29,10 @@
   var Behavior = NestedCell.extend(/** @lends Behavior.prototype */{
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
+     * @name alias
      * @type {string}
+     * @memberof Behavior.prototype
      */
-     alias: null,
 
     /**
      * cidPrefix of Behaviors

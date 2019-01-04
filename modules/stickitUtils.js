@@ -13,11 +13,11 @@
   /**
    * Extensions to stickit handlers.
    *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     stickitUtils
-   * @static
+   * @function stickitUtils
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/stickitUtils.html">stickitUtils Annotated Source</a>
    */
   Backbone.Stickit.addHandler({
     selector: 'input[type="radio"]',

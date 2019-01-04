@@ -178,7 +178,18 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+ * The jQuery reference
+ * @external jQuery
+ * @property {external:jQuery-Deferred} Deferred
+ * @see {@link https://api.jquery.com/category/selectors/|jQuery}
+ */</span>
+<span class="hljs-comment">/**
+ * The jQuery Deferred reference
+ * @external jQuery-Deferred
+ * @see {@link https://api.jquery.com/category/deferred-object/|jQuery.Deferred}
+ */</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
     define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>], factory);
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
@@ -201,6 +212,7 @@
    * Recurses for nested Element Nodes only.
    * There is always room for optimizing this method.
    *
+   * @memberof templateRenderer
    * @param {Node} currentNode The DOM Node corresponding to the existing page content to update
    * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
    * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
@@ -420,17 +432,17 @@ without causing a browser error.</p>
    * Static Template Engine.
    * All template renders should be piped through this method.
    *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     templateRenderer
-   * @static
-   * @author    ariel.wexler@vecna.com
+   * @namespace templateRenderer
+   *
+   * @author ariel.wexler@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/templateRenderer.html"&gt;templateRenderer Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> templateRenderer = {
+  <span class="hljs-keyword">var</span> templateRenderer = <span class="hljs-comment">/** @lends templateRenderer */</span> {
     <span class="hljs-comment">/**
      * Performs efficient re-rendering of a template.
-     * @param  {jQueryObject} $el The Element to render into
-     * @param  {Handlebars Template} template The HBS template to apply
+     * @param  {external:jQuery} $el The Element to render into
+     * @param  {external:Handlebars-Template} template The HBS template to apply
      * @param  {Object} context The context object to pass to the template
      * @param  {Object} [opts] Other options
      * @param  {boolean} [opts.force=false] Will forcefully do a fresh render and not a diff-render
@@ -458,7 +470,6 @@ without causing a browser error.</p>
      * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
      * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
      */</span>
-
     hotswapKeepCaret: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">currentNode, newNode, ignoreElements</span>) </span>{
       <span class="hljs-keyword">var</span> currentCaret, activeElement,
           currentNodeContainsActiveElement = <span class="hljs-literal">false</span>;

@@ -1,13 +1,18 @@
 /**
  * The backbone View reference
+ *
  * @external Backbone
+ * @property {external:Backbone-Events} Events
  * @property {external:Backbone-View} View
+ * @property {external:Backbone-Model} Model
+ * @property {external:Backbone-Collection} Collection
+ *
  * @see {@link http://backbonejs.org/|Backbone}
  */
 /**
  * Module containing all dependencies that exports a single object with everything attached (same format as the global).
  *
- * @constant torso
+ * @namespace torso
  *
  * @property {Behavior} Behavior The {@link Behavior} prototype.
  * @property {Object} behaviors Collection of behaviors that ship with Torso.
@@ -19,7 +24,7 @@
  *   @property {loadingMixin} Mixins.loading The {@link loadingMixin}.
  *   @property {cacheMixin} Mixins.cache The {@link cacheMixin}.
  *   @property {pollingMixin} Mixins.polling The {@link pollingMixin}.
- *   @property {validation.mixin} Mixins.validation The {@link validation.mixin}.
+ *   @property {Validation.mixin} Mixins.validation The {@link validationMixin}.
  *   @property {cellMixin} Mixins.cell The {@link cellMixin}.
  * @property {Model} Model The {@link Model} prototype.
  * @property {NestedCell} NestedCell The {@link NestedCell} prototype.
@@ -29,15 +34,17 @@
  * @property {Router} Router The {@link Router} prototype.
  * @property {history} history Convient access to backbone history.
  * @property {registry} registry The torso object registry.
- * @property {Utils} Utils Collection of utilities used by Torso.
+ * @property {Object} Utils Collection of utilities used by Torso.
  *   @property {templateRenderer} Utils.loading Template renderer used by Torso.
  *   @property {handlebarsUtils} Utils.loading Handlebars utilities used by Torso.
- * @property {validation} validation The {@link validation} prototype.
+ * @property {Validation} validation The {@link validation} prototype.
  * @property {View} View The {@link View} prototype.
  * @property {ListView} ListView The {@link ListView} prototype.
  * @property {FormView} FormView The {@link FormView} prototype.
  *
- * @author    jyoung@vecna.com
+ * @author jyoung@vecna.com
+*
+* @see <a href="../annotated/modules/torso.html">torso Annotated Source</a>
  */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {

@@ -15,6 +15,8 @@
    *
    * @mixin cellMixin
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/cellMixin.html">cellMixin Annotated Source</a>
    */
   return /** @lends cellMixin */ {
     /**

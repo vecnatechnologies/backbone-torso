@@ -195,14 +195,15 @@
   <span class="hljs-comment">/**
    * Loading logic.
    *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  loadingMixin
+   * @mixin loadingMixin
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/mixins/loadingMixin.html"&gt;loadingMixin Annotated Source&lt;/a&gt;
    */</span>
   <span class="hljs-keyword">var</span> loadingMixin = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">base</span>) </span>{
 
-    <span class="hljs-keyword">return</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-comment">/** @lends loadingMixin */</span> {
       <span class="hljs-comment">/**
        * Adds the loading mixin
        * @param {Object} args the arguments to the base constructor method
@@ -262,6 +263,8 @@
       <span class="hljs-comment">/**
        * Base load function that will trigger a "load-begin" and a "load-complete" as
        * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       *
+       * @private
        * @param {Function} fetchMethod - the method to invoke a fetch
        * @param {Object} options - the object to hold the options needed by the fetchMethod
        * @return {Promise} a promise when the fetch method has completed and the events have been triggered

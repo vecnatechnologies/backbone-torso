@@ -178,7 +178,13 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+ * The Backbone-Nested reference
+ * @external Backbone-NestedModel
+ * @extends external:Backbone-Model
+ * @see {@link https://github.com/afeld/backbone-nested|backbone-nested}
+ */</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
     define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>, <span class="hljs-string">'./mixins/pollingMixin'</span>, <span class="hljs-string">'./mixins/modelMixin'</span>, <span class="hljs-string">'backbone-nested'</span>], factory);
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
@@ -193,9 +199,12 @@
 
   <span class="hljs-comment">/**
    * Generic Nested Model
-   * @module    Torso
-   * @class     NestedModel
-   * @constructor
+   *
+   * @class NestedModel
+   * @extends external:Backbone-NestedModel
+   * @mixes pollingMixin
+   * @mixes modelMixin
+   *
    * @param {Object} attributes the initial attributes to use for this model.
    * @param {Object} [options={}] the options for setting up this model.
    *   @param {boolean} [options.register=false] whether to register this model in the app-level registry.
@@ -203,8 +212,10 @@
    *                                             we have not mechanism that will make sure the models get removed from the registry
    *                                             at the appropriate times.
    * @author kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/NestedModel.html"&gt;NestedModel Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> NestedModel = Backbone.NestedModel.extend({
+  <span class="hljs-keyword">var</span> NestedModel = Backbone.NestedModel.extend(<span class="hljs-comment">/** @lends NestedModel.prototype */</span>{
     <span class="hljs-attr">constructor</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attributes, options</span>) </span>{
       Backbone.NestedModel.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
       options = options || {};

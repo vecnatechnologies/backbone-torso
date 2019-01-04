@@ -1,3 +1,9 @@
+/**
+ * The backbone History reference
+ * @external Backbone-History
+ * @extends external:Backbone-Events
+ * @see {@link http://backbonejs.org/#History|Backbone.History}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
@@ -12,10 +18,13 @@
 
   /**
    * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
+   *
+   * @class history
+   * @extends external:Backbone-History
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/history.html">history Annotated Source</a>
    */
   return Backbone.history;
 }));

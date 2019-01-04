@@ -1,3 +1,14 @@
+/**
+ * The jQuery reference
+ * @external jQuery
+ * @property {external:jQuery-Deferred} Deferred
+ * @see {@link https://api.jquery.com/category/selectors/|jQuery}
+ */
+/**
+ * The jQuery Deferred reference
+ * @external jQuery-Deferred
+ * @see {@link https://api.jquery.com/category/deferred-object/|jQuery.Deferred}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone'], factory);
@@ -21,6 +32,7 @@
    * Recurses for nested Element Nodes only.
    * There is always room for optimizing this method.
    *
+   * @memberof templateRenderer
    * @param {Node} currentNode The DOM Node corresponding to the existing page content to update
    * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
    * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
@@ -156,17 +168,17 @@
    * Static Template Engine.
    * All template renders should be piped through this method.
    *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     templateRenderer
-   * @static
-   * @author    ariel.wexler@vecna.com
+   * @namespace templateRenderer
+   *
+   * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/templateRenderer.html">templateRenderer Annotated Source</a>
    */
-  var templateRenderer = {
+  var templateRenderer = /** @lends templateRenderer */ {
     /**
      * Performs efficient re-rendering of a template.
-     * @param  {jQueryObject} $el The Element to render into
-     * @param  {Handlebars Template} template The HBS template to apply
+     * @param  {external:jQuery} $el The Element to render into
+     * @param  {external:Handlebars-Template} template The HBS template to apply
      * @param  {Object} context The context object to pass to the template
      * @param  {Object} [opts] Other options
      * @param  {boolean} [opts.force=false] Will forcefully do a fresh render and not a diff-render
@@ -194,7 +206,6 @@
      * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
      * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
      */
-
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret, activeElement,
           currentNodeContainsActiveElement = false;

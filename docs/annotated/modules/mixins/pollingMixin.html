@@ -194,12 +194,14 @@
    *
    * The polling functionality should only be used for collections and for models that are not
    * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  pollingMixin
+   *
+   * @mixin pollingMixin
+   *
    * @author ariel.wexler@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/mixins/pollingMixin.html"&gt;pollingMixin Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> pollingMixin = {
+  <span class="hljs-keyword">var</span> pollingMixin = <span class="hljs-comment">/** @lends pollingMixin */</span> {
     <span class="hljs-comment">/**
      * @property {number} pollTimeoutId The id from when setTimeout was called to start polling.
      */</span>

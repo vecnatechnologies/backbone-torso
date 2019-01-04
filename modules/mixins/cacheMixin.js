@@ -20,6 +20,8 @@
    * @mixin cacheMixin
    *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/cacheMixin.html">cacheMixin Annotated Source</a>
    */
   var mixin = function(base) {
 
@@ -106,7 +108,7 @@
 
           /**
            * Tracks a new id
-           * @param {string|Number} id the id attribute of the model
+           * @param {(string|Number)} id the id attribute of the model
            */
           trackNewId: function(id) {
             this.trackIds(this.getTrackedIds().concat(id));

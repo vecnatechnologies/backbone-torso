@@ -14,12 +14,14 @@
    *
    * The polling functionality should only be used for collections and for models that are not
    * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  pollingMixin
+   *
+   * @mixin pollingMixin
+   *
    * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/pollingMixin.html">pollingMixin Annotated Source</a>
    */
-  var pollingMixin = {
+  var pollingMixin = /** @lends pollingMixin */ {
     /**
      * @property {number} pollTimeoutId The id from when setTimeout was called to start polling.
      */

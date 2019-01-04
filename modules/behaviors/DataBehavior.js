@@ -30,9 +30,9 @@
    * Converts string or number values into an array with a single string or number item.
    * If the input is not a string, number, array, or info about the ids then undefined is returned.
    * This is a private helper method used internally by this behavior and is not exposed in any way.
-   * @param {string|number|string[]|number[]|Object} ids the ids to convert.
+   * @param {(string|number|string[]|number[]|Object)} ids the ids to convert.
    *   @param {boolean} [ids.skipObjectRetrieval] set if this is a meta-info object about the ids.
-   * @return {string[]|number[]|Object} an array of strings or numbers.
+   * @return {(string[]|number[]|Object)} an array of strings or numbers.
    * @private
    */
   function normalizeIds(ids) {
@@ -95,7 +95,7 @@
    *
    * @author  jyoung@vecna.com
    *
-   * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
+   * @see <a href="../annotated/modules/behaviors/DataBehavior.html">DataBehavior Annotated Source</a>
    * @see <a href="../modules/behaviors/DATA_BEHAVIOR.html">Detailed docs</a> for more in-depth documentation and details.
    */
   var DataBehavior = Behavior.extend(/** @lends DataBehavior */{
@@ -147,8 +147,8 @@
 
     /**
      * Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).
-     *   - {string|number} - the id to use directly (equivalent to an array of a single id).
-     *   - {string[]|number[]} - the ids to use directly.
+     *   - {(string|number)} - the id to use directly (equivalent to an array of a single id).
+     *   - {(string[]|number[])} - the ids to use directly.
      *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
      *                property on that object to use. The object can fire the change event for the given property
      *                and have a .get('propertyName') method, or it can define the property directly on the idContainer.
@@ -187,7 +187,7 @@
      *           var criteria = { ... some criteria ... };
      *           return cache.fetchIdsByCriteria(criteria);
      *         }
-     * @property {string|number|string[]|number[]|Object|Function} ids
+     * @property {(string|number|string[]|number[]|Object|Function)} ids
      */
     ids: undefined,
 
@@ -201,7 +201,7 @@
      *   - 'behaviorAlias:eventName' - arbitrary event triggered by another data behavior on this view (eventName can be a change:propertyName event).
      *   - 'behaviorAlias.data:eventName' - arbitrary event triggered by the data of another DataBehavior on this view (eventName can be a change:propertyName event).
      *   - { '<eventName>': < object (or function returning an object) that the event is triggered on > } - arbitrary ('<eventName>') triggered on the supplied object.
-     * @property {string|string[]|Object|Object[]} updateEvents
+     * @property {(string|string[]|Object|Object[])} updateEvents
      */
     updateEvents: undefined,
 
@@ -229,7 +229,7 @@
      *   @param {boolean} [behaviorOptions.alwaysFetch=false] see alwaysFetch property.
      *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.id=behaviorOptions.ids] see id property.
      *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.ids=behaviorOptions.id] see ids property.
-     *   @param {string|string[]|Object|Object[]} [behaviorOptions.updateEvents] see updateEvents property.
+     *   @param {(string|string[]|Object|Object[])} [behaviorOptions.updateEvents] see updateEvents property.
      * @param {Object} [viewOptions] options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
@@ -415,7 +415,7 @@
      * someDataBehavior.retrieveOncePromise()
      *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
      *
-     * @return {jQuery.Promise} that resolves when the data is successfully fetched and rejects when the fetch fails.
+     * @return {external:jQuery-Deferred} that resolves when the data is successfully fetched and rejects when the fetch fails.
      */
     retrieveOncePromise: function() {
       var retrieveOnceDeferred = $.Deferred();
@@ -475,7 +475,7 @@
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
-     * @return {Object[]|undefined} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     * @return {(Object[]|undefined)} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */
@@ -772,7 +772,7 @@
 
     /**
      * Rejects the promise chain if this behavior is already disposed.
-     * @return {jQuery.Promise} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @return {external:jQuery-Deferred} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
      * @private
      */
     __abortIfDisposed: function() {
@@ -855,8 +855,8 @@
 
     /**
      * Skip retrieving objects if new ids list is empty and existing ids list is empty.
-     * @param {Array|Object} idsResult
-     * @return {Array|Object} either the original idsResult
+     * @param {(Array|Object)} idsResult
+     * @return {(Array|Object)} either the original idsResult
      *                        or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
      *                        and the current ids are empty.
      * @private
@@ -956,7 +956,7 @@
 
     /**
      * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
-     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     * @return {(Object|Object[])} containing the full contents of either the collection or model.
      */
     toJSON: function() {
       var privateCollection = this.privateCollection;
@@ -981,7 +981,7 @@
      * If returnSingleResult is true then this will return the given property from the model (if that model exists).
      * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
      * @param {string} [propertyName] the property to get from the model(s).
-     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     * @return {(Object|Object[])} containing the full contents of either the collection or model.
      */
     get: function(propertyName) {
       var privateCollection = this.privateCollection;
@@ -1003,7 +1003,7 @@
     },
 
     /**
-     * @param {number|string} modelId The id of the model to get from the collection.
+     * @param {(number|string)} modelId The id of the model to get from the collection.
      * @return {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
      * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
      */

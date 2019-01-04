@@ -15,14 +15,15 @@
   /**
    * Loading logic.
    *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  loadingMixin
+   * @mixin loadingMixin
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/loadingMixin.html">loadingMixin Annotated Source</a>
    */
   var loadingMixin = function(base) {
 
-    return {
+    return /** @lends loadingMixin */ {
       /**
        * Adds the loading mixin
        * @param {Object} args the arguments to the base constructor method
@@ -69,6 +70,8 @@
       /**
        * Base load function that will trigger a "load-begin" and a "load-complete" as
        * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       *
+       * @private
        * @param {Function} fetchMethod - the method to invoke a fetch
        * @param {Object} options - the object to hold the options needed by the fetchMethod
        * @return {Promise} a promise when the fetch method has completed and the events have been triggered

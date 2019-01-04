@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>FormView.js - backbone-Torso</title>
+    
+    <meta name="description" content="A holistic approach to Backbone applications" />
+    
+        <meta name="keywords" content="backbone" />
+        <meta name="keyword" content="backbone" />
+    
+    
+    
+    <meta property="og:title" content="backbone-Torso"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://vecnatechnologies.github.io/backbone-torso/images/black_website_logo.svg"/>
+    <meta property="og:site_name" content="backbone-Torso"/>
+    <meta property="og:url" content="https://vecnatechnologies.github.io/backbone-torso/"/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/vecnatechnologies/backbone-torso" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h2><a href="../README.md" class="menu-item" id="all_docs_index_link" >Documentation Index</a></h2><h2><a href="../ANNOTATED.md" class="menu-item" id="annotated_link" >Annotated Source</a></h2><h2><a href="../interactive/index.html" class="menu-item" id="interactive_docs_link" >Interactive Docs</a></h2><h3>Classes</h3><ul><li><a href="Behavior.html">Behavior</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Behavior.html#_dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="Behavior.html#isDisposed">isDisposed</a></li><li data-type='method' style='display: none;'><a href="Behavior.html#prepare">prepare</a></li></ul></li><li><a href="Cell.html">Cell</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Cell.html#fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="Cell.html#save">save</a></li><li data-type='method' style='display: none;'><a href="Cell.html#sync">sync</a></li><li data-type='method' style='display: none;'><a href="Cell.html#url">url</a></li></ul></li><li><a href="Collection.html">Collection</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Collection.html#constructor">constructor</a></li><li data-type='method' style='display: none;'><a href="Collection.html#createPrivateCollection">createPrivateCollection</a></li><li data-type='method' style='display: none;'><a href="Collection.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="Collection.html#fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="Collection.html#fetchByIds">fetchByIds</a></li><li data-type='method' style='display: none;'><a href="Collection.html#filterDefault">filterDefault</a></li><li data-type='method' style='display: none;'><a href="Collection.html#getAllRequestedIds">getAllRequestedIds</a></li><li data-type='method' style='display: none;'><a href="Collection.html#getLoadedOncePromise">getLoadedOncePromise</a></li><li data-type='method' style='display: none;'><a href="Collection.html#getRequesterIds">getRequesterIds</a></li><li data-type='method' style='display: none;'><a href="Collection.html#getRequesterIdsAsDictionary">getRequesterIdsAsDictionary</a></li><li data-type='method' style='display: none;'><a href="Collection.html#getRequesters">getRequesters</a></li><li data-type='method' style='display: none;'><a href="Collection.html#hasLoadedOnce">hasLoadedOnce</a></li><li data-type='method' style='display: none;'><a href="Collection.html#isLoading">isLoading</a></li><li data-type='method' style='display: none;'><a href="Collection.html#isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="Collection.html#polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="Collection.html#registerIds">registerIds</a></li><li data-type='method' style='display: none;'><a href="Collection.html#removeRequester">removeRequester</a></li><li data-type='method' style='display: none;'><a href="Collection.html#startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="Collection.html#stopPolling">stopPolling</a></li></ul></li><li><a href="DataBehavior.html">DataBehavior</a><ul class='members'><li data-type='member' style='display: none;'><a href="DataBehavior.html#.alwaysFetch">alwaysFetch</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.cache">cache</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.data">data</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.FETCHED_STATUSES">FETCHED_STATUSES</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.ids">ids</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.renderOnFetch">renderOnFetch</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.returnSingleResult">returnSingleResult</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.skipInitialLoad">skipInitialLoad</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#.updateEvents">updateEvents</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#alias">alias</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#cidPrefix">cidPrefix</a></li><li data-type='member' style='display: none;'><a href="DataBehavior.html#mixin">mixin</a></li></ul><ul class='methods'><li data-type='method' style='display: none;'><a href="DataBehavior.html#.constructor">constructor</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.isLoading">isLoading</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.isLoadingIds">isLoadingIds</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.isLoadingObjects">isLoadingObjects</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.listenToIdsPropertyChangeEvent">listenToIdsPropertyChangeEvent</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.prepare">prepare</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.pull">pull</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.retrieve">retrieve</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.retrieveOncePromise">retrieveOncePromise</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#.stopListeningToIdsPropertyChangeEvent">stopListeningToIdsPropertyChangeEvent</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#_dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#isDisposed">isDisposed</a></li><li data-type='method' style='display: none;'><a href="DataBehavior.html#prepare">prepare</a></li></ul></li><li><a href="DataBehavior-Data.html">DataBehavior~Data</a></li><li><a href="Events.html">Events</a></li><li><a href="FormModel.html">FormModel</a><ul class='methods'><li data-type='method' style='display: none;'><a href="FormModel.html#_dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#checkIfModelsAreStale">checkIfModelsAreStale</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#constructor">constructor</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#getMapping">getMapping</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#getMappings">getMappings</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#getTrackedModel">getTrackedModel</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#getTrackedModels">getTrackedModels</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#isModelStale">isModelStale</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#isTrackingAnyObjectModel">isTrackingAnyObjectModel</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#isUpdating">isUpdating</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#isValid">isValid</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#preValidate">preValidate</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#pull">pull</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#push">push</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#resetUpdating">resetUpdating</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#save">save</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#setMapping">setMapping</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#setMappings">setMappings</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#setTrackedModel">setTrackedModel</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#setTrackedModels">setTrackedModels</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#startUpdating">startUpdating</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#stopPolling">stopPolling</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#stopUpdating">stopUpdating</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#trackModel">trackModel</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#trackModels">trackModels</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#unsetMapping">unsetMapping</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#unsetMappings">unsetMappings</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#unsetTrackedModel">unsetTrackedModel</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#unsetTrackedModels">unsetTrackedModels</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#untrackModel">untrackModel</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#untrackModels">untrackModels</a></li><li data-type='method' style='display: none;'><a href="FormModel.html#validate">validate</a></li></ul></li><li><a href="FormView.html">FormView</a><ul class='methods'><li data-type='method' style='display: none;'><a href="FormView.html#_prepare">_prepare</a></li><li data-type='method' style='display: none;'><a href="FormView.html#activate">activate</a></li><li data-type='method' style='display: none;'><a href="FormView.html#attachTo">attachTo</a></li><li data-type='method' style='display: none;'><a href="FormView.html#attachView">attachView</a></li><li data-type='method' style='display: none;'><a href="FormView.html#deactivate">deactivate</a></li><li data-type='method' style='display: none;'><a href="FormView.html#delegateEvents">delegateEvents</a></li><li data-type='method' style='display: none;'><a href="FormView.html#detach">detach</a></li><li data-type='method' style='display: none;'><a href="FormView.html#detachTrackedViews">detachTrackedViews</a></li><li data-type='method' style='display: none;'><a href="FormView.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="FormView.html#get">get</a></li><li data-type='method' style='display: none;'><a href="FormView.html#getBehavior">getBehavior</a></li><li data-type='method' style='display: none;'><a href="FormView.html#getTrackedView">getTrackedView</a></li><li data-type='method' style='display: none;'><a href="FormView.html#getTrackedViews">getTrackedViews</a></li><li data-type='method' style='display: none;'><a href="FormView.html#has">has</a></li><li data-type='method' style='display: none;'><a href="FormView.html#hasTrackedViews">hasTrackedViews</a></li><li data-type='method' style='display: none;'><a href="FormView.html#invalid">invalid</a></li><li data-type='method' style='display: none;'><a href="FormView.html#invokeFeedback">invokeFeedback</a></li><li data-type='method' style='display: none;'><a href="FormView.html#isActive">isActive</a></li><li data-type='method' style='display: none;'><a href="FormView.html#isAttached">isAttached</a></li><li data-type='method' style='display: none;'><a href="FormView.html#isAttachedToParent">isAttachedToParent</a></li><li data-type='method' style='display: none;'><a href="FormView.html#isDisposed">isDisposed</a></li><li data-type='method' style='display: none;'><a href="FormView.html#prepare">prepare</a></li><li data-type='method' style='display: none;'><a href="FormView.html#registerTrackedView">registerTrackedView</a></li><li data-type='method' style='display: none;'><a href="FormView.html#render">render</a></li><li data-type='method' style='display: none;'><a href="FormView.html#resetModelListeners">resetModelListeners</a></li><li data-type='method' style='display: none;'><a href="FormView.html#set">set</a></li><li data-type='method' style='display: none;'><a href="FormView.html#templateRender">templateRender</a></li><li data-type='method' style='display: none;'><a href="FormView.html#toJSON">toJSON</a></li><li data-type='method' style='display: none;'><a href="FormView.html#transitionIn">transitionIn</a></li><li data-type='method' style='display: none;'><a href="FormView.html#transitionOut">transitionOut</a></li><li data-type='method' style='display: none;'><a href="FormView.html#undelegateEvents">undelegateEvents</a></li><li data-type='method' style='display: none;'><a href="FormView.html#unregisterTrackedView">unregisterTrackedView</a></li><li data-type='method' style='display: none;'><a href="FormView.html#unregisterTrackedViews">unregisterTrackedViews</a></li><li data-type='method' style='display: none;'><a href="FormView.html#unset">unset</a></li><li data-type='method' style='display: none;'><a href="FormView.html#updateClassName">updateClassName</a></li><li data-type='method' style='display: none;'><a href="FormView.html#updateDOM">updateDOM</a></li><li data-type='method' style='display: none;'><a href="FormView.html#valid">valid</a></li></ul></li><li><a href="history.html">history</a></li><li><a href="ListView.html">ListView</a><ul class='methods'><li data-type='method' style='display: none;'><a href="ListView.html#_prepare">_prepare</a></li><li data-type='method' style='display: none;'><a href="ListView.html#activate">activate</a></li><li data-type='method' style='display: none;'><a href="ListView.html#attachTo">attachTo</a></li><li data-type='method' style='display: none;'><a href="ListView.html#attachView">attachView</a></li><li data-type='method' style='display: none;'><a href="ListView.html#constructor">constructor</a></li><li data-type='method' style='display: none;'><a href="ListView.html#deactivate">deactivate</a></li><li data-type='method' style='display: none;'><a href="ListView.html#delegateEvents">delegateEvents</a></li><li data-type='method' style='display: none;'><a href="ListView.html#detach">detach</a></li><li data-type='method' style='display: none;'><a href="ListView.html#detachTrackedViews">detachTrackedViews</a></li><li data-type='method' style='display: none;'><a href="ListView.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="ListView.html#get">get</a></li><li data-type='method' style='display: none;'><a href="ListView.html#getBehavior">getBehavior</a></li><li data-type='method' style='display: none;'><a href="ListView.html#getItemViewFromModel">getItemViewFromModel</a></li><li data-type='method' style='display: none;'><a href="ListView.html#getItemViews">getItemViews</a></li><li data-type='method' style='display: none;'><a href="ListView.html#getTrackedView">getTrackedView</a></li><li data-type='method' style='display: none;'><a href="ListView.html#getTrackedViews">getTrackedViews</a></li><li data-type='method' style='display: none;'><a href="ListView.html#has">has</a></li><li data-type='method' style='display: none;'><a href="ListView.html#hasItemViews">hasItemViews</a></li><li data-type='method' style='display: none;'><a href="ListView.html#hasTrackedViews">hasTrackedViews</a></li><li data-type='method' style='display: none;'><a href="ListView.html#invokeFeedback">invokeFeedback</a></li><li data-type='method' style='display: none;'><a href="ListView.html#isActive">isActive</a></li><li data-type='method' style='display: none;'><a href="ListView.html#isAttached">isAttached</a></li><li data-type='method' style='display: none;'><a href="ListView.html#isAttachedToParent">isAttachedToParent</a></li><li data-type='method' style='display: none;'><a href="ListView.html#isDisposed">isDisposed</a></li><li data-type='method' style='display: none;'><a href="ListView.html#modelsToRender">modelsToRender</a></li><li data-type='method' style='display: none;'><a href="ListView.html#prepare">prepare</a></li><li data-type='method' style='display: none;'><a href="ListView.html#prepareEmpty">prepareEmpty</a></li><li data-type='method' style='display: none;'><a href="ListView.html#registerTrackedView">registerTrackedView</a></li><li data-type='method' style='display: none;'><a href="ListView.html#render">render</a></li><li data-type='method' style='display: none;'><a href="ListView.html#renderChildViews">renderChildViews</a></li><li data-type='method' style='display: none;'><a href="ListView.html#reorder">reorder</a></li><li data-type='method' style='display: none;'><a href="ListView.html#set">set</a></li><li data-type='method' style='display: none;'><a href="ListView.html#setCollection">setCollection</a></li><li data-type='method' style='display: none;'><a href="ListView.html#templateRender">templateRender</a></li><li data-type='method' style='display: none;'><a href="ListView.html#toJSON">toJSON</a></li><li data-type='method' style='display: none;'><a href="ListView.html#transitionIn">transitionIn</a></li><li data-type='method' style='display: none;'><a href="ListView.html#transitionOut">transitionOut</a></li><li data-type='method' style='display: none;'><a href="ListView.html#undelegateEvents">undelegateEvents</a></li><li data-type='method' style='display: none;'><a href="ListView.html#unregisterTrackedView">unregisterTrackedView</a></li><li data-type='method' style='display: none;'><a href="ListView.html#unregisterTrackedViews">unregisterTrackedViews</a></li><li data-type='method' style='display: none;'><a href="ListView.html#unset">unset</a></li><li data-type='method' style='display: none;'><a href="ListView.html#update">update</a></li><li data-type='method' style='display: none;'><a href="ListView.html#updateClassName">updateClassName</a></li><li data-type='method' style='display: none;'><a href="ListView.html#updateDOM">updateDOM</a></li></ul></li><li><a href="Model.html">Model</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Model.html#_dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="Model.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="Model.html#isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="Model.html#polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="Model.html#startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="Model.html#stopPolling">stopPolling</a></li></ul></li><li><a href="NestedCell.html">NestedCell</a><ul class='methods'><li data-type='method' style='display: none;'><a href="NestedCell.html#_dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#save">save</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#stopPolling">stopPolling</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#sync">sync</a></li><li data-type='method' style='display: none;'><a href="NestedCell.html#url">url</a></li></ul></li><li><a href="NestedModel.html">NestedModel</a><ul class='methods'><li data-type='method' style='display: none;'><a href="NestedModel.html#_dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="NestedModel.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="NestedModel.html#isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="NestedModel.html#polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="NestedModel.html#startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="NestedModel.html#stopPolling">stopPolling</a></li></ul></li><li><a href="PrivateCollection.html">PrivateCollection</a><ul class='methods'><li data-type='method' style='display: none;'><a href="PrivateCollection.html#addModelAndTrack">addModelAndTrack</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#constructor">constructor</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#createPrivateCollection">createPrivateCollection</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#fetchByIds">fetchByIds</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#filterDefault">filterDefault</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#getAllRequestedIds">getAllRequestedIds</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#getLoadedOncePromise">getLoadedOncePromise</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#getRequesterIds">getRequesterIds</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#getRequesterIdsAsDictionary">getRequesterIdsAsDictionary</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#getRequesters">getRequesters</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#getTrackedIds">getTrackedIds</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#hasLoadedOnce">hasLoadedOnce</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#isLoading">isLoading</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#pull">pull</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#registerIds">registerIds</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#remove">remove</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#removeRequester">removeRequester</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#requesterDispose">requesterDispose</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#stopPolling">stopPolling</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#trackAndFetch">trackAndFetch</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#trackAndPull">trackAndPull</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#trackIds">trackIds</a></li><li data-type='method' style='display: none;'><a href="PrivateCollection.html#trackNewId">trackNewId</a></li></ul></li><li><a href="registry.html">registry</a><ul class='methods'><li data-type='method' style='display: none;'><a href="registry.html#cellInitialized">cellInitialized</a></li><li data-type='method' style='display: none;'><a href="registry.html#disposeAll">disposeAll</a></li><li data-type='method' style='display: none;'><a href="registry.html#disposeAllCells">disposeAllCells</a></li><li data-type='method' style='display: none;'><a href="registry.html#disposeAllModels">disposeAllModels</a></li><li data-type='method' style='display: none;'><a href="registry.html#disposeAllServices">disposeAllServices</a></li><li data-type='method' style='display: none;'><a href="registry.html#disposeAllViews">disposeAllViews</a></li><li data-type='method' style='display: none;'><a href="registry.html#modelInitialized">modelInitialized</a></li><li data-type='method' style='display: none;'><a href="registry.html#serviceInitialized">serviceInitialized</a></li><li data-type='method' style='display: none;'><a href="registry.html#viewInitialized">viewInitialized</a></li></ul></li><li><a href="Router.html">Router</a></li><li><a href="ServiceCell.html">ServiceCell</a><ul class='methods'><li data-type='method' style='display: none;'><a href="ServiceCell.html#fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="ServiceCell.html#save">save</a></li><li data-type='method' style='display: none;'><a href="ServiceCell.html#sync">sync</a></li><li data-type='method' style='display: none;'><a href="ServiceCell.html#url">url</a></li></ul></li><li><a href="View.html">View</a><ul class='methods'><li data-type='method' style='display: none;'><a href="View.html#_prepare">_prepare</a></li><li data-type='method' style='display: none;'><a href="View.html#activate">activate</a></li><li data-type='method' style='display: none;'><a href="View.html#attachTo">attachTo</a></li><li data-type='method' style='display: none;'><a href="View.html#attachView">attachView</a></li><li data-type='method' style='display: none;'><a href="View.html#deactivate">deactivate</a></li><li data-type='method' style='display: none;'><a href="View.html#delegateEvents">delegateEvents</a></li><li data-type='method' style='display: none;'><a href="View.html#detach">detach</a></li><li data-type='method' style='display: none;'><a href="View.html#detachTrackedViews">detachTrackedViews</a></li><li data-type='method' style='display: none;'><a href="View.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="View.html#get">get</a></li><li data-type='method' style='display: none;'><a href="View.html#getBehavior">getBehavior</a></li><li data-type='method' style='display: none;'><a href="View.html#getTrackedView">getTrackedView</a></li><li data-type='method' style='display: none;'><a href="View.html#getTrackedViews">getTrackedViews</a></li><li data-type='method' style='display: none;'><a href="View.html#has">has</a></li><li data-type='method' style='display: none;'><a href="View.html#hasTrackedViews">hasTrackedViews</a></li><li data-type='method' style='display: none;'><a href="View.html#invokeFeedback">invokeFeedback</a></li><li data-type='method' style='display: none;'><a href="View.html#isActive">isActive</a></li><li data-type='method' style='display: none;'><a href="View.html#isAttached">isAttached</a></li><li data-type='method' style='display: none;'><a href="View.html#isAttachedToParent">isAttachedToParent</a></li><li data-type='method' style='display: none;'><a href="View.html#isDisposed">isDisposed</a></li><li data-type='method' style='display: none;'><a href="View.html#prepare">prepare</a></li><li data-type='method' style='display: none;'><a href="View.html#registerTrackedView">registerTrackedView</a></li><li data-type='method' style='display: none;'><a href="View.html#render">render</a></li><li data-type='method' style='display: none;'><a href="View.html#set">set</a></li><li data-type='method' style='display: none;'><a href="View.html#templateRender">templateRender</a></li><li data-type='method' style='display: none;'><a href="View.html#toJSON">toJSON</a></li><li data-type='method' style='display: none;'><a href="View.html#transitionIn">transitionIn</a></li><li data-type='method' style='display: none;'><a href="View.html#transitionOut">transitionOut</a></li><li data-type='method' style='display: none;'><a href="View.html#undelegateEvents">undelegateEvents</a></li><li data-type='method' style='display: none;'><a href="View.html#unregisterTrackedView">unregisterTrackedView</a></li><li data-type='method' style='display: none;'><a href="View.html#unregisterTrackedViews">unregisterTrackedViews</a></li><li data-type='method' style='display: none;'><a href="View.html#unset">unset</a></li><li data-type='method' style='display: none;'><a href="View.html#updateClassName">updateClassName</a></li><li data-type='method' style='display: none;'><a href="View.html#updateDOM">updateDOM</a></li></ul></li><li><a href="ViewStateCell.html">ViewStateCell</a><ul class='methods'><li data-type='method' style='display: none;'><a href="ViewStateCell.html#_dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#dispose">dispose</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#save">save</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#stopPolling">stopPolling</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#sync">sync</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#trigger">trigger</a></li><li data-type='method' style='display: none;'><a href="ViewStateCell.html#url">url</a></li></ul></li></ul><h3>Externals</h3><ul><li><a href="external-Backbone.html">external:Backbone</a></li><li><a href="external-Backbone-Collection.html">external:Backbone-Collection</a></li><li><a href="external-Backbone-Events.html">external:Backbone-Events</a></li><li><a href="external-Backbone-History.html">external:Backbone-History</a></li><li><a href="external-Backbone-Model.html">external:Backbone-Model</a></li><li><a href="external-Backbone-NestedModel.html">external:Backbone-NestedModel</a></li><li><a href="external-Backbone-Router.html">external:Backbone-Router</a></li><li><a href="external-Backbone-View.html">external:Backbone-View</a></li><li><a href="external-Handlebars.html">external:Handlebars</a></li><li><a href="external-Handlebars-Template.html">external:Handlebars-Template</a></li><li><a href="external-jQuery.html">external:jQuery</a></li><li><a href="external-jQuery-Deferred.html">external:jQuery-Deferred</a></li></ul><h3>Namespaces</h3><ul><li><a href="HandlebarsHelper.html">HandlebarsHelper</a><ul class='methods'><li data-type='method' style='display: none;'><a href="HandlebarsHelper.html#.bindModel">bindModel</a></li><li data-type='method' style='display: none;'><a href="HandlebarsHelper.html#.dasherize">dasherize</a></li><li data-type='method' style='display: none;'><a href="HandlebarsHelper.html#.feedback">feedback</a></li><li data-type='method' style='display: none;'><a href="HandlebarsHelper.html#.formAttr">formAttr</a></li><li data-type='method' style='display: none;'><a href="HandlebarsHelper.html#.injectFieldIndices">injectFieldIndices</a></li><li data-type='method' style='display: none;'><a href="HandlebarsHelper.html#.labelFor">labelFor</a></li></ul></li><li><a href="templateRenderer.html">templateRenderer</a><ul class='methods'><li data-type='method' style='display: none;'><a href="templateRenderer.html#.copyTopElement">copyTopElement</a></li><li data-type='method' style='display: none;'><a href="templateRenderer.html#.getCaretPosition">getCaretPosition</a></li><li data-type='method' style='display: none;'><a href="templateRenderer.html#.hotswap">hotswap</a></li><li data-type='method' style='display: none;'><a href="templateRenderer.html#.hotswapKeepCaret">hotswapKeepCaret</a></li><li data-type='method' style='display: none;'><a href="templateRenderer.html#.render">render</a></li><li data-type='method' style='display: none;'><a href="templateRenderer.html#.setCaretPosition">setCaretPosition</a></li><li data-type='method' style='display: none;'><a href="templateRenderer.html#.supportsSelection">supportsSelection</a></li></ul></li><li><a href="torso.html">torso</a></li><li><a href="Torso.behaviors.DataBehavior.html">Torso.behaviors.DataBehavior</a></li><li><a href="Validation.html">Validation</a><ul class='members'><li data-type='member' style='display: none;'><a href="Validation.html#.mixin">mixin</a></li><li data-type='member' style='display: none;'><a href="Validation.html#.version">version</a></li></ul><ul class='methods'><li data-type='method' style='display: none;'><a href="Validation.html#.configure">configure</a></li></ul></li></ul><h3>Mixins</h3><ul><li><a href="cacheMixin.html">cacheMixin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="cacheMixin.html#.constructor">constructor</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.createPrivateCollection">createPrivateCollection</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.fetchByIds">fetchByIds</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.getAllRequestedIds">getAllRequestedIds</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.getRequesterIds">getRequesterIds</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.getRequesterIdsAsDictionary">getRequesterIdsAsDictionary</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.getRequesters">getRequesters</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.registerIds">registerIds</a></li><li data-type='method' style='display: none;'><a href="cacheMixin.html#.removeRequester">removeRequester</a></li></ul></li><li><a href="cellMixin.html">cellMixin</a><ul class='members'><li data-type='member' style='display: none;'><a href="cellMixin.html#.isModelCompatible">isModelCompatible</a></li></ul><ul class='methods'><li data-type='method' style='display: none;'><a href="cellMixin.html#.fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="cellMixin.html#.save">save</a></li><li data-type='method' style='display: none;'><a href="cellMixin.html#.sync">sync</a></li><li data-type='method' style='display: none;'><a href="cellMixin.html#.url">url</a></li></ul></li><li><a href="loadingMixin.html">loadingMixin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="loadingMixin.html#.constructor">constructor</a></li><li data-type='method' style='display: none;'><a href="loadingMixin.html#.fetch">fetch</a></li><li data-type='method' style='display: none;'><a href="loadingMixin.html#.getLoadedOncePromise">getLoadedOncePromise</a></li><li data-type='method' style='display: none;'><a href="loadingMixin.html#.hasLoadedOnce">hasLoadedOnce</a></li><li data-type='method' style='display: none;'><a href="loadingMixin.html#.isLoading">isLoading</a></li></ul></li><li><a href="modelMixin.html">modelMixin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="modelMixin.html#._dispose">_dispose</a></li><li data-type='method' style='display: none;'><a href="modelMixin.html#.dispose">dispose</a></li></ul></li><li><a href="pollingMixin.html">pollingMixin</a><ul class='members'><li data-type='member' style='display: none;'><a href="pollingMixin.html#.pollTimeoutId">pollTimeoutId</a></li></ul><ul class='methods'><li data-type='method' style='display: none;'><a href="pollingMixin.html#.isPolling">isPolling</a></li><li data-type='method' style='display: none;'><a href="pollingMixin.html#.polledFetch">polledFetch</a></li><li data-type='method' style='display: none;'><a href="pollingMixin.html#.startPolling">startPolling</a></li><li data-type='method' style='display: none;'><a href="pollingMixin.html#.stopPolling">stopPolling</a></li></ul></li><li><a href="validationMixin.html">validationMixin</a><ul class='methods'><li data-type='method' style='display: none;'><a href="validationMixin.html#.isValid">isValid</a></li><li data-type='method' style='display: none;'><a href="validationMixin.html#.preValidate">preValidate</a></li><li data-type='method' style='display: none;'><a href="validationMixin.html#.validate">validate</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#handlebarsUtils">handlebarsUtils</a></li><li><a href="global.html#stickitUtils">stickitUtils</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">FormView.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function(root, factory) {
+  if (typeof define === 'function' &amp;&amp; define.amd) {
+    define(['underscore', 'backbone', './View', './FormModel', './Cell', 'backbone.stickit'], factory);
+  } else if (typeof exports === 'object') {
+    require('backbone.stickit');
+    module.exports = factory(require('underscore'), require('backbone'), require('./View'), require('./FormModel'), require('./Cell'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.FormView = factory(root._, root.Backbone, root.Torso.View, root.Torso.FormModel, root.Torso.Cell);
+  }
+}(this, function(_, Backbone, View, FormModel, Cell) {
+  'use strict';
+
+  var $ = Backbone.$;
+
+  /**
+   * Generic Form View
+   *
+   * @class FormView
+   * @extends View
+   *
+   * @param {Object} args - options argument
+   * @param {FormModel} [args.model=new this.FormModelClass()] - a form model for binding that defaults to class-level
+                                                                  model or instantiates a FormModelClass
+   * @param {Function} [args.FormModelClass=FormModel] - the class (that extends {@link FormModel}) that will be used as the FormModel. Defaults to a class-level
+                                                    definition or {@link FormModel} if none is provided
+   * @param {external:Handlebars-Template} [args.template] - overrides the template used by this view
+   * @param {Object} [args.events] - events hash: merge + override the events hash used by this view
+   * @param {Object} [args.fields] - field hash: merge + override automated two-way binding field hash used by this view
+   * @param {Object} [args.bindings] - binding hash: merge + override custom epoxy binding hash used by this view
+   *
+   * @author ariel.wexler@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/FormView.html">FormView Annotated Source&lt;/a>
+   */
+  var FormView = View.extend(/** @lends FormView.prototype */{
+    /**
+     * Validation error hash
+     * @private
+     * @property _errors
+     * @type Object
+     */
+    /**
+     * Validation success
+     * @private
+     * @property _success
+     * @type Boolean
+     */
+    /**
+     * Stickit bindings hash local backup
+     * @private
+     * @name _bindings
+     * @memberof FormView
+     * @instance
+     * @type Object
+     */
+    /**
+     * Handlebars template for form
+     * @name template
+     * @memberof FormView
+     * @instance
+     * @type external:Handlebars-Template
+     */
+    /**
+     * Backbone events hash
+     * @name events
+     * @memberof FormView
+     * @instance
+     * @type Object
+     */
+    /**
+     * Two-way binding field customization
+     * @name fields
+     * @memberof FormView
+     * @instance
+     * @type Object
+     */
+    /**
+     * Stickit bindings hash
+     * @name bindings
+     * @memberof FormView
+     * @instance
+     * @type Object
+     */
+    /**
+     * The class to be used when instantiating the form model
+     * @name FormModelClass
+     * @memberof FormView
+     * @instance
+     * @type {FormModel.prototype}
+     */
+    constructor: function(args) {
+      args = args || {};
+
+      /* Listen to model validation callbacks */
+      var FormModelClass = args.FormModelClass || this.FormModelClass || FormModel;
+      this.model = args.model || this.model || (new FormModelClass());
+
+      /* Override template */
+      this.template = args.template || this.template;
+
+      /* Merge events, fields, bindings, and computeds */
+      this.events = _.extend({}, this.events || {}, args.events || {});
+      this.fields = _.extend({}, this.fields || {}, args.fields || {});
+      this._errors = [];
+      this._success = false;
+      // this._bindings is a snapshot of the original bindings
+      this._bindings = _.extend({}, this.bindings || {}, args.bindings || {});
+
+      View.apply(this, arguments);
+
+      this.resetModelListeners(this.model);
+    },
+
+    /**
+     * Prepare the formview's default render context
+     * @return {Object}
+     *         {Object.errors} A hash of field names mapped to error messages
+     *         {Object.success} A boolean value of true if validation has succeeded
+     */
+    prepare: function() {
+      var templateContext = View.prototype.prepare.apply(this);
+      templateContext.formErrors = (_.size(this._errors) !== 0) ? this._errors : null;
+      templateContext.formSuccess = this._success;
+      return templateContext;
+    },
+
+    /**
+     * Override the delegate events and wrap our custom additions
+     */
+    delegateEvents: function() {
+      /* DOM event bindings and plugins */
+      this.__generateStickitBindings();
+      this.stickit();
+      View.prototype.delegateEvents.call(this);
+    },
+
+    /**
+     * Resets the form model with the passed in model. Stops listening to current form model
+     * and sets up listeners on the new one.
+     * @param {Torso.FormModel} model the new form model
+     * @param {boolean} [stopListening=false] if true, it will stop listening to the previous form model
+     */
+    resetModelListeners: function(model, stopListening) {
+      if (this.model &amp;&amp; stopListening) {
+        this.stopListening(this.model);
+      }
+      this.model = model;
+      this.listenTo(this.model, 'validated:valid', this.valid);
+      this.listenTo(this.model, 'validated:invalid', this.invalid);
+    },
+
+    /**
+     * Default method called on validation success.
+     */
+    valid: function() {
+      this._success = true;
+      this._errors = [];
+    },
+
+    /**
+     * Default method called on validation failure.
+     */
+    invalid: function(model, errors) {
+      this._success = false;
+      this._errors = errors;
+    },
+
+    /**
+     * Deactivate callback that removes bindings and other resources
+     * that shouldn't exist in a dactivated state
+     */
+    deactivate: function() {
+      View.prototype.deactivate.call(this);
+      // No detach callback... Deactivate will have to do as it is called by detach
+      if (this.$el) {
+        this.unstickit();
+      }
+    },
+
+    /**
+     * For use in a feedback's "then" callback
+     * Checks to see if the form model's field is valid. If the field is invalid, it adds the class.
+     * If the field is invalid, it removes the class. When an array is passed in for the fieldName,
+     * it will validate all the fields together as if they were one (any failure counts as a total failure,
+     * and all fields need to be valid for success).
+     * @param {(string|string[])} fieldName the name of the form model field or an array of field names
+     * @param {string} className the class name to add or remove
+     * @param {boolean} [onValid] if true, will reverse the logic operator
+     * @private
+     */
+    _thenAddClassIfInvalid: function(fieldName, className, onValid) {
+      var isValid = this.model.isValid(fieldName);
+      if ((onValid ? true : false) === (isValid ? true : false)) {
+        return {
+          addClass: className
+        };
+      } else {
+        return {
+          removeClass: className
+        };
+      }
+    },
+
+    /**
+     * For use in a feedback's "then" callback
+     * Checks to see if the form model's field is valid. If the field is invalid, it sets the text.
+     * If the field is invalid, it removes the text. When an array is passed in for the fieldName,
+     * it will validate all the fields together as if they were one (any failure counts as a total failure,
+     * and all fields need to be valid for success).
+     * @param {(string|string[])} fieldName the name of the form model field or an array of field names
+     * @param {string} text the text to set
+     * @param {boolean} [onValid] if true, will reverse the logic operator
+     * @private
+     */
+    _thenSetTextIfInvalid: function(fieldName, text, onValid) {
+      var isValid = this.model.isValid(fieldName);
+      if ((onValid ? true : false) === (isValid ? true : false)) {
+        return {
+          text: text
+        };
+      } else {
+        return {
+          text: ''
+        };
+      }
+    },
+
+    //************** Private methods **************//
+
+    /**
+     * Selects all data-model references in this view's DOM, and creates stickit bindings
+     * @private
+     */
+    __generateStickitBindings: function() {
+      var self = this;
+      // Start by removing all old bindings and falling back to the initialized binding contents
+      this.bindings = _.extend({}, this._bindings);
+
+      // Stickit model two-way bindings
+      _.each(this.$('[data-model]'), function(element) {
+        var attr = $(element).data('model'),
+            options = self.__getFieldOptions(attr),
+            fieldBinding = self.__generateModelFieldBinding(attr, options);
+
+        //add select options
+        if ($(element).is('select')) {
+          fieldBinding.selectOptions = self.__generateSelectOptions(element, options);
+        }
+
+        self.bindings['[data-model="' + attr + '"]'] = fieldBinding;
+      });
+    },
+
+    /**
+     * @private
+     * @param {string} attr An attribute of the model
+     * @return {Object} Any settings that are associates with that attribute
+     */
+    __getFieldOptions: function(attr) {
+      attr = this.__stripAllAttribute(attr);
+      return this.fields[attr] || {};
+    },
+
+    /**
+     * @param {string} field A specific model field
+     * @param {Object} options Additional behavior options for the bindings
+     * @param {Object} [options.modelFormat] The function called before setting model values
+     * @param {Object} [options.viewFormat] The function called before setting view values
+     * @param {Object} [options.stickit] Any options fields that stickit accepts
+     * @private
+     * @return {Object} Stickit Binding Hash
+     */
+    __generateModelFieldBinding: function(field, options) {
+      var indices = this.__getAllIndexTokens(field);
+      options = options || {};
+      var stickitOpts = options.stickit || {};
+      if (_.isFunction(stickitOpts)) {
+        stickitOpts = stickitOpts.call(this, field, options);
+      }
+      return _.extend({
+        observe: field,
+        onSet: function(value) {
+          var params = [value];
+          params.push(indices);
+          params = _.flatten(params);
+          return options.modelFormat ? options.modelFormat.apply(this, params) : value;
+        },
+        onGet: function(value) {
+          var params = [value];
+          params.push(indices);
+          params = _.flatten(params);
+          return options.viewFormat ? options.viewFormat.apply(this, params) : value;
+        }
+      }, stickitOpts);
+    },
+
+    /**
+     * @param {Element} element The select element to generate options for
+     * @param {Object} opts Additional behavior options for the bindings
+     * @param {Object} [opts.modelFormat] The function called before setting model values
+     * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
+     * @private
+     * @return {Object} Stickit options hash
+     */
+    __generateSelectOptions: function(element, opts) {
+      var collection = [],
+          options = $(element).children('option');
+      opts = opts || {};
+      opts.stickit = opts.stickit || {};
+      var selectOptions = opts.stickit.selectOptions || {};
+      if (_.isFunction(selectOptions)) {
+        selectOptions = selectOptions.call(this, element, opts);
+      }
+
+      _.each(options, function(option) {
+        collection.push({'label': $(option).text(), 'value': opts.modelFormat ? opts.modelFormat.apply(this, [$(option).val()]) : $(option).val()});
+      });
+
+      return _.extend({
+        collection: collection,
+        labelPath: 'label',
+        valuePath: 'value'
+      }, selectOptions);
+    }
+  });
+
+  return FormView;
+}));
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+<script src="scripts/collapse.js"></script>
+
+
+
+</body>
+</html>

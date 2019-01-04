@@ -1,6 +1,7 @@
 /**
  * The backbone Collection reference
  * @external Backbone-Collection
+ * @extends external:Backbone-Events
  * @see {@link http://backbonejs.org/#Collection|Backbone.Collection}
  */
 (function(root, factory) {
@@ -25,8 +26,8 @@
    * @mixes cacheMixin
    *
    * @author kent.willis@vecna.com
-     *
-     * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
+   *
+   * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
    */
   var Collection = Backbone.Collection.extend(/** @lends Collection.prototype */{
       /**

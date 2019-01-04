@@ -178,7 +178,12 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+ * The backbone Events reference
+ * @external Backbone-Events
+ * @see {@link http://backbonejs.org/#Events|Backbone.Events}
+ */</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
     define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'backbone'</span>], factory);
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
@@ -192,10 +197,13 @@
 
   <span class="hljs-comment">/**
    * Generic Events.
-   * @module    Torso
+   *
    * @class     Events
-   * @constructor
+   * @extends {external:Backbone-Events}
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/Events.html"&gt;Events Annotated Source&lt;/a&gt;
    */</span>
   <span class="hljs-keyword">var</span> Events = _.extend({}, Backbone.Events);
 

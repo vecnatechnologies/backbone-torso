@@ -178,7 +178,13 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+ * The backbone Router reference
+ * @external Backbone-Router
+ * @extends external:Backbone-Events
+ * @see {@link http://backbonejs.org/#Router|Backbone.Router}
+ */</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
     define([<span class="hljs-string">'backbone'</span>], factory);
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
@@ -191,11 +197,15 @@
 <span class="hljs-meta">  'use strict'</span>;
   <span class="hljs-comment">/**
    * Backbone's router.
-   * @module Torso
+   *
    * @class  Router
+   * @extends external:Backbone-Router
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/Router.html"&gt;Router Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">return</span> Backbone.Router.extend({});
+  <span class="hljs-keyword">return</span> Backbone.Router.extend(<span class="hljs-comment">/** @lends Router.prototype */</span>{});
 }));</pre></div></div>
             
         </li>

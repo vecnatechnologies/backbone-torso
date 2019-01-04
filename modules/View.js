@@ -1,6 +1,7 @@
 /**
  * The backbone View reference
  * @external Backbone-View
+ * @extends external:Backbone-Events
  * @see {@link http://backbonejs.org/#View|Backbone.View}
  */
 (function(root, factory) {
@@ -311,7 +312,7 @@
 
     /**
      * If detached, will replace the element passed in with this view's element and activate the view.
-     * @param {jQuery} [$el] the element to attach to. This element will be replaced with this view.
+     * @param {external:jQuery} [$el] the element to attach to. This element will be replaced with this view.
      *                       If options.replaceMethod is provided, then this parameter is ignored.
      * @param {Object} [options] optional options
      * @param   {Fucntion} [options.replaceMethod] if given, this view will invoke replaceMethod function
@@ -355,7 +356,7 @@
      *     previousView: the previous view (can be undefined)
      *     parentView: the parent view transitioning in or out the tracked view
      *   }
-     * @param {jQuery|string} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
+     * @param {(external:jQuery|string)} $el the element to attach to OR the name of the injection site. The element with the attribute "inject=<name of injection site>" will be used.
      * @param {View}   view   The instantiated view object to be attached
      * @param {Object} [options] optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.
      * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
@@ -1033,7 +1034,7 @@
     /**
      * Simliar to this.attachView except it utilizes the new view's transitionIn method instead of just attaching the view.
      * This method is invoked on the parent view to attach a tracked view where the transitionIn method defines how a tracked view is brought onto the page.
-     * @param {jQuery} $el the element to attach to.
+     * @param {external:jQuery} $el the element to attach to.
      * @param {View} newView the view to be transitioned in.
      * @param {Object} [options] optional options object
      * @param   {boolean} [options.noActivate=false] if set to true, the view will not be activated upon attaching.
@@ -1099,7 +1100,7 @@
 
     /**
      * Replaces the injection site element passed in using $el.replaceWith OR you can use your own replace method
-     * @param {jQuery} $el the injection site element to be replaced
+     * @param {external:jQuery} $el the injection site element to be replaced
      * @param {Object} [options] Optional options
      * @param   {Function} [options.replaceMethod] use an alternative replace method. Invoked with the view's element as the argument.
      * @param   {boolean} [options.discardInjectionSite=false] if true, the view will not save a reference to the injection site after replacement.
@@ -1341,7 +1342,7 @@
      * Returns all elements on the page that match the feedback mapping
      * If dest is: my-feedback-foo[x][y] then it will find all elements that match: data-feedback="my-feedback-foo[*][*]"
      * @param {string} dest the string of the data-feedback
-     * @return {jQuery} all elements on the page that match the feedback mapping
+     * @return {external:jQuery} all elements on the page that match the feedback mapping
      * @private
      */
     __getFeedbackDestinations: function(dest) {

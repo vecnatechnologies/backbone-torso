@@ -14,46 +14,50 @@
 
   /**
    * Generic Form Model
-   * @module    Torso
-   * @class     FormModel
-   * @constructor
+   *
+   * @class FormModel
+   * @extends NestedModel
+   * @mixes validationMixin
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/FormModel.html">FormModel Annotated Source</a>
    */
-  var FormModel = NestedModel.extend({
+  var FormModel = NestedModel.extend(/** @lends FormModel.prototype */{
     /**
      * @private
      * @property __currentMappings
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __cache
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __currentObjectModels
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __currentUpdateEvents
      * @type Array
-     **/
+     */
     /**
      * @property validation
      * @type Object
-     **/
+     */
     /**
      * @property labels
      * @type Object
-     **/
+     */
     /**
      * Map from aliases (either model names or computed value names) to mappings.
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property mapping
      * @type Object
-     **/
+     */
     mapping: undefined,
 
     /**
@@ -61,7 +65,7 @@
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property models
      * @type Object
-     **/
+     */
     models: undefined,
 
     /**
@@ -157,12 +161,12 @@
      *   },
      * }, optional model map)
      * @param {string} alias the name for the mapping - either a model mapping or a computed mapping
-     * @param {string, Boolean or Object} mapping Provides the mapping for this alias. If trying to map to a model, then either provide
+     * @param {(string|boolean|Object)} mapping Provides the mapping for this alias. If trying to map to a model, then either provide
      *  a space delimited list of fields to track as a String or the boolean true to track all the model's fields. If the mapping is for
      *  a computed value, then provide a map from model alias to model mapping for all the fields needed for the computed and a pull method
      *  if you want to change/combine/split object model properties before bringing them into the form model and a push method if you want to
      *  change/combine/split form model properties before pushing them to the object models.
-     * @param {Object or Backbone.Model instance} [models] Provides instances to use for this mapping. If mapping is a computed,
+     * @param {Object|external:Backbone-Model} [models] Provides instances to use for this mapping. If mapping is a computed,
      *   provide a map from alias to model instance. If mapping is for a single model, just provide the model instance for that alias.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
@@ -217,7 +221,7 @@
      *   }
      * }, optional model map)
      * @param {Object} mappings Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.
-     * @param {Object} [models] this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are backbone model instances.
+     * @param {Object} [models] this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are external:Backbone-Models.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
     setMappings: function(mappings, models, copy) {
@@ -231,8 +235,8 @@
 
     /**
      * Remove a mapping (model or computed) by alias
-     * @param {string or Backbone.Model instance} aliasOrModel if a String is provided, it will unset the mapping with that alias.
-     *   If a Backbone Model instance is provided, it will remove the model mapping that was bound to that model.
+     * @param {string|external:Backbone-Model} aliasOrModel if a String is provided, it will unset the mapping with that alias.
+     *   If a external:Backbone-Model is provided, it will remove the model mapping that was bound to that model.
      * @param {boolean} [removeModelIfUntracked=false] If true, after the mapping is removed, the model will also be unset but only if
      *   no other mappings reference it. Note, setting this to true will not remove any computed mappings that also use that model.
      */
@@ -259,7 +263,7 @@
     /**
      * Returns the object model currently bound to the given name/alias.
      * @param {string} alias the name/alias used by the mappings.
-     * @return {Backbone Model instance} the model currently bound to the alias
+     * @return {external:Backbone-Model} the model currently bound to the alias
      */
     getTrackedModel: function(alias) {
       return this.__currentObjectModels[alias];
@@ -274,8 +278,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/trackModel:method"}}.trackModel(){{/crossLink}}
-     * @deprecated use .trackModel() instead.
+     * Use {@link FormModel#trackModel} instead.
+     * @see {@link FormModel#trackModel}
+     * @deprecated
      */
     setTrackedModel: function() {
       this.trackModel.apply(this, arguments);
@@ -284,7 +289,7 @@
     /**
      * Update or create a binding between an object model and an alias.
      * @param {string} alias the alias/name to bind to.
-     * @param {Backbone Model instance} model the model to be bound. Mappings referencing this alias will start applying to this model.
+     * @param {external:Backbone-Model} model the model to be bound. Mappings referencing this alias will start applying to this model.
      * @param {boolean} [copy=false] if true, the form model will perform a pull on any mappings using this alias.
      */
     trackModel: function(alias, model, copy) {
@@ -308,8 +313,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/trackModels:method"}}.trackModels(){{/crossLink}}
-     * @deprecated use .trackModels() instead.
+     * Use {@link FormModel#trackModels} instead.
+     * @see {@link FormModel#trackModels}
+     * @deprecated
      */
     setTrackedModels: function() {
       this.trackModels.apply(this, arguments);
@@ -317,7 +323,7 @@
 
     /**
      * Binds multiple models to their aliases.
-     * @param {Map from String to Backbone Model instances} models A map from alias/name to model to be bound to that alias.
+     * @param {Object.<string, external:Backbone-Model>} models A map from alias/name to model to be bound to that alias.
      * @param {boolean} [copy=false] if true, the form model will perform a pull on any mapping using these models.
      */
     trackModels: function(models, copy) {
@@ -327,8 +333,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/untrackModel:method"}}.untrackModel(){{/crossLink}}
-     * @deprecated use .untrackModel() instead.
+     * Use {@link FormModel#untrackModel} instead.
+     * @see {@link FormModel#untrackModel}
+     * @deprecated
      */
     unsetTrackedModel: function() {
       this.untrackModel.apply(this, arguments);
@@ -336,7 +343,7 @@
 
     /**
      * Removes the binding between a model alias and a model instance. Effectively stops tracking that model.
-     * @param {string or Backbone Model instance} aliasOrModel If a string is given, it will unset the model using that alias. If a model instance
+     * @param {string|external:Backbone-Model} aliasOrModel If a string is given, it will unset the model using that alias. If a model instance
      *   is given, it will unbind whatever alias is currently bound to it.
      */
     untrackModel: function(aliasOrModel) {
@@ -351,8 +358,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/untrackModels:method"}}.untrackModels(){{/crossLink}}
-     * @deprecated use .untrackModels() instead.
+     * Use {@link FormModel#untrackModels} instead.
+     * @see {@link FormModel#untrackModels}
+     * @deprecated
      */
     unsetTrackedModels: function() {
       this.untrackModels.apply(this, arguments);
@@ -600,9 +608,9 @@
 
     /**
      * Returns the aliases/names of models referenced in the computed mapping with the given alias
-     * @param {string|Object} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
+     * @param {(string|Object)} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
      *   an object if it hasn't been added as a mapping yet.
-     * @return {Array of Strings} an array of the model names/aliases referenced inside the computed mapping
+     * @return {string[]} an array of the model names/aliases referenced inside the computed mapping
      * @private
      */
     __getModelAliases: function(computedAliasOrConfig) {
@@ -621,8 +629,10 @@
     /**
      * Repackages a computed mapping to be easier consumed by methods wanting the model mappings tied to the model instances.
      * Returns a list of objects that contain the model instance and the mapping for that model.
+     *
+     * @private
      * @param {string} computedAlias the name/alias used for this computed
-     * @return {Array of Objects} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
+     * @return {object[]} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
      */
     __getComputedModelConfigs: function(computedAlias) {
       var hasAllModels = true,
@@ -791,7 +801,7 @@
     /**
      * NOTE: When looking to update the form model manually, call this.pull().
      * Updates this form model with the changed attributes of a given object model
-     * @param {Backbone.Model instance} model the object model that has been changed
+     * @param {external:Backbone-Model} model the object model that has been changed
      * @private
      */
     __updateFormModel: function(model) {
@@ -803,7 +813,7 @@
 
     /**
      * Updates the form model's snapshot of the model's attributes to use later
-     * @param {Backbone.Model instance} model the object model
+     * @param {external:Backbone-Model} model the object model
      * @param {Object} [cache=this.__cache] if passed an object (can be empty), this method will fill
      *   this cache object instead of this form model's __cache field
      * @private
@@ -833,7 +843,7 @@
 
     /**
      * Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.
-     * @param {string or Backbone.Model instance} aliasOrModel If string, just returns this string. If a model instance, then the alias
+     * @param {string|external:Backbone-Model} aliasOrModel If string, just returns this string. If a model instance, then the alias
      *   that is bound to the tracked model passed in will be found and returned.
      * @return {string} the alias
      * @private
@@ -852,7 +862,7 @@
     },
 
     /**
-     * @param {Backbone.Model instance} model the model to create the hash value from
+     * @param {external:Backbone-Model} model the model to create the hash value from
      * @return {string} the hash value of the model making sure to only use the tracked fields
      * @private
      */
@@ -875,7 +885,7 @@
 
     /**
      * Deep clones the attributes. There should be no functions in the attributes
-     * @param {Object|Array|Basic Data Type} val a non-function value
+     * @param {(Object|Array|string|number|boolean)} val a non-function value
      * @return the clone
      * @private
      */
@@ -971,7 +981,7 @@
     /**
      * Returns a map where the keys are the fields that are being tracked on tracked model and values are
      * the with current values of those fields.
-     * @param {Backbone.Model instance} model the object model
+     * @param {external:Backbone-Model} model the object model
      * @return {Object} aa map where the keys are the fields that are being tracked on tracked model and
      *   values are the with current values of those fields.
      * @private
@@ -1007,7 +1017,7 @@
     /**
      * Returns a useful data structure that binds a tracked model to the fields being tracked on a mapping.
      * @param modelAlias
-     * @param {Array of Strings or undefined} fields the fields that the model is tracking. Can be undefined if tracking all fields.
+     * @param {(string[]|undefined)} fields the fields that the model is tracking. Can be undefined if tracking all fields.
      *   When creating a model config for a computed mapping, the fields refers to the fields being tracked only for that computed value.
      * @return {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
      *   it will return undefined.

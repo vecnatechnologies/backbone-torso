@@ -192,34 +192,55 @@
 
   <span class="hljs-comment">/**
    * Registry of instantiated Torso objects
-   * @module    Torso
-   * @class     registry
-   * @constructor
-   * @author kent.willis@vecna.com
-   */</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>Registry prototype.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> Registry = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+   *
+   * @class registry
+   * @extends external:Backbone-Events
+   *
+   * @author jyoung@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/registry.html"&gt;registry Annotated Source&lt;/a&gt;
+   */</span>
+  <span class="hljs-keyword">var</span> Registry = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-comment">/**
+     * The registered cells keyed by their unique cid.
+     * @name cells
+     * @instance
+     * @type {Object.&lt;string, Cell&gt;}
+     * @memberof registry
+     */</span>
     <span class="hljs-keyword">this</span>.cells = {};
+    <span class="hljs-comment">/**
+     * The registered models keyed by their unique cid.
+     * @name models
+     * @instance
+     * @type {Object.&lt;string, Model&gt;}
+     * @memberof registry
+     */</span>
     <span class="hljs-keyword">this</span>.models = {};
+    <span class="hljs-comment">/**
+     * The registered services keyed by their unique cid.
+     * @name services
+     * @instance
+     * @type {Object.&lt;string, ServiceCell&gt;}
+     * @memberof registry
+     */</span>
     <span class="hljs-keyword">this</span>.services = {};
+    <span class="hljs-comment">/**
+     * The registered views keyed by their unique cid.
+     * @name views
+     * @instance
+     * @type {Object.&lt;string, View&gt;}
+     * @memberof registry
+     */</span>
     <span class="hljs-keyword">this</span>.views = {};
   };
 
-  _.extend(Registry.prototype, Backbone.Events, {
-    <span class="hljs-attr">cidPrefix</span>: <span class="hljs-string">'r'</span>,
+  _.extend(Registry.prototype, Backbone.Events, <span class="hljs-comment">/** @lends registry.prototype */</span>{
+    <span class="hljs-comment">/**
+     * The prefix to use for this object's cid.
+     * @type {string}
+     */</span>
+    cidPrefix: <span class="hljs-string">'r'</span>,
 
     <span class="hljs-comment">/**
      * Add the model to the model cache when it is initialized.

@@ -178,7 +178,13 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+            <div class="content"><div class='highlight'><pre><span class="hljs-comment">/**
+ * The backbone History reference
+ * @external Backbone-History
+ * @extends external:Backbone-Events
+ * @see {@link http://backbonejs.org/#History|Backbone.History}
+ */</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
   <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
     define([<span class="hljs-string">'backbone'</span>], factory);
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
@@ -192,10 +198,13 @@
 
   <span class="hljs-comment">/**
    * Backbone's history object.
-   * @module    Torso
-   * @class     history
-   * @constructor
+   *
+   * @class history
+   * @extends external:Backbone-History
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/history.html"&gt;history Annotated Source&lt;/a&gt;
    */</span>
   <span class="hljs-keyword">return</span> Backbone.history;
 }));</pre></div></div>

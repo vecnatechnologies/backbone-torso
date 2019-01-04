@@ -190,14 +190,16 @@
   }
 }(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, registry</span>) </span>{
 <span class="hljs-meta">  'use strict'</span>;
+
   <span class="hljs-comment">/**
    * The base for a model
-   * @module Torso
-   * @namespace Torso.Mixins
-   * @class  modelMixin
+   *
+   * @mixin modelMixin
    * @author kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/mixins/modelMixin.html"&gt;modelMixin Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">return</span> {
+  <span class="hljs-keyword">return</span> <span class="hljs-comment">/** @lends modelMixin */</span> {
     <span class="hljs-comment">/**
      * Register this item with the model registry after initialize.
      * @private
@@ -220,6 +222,7 @@
 
     <span class="hljs-comment">/**
      * Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.
+     * @function
      */</span>
     _dispose: _.noop
   };

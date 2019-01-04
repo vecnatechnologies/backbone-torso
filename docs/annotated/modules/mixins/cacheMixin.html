@@ -200,6 +200,8 @@
    * @mixin cacheMixin
    *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see &lt;a href="../annotated/modules/mixins/cacheMixin.html"&gt;cacheMixin Annotated Source&lt;/a&gt;
    */</span>
   <span class="hljs-keyword">var</span> mixin = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">base</span>) </span>{
 
@@ -286,7 +288,7 @@
 
           <span class="hljs-comment">/**
            * Tracks a new id
-           * @param {string|Number} id the id attribute of the model
+           * @param {(string|Number)} id the id attribute of the model
            */</span>
           trackNewId: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">id</span>) </span>{
             <span class="hljs-keyword">this</span>.trackIds(<span class="hljs-keyword">this</span>.getTrackedIds().concat(id));
