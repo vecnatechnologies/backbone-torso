@@ -267,7 +267,7 @@
           var newIndex = indexMap[m.substring(1, m.length - 1)];
           var indexToken = '[' + (newIndex === undefined ? '' : newIndex) + ']';
           var forceArrayNotation = options &amp;&amp; options.forceArrayNotation;
-          if (_.isString(newIndex) &amp;&amp; !forceArrayNotation) {
+          if (_.isString(newIndex) &amp;&amp; isNaN(newIndex) &amp;&amp; !forceArrayNotation) {
             indexToken = '.' + newIndex;
           }
           return indexToken;
