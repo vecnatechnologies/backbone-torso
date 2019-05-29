@@ -108,5 +108,13 @@
       "name": "Josh Young",
       "email": "jyoung@vecna.com"
     }
-  ]
+  ],
+  "release-it": {
+    "github": {
+      "release": true
+    },
+    "git": {
+      "tagName": "v${version}"
+    }
+  }
 }
