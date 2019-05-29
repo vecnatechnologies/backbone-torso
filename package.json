@@ -111,10 +111,13 @@
   ],
   "release-it": {
     "github": {
-      "release": true
+      "release": true,
+      "releaseName": "Release v${version}"
     },
     "git": {
-      "tagName": "v${version}"
+      "tagName": "v${version}",
+      "commitMessage": "Release v${version}"
+      "tagAnnotation": "Release v${version}"
     }
   }
 }
