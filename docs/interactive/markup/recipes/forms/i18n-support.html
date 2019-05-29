@@ -1,0 +1,178 @@
+<h3>
+  Internationalization (i18n Support)
+</h3>
+<hr/>
+<p>If you are building an application that needs to support multiple languages, then you
+should use an internationalization utility like i18n.  For this to work, you must create
+an i18n properties file that maps keys to phrases.  During runtime, the i18n plugin will
+convert keys to the appropriate language (if that property exists for the given language).
+Also, please pardon any poor translations :)</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="i18n-form"></div>
+
+<div class="code-type other">PROPERTIES - messages</div>
+<pre><code class=""><script type="text/code">
+form.has.errors=Form has errors!
+form.submit.success=Form submit success!
+
+form.label.name=Name
+form.label.gender=Gender
+form.label.gender.male=male
+form.label.gender.female=female
+form.label.submit=Submit
+
+form.error.name.required=Name is required
+form.error.name.min.length=Name must be at least {0} characters
+form.error.gender.required=Gender is required
+</script></code></pre>
+
+<div class="code-type hbs closed"></div>
+<pre><code class="html" for="i18n-form"><script type="text/code">
+<div class="btn-group">
+  <button data-lang='en'
+          class="btn \{{#equal lang 'en'}}primary\{{/equal}}">
+    English
+  </button>
+  <button data-lang='fr'
+          class="btn \{{#equal lang 'fr'}}primary\{{/equal}}">
+    Français
+  </button>
+  <button data-lang='es'
+          class="btn \{{#equal lang 'es'}}primary\{{/equal}}">
+    Español
+  </button>
+</div>
+<form>
+  <!-- Form error-listing alert -->
+  \{{#if formErrors}}
+  <div class="alert error">
+    <strong>
+      <span class="fa fa-exclamation-triangle"></span>
+      \{{i18n 'form.has.errors'}}
+    </strong>
+    <ul>
+    \{{#each formErrors}}
+      <li>\{{i18n this}}</li>
+    \{{/each}}
+    </ul>
+  </div>
+  \{{/if}}
+
+  <!-- Form success alert -->
+  \{{#if formSuccess}}
+    <div class="alert success">
+      <strong>
+        <span class="fa fa-thumbs-o-up"></span>
+        \{{i18n 'form.submit.success'}}
+      </strong>
+    </div>
+  \{{/if}}
+
+  <fieldset>
+    <label>\{{i18n 'form.label.name'}}:</label>
+    <input data-model="name" type="text" name="name"><br/>
+  </fieldset>
+
+  <fieldset>
+    <label>\{{i18n 'form.label.gender'}}:</label>
+    <input data-model="gender" type="radio" id="gender-male"
+           name="gender" value="male">
+    <label for="gender-male" class="btn">
+           \{{i18n 'form.label.gender.male'}}</label>
+    <input data-model="gender" type="radio" id="gender-female"
+           name="gender" value="female">
+    <label for="gender-female" class="btn">
+           \{{i18n 'form.label.gender.female'}}</label>
+  </fieldset>
+
+  <input class="primary" type="submit"
+         value="\{{i18n 'form.label.submit'}}">
+</form>
+</script></code></pre>
+<div class="code-type javascript closed"> - i18n HELPER</div>
+<pre><code class="javascript" for="i18n-form"><script type="text/code">
+Handlebars.registerHelper("i18n",function(data) {
+  // If the i18n data is an array, then assume format
+  // is [key, arg0, arg1, ...]
+  if (_.isArray(data)) {
+    return $.i18n.prop.apply(null, data);
+  } else {
+    // Else, just apply the i18n method assuming the
+    // handlbars template gave multiple arguments
+    return $.i18n.prop.apply(null, arguments);
+  }
+});
+</script></code></pre>
+<div class="code-type javascript"> - MODEL</div>
+<pre><code class="javascript" for="i18n-form"><script type="text/code">
+var ValidatingFormModel = Torso.FormModel.extend({
+  validation: {
+    name: {
+      inlineFn: function(value) {
+        if (_.size(value) === 0) {
+          return 'form.error.name.required';
+        } else if (_.size(value) < 5) {
+          return ['form.error.name.min.length', 5];
+        } else {
+          return '';
+        }
+      }
+    },
+    gender: {
+      inlineFn: function(value) {
+        if (!value) {
+          return 'form.error.gender.required';
+        } else {
+          return '';
+        }
+      }
+    }
+  }
+});
+var formModel = new ValidatingFormModel();
+</script></code></pre>
+<div class="code-type javascript closed"> - VIEW</div>
+<pre><code class="javascript" for="i18n-form"><script type="text/code">
+var ValidatingFormView = Torso.FormView.extend({
+  template: compiledTemplate,
+  language: 'en',
+  events: {
+    'click [type="submit"]': 'submit',
+    'click button[data-lang]': 'setLanguage'
+  },
+  prepare: function() {
+    return _.extend({
+      lang: this.language
+    }, ValidatingFormView.__super__.prepare.call(this));
+  },
+  render: function() {
+    this.$el.html(this.template(this.prepare()));
+    this.delegateEvents();
+  },
+  submit: function() {
+    this._errors = this.model.validate();
+    this.render();
+    return false;
+  },
+  loadI18nProps: function() {
+    $.i18n.properties({
+      path: 'i18n/',
+      name: 'messages',
+      language: this.language,
+      mode: 'map'
+    });
+  },
+  setLanguage: function(evt) {
+    this.language = $(evt.target).data('lang');
+    this.loadI18nProps();
+    this.render();
+  }
+});
+var formView = new ValidatingFormView({
+  el: $container,
+  model: formModel
+});
+formView.loadI18nProps();
+formView.render();
+</script></code></pre>

@@ -17,10 +17,11 @@
    * - safe disposal methods for memory + event management
    * - special functional overrides to support ID registration for different views
    *
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  cacheMixin
+   * @mixin cacheMixin
+   *
    * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/cacheMixin.html">cacheMixin Annotated Source</a>
    */
   var mixin = function(base) {
 
@@ -30,9 +31,10 @@
      * Returns a new class of collection that inherits from the parent but not the cacheMixin
      * and adds a requesterMixin that connects this cache to it's parent
      *
-     * @method createRequesterCollectionClass
-     * @param parent {Backbone Collection instance} the parent of the private collection
-     * @param guid {String} the unique code of the owner of this private collection
+     * @class PrivateCollection
+     * @extends Collection
+     * @param {external:Backbone-Collection} parent the parent of the private collection
+     * @param {string} guid the unique code of the owner of this private collection
      */
     createRequesterCollectionClass = function(parent, guid) {
       return parent.constructor.extend((function(parentClass, parentInstance, ownerKey) {
@@ -40,12 +42,11 @@
         /**
          * A mixin that overrides base collection methods meant for cache's and tailors them
          * to a requester.
-         * @method requesterMixin
+         * @alias PrivateCollection.prototype
          */
         var requesterMixin = {
 
           /**
-           * @method requesterMixin.getTrackedIds
            * @return {Array} array of ids that this collection is tracking
            */
           getTrackedIds: function() {
@@ -54,10 +55,9 @@
 
           /**
            * Will force the cache to fetch just the registered ids of this collection
-           * @method requesterMixin.fetch
            * @param [options] - argument options
-           * @param [options.idsToFetch=collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
-           * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
+           * @param {Array} [options.idsToFetch=collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+           * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           fetch: function(options) {
@@ -75,9 +75,8 @@
 
           /**
            * Will force the cache to fetch a subset of this collection's tracked ids
-           * @method requesterMixin.fetchByIds
-           * @param ids {Array} array of model ids
-           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @param {Array} ids array of model ids
+           * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete
            */
           fetchByIds: function(ids, options) {
@@ -89,7 +88,6 @@
           /**
            * Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.
            * Overrides the Id registration system to route via the parent collection
-           * @method requesterMixin.trackIds
            * @param ids The list of ids that this collection wants to track
            */
           trackIds: function(ids) {
@@ -100,8 +98,7 @@
 
           /**
            * Adds a new model to the requester collection and tracks the model.id
-           * @method requesterMixin.addModelAndTrack
-           * @param model {Backbone Model} the model to be added
+           * @param {external:Backbone-Model} model the model to be added
            */
           addModelAndTrack: function(model) {
             this.add(model);
@@ -111,8 +108,7 @@
 
           /**
            * Tracks a new id
-           * @method requesterMixin.trackNewId
-           * @param id {String or Number} the id attribute of the model
+           * @param {(string|Number)} id the id attribute of the model
            */
           trackNewId: function(id) {
             this.trackIds(this.getTrackedIds().concat(id));
@@ -121,7 +117,6 @@
           /**
            * Will begin tracking the new ids and then ask the cache to fetch them
            * This will reset any previous list of ids being tracked.
-           * @method requesterMixin.trackAndFetch
            * @return the promise of the fetch by ids
            */
           trackAndFetch: function(newIds) {
@@ -139,8 +134,7 @@
            * The resulting promise is resolved when ALL items in the process of being fetched have completed.
            * The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.
            *
-           * @method requesterMixin.pull
-           * @param [options] {Object} if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
+           * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
            * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
            *                   Will only resolve once all ids have attempted to be fetched from the server.
            */
@@ -174,7 +168,6 @@
           /**
            * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
            * the difference between pull and fetch.
-           * @method requesterMixin.trackAndPull
            * @return the promise of the fetch by ids
            */
           trackAndPull: function(newIds) {
@@ -184,7 +177,6 @@
 
           /**
            * Handles the disposing of this collection as it relates to a requester collection.
-           * @method requesterMixin.requesterDispose
            */
           requesterDispose: function() {
             parentInstance.removeRequester(ownerKey);
@@ -192,7 +184,7 @@
 
           /**
            * In addition to removing the model from the collection also remove it from the list of tracked ids.
-           * @param modelIdentifier {*} same duck-typing as Backbone.Collection.get():
+           * @param {*} modelIdentifier same duck-typing as Backbone.Collection.get():
            *                              by id, cid, model object with id or cid properties,
            *                              or an attributes object that is transformed through modelId
            */
@@ -213,18 +205,18 @@
 
     /**
      * Adds functions to manage state of requesters
-     * @method cacheMixin
-     * @param collection {Collection} the collection to add this mixin
+     *
+     * @param {Collection} collection the collection to add this mixin
      */
     cacheMixin = function(collection) {
 
       //************* PRIVATE METHODS ************//
 
       /**
+       * @alias cacheMixin.setRequestedIds
        * @private
-       * @method cacheMixin.setRequestedIds
-       * @param guid {String} the global unique identifier for the requester
-       * @param array {Array} the array of ids the requester wants
+       * @param {string} guid the global unique identifier for the requester
+       * @param {Array} array the array of ids the requester wants
        */
       var setRequestedIds = function(guid, array) {
         collection.requestMap[guid] = {
@@ -236,8 +228,8 @@
       //*********** PUBLIC METHODS ************//
 
       /**
-       * @method cacheMixin.getRequesterIds
-       * @param {String} the global unique id of the requester
+       * @alias cacheMixin.getRequesterIds
+       * @param {string} the global unique id of the requester
        * @return {Array} an array of the ids the requester with the guid has requested
        */
       collection.getRequesterIds = function(guid) {
@@ -245,9 +237,9 @@
       };
 
       /**
-       * @method cacheMixin.getRequesterIdsAsDictionary
        * This method is used for quick look up of a certain id within the list of requested ids
-       * @param guid {String} the global unique id of the requester
+       * @alias cacheMixin.getRequesterIdsAsDictionary
+       * @param {string} guid the global unique id of the requester
        * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
        */
       collection.getRequesterIdsAsDictionary = function(guid) {
@@ -255,9 +247,9 @@
       };
 
       /**
-       * @method cacheMixin.removeRequester
        * Removes a requester from this cache. No longer receives updates
-       * @param guid {String} the global unique id of the requester
+       * @alias cacheMixin.removeRequester
+       * @param {string} guid the global unique id of the requester
        */
       collection.removeRequester = function(guid) {
         delete this.requestMap[guid];
@@ -267,7 +259,7 @@
       /**
        * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
        * TODO: should this return just the knownPrivateCollections
-       * @method cacheMixin.getRequesters
+       * @alias cacheMixin.getRequesters
        * @return {Array} an array of the all requesters in the form of their GUID's
        */
       collection.getRequesters = function()  {
@@ -276,7 +268,7 @@
 
       /**
        * Return the list of Ids requested by this collection
-       * @method cacheMixin.getAllRequestedIds
+       * @alias cacheMixin.getAllRequestedIds
        * @return {Array} the corresponding requested Ids
        */
       collection.getAllRequestedIds = function() {
@@ -288,9 +280,9 @@
        * Binds a custom "resized" event to the private collections.
        * Overrides the fetch method to call the parent collection's fetchByIds method.
        * Overrides the registerIds method to redirect to its parent collection.
-       * @method cacheMixin.createPrivateCollection
-       * @param guid {String} Identifier for the requesting view
-       * @return {Collection} an new empty collection of the same type as "this"
+       * @alias cacheMixin.createPrivateCollection
+       * @param {string} guid Identifier for the requesting view
+       * @return {PrivateCollection} an new empty collection of the same type as "this"
        */
       collection.createPrivateCollection = function(guid, args) {
         args = args || {};
@@ -309,9 +301,9 @@
        * requests for Ids to be fetched.  Furthermore, the "polledFetch" method
        * is overriden such that it no longer routes through Backbone's fetch all,
        * but rather a custom "fetchByIds" method.
-       * @method cacheMixin.registerIds
-       * @param newIds {Array}  - New ids to register under the requester
-       * @param guid {String}   - The GUID of the object that wants the ids
+       * @alias cacheMixin.registerIds
+       * @param {Array} newIds  - New ids to register under the requester
+       * @param {string} guid   - The GUID of the object that wants the ids
        */
       collection.registerIds = function(newIds, guid) {
         var i, newIdx, model, requesterIdx, storedIds,
@@ -367,7 +359,8 @@
        * Overrides the base fetch call if this.fetchUsingTrackedIds is true
        * Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise
        * it will pass through to the default fetch.
-       * @method fetch
+       * @alias cacheMixin.fetch
+       * @param {Object} options
        */
       collection.fetch = function(options) {
         options = options || {};
@@ -382,10 +375,10 @@
 
       /**
        * A custom fetch operation to only fetch the requested Ids.
-       * @method cacheMixin.fetchByIds
+       * @alias cacheMixin.fetchByIds
        * @param [options] - argument options
-       * @param [options.idsToFetch=collection.collectionTrackedIds] {Array} - A list of request Ids, will default to current tracked ids
-       * @param [options.setOptions] {Object} - if a set is made, then the setOptions will be passed into the set method
+       * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+       * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
        * @return {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(options) {
@@ -477,17 +470,17 @@
       };
     };
 
-    return {
+    return /** @lends cacheMixin */ {
       /**
        * The constructor constructor / initialize method for collections.
        * Allocate new memory for the local references if they
        * were null when this method was called.
-       * @param [options] {Object} - optional options object
-       * @param   [options.fetchHttpAction='POST'] {String} http action used to get objects by ids
-       * @param   [options.getByIdsUrl='/ids'] {String} path appended to collection.url to get objects by a list of ids
-       * @param   [options.fetchUsingTrackedIds=true] {Boolean} if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
-                                                               but will rather call the default fetch method.
-       * @method constructor
+       *
+       * @param {Object} [options] - optional options object
+       * @param   [options.fetchHttpAction='POST'] {string} http action used to get objects by ids
+       * @param   [options.getByIdsUrl='/ids'] {string} path appended to collection.url to get objects by a list of ids
+       * @param   {boolean} [options.fetchUsingTrackedIds=true] if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
+       *                                                       but will rather call the default fetch method.
        */
       constructor: function(models, options) {
         options = options || {};

@@ -11,17 +11,20 @@
   'use strict';
   /**
    * A service cell is a event listening and event emitting object that is independent of any model or view.
-   * @module    Torso
-   * @class  ServiceCell
-   * @constructor
-   * @param attributes {Object} the initial attributes to use for this service.
-   * @param [options={}] {Object} the options for setting up this service.
-   *   @param [options.register=true] {Boolean} whether to register this service in the app-level registry.
+   *
+   * @class ServiceCell
+   * @extends Cell
+   *
+   * @param {Object} attributes the initial attributes to use for this service.
+   * @param {Object} [options={}] the options for setting up this service.
+   *   @param {boolean} [options.register=true] whether to register this service in the app-level registry.
    *                                            By default this WILL add it to the registry unless set to false because
    *                                            most services are global so holding on to them beyond
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/ServiceCell.html">ServiceCell Annotated Source</a>
    */
-  var ServiceCell = Cell.extend({
+  var ServiceCell = Cell.extend(/** @lends ServiceCell.prototype */{
     constructor: function() {
       var args = Array.prototype.slice.call(arguments);
       args[1] = args[1] || {};
@@ -32,7 +35,6 @@
 
     /**
      * Register this item with the service registry after initialize.
-     * @method __register
      * @private
      * @override
      */

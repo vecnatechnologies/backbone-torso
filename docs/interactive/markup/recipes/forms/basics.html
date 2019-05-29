@@ -1,0 +1,57 @@
+<h3>
+  Basic Form
+</h3>
+<hr/>
+<p>The following example is a basic backbone form that gives an name input, gender
+input, and submit button.</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="basic-form"></div>
+
+<div class="code-type html"></div>
+<pre><code class="html" for="basic-form"><script type="text/code">
+<form>
+  <fieldset>
+    <label>Name:</label>
+    <input type="text" name="name"><br/>
+  </fieldset>
+
+  <fieldset>
+    <label>Gender:</label>
+    <input type="radio" id="gender-male"
+           name="gender" value="male">
+    <label for="gender-male" class="btn">male</label>
+    <input type="radio" id="gender-female"
+           name="gender" value="female">
+    <label for="gender-female" class="btn">female</label>
+  </fieldset>
+
+  <input class="primary" type="submit" value="Submit">
+</form>
+</script></code></pre>
+<div class="code-type javascript"></div>
+<pre><code class="javascript" for="basic-form"><script type="text/code">
+var BasicFormView = Backbone.View.extend({
+  template: compiledTemplate,
+  events: {
+    'click [type="submit"]': 'submit'
+  },
+  render: function() {
+    this.$el.html(this.template());
+    this.delegateEvents();
+  },
+  submit: function() {
+    alert('BASIC FORM SUBMITTED!');
+    this.render();
+    return false;
+  }
+});
+var formView = new BasicFormView({el: $container});
+formView.render();
+</script></code></pre>
+
+<p>Although this demo works fine, notice that there is a strange behavior on submission.
+When we press submit, the render method is called. When we re-render, the input elements all
+lose their state! This goes against the Torso design philosophy of state-free DOM. If the submit
+button were to run validation before submission and provide user feedback, the render call would
+blow away all inputs. In short, we must find a way to save the form state.</p>

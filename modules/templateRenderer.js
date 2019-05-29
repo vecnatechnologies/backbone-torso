@@ -1,3 +1,14 @@
+/**
+ * The jQuery reference
+ * @external jQuery
+ * @property {external:jQuery-Deferred} Deferred
+ * @see {@link https://api.jquery.com/category/selectors/|jQuery}
+ */
+/**
+ * The jQuery Deferred reference
+ * @external jQuery-Deferred
+ * @see {@link https://api.jquery.com/category/deferred-object/|jQuery.Deferred}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore', 'backbone'], factory);
@@ -21,10 +32,10 @@
    * Recurses for nested Element Nodes only.
    * There is always room for optimizing this method.
    *
-   * @method hotswap
-   * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
-   * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
-   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   * @memberof templateRenderer
+   * @param {Node} currentNode The DOM Node corresponding to the existing page content to update
+   * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
+   * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
    */
   function hotswap(currentNode, newNode, ignoreElements) {
     var newNodeType = newNode.nodeType,
@@ -49,7 +60,7 @@
    * If the node value is not set, then the stickit-bind-val might be how the view is communicating the value for stickit to use
    * (possibly in the case of non-string values).  In this case trust the stickit-bind-val.
    *
-   * @param node {Node} the DoM element to test and fix the stickit data on.
+   * @param {Node} node the DoM element to test and fix the stickit data on.
    */
   function cleanupStickitData(node) {
     var $node = $(node);
@@ -61,9 +72,9 @@
 
   /*
    * Swap method for Element Nodes
-   * @param currentNode {Element} The pre-existing DOM Element to update
-   * @param newNode {Element} The detached DOM Element representing the desired DOM Element subtree
-   * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
+   * @param {Element} currentNode The pre-existing DOM Element to update
+   * @param {Element} newNode The detached DOM Element representing the desired DOM Element subtree
+   * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
    */
   function swapElementNodes(currentNode, newNode, ignoreElements) {
     var currentAttr, shouldIgnore, $currChildNodes, $newChildNodes, currentAttributes,
@@ -128,8 +139,8 @@
 
   /*
    * Swap method for Text, Comment, and CDATA Section Nodes
-   * @param currentNode {Node} The pre-existing DOM Node to update
-   * @param newNode {Node} The detached DOM Node representing the desired DOM Node subtree
+   * @param {Node} currentNode The pre-existing DOM Node to update
+   * @param {Node} newNode The detached DOM Node representing the desired DOM Node subtree
    */
   function updateIfNodeValueChanged(currentNode, newNode){
     var nodeValueChanged = newNode.nodeValue !== currentNode.nodeValue;
@@ -157,23 +168,22 @@
    * Static Template Engine.
    * All template renders should be piped through this method.
    *
-   * @module    Torso
-   * @namespace Torso.Utils
-   * @class     templateRenderer
-   * @static
-   * @author    ariel.wexler@vecna.com
+   * @namespace templateRenderer
+   *
+   * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/templateRenderer.html">templateRenderer Annotated Source</a>
    */
-  var templateRenderer = {
+  var templateRenderer = /** @lends templateRenderer */ {
     /**
      * Performs efficient re-rendering of a template.
-     * @method render
-     * @param  $el {jQueryObject} The Element to render into
-     * @param  template {Handlebars Template} The HBS template to apply
-     * @param  context {Object} The context object to pass to the template
-     * @param  [opts] {Object} Other options
-     * @param  [opts.force=false] {Boolean} Will forcefully do a fresh render and not a diff-render
-     * @param  [opts.newHTML] {String} If you pass in newHTML, it will not use the template or context, but use this instead.
-     * @param  [opts.ignoreElements] {Array} jQuery selectors of DOM elements to ignore during render. Can be an expensive check
+     * @param  {external:jQuery} $el The Element to render into
+     * @param  {external:Handlebars-Template} template The HBS template to apply
+     * @param  {Object} context The context object to pass to the template
+     * @param  {Object} [opts] Other options
+     * @param  {boolean} [opts.force=false] Will forcefully do a fresh render and not a diff-render
+     * @param  {string} [opts.newHTML] If you pass in newHTML, it will not use the template or context, but use this instead.
+     * @param  {Array} [opts.ignoreElements] jQuery selectors of DOM elements to ignore during render. Can be an expensive check
      */
     render: function($el, template, context, opts) {
       var newDOM, newHTML,
@@ -192,12 +202,10 @@
 
     /**
      * Call this.hotswap but also keeps the caret position the same
-     * @param currentNode {Node} The DOM Node corresponding to the existing page content to update
-     * @param newNode {Node} The detached DOM Node representing the desired DOM subtree
-     * @param ignoreElements {Array} Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
-     * @method hotswapKeepCaret
+     * @param {Node} currentNode The DOM Node corresponding to the existing page content to update
+     * @param {Node} newNode The detached DOM Node representing the desired DOM subtree
+     * @param {Array} ignoreElements Array of jQuery selectors for DOM Elements to ignore during render. Can be an expensive check.
      */
-
     hotswapKeepCaret: function(currentNode, newNode, ignoreElements) {
       var currentCaret, activeElement,
           currentNodeContainsActiveElement = false;
@@ -223,9 +231,8 @@
 
     /**
      * Produces a copy of the element tag with attributes but with no contents
-     * @param el {Element} the DOM element to be copied
+     * @param {Element} el the DOM element to be copied
      * @return {Element} a shallow copy of the element with no children but with attributes
-     * @method copyTopElement
      */
     copyTopElement: function(el) {
       var newDOM = document.createElement(el.tagName);
@@ -238,9 +245,8 @@
     /**
      * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
      * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
-     * @param el {Element} the DOM element to check
-     * @return {Boolean} boolean indicating whether or not the selection is allowed for {Element} el
-     * @method supportsSelection
+     * @param {Element} el the DOM element to check
+     * @return {boolean} boolean indicating whether or not the selection is allowed for {Element} el
      */
     supportsSelection : function (el) {
       return (/text|password|search|tel|url/).test(el.type);
@@ -249,8 +255,7 @@
     /**
      * Method that returns the current caret (cursor) position of a given element.
      * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
-     * @method getCaretPosition
-     * @param elem {element} the DOM element to check caret position
+     * @param {element} elem the DOM element to check caret position
      * @return {Integer} the cursor index of the given element.
      */
     getCaretPosition: function(elem) {
@@ -279,9 +284,8 @@
     /**
      * Method that returns sets the current caret (cursor) position of a given element and puts it in focus.
      * Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox
-     * @method setCaretPosition
-     * @param elem {element}
-     * @param caretPos {Integer} The caret index to set
+     * @param {element} elem
+     * @param {Integer} caretPos The caret index to set
      * @return {Integer} the cursor index of the given element.
      */
     setCaretPosition: function(elem, caretPos) {

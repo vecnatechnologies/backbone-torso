@@ -14,46 +14,50 @@
 
   /**
    * Generic Form Model
-   * @module    Torso
-   * @class     FormModel
-   * @constructor
+   *
+   * @class FormModel
+   * @extends NestedModel
+   * @mixes validationMixin
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/FormModel.html">FormModel Annotated Source</a>
    */
-  var FormModel = NestedModel.extend({
+  var FormModel = NestedModel.extend(/** @lends FormModel.prototype */{
     /**
      * @private
      * @property __currentMappings
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __cache
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __currentObjectModels
      * @type Object
-     **/
+     */
     /**
      * @private
      * @property __currentUpdateEvents
      * @type Array
-     **/
+     */
     /**
      * @property validation
      * @type Object
-     **/
+     */
     /**
      * @property labels
      * @type Object
-     **/
+     */
     /**
      * Map from aliases (either model names or computed value names) to mappings.
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property mapping
      * @type Object
-     **/
+     */
     mapping: undefined,
 
     /**
@@ -61,7 +65,7 @@
      * Please refer to the documentation on the constructor about the form and options for this field.
      * @property models
      * @type Object
-     **/
+     */
     models: undefined,
 
     /**
@@ -83,18 +87,17 @@
      *   modelName: modelInstance,  // optionally, provide a set of model instance to model name (aliases) to start tracking
      *   modelName2: modelInstance2 // provide as many aliases to model instances as you'd like
      * }
-     * @method constructor
-     * @param [options] {Object}
-     *   @param [options.mapping] {Object} map from aliases (either model names or computed value names) to mappings.
+     * @param {Object} [options]
+     *   @param {Object} [options.mapping] map from aliases (either model names or computed value names) to mappings.
      *     A model mapping can bind an alias to a space seperated list of fields to track as a String  r the boolean true if it is mapping all the
      *     fields. A computed mapping can bind an alias to a set of model mappings required for this computed value and both a pull and/or push method
      *     that are used to compute different values to or from object model(s).
-     *   @param [options.models] {Object} Because the options.mapping parameter only allows you to define the mappings to aliases, this options allows
+     *   @param {Object} [options.models] Because the options.mapping parameter only allows you to define the mappings to aliases, this options allows
      *     you to bind model instances to aliases. Setting model instances to aliases are required to actually begin pulling/pushing values.
-     *   @param [options.startUpdating=false] {Boolean} set to true if you want to immediately set up listeners to update this form
+     *   @param {boolean} [options.startUpdating=false] set to true if you want to immediately set up listeners to update this form
      *     model as the object model updates. You can always toggle this state with startUpdating() and stopUpdating().
-     *   @param [options.validation] {Object} A Backbone.Validation plugin hash to dictate the validation rules
-     *   @param [options.labels] {Object} A Backbone.Validation plugin hash to dictate the attribute labels
+     *   @param {Object} [options.validation] A Backbone.Validation plugin hash to dictate the validation rules
+     *   @param {Object} [options.labels] A Backbone.Validation plugin hash to dictate the attribute labels
      */
     constructor: function(attributes, options) {
       options = options || {};
@@ -127,8 +130,7 @@
     },
 
     /**
-     * @method getMapping
-     * @param alias {String} the alias of the mapping - either a model mapping or a computed mapping
+     * @param {string} alias the alias of the mapping - either a model mapping or a computed mapping
      * @return the mapping config for that alias
      */
     getMapping: function(alias) {
@@ -136,7 +138,6 @@
     },
 
     /**
-     * @method getMappings
      * @return all the current mapping configs
      */
     getMappings: function() {
@@ -159,14 +160,13 @@
      *     this.set('foobar', [models.model1.foo, models.model2.bar]);
      *   },
      * }, optional model map)
-     * @method setMapping
-     * @param alias {String} the name for the mapping - either a model mapping or a computed mapping
-     * @param mapping {String, Boolean or Object} Provides the mapping for this alias. If trying to map to a model, then either provide
+     * @param {string} alias the name for the mapping - either a model mapping or a computed mapping
+     * @param {(string|boolean|Object)} mapping Provides the mapping for this alias. If trying to map to a model, then either provide
      *  a space delimited list of fields to track as a String or the boolean true to track all the model's fields. If the mapping is for
      *  a computed value, then provide a map from model alias to model mapping for all the fields needed for the computed and a pull method
      *  if you want to change/combine/split object model properties before bringing them into the form model and a push method if you want to
      *  change/combine/split form model properties before pushing them to the object models.
-     * @param [models] {Object or Backbone.Model instance} Provides instances to use for this mapping. If mapping is a computed,
+     * @param {Object|external:Backbone-Model} [models] Provides instances to use for this mapping. If mapping is a computed,
      *   provide a map from alias to model instance. If mapping is for a single model, just provide the model instance for that alias.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
@@ -220,9 +220,8 @@
      *     pull: function(models) {},
      *   }
      * }, optional model map)
-     * @method setMappings
-     * @param mappings {Object} Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.
-     * @param [models] {Object} this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are backbone model instances.
+     * @param {Object} mappings Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.
+     * @param {Object} [models] this parameter allows you to immediately bind model instances to aliases. Keys are aliases and values are external:Backbone-Models.
      * @param [copy=false] if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.
      */
     setMappings: function(mappings, models, copy) {
@@ -236,10 +235,9 @@
 
     /**
      * Remove a mapping (model or computed) by alias
-     * @method unsetMapping
-     * @param aliasOrModel {String or Backbone.Model instance} if a String is provided, it will unset the mapping with that alias.
-     *   If a Backbone Model instance is provided, it will remove the model mapping that was bound to that model.
-     * @param [removeModelIfUntracked=false] {Boolean} If true, after the mapping is removed, the model will also be unset but only if
+     * @param {string|external:Backbone-Model} aliasOrModel if a String is provided, it will unset the mapping with that alias.
+     *   If a external:Backbone-Model is provided, it will remove the model mapping that was bound to that model.
+     * @param {boolean} [removeModelIfUntracked=false] If true, after the mapping is removed, the model will also be unset but only if
      *   no other mappings reference it. Note, setting this to true will not remove any computed mappings that also use that model.
      */
     unsetMapping: function(aliasOrModel, removeModelIfUntracked) {
@@ -256,7 +254,6 @@
     /**
      * Removes all current mappings
      * Does NOT remove current model being tracked. Call this.untrackModels afterwards if you wish this behavior.
-     * @method unsetMappings
      */
     unsetMappings: function() {
       this.__currentMappings = {};
@@ -265,9 +262,8 @@
 
     /**
      * Returns the object model currently bound to the given name/alias.
-     * @method getTrackedModel
-     * @param alias {String} the name/alias used by the mappings.
-     * @return {Backbone Model instance} the model currently bound to the alias
+     * @param {string} alias the name/alias used by the mappings.
+     * @return {external:Backbone-Model} the model currently bound to the alias
      */
     getTrackedModel: function(alias) {
       return this.__currentObjectModels[alias];
@@ -275,7 +271,6 @@
 
     /**
      * Returns all the currently tracked object models
-     * @method getTrackedModels
      * @return all the currently tracked object models
      */
     getTrackedModels: function() {
@@ -283,9 +278,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/trackModel:method"}}.trackModel(){{/crossLink}}
-     * @method setTrackedModel
-     * @deprecated use .trackModel() instead.
+     * Use {@link FormModel#trackModel} instead.
+     * @see {@link FormModel#trackModel}
+     * @deprecated
      */
     setTrackedModel: function() {
       this.trackModel.apply(this, arguments);
@@ -293,10 +288,9 @@
 
     /**
      * Update or create a binding between an object model and an alias.
-     * @method trackModel
-     * @param alias {String} the alias/name to bind to.
-     * @param model {Backbone Model instance} the model to be bound. Mappings referencing this alias will start applying to this model.
-     * @param [copy=false] {Boolean} if true, the form model will perform a pull on any mappings using this alias.
+     * @param {string} alias the alias/name to bind to.
+     * @param {external:Backbone-Model} model the model to be bound. Mappings referencing this alias will start applying to this model.
+     * @param {boolean} [copy=false] if true, the form model will perform a pull on any mappings using this alias.
      */
     trackModel: function(alias, model, copy) {
       this.__currentObjectModels[alias] = model;
@@ -319,8 +313,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/trackModels:method"}}.trackModels(){{/crossLink}}
-     * @deprecated use .trackModels() instead.
+     * Use {@link FormModel#trackModels} instead.
+     * @see {@link FormModel#trackModels}
+     * @deprecated
      */
     setTrackedModels: function() {
       this.trackModels.apply(this, arguments);
@@ -328,9 +323,8 @@
 
     /**
      * Binds multiple models to their aliases.
-     * @method trackModels
-     * @param models {Map from String to Backbone Model instances} A map from alias/name to model to be bound to that alias.
-     * @param [copy=false] {Boolean} if true, the form model will perform a pull on any mapping using these models.
+     * @param {Object.<string, external:Backbone-Model>} models A map from alias/name to model to be bound to that alias.
+     * @param {boolean} [copy=false] if true, the form model will perform a pull on any mapping using these models.
      */
     trackModels: function(models, copy) {
       _.each(models, function(instance, alias) {
@@ -339,9 +333,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/untrackModel:method"}}.untrackModel(){{/crossLink}}
-     * @method unsetTrackedModel
-     * @deprecated use .untrackModel() instead.
+     * Use {@link FormModel#untrackModel} instead.
+     * @see {@link FormModel#untrackModel}
+     * @deprecated
      */
     unsetTrackedModel: function() {
       this.untrackModel.apply(this, arguments);
@@ -349,8 +343,7 @@
 
     /**
      * Removes the binding between a model alias and a model instance. Effectively stops tracking that model.
-     * @method untrackModel
-     * @param aliasOrModel {String or Backbone Model instance} If a string is given, it will unset the model using that alias. If a model instance
+     * @param {string|external:Backbone-Model} aliasOrModel If a string is given, it will unset the model using that alias. If a model instance
      *   is given, it will unbind whatever alias is currently bound to it.
      */
     untrackModel: function(aliasOrModel) {
@@ -365,9 +358,9 @@
     },
 
     /**
-     * See {{#crossLink "FormModel/untrackModels:method"}}.untrackModels(){{/crossLink}}
-     * @method unsetTrackedModels
-     * @deprecated use .untrackModels() instead.
+     * Use {@link FormModel#untrackModels} instead.
+     * @see {@link FormModel#untrackModels}
+     * @deprecated
      */
     unsetTrackedModels: function() {
       this.untrackModels.apply(this, arguments);
@@ -375,7 +368,6 @@
 
     /**
      * Removes all the bindings between model aliases and model instances. Effectively stops tracking the current models.
-     * @method untrackModels
      */
     untrackModels: function() {
       this.__currentObjectModels = [];
@@ -386,7 +378,6 @@
     /**
      * Pushes values from this form model back to the object models it is tracking. This includes invoking the push callbacks from
      * computed values
-     * @method push
      */
     push: function() {
       _.each(this.getMappings(), function(config, alias) {
@@ -397,7 +388,6 @@
     /**
      * Pulls the most recent values of every object model that this form model tracks including computed values
      * NOTE: using this method can override user-submitted data from an HTML form. Use caution.
-     * @method pull
      */
     pull: function() {
       _.each(this.getMappings(), function(config, alias) {
@@ -413,11 +403,11 @@
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
      * NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise
      * with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}
-     * @param [options] {Object}
-     *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
+     * @param {Object} [options]
+     *   @param {boolean} [options.rollback=true] if true, when any object model fails to save, it will revert the object
      *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
      *     to object models within the timing of this save method, the updates could be lost.
-     *   @param [options.force=true] {Boolean} if false, the form model will check to see if an update has been made
+     *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
      * @return when using a "url", a promise is returned for the save on this form model.
@@ -425,7 +415,6 @@
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
-     * @method save
      */
     save: function(options) {
       var notTrackingResponse, url,
@@ -466,7 +455,6 @@
     },
 
     /**
-     * @method isTrackingAnyObjectModel
      * @return true if this form model is backed by an Object model. That means that at least one object model was bound to an mapping alias.
      */
     isTrackingAnyObjectModel: function() {
@@ -474,7 +462,6 @@
     },
 
     /**
-     * @method isUpdating
      * @return true if any updates to an object model will immediately copy new values into this form model.
      */
     isUpdating: function() {
@@ -483,8 +470,7 @@
 
     /**
      * Will add listeners that will automatically pull new updates from this form's object models.
-     * @param [pullFirst=false] {Boolean} if true, the form model will pull most recent values then start listening
-     * @method startUpdating
+     * @param {boolean} [pullFirst=false] if true, the form model will pull most recent values then start listening
      */
     startUpdating: function(pullFirst) {
       if (this.isTrackingAnyObjectModel() && !this.isUpdating()) {
@@ -497,7 +483,6 @@
 
     /**
      * This will stop the form model from listening to its object models.
-     * @method stopUpdating
      */
     stopUpdating: function() {
       _.each(this.__currentUpdateEvents, function(eventConfig) {
@@ -508,7 +493,6 @@
 
     /**
      * If updating, it will reset the updating events to match the current mappings.
-     * @method resetUpdating
      */
     resetUpdating: function() {
       if (this.isUpdating()) {
@@ -518,12 +502,11 @@
     },
 
     /**
-     * @param model {Backbone.Model} the backbone model that is being checked
-     * @param [staleModels] {Object} a hash that will be updated to contain this model if it is stale in the form: cid -> model.
-     * @param [currentHashValues] {Object} If passed an object, it will look in this cache for the current value of the object model
+     * @param {Backbone.Model} model the backbone model that is being checked
+     * @param {Object} [staleModels] a hash that will be updated to contain this model if it is stale in the form: cid -> model.
+     * @param {Object} [currentHashValues] If passed an object, it will look in this cache for the current value of the object model
      *   instead of calculating it. It should be key'ed by the model's cid
-     * @return {Boolean} true if the model passed in has been changed since the last pull from the object model.
-     * @method isModelStale
+     * @return {boolean} true if the model passed in has been changed since the last pull from the object model.
      */
     isModelStale: function(model, staleModels, currentHashValues) {
       var hashValue;
@@ -545,7 +528,6 @@
 
     /**
      * @return {Array} an array of the object models that have been updated since the last pull from this form model
-     * @method checkIfModelsAreStale
      */
     checkIfModelsAreStale: function() {
       var staleModels = {},
@@ -560,9 +542,8 @@
 
     /**
      * Sets up a listener to update the form model if the model's field (or any field) changes.
-     * @param model {Backbone.Model} the object model from which this form model will start listen to changes
-     * @param [field] {String} the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
-     * @method __listenToModelField
+     * @param {Backbone.Model} model the object model from which this form model will start listen to changes
+     * @param {string} [field] the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
      * @private
      */
     __listenToModelField: function(model, field) {
@@ -583,10 +564,9 @@
 
     /**
      * Sets up a listener on one (or all) of the fields that is needed to update a computed value
-     * @param model {Backbone.Model} the object model from which this form model will start listen to changes
-     * @param [field] {String} the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
-     * @param computedAlias {String} the name/alias of the computed mapping being used.
-     * @method __listenToComputedValuesDependency
+     * @param {Backbone.Model} model the object model from which this form model will start listen to changes
+     * @param {string} [field] the field name that it will start listening to. If no field is given, it will listen to the general 'change' event.
+     * @param {string} computedAlias the name/alias of the computed mapping being used.
      * @private
      */
     __listenToComputedValuesDependency: function(model, field, computedAlias) {
@@ -607,8 +587,7 @@
     /**
      * Returns the models that a currently being tracked that are part of a computed mapping
      * If there is a missing model (a model alias is referenced but no model instance is bound to that alias), then it will return undefined.
-     * @method __getComputedModels
-     * @param computedAlias {String} the name/alias of the computed mapping
+     * @param {string} computedAlias the name/alias of the computed mapping
      * @return {Object} a map from model name/alias to model instance. If there is a missing model (an model alias is referenced but no model
      *   instance is bound to that alias), then it will return undefined.
      * @private
@@ -629,10 +608,9 @@
 
     /**
      * Returns the aliases/names of models referenced in the computed mapping with the given alias
-     * @method __getModelAliases
-     * @param computedAliasOrConfig {String or Object} the name/alias of the computed mapping or the computed mapping itself as
+     * @param {(string|Object)} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
      *   an object if it hasn't been added as a mapping yet.
-     * @return {Array of Strings} an array of the model names/aliases referenced inside the computed mapping
+     * @return {string[]} an array of the model names/aliases referenced inside the computed mapping
      * @private
      */
     __getModelAliases: function(computedAliasOrConfig) {
@@ -651,9 +629,10 @@
     /**
      * Repackages a computed mapping to be easier consumed by methods wanting the model mappings tied to the model instances.
      * Returns a list of objects that contain the model instance and the mapping for that model.
-     * @method __getComputedModelConfigs
-     * @param computedAlias {String} the name/alias used for this computed
-     * @return {Array of Objects} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
+     *
+     * @private
+     * @param {string} computedAlias the name/alias used for this computed
+     * @return {object[]} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
      */
     __getComputedModelConfigs: function(computedAlias) {
       var hasAllModels = true,
@@ -672,11 +651,11 @@
 
     /**
      * Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.
-     * @param [options] {Object}
-     *   @param [options.rollback=true] {Boolean} if true, when any object model fails to save, it will revert the object
+     * @param {Object} [options]
+     *   @param {boolean} [options.rollback=true] if true, when any object model fails to save, it will revert the object
      *     model attributes to the state they were before calling save. NOTE: if there are updates that happen
      *     to object models within the timing of this save method, the updates could be lost.
-     *   @param [options.force=true] {Boolean} if false, the form model will check to see if an update has been made
+     *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
      * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
@@ -684,7 +663,6 @@
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
      * @private
-     * @method __saveToModels
      */
     __saveToModels: function(deferred, options) {
       var staleModels,
@@ -753,8 +731,7 @@
     /**
      * Pulls in new information from tracked models using the mapping defined by the given alias.
      * This works for both model mappings and computed value mappings
-     * @method __pull
-     * @param alias {String} the name of the mapping that will be used during the pull
+     * @param {string} alias the name of the mapping that will be used during the pull
      * @private
      */
     __pull: function(alias) {
@@ -780,8 +757,7 @@
     /**
      * Pushes form model information to tracked models using the mapping defined by the given alias.
      * This works for both model mappings and computed value mappings
-     * @method __push
-     * @param alias {String} the name of the mapping that will be used during the push
+     * @param {string} alias the name of the mapping that will be used during the push
      * @private
      */
     __push: function(alias) {
@@ -816,7 +792,6 @@
      * }
      * NOT the form model itself like if you called this.__updateFormField.
      * @private
-     * @method __updateFormField
      */
     __updateFormField: function(model, value) {
       this.formModel.set(this.field, value);
@@ -826,9 +801,8 @@
     /**
      * NOTE: When looking to update the form model manually, call this.pull().
      * Updates this form model with the changed attributes of a given object model
-     * @param model {Backbone.Model instance} the object model that has been changed
+     * @param {external:Backbone-Model} model the object model that has been changed
      * @private
-     * @method __updateFormModel
      */
     __updateFormModel: function(model) {
       _.each(model.changedAttributes(), function(value, fieldName) {
@@ -839,11 +813,10 @@
 
     /**
      * Updates the form model's snapshot of the model's attributes to use later
-     * @param model {Backbone.Model instance} the object model
-     * @param [cache=this.__cache] {Object} if passed an object (can be empty), this method will fill
+     * @param {external:Backbone-Model} model the object model
+     * @param {Object} [cache=this.__cache] if passed an object (can be empty), this method will fill
      *   this cache object instead of this form model's __cache field
      * @private
-     * @method __updateCache
      */
     __updateCache: function(model) {
       if (!model) {
@@ -860,10 +833,9 @@
 
     /**
      * Create a hash value of a simple object
-     * @param obj {Object} simple object with no functions
+     * @param {Object} obj simple object with no functions
      * @return a hash value of the object
      * @private
-     * @method __hashValue
      */
     __hashValue: function(obj) {
       return JSON.stringify(obj);
@@ -871,10 +843,9 @@
 
     /**
      * Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.
-     * @method __findAlias
-     * @param aliasOrModel {String or Backbone.Model instance} If string, just returns this string. If a model instance, then the alias
+     * @param {string|external:Backbone-Model} aliasOrModel If string, just returns this string. If a model instance, then the alias
      *   that is bound to the tracked model passed in will be found and returned.
-     * @return {String} the alias
+     * @return {string} the alias
      * @private
      */
     __findAlias: function(aliasOrModel) {
@@ -891,10 +862,9 @@
     },
 
     /**
-     * @param model {Backbone.Model instance} the model to create the hash value from
-     * @return {String} the hash value of the model making sure to only use the tracked fields
+     * @param {external:Backbone-Model} model the model to create the hash value from
+     * @return {string} the hash value of the model making sure to only use the tracked fields
      * @private
-     * @method __generateHashValue
      */
     __generateHashValue: function(model) {
       var modelFields = this.__getTrackedModelFields(model);
@@ -904,7 +874,6 @@
     /**
      * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
      * @private
-     * @method __generateAllHashValues
      */
     __generateAllHashValues: function() {
       var currentHashValues = {};
@@ -916,10 +885,9 @@
 
     /**
      * Deep clones the attributes. There should be no functions in the attributes
-     * @param val {Object|Array|Basic Data Type} a non-function value
+     * @param {(Object|Array|string|number|boolean)} val a non-function value
      * @return the clone
      * @private
-     * @method __cloneVal
      */
     __cloneVal: function(val) {
       var seed;
@@ -936,7 +904,6 @@
     /**
      * Attaches listeners to the tracked object models with callbacks that will copy new properties into this form model.
      * @private
-     * @method __setupListeners
      */
     __setupListeners: function() {
       var model, modelConfigs,
@@ -972,12 +939,11 @@
     /**
      * Copies fields from one backbone model to another. Is useful during a pull or push to/from Object models. The values will
      * be deep cloned from the origin to the destination.
-     * @param [fields] {Array} a string of attribute names on the origin model that will be copied. Leave null if all attributes
+     * @param {Array} [fields] a string of attribute names on the origin model that will be copied. Leave null if all attributes
      *   are to be copied
-     * @param destination {Backbone.Model} the backbone model that will have values copied into
-     * @param origin {Backbone.Model} the backbone model that will be used to grab values.
+     * @param {Backbone.Model} destination the backbone model that will have values copied into
+     * @param {Backbone.Model} origin the backbone model that will be used to grab values.
      * @private
-     * @method __copyFields
      */
     __copyFields: function(fields, destination, origin) {
       if ((!fields || fields === true) && this === origin && _.size(this.getTrackedModels()) > 1) {
@@ -997,8 +963,7 @@
     /**
      * Sets the mapping using the form model's default mapping or the options.mappings if available.
      * Also sets the tracked models if the form model's default models or the options.models is provided.
-     * @method __initMappings
-     * @param [options] {Object} See initialize options: 'mapping' and 'models'.
+     * @param {Object} [options] See initialize options: 'mapping' and 'models'.
      * @private
      */
     __initMappings: function(options) {
@@ -1016,11 +981,10 @@
     /**
      * Returns a map where the keys are the fields that are being tracked on tracked model and values are
      * the with current values of those fields.
-     * @param model {Backbone.Model instance} the object model
+     * @param {external:Backbone-Model} model the object model
      * @return {Object} aa map where the keys are the fields that are being tracked on tracked model and
      *   values are the with current values of those fields.
      * @private
-     * @method __getTrackedModelFields
      */
     __getTrackedModelFields: function(model) {
       var allFields,
@@ -1052,9 +1016,8 @@
 
     /**
      * Returns a useful data structure that binds a tracked model to the fields being tracked on a mapping.
-     * @method __createModelConfig
      * @param modelAlias
-     * @param fields {Array of Strings or undefined} the fields that the model is tracking. Can be undefined if tracking all fields.
+     * @param {(string[]|undefined)} fields the fields that the model is tracking. Can be undefined if tracking all fields.
      *   When creating a model config for a computed mapping, the fields refers to the fields being tracked only for that computed value.
      * @return {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
      *   it will return undefined.
@@ -1074,7 +1037,6 @@
      * Returns an array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      * including model mappings inside computed mappings. There will be a model config for each tracked model on a computed mapping
      * meaning there can be multiple model configs for the same tracked model.
-     * @method __getAllModelConfigs
      * @return {Array} array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      *   including model mappings inside computed mappings.
      * @private
@@ -1111,14 +1073,13 @@
      *   }
      * }
      * If any model mapping is tracking all fields by passing true as its config, a copy of all the attributes for that model will be provided.
-     * @param [model] {Backbone.Model} the model that was updated. If provided, the cache will be updated
+     * @param {Backbone.Model} [model] the model that was updated. If provided, the cache will be updated
      * NOTE: requires the context of this function to be:
      * {
      *  formModel: <this form model>,
      *  alias: <the computed alias>,
      * }
      * @private
-     * @method __invokeComputedPull
      */
     __invokeComputedPull: function(model) {
       if (model) {

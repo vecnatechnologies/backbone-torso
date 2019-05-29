@@ -30,9 +30,9 @@
    * Converts string or number values into an array with a single string or number item.
    * If the input is not a string, number, array, or info about the ids then undefined is returned.
    * This is a private helper method used internally by this behavior and is not exposed in any way.
-   * @param ids {String|Number|String[]|Number[]|Object} the ids to convert.
-   *   @param [ids.skipObjectRetrieval] {Boolean} set if this is a meta-info object about the ids.
-   * @return {String[]|Number[]|Object} an array of strings or numbers.
+   * @param {(string|number|string[]|number[]|Object)} ids the ids to convert.
+   *   @param {boolean} [ids.skipObjectRetrieval] set if this is a meta-info object about the ids.
+   * @return {(string[]|number[]|Object)} an array of strings or numbers.
    * @private
    */
   function normalizeIds(ids) {
@@ -63,8 +63,8 @@
 
   /**
    * Gets a nested property from an object, returning undefined if it doesn't exist on any level.
-   * @param rootObject {Object} object containing the property to get.
-   * @param propertyString {String} string identifying the nested object to retrieve.
+   * @param {Object} rootObject object containing the property to get.
+   * @param {string} propertyString string identifying the nested object to retrieve.
    * @return {*} either undefined or the property referenced from the rootObject.
    */
   function getNestedProperty(rootObject, propertyString) {
@@ -86,27 +86,23 @@
   }
 
   /**
-   * Behaviors defined in Torso.
-   * @module Torso.behaviors
-   * @namespace Torso.behaviors
-   */
-
-  /**
    * This behavior implements simplified interaction with data sources (i.e. TorsoCollection).
    * This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.
    * This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.
    *
-   * See https://tonicdev.com/torso/databehavior for more in-depth documentation and details.
-   *
    * @class DataBehavior
-   * @method constructor
+   * @extends Behavior
+   *
    * @author  jyoung@vecna.com
+   *
+   * @see <a href="../annotated/modules/behaviors/DataBehavior.html">DataBehavior Annotated Source</a>
+   * @see <a href="../modules/behaviors/DATA_BEHAVIOR.html">Detailed docs</a> for more in-depth documentation and details.
    */
-  var DataBehavior = Behavior.extend({
+  var DataBehavior = Behavior.extend(/** @lends DataBehavior */{
     /**
      * The torso collection that is acting as a cache used to create the private collections.
      * This property/option is required.  Instantiation will fail if it is not set.
-     * @property cache {Collection}
+     * @property {Collection} cache
      */
     cache: undefined,
 
@@ -114,7 +110,7 @@
      * Adds a listener on the Behavior for the `fetched` event that triggers a render on the view.
      * true - A listener is added to the behavior that re-renders the view when a 'fetched' event is triggered.
      * false (default) - no listeners are added.
-     * @property renderOnFetch {Boolean}
+     * @property {boolean} renderOnFetch
      * @default false
      */
     renderOnFetch: false,
@@ -123,7 +119,7 @@
      * Skip triggering a load of this data behavior when the view completes initializing.
      * true - no load after the view is initialized.
      * false (default) - trigger a .retrieve() on this data behavior when the view completes initialization.
-     * @property skipInitialLoad {Boolean}
+     * @property {boolean} skipInitialLoad
      * @default false
      */
     skipInitialLoad: false,
@@ -132,7 +128,7 @@
      * Determines the result of `view.getBehavior('thisBehaviorAlias').toJSON()`.
      * true - a single model result is returned.
      * false (default) - an array of model results are returned.
-     * @property returnSingleResult {Boolean}
+     * @property {boolean} returnSingleResult
      * @default false
      */
     returnSingleResult: false,
@@ -144,15 +140,15 @@
      * True will query the server more often, but will provide more up-to-date data.
      * False will only query the server if the model hasn't already been retrieved.
      * This property will be ignored if `fetch()` or `pull()` is called directly.
-     * @property alwaysFetch {Boolean}
+     * @property {boolean} alwaysFetch
      * @default false
      */
     alwaysFetch: false,
 
     /**
      * Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).
-     *   - {String|Number} - the id to use directly (equivalent to an array of a single id).
-     *   - {String[]|Number[]} - the ids to use directly.
+     *   - {(string|number)} - the id to use directly (equivalent to an array of a single id).
+     *   - {(string[]|number[])} - the ids to use directly.
      *   - {Object} - more complex configuration that identifies a model-like object that fires a change event and the
      *                property on that object to use. The object can fire the change event for the given property
      *                and have a .get('propertyName') method, or it can define the property directly on the idContainer.
@@ -161,7 +157,7 @@
      *                The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
      *                have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this
      *                data behavior that the property has been modified.
-     *     - property {String} - the name of the property that defines the ids. The root object is assumed to be the view unless
+     *     - property {string} - the name of the property that defines the ids. The root object is assumed to be the view unless
      *                           idContainer is defined. The idContainer is the object that fires a change event for the given property name.
      *                           Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
      *                           Will get the property before the first '.' from the view and if it is an object will try to use a
@@ -191,7 +187,7 @@
      *           var criteria = { ... some criteria ... };
      *           return cache.fetchIdsByCriteria(criteria);
      *         }
-     * @property ids {String|Number|String[]|Number[]|Object|Function}
+     * @property {(string|number|string[]|number[]|Object|Function)} ids
      */
     ids: undefined,
 
@@ -205,37 +201,36 @@
      *   - 'behaviorAlias:eventName' - arbitrary event triggered by another data behavior on this view (eventName can be a change:propertyName event).
      *   - 'behaviorAlias.data:eventName' - arbitrary event triggered by the data of another DataBehavior on this view (eventName can be a change:propertyName event).
      *   - { '<eventName>': < object (or function returning an object) that the event is triggered on > } - arbitrary ('<eventName>') triggered on the supplied object.
-     * @property updateEvents {String|String[]|Object|Object[]}
+     * @property {(string|string[]|Object|Object[])} updateEvents
      */
     updateEvents: undefined,
 
     /**
      * Object that manages interaction with the data.  Contains the privateCollection, proxies all events from the privateCollection,
      * and has get('...') and .toJSON() methods that access the private collection data.
-     * @property data {Torso.behaviors.DataBehavior.Data}
+     * @property {Torso.behaviors.DataBehavior.Data} data
      */
     data: undefined,
 
     /**
      * The possible fetched statuses.  This is the status value of the fetched event payload.
-     * @property FETCHED_STATUSES {Object} { SUCCESS: 'SUCCESS', FAILURE: 'FAILURE' }
+     * @property {Object} { SUCCESS: 'SUCCESS', FAILURE: 'FAILURE' } FETCHED_STATUSES
      */
     FETCHED_STATUSES: FETCHED_STATUSES,
 
     /**
-     * @method constructor
      * @override
-     * @param [behaviorState] {Object} the initial state of the behavior.
-     * @param behaviorOptions {Object}
-     *   @param behaviorOptions.cache {Collection} see cache property.
-     *   @param [behaviorOptions.renderOnFetch=false] {Boolean} see renderOnFetch property.
-     *   @param [behaviorOptions.skipInitialLoad=false] {Boolean} see skipInitialLoad property.
-     *   @param [behaviorOptions.returnSingleResult=false] {Boolean} see returnSingleResult property.
-     *   @param [behaviorOptions.alwaysFetch=false] {Boolean} see alwaysFetch property.
-     *   @param [behaviorOptions.id=behaviorOptions.ids] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see id property.
-     *   @param [behaviorOptions.ids=behaviorOptions.id] {String|Number|String[]|Number[]|{property: String, idContainer: Object}|Function} see ids property.
-     *   @param [behaviorOptions.updateEvents] {String|String[]|Object|Object[]} see updateEvents property.
-     * @param [viewOptions] {Object} options passed to View's initialize
+     * @param {Object} [behaviorState] the initial state of the behavior.
+     * @param {Object} behaviorOptions
+     *   @param {Collection} behaviorOptions.cache see cache property.
+     *   @param {boolean} [behaviorOptions.renderOnFetch=false] see renderOnFetch property.
+     *   @param {boolean} [behaviorOptions.skipInitialLoad=false] see skipInitialLoad property.
+     *   @param {boolean} [behaviorOptions.returnSingleResult=false] see returnSingleResult property.
+     *   @param {boolean} [behaviorOptions.alwaysFetch=false] see alwaysFetch property.
+     *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.id=behaviorOptions.ids] see id property.
+     *   @param {string|number|string[]|number[]|{property: String, idContainer: Object}|Function} [behaviorOptions.ids=behaviorOptions.id] see ids property.
+     *   @param {(string|string[]|Object|Object[])} [behaviorOptions.updateEvents] see updateEvents property.
+     * @param {Object} [viewOptions] options passed to View's initialize
      */
     constructor: function(behaviorState, behaviorOptions, viewOptions) {
       _.bindAll(this, '__skipRetrieveOnEmptyTrackedIdsAndNewIds', '__completeLoadingIds', '__fetchSuccess', '__fetchFailed', '__abortIfDisposed');
@@ -281,7 +276,6 @@
     /**
      * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
      * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
-     * @method retrieve
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     retrieve: function() {
@@ -294,7 +288,6 @@
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
-     * @method pull
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     pull: function() {
@@ -316,7 +309,6 @@
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
-     * @method fetch
      * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     fetch: function() {
@@ -338,7 +330,6 @@
 
     /**
      * Adds the toJSON of the data represented by this behavior to the context.
-     * @method prepare
      * @override
      */
     prepare: function() {
@@ -352,8 +343,7 @@
 
     /**
      * Determine if the behavior is loading objects or ids.
-     * @method isLoading
-     * @return {Boolean} true - the behavior is currently loading objects or ids.
+     * @return {boolean} true - the behavior is currently loading objects or ids.
      *                   false - the behavior is not currently loading objects or ids.
      */
     isLoading: function() {
@@ -362,8 +352,7 @@
 
     /**
      * Determine if the behavior is loading ids.
-     * @method isLoadingIds
-     * @return {Boolean} true - the behavior is currently loading ids.
+     * @return {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
      */
     isLoadingIds: function() {
@@ -372,8 +361,7 @@
 
     /**
      * Determine if the behavior is loading objects.
-     * @method isLoadingObjects
-     * @return {Boolean} true - the behavior is currently loading objects.
+     * @return {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
      */
     isLoadingObjects: function() {
@@ -382,7 +370,6 @@
 
     /**
      * Listens for the change event on the ids property and, if triggered, re-fetches the data based on the new ids.
-     * @method listenToIdsPropertyChangeEvent
      */
     listenToIdsPropertyChangeEvent: function() {
       if (!_.isUndefined(this.ids.property)) {
@@ -401,7 +388,6 @@
 
     /**
      * Removes the listener added by listenToIdsPropertyChangeEvent().
-     * @method stopListeningToIdsPropertyChangeEvent
      */
     stopListeningToIdsPropertyChangeEvent: function() {
       if (this.__currentContextWithListener) {
@@ -429,8 +415,7 @@
      * someDataBehavior.retrieveOncePromise()
      *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
      *
-     * @method retrieveOncePromise
-     * @return {jQuery.Promise} that resolves when the data is successfully fetched and rejects when the fetch fails.
+     * @return {external:jQuery-Deferred} that resolves when the data is successfully fetched and rejects when the fetch fails.
      */
     retrieveOncePromise: function() {
       var retrieveOnceDeferred = $.Deferred();
@@ -454,7 +439,6 @@
 
     /**
      * Removes existing listeners and adds new ones for all of the updateEvents configured.
-     * @method _delegateUpdateEvents
      * @private
      */
     _delegateUpdateEvents: function() {
@@ -467,7 +451,6 @@
 
     /**
      * Removes existing event listeners.
-     * @method _undelegateEvents
      * @private
      */
     _undelegateUpdateEvents: function() {
@@ -479,7 +462,7 @@
 
     /**
      * Parses this.updateEvents configuration.
-     * @return {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
+     * @return {Object[]} {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
      * @private
      */
     __parseUpdateEvents: function() {
@@ -491,8 +474,8 @@
     /**
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
-     * @param updateEventConfiguration {String | Object} the configuration for an individual event configuration.
-     * @return {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
+     * @return {(Object[]|undefined)} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */
@@ -519,7 +502,6 @@
 
     /**
      * Validates that the cache property is valid and if not throws an error describing why its not valid.
-     * @method __validateCache
      * @private
      */
     __validateCache: function() {
@@ -535,7 +517,6 @@
      * Validates that the ids property is valid and if not throws an error describing why its not valid.
      * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
      * This is done as part of validation because we first validate that both are not set.
-     * @method __normalizeAndValidateIds
      * @private
      */
     __normalizeAndValidateIds: function() {
@@ -550,7 +531,6 @@
      * Validates that the ids property is valid and if not throws an error describing why its not valid.
      * A side effect of this method is copying id into the ids location (if id is set).  Ids is what is used by the rest of the code.
      * This is done as part of validation because we first validate that both are not set.
-     * @method __normalizeAndValidateIds
      * @private
      */
     __validateIds: function() {
@@ -582,7 +562,6 @@
 
     /**
      * Validates that the updateEvents property is valid and if not throws an error describing why its not valid.
-     * @method __normalizeAndValidateUpdateEvents
      * @private
      */
     __normalizeAndValidateUpdateEvents: function() {
@@ -606,7 +585,6 @@
 
     /**
      * Validates that the updateEventConfiguration is valid and if not throws an error describing why its not valid.
-     * @method __normalizeAndValidateIds
      * @private
      */
     __validUpdateEvent: function(updateEventConfiguration) {
@@ -618,7 +596,6 @@
     },
 
     /**
-     * @method __getIds
      * @return {$.Deferred.Promise} A jquery deferred promise that resolves to the ids to track in the private collection
      *                              or rejects with the error message.
      *                              It can also return an object that prevents object retrieval ({ skipObjectRetrieval: true }).
@@ -666,7 +643,6 @@
 
     /**
      * Sets the loading ids property to false (loading completed).
-     * @method __completeLoadingIds
      * @private
      */
     __completeLoadingIds: function() {
@@ -675,7 +651,6 @@
 
     /**
      * Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.
-     * @method __parseIdsPropertyNameAndIdContainer
      * @return {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
      * @private
      */
@@ -781,7 +756,7 @@
      *   viewState (maps to the behavior's view's viewState),
      *   model (maps to the behavior's view's model),
      *   <*> any others are assumed to be the names of behaviors on this behavior's view.
-     * @param updateEventConfiguration {String} a string representation of the event.
+     * @param {string} updateEventConfiguration a string representation of the event.
      * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
      * @private
      */
@@ -797,7 +772,7 @@
 
     /**
      * Rejects the promise chain if this behavior is already disposed.
-     * @return {jQuery.Promise} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @return {external:jQuery-Deferred} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
      * @private
      */
     __abortIfDisposed: function() {
@@ -814,10 +789,9 @@
 
     /**
      * Triggers a 'fetched' event with the payload { status: 'success' } when the fetch completes successfully.
-     * @method __fetchSuccess
-     * @param response {Object} the response from the server.
-     *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
-     *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
+     * @param {Object} response the response from the server.
+     *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
+     *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
      * @private
      */
     __fetchSuccess: function(response) {
@@ -840,11 +814,10 @@
 
     /**
      * Triggers a 'fetched' event with the payload { status: 'failed' } when the fetch fails.
-     * @method __fetchFailed
-     * @param [response] {Object} the response from the server.
-     *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
-     *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
-     *   @param [response.emptyIds=false] {Boolean} true if were are no ids retrieved.  False otherwise.
+     * @param {Object} [response] the response from the server.
+     *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
+     *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
+     *   @param {boolean} [response.emptyIds=false] true if were are no ids retrieved.  False otherwise.
      * @private
      */
     __fetchFailed: function(response) {
@@ -870,10 +843,10 @@
 
     /**
      * Determines if the 'fetched' event should be triggered in the __fetchFailed or __fetchSuccess methods.
-     * @param response {Object} to use to determine if the fetched event should be triggered.
-     *   @param [response.skipObjectRetrieval=false] {Boolean} if we retrieved objects, then trigger fetch event.
-     *   @param [response.forceFetchedEvent=false] {Boolean} if true then trigger fetch no matter what.
-     * @return {Boolean} true if the fetched event should be triggered, false otherwise.
+     * @param {Object} response to use to determine if the fetched event should be triggered.
+     *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
+     *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
+     * @return {boolean} true if the fetched event should be triggered, false otherwise.
      * @private
      */
     __shouldTriggerFetchedEvent: function(response) {
@@ -882,9 +855,8 @@
 
     /**
      * Skip retrieving objects if new ids list is empty and existing ids list is empty.
-     * @method __skipRetrieveOnEmptyTrackedIdsAndNewIds
-     * @param idsResult {Array|Object}
-     * @return {Array|Object} either the original idsResult
+     * @param {(Array|Object)} idsResult
+     * @return {(Array|Object)} either the original idsResult
      *                        or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
      *                        and the current ids are empty.
      * @private
@@ -899,7 +871,6 @@
 
     /**
      * Adds listeners when the view is activated.
-     * @method _activate
      * @private
      */
     _activate: function() {
@@ -910,7 +881,6 @@
 
     /**
      * Stops listening when the view is deactivated.
-     * @method _deactivate
      * @private
      */
     _deactivate: function() {
@@ -928,28 +898,29 @@
   /**
    * Data object used to create the .data property of the DataBehavior.
    * @class Data
-   * @constructor
+   * @inner
+   * @memberof DataBehavior
    */
   var Data = function(options) {
     this.initialize(options);
   };
 
-  _.extend(Data.prototype, Events, {
+  _.extend(Data.prototype, Events, /** @lends Data */ {
     /**
      * Instantiates the data objects and binds it to this behavior instance.
-     * @param options {Object} to pass to the initialize methods.
-     *   @param options.parentBehavior {DataBehavior} the data behavior instance that this Data object should be bound to.
-     *   @param options.privateCollection {Collection} the private collection that this data represents.
+     * @param {Object} options to pass to the initialize methods.
+     *   @param {DataBehavior} options.parentBehavior the data behavior instance that this Data object should be bound to.
+     *   @param {Collection} options.privateCollection the private collection that this data represents.
      */
     initialize: function(options) {
       /**
        * The dataBehavior instance that owns this data object.
-       * @property parentBehavior {DataBehavior}
+       * @property {DataBehavior} parentBehavior
        */
       this.parentBehavior = options.parentBehavior;
       /**
        * The private collection that this data object manages.
-       * @property privateCollection {Collection}
+       * @property {Collection} privateCollection
        */
       this.privateCollection = options.privateCollection;
 
@@ -958,8 +929,7 @@
 
     /**
      * Determine if behavior is loading ids or objects.
-     * @method isLoading
-     * @return {Boolean} true - the behavior is loading objects or ids.
+     * @return {boolean} true - the behavior is loading objects or ids.
      *                   false - the behavior is not loading objects or ids.
      */
     isLoading: function() {
@@ -968,8 +938,7 @@
 
     /**
      * Determine if the behavior is loading ids.
-     * @method isLoadingIds
-     * @return {Boolean} true - the behavior is currently loading ids.
+     * @return {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
      */
     isLoadingIds: function() {
@@ -978,8 +947,7 @@
 
     /**
      * Determine if the behavior is loading objects.
-     * @method isLoadingObjects
-     * @return {Boolean} true - the behavior is currently loading objects.
+     * @return {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
      */
     isLoadingObjects: function() {
@@ -988,8 +956,7 @@
 
     /**
      * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
-     * @method toJSON
-     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     * @return {(Object|Object[])} containing the full contents of either the collection or model.
      */
     toJSON: function() {
       var privateCollection = this.privateCollection;
@@ -1013,9 +980,8 @@
      *
      * If returnSingleResult is true then this will return the given property from the model (if that model exists).
      * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
-     * @method get
-     * @param [propertyName] {String} the property to get from the model(s).
-     * @return {Object|Object[]} containing the full contents of either the collection or model.
+     * @param {string} [propertyName] the property to get from the model(s).
+     * @return {(Object|Object[])} containing the full contents of either the collection or model.
      */
     get: function(propertyName) {
       var privateCollection = this.privateCollection;
@@ -1037,8 +1003,7 @@
     },
 
     /**
-     * @method getModel
-     * @param modelId {Number|String} The id of the model to get from the collection.
+     * @param {(number|string)} modelId The id of the model to get from the collection.
      * @return {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
      * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
      */
@@ -1062,7 +1027,6 @@
     },
 
     /**
-     * @method getModels
      * @return {Backbone.Model[]} new array containing all the models in the data's private collection.
      */
     getModels: function() {
@@ -1071,7 +1035,6 @@
 
     /**
      * Adds the listeners to the private collection.
-     * @method activate
      */
     activate: function() {
       this.listenTo(this.privateCollection, 'all', this.trigger);
@@ -1079,7 +1042,6 @@
 
     /**
      * Removes the listeners on the private collection.
-     * @method deactivate
      */
     deactivate: function() {
       this.stopListening(this.privateCollection, 'all', this.trigger);

@@ -14,14 +14,16 @@
    *
    * The polling functionality should only be used for collections and for models that are not
    * part of any collections. It should not be used for a model that is a part of a collection.
-   * @module    Torso
-   * @namespace Torso.Mixins
-   * @class  pollingMixin
+   *
+   * @mixin pollingMixin
+   *
    * @author ariel.wexler@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/pollingMixin.html">pollingMixin Annotated Source</a>
    */
-  var pollingMixin = {
+  var pollingMixin = /** @lends pollingMixin */ {
     /**
-     * @property pollTimeoutId {Number} The id from when setTimeout was called to start polling.
+     * @property {number} pollTimeoutId The id from when setTimeout was called to start polling.
      */
     pollTimeoutId: undefined,
     __pollStarted: false,
@@ -29,7 +31,6 @@
 
     /**
      * Returns true if the poll is active
-     * @method isPolling
      */
     isPolling: function() {
       return this.__pollStarted;
@@ -39,8 +40,7 @@
      * Starts polling Model/Collection by calling fetch every pollInterval.
      * Note: Each Model/Collection will only allow a singleton of polling to occur so
      * as not to have duplicate threads updating Model/Collection.
-     * @method startPolling
-     * @param  pollInterval {Integer} interval between each poll in ms.
+     * @param  {Integer} pollInterval interval between each poll in ms.
      */
     startPolling: function(pollInterval) {
       var self = this;
@@ -61,7 +61,6 @@
 
     /**
      * Stops polling Model and clears all Timeouts.
-     * @method  stopPolling
      */
     stopPolling: function() {
       window.clearInterval(this.pollTimeoutId);
@@ -71,7 +70,6 @@
     /**
      * By default, the polled fetching operation is routed directly
      * to backbone's fetch all.
-     * @method polledFetch
      */
     polledFetch: function() {
       this.fetch();
@@ -82,7 +80,6 @@
     /**
      * Private function to recursively call itself and poll for db updates.
      * @private
-     * @method __poll
      */
     __poll: function() {
       this.polledFetch();

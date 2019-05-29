@@ -1,0 +1,4104 @@
+/*! normalize.css v1.1.2 | MIT License | git.io/normalize */
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\0000322}}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\0000332}}
+audio,
+canvas,
+video {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\0000343}}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\0000353}}
+[hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+/**
+ * 1. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 2. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\0000368}}
+html {
+  font-size: 100%;
+  /* 1 */
+  -ms-text-size-adjust: 100%;
+  /* 2 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\0000383}}
+html,
+button,
+input,
+select,
+textarea {
+  font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\0000391}}
+body {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003103}}
+a:focus {
+  outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003112}}
+a:active,
+a:hover {
+  outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003126}}
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003131}}
+h2 {
+  font-size: 1.5em;
+  margin: 0.83em 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003136}}
+h3, legend {
+  font-size: 1.17em;
+  margin: 1em 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003141}}
+h4 {
+  font-size: 1em;
+  margin: 1.33em 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003146}}
+h5 {
+  font-size: 0.83em;
+  margin: 1.67em 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003151}}
+h6 {
+  font-size: 0.67em;
+  margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003160}}
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003169}}
+b,
+strong {
+  font-weight: bold;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003173}}
+blockquote {
+  margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003181}}
+dfn {
+  font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003190}}
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003200}}
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003210}}
+p,
+pre {
+  margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003221}}
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, serif;
+  _font-family: 'courier new', monospace;
+  font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003231}}
+pre {
+  white-space: pre;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003241}}
+q {
+  quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003250}}
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003259}}
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003268}}
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003275}}
+sup {
+  top: -0.5em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003279}}
+sub {
+  bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+/**
+ * Address margins set differently in IE 6/7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003294}}
+dl,
+menu,
+ol,
+ul {
+  margin: 1em 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003298}}
+dd {
+  margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003308}}
+menu,
+ol,
+ul {
+  padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003317}}
+nav ul,
+nav ol {
+  list-style: none;
+  list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003331}}
+img {
+  border: 0;
+  /* 1 */
+  -ms-interpolation-mode: bicubic;
+  /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003340}}
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003352}}
+figure {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003364}}
+form {
+  margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003372}}
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003384}}
+legend {
+  border: 0;
+  /* 1 */
+  padding: 0;
+  white-space: normal;
+  /* 2 */
+  *margin-left: -7px;
+  /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003401}}
+button,
+input,
+select,
+textarea {
+  font-size: 100%;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  vertical-align: baseline;
+  /* 3 */
+  *vertical-align: middle;
+  /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003414}}
+button,
+input {
+  line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003426}}
+button,
+select {
+  text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003443}}
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  /* 2 */
+  cursor: pointer;
+  /* 3 */
+  *overflow: visible;
+  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003454}}
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003466}}
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+  *height: 13px;
+  /* 3 */
+  *width: 13px;
+  /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003479}}
+input[type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  /* 2 */
+  box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003492}}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003501}}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003511}}
+textarea {
+  overflow: auto;
+  /* 1 */
+  vertical-align: top;
+  /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+/**
+ * Remove most spacing between table cells.
+ */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/_normalize\.scss}line{font-family:\00003524}}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 100;
+  font-style: normal;
+  src: url("../fonts/proxima-nova/ProximaNova-Thin-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-Thin-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-Thin-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-Thin-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-Thin-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 100;
+  font-style: italic;
+  src: url("../fonts/proxima-nova/ProximaNova-ThinIt-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-ThinIt-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-ThinIt-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-ThinIt-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-ThinIt-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 300;
+  font-style: normal;
+  src: url("../fonts/proxima-nova/ProximaNova-Light-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-Light-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-Light-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-Light-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-Light-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 300;
+  font-style: italic;
+  src: url("../fonts/proxima-nova/ProximaNova-LightIt-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-LightIt-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-LightIt-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-LightIt-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-LightIt-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 400;
+  font-style: normal;
+  src: url("../fonts/proxima-nova/ProximaNova-Reg-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-Reg-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-Reg-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-Reg-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-Reg-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 400;
+  font-style: italic;
+  src: url("../fonts/proxima-nova/ProximaNova-RegIt-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-RegIt-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-RegIt-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-RegIt-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-RegIt-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 600;
+  font-style: normal;
+  src: url("../fonts/proxima-nova/ProximaNova-Sbold-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-Sbold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-Sbold-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-Sbold-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-Sbold-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 600;
+  font-style: italic;
+  src: url("../fonts/proxima-nova/ProximaNova-SboldIt-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-SboldIt-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-SboldIt-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-SboldIt-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-SboldIt-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 700;
+  font-style: normal;
+  src: url("../fonts/proxima-nova/ProximaNova-Bold-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-Bold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-Bold-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-Bold-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-Bold-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 700;
+  font-style: italic;
+  src: url("../fonts/proxima-nova/ProximaNova-BoldIt-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-BoldIt-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-BoldIt-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-BoldIt-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-BoldIt-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 800;
+  font-style: normal;
+  src: url("../fonts/proxima-nova/ProximaNova-Xbold-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-Xbold-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-Xbold-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-Xbold-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-Xbold-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 800;
+  font-style: italic;
+  src: url("../fonts/proxima-nova/ProximaNova-XboldIt-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-XboldIt-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-XboldIt-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-XboldIt-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-XboldIt-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 900;
+  font-style: normal;
+  src: url("../fonts/proxima-nova/ProximaNova-Black-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-Black-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-Black-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-Black-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-Black-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: proxima-nova;
+  font-weight: 900;
+  font-style: italic;
+  src: url("../fonts/proxima-nova/ProximaNova-BlackIt-webfont.eot");
+  src: url("../fonts/proxima-nova/ProximaNova-BlackIt-webfont.eot?#iefix") format("embedded-opentype"), url("../fonts/proxima-nova/ProximaNova-BlackIt-webfont.woff") format("woff"), url("../fonts/proxima-nova/ProximaNova-BlackIt-webfont.ttf") format("truetype"), url("../fonts/proxima-nova/ProximaNova-BlackIt-webfont.svg#proxima-nova") format("svg");
+}
+
+@font-face {
+  font-family: 'icomoon';
+  src: url("../fonts/brecons/brecons.eot");
+  src: url("../fonts/brecons/brecons.eot?#iefix") format("embedded-opentype"), url("../fonts/brecons/brecons.woff") format("woff"), url("../fonts/brecons/brecons.ttf") format("truetype"), url("../fonts/brecons/brecons.svg#icomoon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000313}}
+[data-icon]:before {
+  font-family: 'icomoon';
+  content: attr(data-icon);
+  speak: none;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000324}}
+a[class*='icon'] {
+  text-decoration: none;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="icon-"] {
+*/
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000334}}
+.icon-switch, .icon-pill, .icon-home, .icon-inbox, .icon-calendar, .icon-credit, .icon-question-sign, .icon-stethoscope, .icon-star-empty, .icon-star, .icon-drawer, .icon-plus, .icon-minus, .icon-reorder, .nav-toggle, .icon-ok, .icon-exclamation-sign, .icon-remove, .alert .close, .icon-sort-up, .icon-sort-down, .icon-sort, .icon-move, .icon-signout, .icon-warning-sign, .icon-remove-sign, .icon-info-sign, .icon-check, .icon-ok-sign, .icon-ok-circle, .icon-check-empty, .icon-filter, .icon-arrow-right, .icon-chevron-right, .icon-chevron-left, .icon-arrow-left, .icon-search, .icon-paper-clip, .icon-tea, .icon-bandage, .icon-email, .icon-reply, .icon-forward, .icon-allergies, .icon-address-book, .icon-cog, .icon-syringe, .icon-bar-chart, .icon-hospital, .icon-th, .icon-external-link, .icon-layers, .icon-desktop, .icon-tablet, .icon-fontwidth, .icon-th-list, .icon-user, .icon-user-md, .icon-group, .icon-download, .icon-medkit, .icon-caret-down, .icon-caret-up, .icon-caret-left, .icon-caret-right, .icon-heart, .icon-h-sign, .icon-plus-sign, .icon-pencil, .icon-edit, .icon-eye-open, .icon-print, .icon-envelope, .icon-comment, .icon-chat, .icon-dollar-sign, .icon-clip-board, .icon-file, .icon-circle-blank, .icon-circle, .icon-barcode, .icon-ellipsis, .icon-double-angle-right, .icon-angle-right, .icon-angle-left, .icon-double-angle-left, .icon-blocked, .icon-angle-up, .icon-angle-down, .icon-chevron-down, .icon-arrow-down, .icon-double-angle-down, .icon-arrow-up, .icon-double-angle-up, .icon-chevron-up, .icon-lock {
+  font-family: 'icomoon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000344}}
+.icon-switch:before {
+  content: "\e602";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000347}}
+.icon-pill:before {
+  content: "\e007";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000350}}
+.icon-home:before {
+  content: "\f015";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000353}}
+.icon-inbox:before {
+  content: "\f01c";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000356}}
+.icon-calendar:before {
+  content: "\f073";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000359}}
+.icon-credit:before {
+  content: "\f09d";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000362}}
+.icon-question-sign:before {
+  content: "\f059";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000365}}
+.icon-stethoscope:before {
+  content: "\f0f1";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000368}}
+.icon-star-empty:before {
+  content: "\f006";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000371}}
+.icon-star:before {
+  content: "\f005";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000374}}
+.icon-drawer:before {
+  content: "\e009";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000377}}
+.icon-plus:before {
+  content: "\f067";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000380}}
+.icon-minus:before {
+  content: "\f068";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000383}}
+.icon-reorder:before, .nav-toggle:before {
+  content: "\f0c9";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000386}}
+.icon-ok:before {
+  content: "\f00c";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000389}}
+.icon-exclamation-sign:before {
+  content: "\f06a";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000392}}
+.icon-remove:before, .alert .close:before {
+  content: "\f00d";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000395}}
+.icon-sort-up:before {
+  content: "\f0de";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\0000398}}
+.icon-sort-down:before {
+  content: "\f0dd";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003101}}
+.icon-sort:before {
+  content: "\f0dc";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003104}}
+.icon-move:before {
+  content: "\f047";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003107}}
+.icon-signout:before {
+  content: "\f08b";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003110}}
+.icon-warning-sign:before {
+  content: "\f071";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003113}}
+.icon-remove-sign:before {
+  content: "\f057";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003116}}
+.icon-info-sign:before {
+  content: "\f05a";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003119}}
+.icon-check:before {
+  content: "\f046";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003122}}
+.icon-ok-sign:before {
+  content: "\f058";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003125}}
+.icon-ok-circle:before {
+  content: "\f05d";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003128}}
+.icon-check-empty:before {
+  content: "\f096";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003131}}
+.icon-filter:before {
+  content: "\f0b0";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003134}}
+.icon-arrow-right:before {
+  content: "\f061";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003137}}
+.icon-chevron-right:before {
+  content: "\f054";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003140}}
+.icon-chevron-left:before {
+  content: "\f053";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003143}}
+.icon-arrow-left:before {
+  content: "\f060";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003146}}
+.icon-search:before {
+  content: "\e001";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003149}}
+.icon-paper-clip:before {
+  content: "\f0c6";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003152}}
+.icon-tea:before {
+  content: "\f3cb";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003155}}
+.icon-bandage:before {
+  content: "\e004";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003158}}
+.icon-email:before {
+  content: "\e005";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003161}}
+.icon-reply:before {
+  content: "\e006";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003164}}
+.icon-forward:before {
+  content: "\e00a";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003167}}
+.icon-allergies:before {
+  content: "\e00b";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003170}}
+.icon-address-book:before {
+  content: "\e00c";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003173}}
+.icon-cog:before {
+  content: "\f013";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003176}}
+.icon-syringe:before {
+  content: "\e002";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003179}}
+.icon-bar-chart:before {
+  content: "\e003";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003182}}
+.icon-hospital:before {
+  content: "\f0f8";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003185}}
+.icon-th:before {
+  content: "\f00a";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003188}}
+.icon-external-link:before {
+  content: "\f08e";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003191}}
+.icon-layers:before {
+  content: "\f1ca";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003194}}
+.icon-desktop:before {
+  content: "\f108";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003197}}
+.icon-tablet:before {
+  content: "\e00e";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003200}}
+.icon-fontwidth:before {
+  content: "\f1f9";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003203}}
+.icon-th-list:before {
+  content: "\f00b";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003206}}
+.icon-user:before {
+  content: "\f007";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003209}}
+.icon-user-md:before {
+  content: "\f0f0";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003212}}
+.icon-group:before {
+  content: "\f0c0";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003215}}
+.icon-download:before {
+  content: "\f11a";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003218}}
+.icon-medkit:before {
+  content: "\f0fa";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003221}}
+.icon-caret-down:before {
+  content: "\f0d7";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003224}}
+.icon-caret-up:before {
+  content: "\f0d8";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003227}}
+.icon-caret-left:before {
+  content: "\f0d9";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003230}}
+.icon-caret-right:before {
+  content: "\f0da";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003233}}
+.icon-heart:before {
+  content: "\e008";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003236}}
+.icon-h-sign:before {
+  content: "\f0fd";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003239}}
+.icon-plus-sign:before {
+  content: "\f0fe";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003242}}
+.icon-pencil:before {
+  content: "\f040";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003245}}
+.icon-edit:before {
+  content: "\f044";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003248}}
+.icon-eye-open:before {
+  content: "\f06e";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003251}}
+.icon-print:before {
+  content: "\f02f";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003254}}
+.icon-envelope:before {
+  content: "\e00d";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003257}}
+.icon-comment:before {
+  content: "\e00f";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003260}}
+.icon-chat:before {
+  content: "\e010";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003263}}
+.icon-dollar-sign:before {
+  content: "\e000";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003266}}
+.icon-clip-board:before {
+  content: "\e011";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003269}}
+.icon-file:before {
+  content: "\e012";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003272}}
+.icon-circle-blank:before {
+  content: "\f10c";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003275}}
+.icon-circle:before {
+  content: "\f111";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003278}}
+.icon-barcode:before {
+  content: "\f02a";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003281}}
+.icon-ellipsis:before {
+  content: "\e013";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003284}}
+.icon-double-angle-right:before {
+  content: "\f101";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003287}}
+.icon-angle-right:before {
+  content: "\f105";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003290}}
+.icon-angle-left:before {
+  content: "\f104";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003293}}
+.icon-double-angle-left:before {
+  content: "\f100";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003296}}
+.icon-blocked:before {
+  content: "\e016";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003299}}
+.icon-angle-up:before {
+  content: "\f106";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003302}}
+.icon-angle-down:before {
+  content: "\f107";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003305}}
+.icon-chevron-down:before {
+  content: "\f078";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003308}}
+.icon-arrow-down:before {
+  content: "\f063";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003311}}
+.icon-double-angle-down:before {
+  content: "\f103";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003314}}
+.icon-arrow-up:before {
+  content: "\f062";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003317}}
+.icon-double-angle-up:before {
+  content: "\f102";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003320}}
+.icon-chevron-up:before {
+  content: "\f077";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003323}}
+.icon-location:before {
+  content: "\e600";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003326}}
+.icon-clock:before {
+  content: "\e601";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003329}}
+.icon-users:before {
+  content: "\e602";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003332}}
+.icon-user-2:before {
+  content: "\e603";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003335}}
+.icon-globe:before {
+  content: "\e604";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003338}}
+.icon-newspaper:before {
+  content: "\e605";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003341}}
+.icon-radio-unchecked:before {
+  content: "\e606";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003344}}
+.icon-code:before {
+  content: "\e607";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003347}}
+.icon-earth:before {
+  content: "\e608";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003350}}
+.icon-flow-branch:before {
+  content: "\e609";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003353}}
+.icon-heart-2:before {
+  content: "\e60a";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortal_icomoon\.scss}line{font-family:\00003356}}
+.icon-lock:before {
+  content: "\e600";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\000033}}
+body, button, input[type='submit'] {
+  font-family: "proxima-nova", "HelveticaNeue", Helvetica, arial, verdana, sans-serif;
+  font-weight: 300;
+  line-height: 1.5em;
+  color: #454b50;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000311}}
+a:link {
+  color: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000315}}
+a:visited {
+  color: #24a4ce;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000319}}
+a:hover {
+  color: #00b6f2;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000323}}
+a:focus {
+  outline: solid 2px #00b6f2;
+  outline-offset: -2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000328}}
+a:active {
+  color: #26caff;
+  outline: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000333}}
+a.nolink {
+  text-decoration: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000338}}
+h1, h2, h3, legend, h4, h5, h6 {
+  font-family: "proxima-nova", "HelveticaNeue", Helvetica, arial, verdana, sans-serif;
+  font-weight: 700;
+  line-height: 1.25em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000344}}
+h1 {
+  font-size: 1.6em;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000347}}
+h1 small {
+  font-size: 0.625 em;
+  font-weight: normal;
+  color: #828b93;
+}
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000344}}
+  h1 {
+    font-size: 1.4em;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000357}}
+  h1 small {
+    font-size: 0.71429 em;
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000363}}
+h2 {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #687279;
+  margin-top: 1.5em;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000370}}
+h2 small {
+  margin-left: 1em;
+  font-size: 16px;
+  font-size: 1rem;
+  font-weight: normal;
+  text-transform: none;
+  color: #828b93;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000378}}
+h2 small > a {
+  margin-right: 1ex;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000384}}
+h3, legend {
+  margin-top: 1.5em;
+  font-size: 16px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000390}}
+h1 > a:link, h1 > a:visited, h2 > a:link, h2 > a:visited {
+  color: #454b50;
+  text-decoration: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\0000396}}
+code, kbd, pre, samp {
+  font-family: "Inconsolata", monospace, sans-serif;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\00003100}}
+.title {
+  margin: 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\00003104}}
+small {
+  font-weight: normal;
+  color: #687279;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\00003110}}
+.phone {
+  display: inline-block;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/base\/_typography\.scss}line{font-family:\00003114}}
+::selection {
+  background: #dc0081;
+  color: #fff;
+  text-shadow: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\000033}}
+*, *:before, *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\000037}}
+img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+  -ms-interpolation-mode: bicubic;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\0000317}}
+.map img {
+  max-width: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\0000321}}
+img.full-width {
+  width: 100%;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\0000326}}
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: auto;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/bourbon\/addons\/_clearfix\.scss}line{font-family:\0000315}}
+.row:after, dl:after, ol:after, ul:after, .nav-dropdown:after, .modal:after, #app:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\0000337}}
+.row, dl {
+  width: auto;
+  margin: 0 -25px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\0000343}}
+a.tab, .wizard-step-link, .itemized-item.itemized-total, .itemized-label, menu, fieldset, .fieldset, .document-reader, .alert, .modal-header, .modal-body, .modal-footer, .pagination, .page-content > h2, a.header-back, .content, .page-footer {
+  display: block;
+  float: left;
+  padding: 0 25px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\0000376}}
+.itemized-item.itemized-total, .itemized-label {
+  width: 83.33333%;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\0000382}}
+.topnav, .tabs, menu, .wizard-steps, fieldset, .fieldset, .document-reader, .alert, .modal-header, .modal-body, .modal-footer, .pagination, .global, .page-content > h2, .page-title.wizard-header, a.header-back, .content, .page-footer {
+  width: 100%;
+  *width: calc(8.33333% * 12 - 50px);
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\00003112}}
+.hidden {
+  display: none;
+}
+
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\00003126}}
+  .itemized-item.itemized-total, .itemized-label {
+    width: 100%;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\00003128}}
+  .topnav, .tabs, menu, .wizard-steps, fieldset, .fieldset, .document-reader, .alert, .modal-header, .modal-body, .modal-footer, .pagination, .global, .page-content > h2, .page-title.wizard-header, a.header-back, .content, .page-footer {
+    width: 100%;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\00003130}}
+  .hide-for-small {
+    display: none !important;
+  }
+}
+@media only print {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\00003143}}
+  .itemized-item.itemized-total, .itemized-label {
+    width: 100%;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/layout\/_grid\.scss}line{font-family:\00003145}}
+  .topnav, .tabs, menu, .wizard-steps, fieldset, .fieldset, .document-reader, .alert, .modal-header, .modal-body, .modal-footer, .pagination, .global, .page-content > h2, .page-title.wizard-header, a.header-back, .content, .page-footer {
+    width: 100%;
+  }
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\000033}}
+ol, ul {
+  padding-left: 20px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\000038}}
+.nav-dropdown {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000313}}
+.nav-dropdown > li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000320}}
+.itemized-list {
+  padding: 0;
+  list-style: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000325}}
+.itemized-item {
+  float: left;
+  width: 100%;
+  padding-bottom: 25px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000330}}
+.itemized-item.itemized-total {
+  margin-top: 1ex;
+  padding: 0 25px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000338}}
+.itemized-label {
+  display: inline-block;
+  margin: 0;
+  padding: 12.5px 25px;
+  border: solid 1px #e6e6e6;
+  border-radius: 2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000347}}
+.itemized-label.selected {
+  background: #fff;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000352}}
+.itemized-checkbox {
+  margin-right: 1ex;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000356}}
+.itemized-amount {
+  font-weight: bold;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000370}}
+.itemized-details {
+  display: block;
+  float: left;
+  margin: 12.5px 25px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000376}}
+dl {
+  margin: 1em 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000381}}
+.two-column {
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  columns: 2;
+}
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000381}}
+  .two-column {
+    -webkit-columns: 1;
+    -moz-columns: 1;
+    columns: 1;
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000390}}
+dt, dd {
+  float: left;
+  margin: 0.5ex 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\0000395}}
+dt {
+  clear: left;
+  font-weight: bold;
+}
+@media only screen and (min-width: 766px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003101}}
+  .dl-inline > dt {
+    clear: none;
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003107}}
+dd {
+  padding: 0 1ex;
+  word-break: break-all;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003111}}
+dd.dd-block {
+  width: 100%;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003115}}
+dd > ul {
+  margin: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003119}}
+.dl-inline > dd {
+  margin-right: 1em;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003123}}
+dd + dd {
+  margin-left: -1ex;
+  padding-left: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003127}}
+dd + dd:before {
+  content: ", ";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003143}}
+table {
+  width: 100%;
+  margin-top: 1em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003148}}
+.small-table {
+  width: auto;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003152}}
+tr:nth-child(even) {
+  background: #f2f1f0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003156}}
+th, td {
+  padding: 1ex;
+  text-align: left;
+  vertical-align: top;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003161}}
+th.number, td.number {
+  width: 125px;
+  text-align: right;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003167}}
+td h3, td legend {
+  margin-top: 1ex;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003171}}
+.small-label {
+  display: none;
+}
+
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003177}}
+  table.responsive, table.responsive tbody, table.responsive tr, table.responsive td {
+    display: block;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/bourbon\/addons\/_clearfix\.scss}line{font-family:\0000315}}
+  table.responsive tr:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003185}}
+  table.responsive th {
+    display: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003190}}
+  .time-table-small th {
+    display: block;
+    padding-top: 1em;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_lists\.scss}line{font-family:\00003195}}
+  .small-label {
+    display: block;
+    float: left;
+    clear: left;
+    width: 38%;
+    font-weight: bold;
+  }
+}
+@-webkit-keyframes glow {
+  /* line 8, ../../../../../../target/scss/modules/_nav.scss */
+  10 {
+    text-shadow: 0 0 0 #fff;
+  }
+
+  /* line 12, ../../../../../../target/scss/modules/_nav.scss */
+  50% {
+    text-shadow: 0 0 25px #fff;
+  }
+
+  /* line 16, ../../../../../../target/scss/modules/_nav.scss */
+  100% {
+    text-shadow: 0 0 0 #fff;
+  }
+}
+
+@-moz-keyframes glow {
+  /* line 8, ../../../../../../target/scss/modules/_nav.scss */
+  10 {
+    text-shadow: 0 0 0 #fff;
+  }
+
+  /* line 12, ../../../../../../target/scss/modules/_nav.scss */
+  50% {
+    text-shadow: 0 0 25px #fff;
+  }
+
+  /* line 16, ../../../../../../target/scss/modules/_nav.scss */
+  100% {
+    text-shadow: 0 0 0 #fff;
+  }
+}
+
+@keyframes glow {
+  /* line 8, ../../../../../../target/scss/modules/_nav.scss */
+  10 {
+    text-shadow: 0 0 0 #fff;
+  }
+
+  /* line 12, ../../../../../../target/scss/modules/_nav.scss */
+  50% {
+    text-shadow: 0 0 25px #fff;
+  }
+
+  /* line 16, ../../../../../../target/scss/modules/_nav.scss */
+  100% {
+    text-shadow: 0 0 0 #fff;
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000321}}
+.glow {
+  position: relative;
+  -webkit-animation: glow 1s;
+  -moz-animation: glow 1s;
+  animation: glow 1s;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000326}}
+a.skip-link {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: -9999em;
+  padding: 1ex;
+  background: #454b50;
+  color: white;
+  z-index: 10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000336}}
+a.skip-link:focus {
+  left: 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000341}}
+.topnav {
+  position: relative;
+  float: left;
+  height: 50px;
+  background: #454b50;
+  z-index: 20;
+  -webkit-transition: left 0.25s;
+  -moz-transition: left 0.25s;
+  transition: left 0.25s;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000351}}
+.nav-list {
+  float: left;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 0;
+  list-style: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000359}}
+.nav-list.secondary {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000366}}
+.nav-item {
+  position: relative;
+  float: left;
+  height: 50px;
+  margin: 0 5px 0 0;
+  line-height: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000373}}
+.secondary > .nav-item {
+  text-align: right;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000377}}
+html.no-touch .nav-item:hover > .nav-dropdown, .nav-item.active > .nav-dropdown {
+  display: block;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000381}}
+.nav-item > .icon-caret-down {
+  display: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\0000384}}
+html.touch .nav-item > .icon-caret-down {
+  display: inline-block;
+  vertical-align: top;
+  width: 40px;
+  height: 40px;
+  margin: 5px 0 0 0;
+  padding-top: 11px;
+  border: solid 1px #5d656b;
+  border-left: none;
+  border-radius: 0 2px 2px 0;
+  text-align: center;
+  font-size: 16px;
+  color: #999;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003100}}
+.nav-item.active > .icon-caret-down {
+  background: #222427;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003103}}
+.nav-item.active > .icon-caret-down:before {
+  content: "\f0d8";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003109}}
+.nav-link, li .dropdown-divider {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  height: 40px;
+  margin: 5px 0 0 5px;
+  padding: 0 1em;
+  border-radius: 2px;
+  line-height: 38px;
+  text-decoration: none;
+  font-size: 16px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003121}}
+.nav-link, li .dropdown-divider, .nav-link:link, li .dropdown-divider:link, .nav-link:visited, li .dropdown-divider:visited {
+  color: #fbfbfb;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003125}}
+.nav-link:hover, li .dropdown-divider:hover, .nav-link:link:hover, li .dropdown-divider:link:hover, .nav-link:visited:hover, li .dropdown-divider:visited:hover {
+  background: #222427;
+  color: #00b6f2;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003130}}
+html.touch .nav-link, html.touch li .dropdown-divider, li html.touch .dropdown-divider {
+  margin-left: 0;
+  padding: 0 1ex;
+  border: solid 1px #5d656b;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003136}}
+html.touch .nav-item:first-child > .nav-link, html.touch li .nav-item:first-child > .dropdown-divider, li html.touch .nav-item:first-child > .dropdown-divider {
+  margin-left: 5px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003140}}
+.nav-link.current, li .current.dropdown-divider {
+  background: #222427;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003144}}
+.nav-link.nav-settings, li .nav-settings.dropdown-divider {
+  width: 30%;
+  text-align: right;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003148}}
+.nav-link.nav-settings:before, li .nav-settings.dropdown-divider:before {
+  content: "\f013";
+  font-family: icomoon;
+  font-size: 1.5em;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003155}}
+.nav-link > .link-title, li .dropdown-divider > .link-title {
+  display: inline-block;
+  position: relative;
+  margin-top: 2px;
+  vertical-align: middle;
+  font-weight: 100;
+  z-index: 1;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003164}}
+.nav-link > .icon-caret-down, li .dropdown-divider > .icon-caret-down {
+  margin-left: 5px;
+  color: #999;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003168}}
+html.touch .nav-link > .icon-caret-down, html.touch li .dropdown-divider > .icon-caret-down, li html.touch .dropdown-divider > .icon-caret-down {
+  display: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003173}}
+.nav-link > i, li .dropdown-divider > i, .nav-link > img, li .dropdown-divider > img, .nav-link > .nav-icon, li .dropdown-divider > .nav-icon {
+  position: relative;
+  vertical-align: middle;
+  z-index: 1;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003179}}
+.nav-link > .badge, li .dropdown-divider > .badge {
+  position: relative;
+  margin: -1ex 0 0 -1ex;
+  z-index: 1;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003186}}
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  width: 250px;
+  margin-top: 5px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  background: #2d3135;
+  z-index: 2;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003198}}
+.nav-dropdown > .nav-item {
+  float: none;
+  height: 45px;
+  text-align: left;
+  padding: 0 5px 5px 5px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003204}}
+.nav-dropdown > .nav-item:first-child {
+  height: 50px;
+  padding: 5px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003209}}
+.nav-dropdown > .nav-item .nav-link, .nav-dropdown > .nav-item li .dropdown-divider, li .nav-dropdown > .nav-item .dropdown-divider {
+  display: block;
+  margin: 0;
+  border-color: #454b50;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003217}}
+a.nav-link-signout:link, a.nav-link-signout:visited {
+  color: #ff8d6b;
+}
+
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003234}}
+  .nav-list.secondary {
+    position: relative;
+    border-top: solid 1px rgba(0, 0, 0, 0.5);
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003238}}
+  .nav-list.secondary > .nav-item {
+    text-align: left;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003243}}
+  .nav-link, li .dropdown-divider {
+    display: block;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003247}}
+  .nav-dropdown-phr, .topnav .icon-caret-down {
+    display: none !important;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003251}}
+  .nav-dropdown {
+    margin-top: 0;
+    background: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003256}}
+  .nav-dropdown-signout {
+    display: block;
+  }
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003265}}
+.tabs {
+  float: left;
+  margin: 1em 0;
+  padding: 0 50px;
+  border-bottom: solid 1px #dadee0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003272}}
+.tabs > .secondary {
+  float: right;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003277}}
+a.tab {
+  margin-right: 25px;
+  margin-bottom: -1px;
+  padding: 12.5px 1em;
+  border: solid 1px #dadee0;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  background: #dadee0;
+  text-decoration: none;
+  color: #0a5679;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003289}}
+a.tab:hover {
+  background: #e8eaec;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003293}}
+a.tab.current {
+  background-color: #fbfbfb;
+  background-image: -webkit-linear-gradient(white, #fbfbfb);
+  background-image: linear-gradient(white, #fbfbfb);
+  border-bottom-color: #fbfbfb;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003299}}
+a.tab-more {
+  display: none;
+}
+
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003305}}
+  a.tab {
+    display: none;
+    margin-right: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003311}}
+  a.tab.current {
+    display: block;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003315}}
+  .tabs.show-all > a.tab {
+    display: block;
+    clear: both;
+    width: auto;
+    margin-bottom: 5px;
+    border-radius: 3px;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003322}}
+  .tabs.show-all > a.tab.current {
+    border-bottom-color: #dadee0;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003328}}
+  a.tab-more {
+    display: block;
+    float: left;
+    padding: 0 25px 15px;
+    font-size: 2em;
+    font-weight: bold;
+    text-decoration: none;
+    color: #0090bf;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003337}}
+  a.tab-more:hover {
+    color: #00b6f2;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003341}}
+  .tabs.show-all > a.tab-more {
+    display: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003346}}
+  .tabs > .btn {
+    display: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003350}}
+  .tabs.show-all > .btn {
+    display: block;
+    float: left;
+    clear: both;
+    margin-bottom: 5px;
+  }
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003367}}
+.menu-toolbar {
+  margin: 0 0 12.5px;
+  padding: 12.5px 25px;
+  text-align: center;
+  border: none;
+  background: #f2f1f0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003374}}
+.menu-toolbar.form-buttons {
+  padding: 0;
+  background: none;
+  border-bottom: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003380}}
+.menu-toolbar > .btn, .menu-toolbar > button, .menu-toolbar > .btn-group {
+  float: left;
+  margin-right: 25px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003384}}
+.menu-toolbar > .btn.secondary, .menu-toolbar > button.secondary, .menu-toolbar > .btn-group.secondary {
+  float: right;
+  margin-right: 0;
+  margin-left: 25px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003391}}
+.menu-toolbar > .menu-text {
+  display: inline-block;
+  margin-top: 1ex;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003396}}
+.menu-toolbar.dashboard-menu {
+  text-align: left;
+  border-top: solid 1px #dadee0;
+  background: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003401}}
+.menu-toolbar.dashboard-menu > h2 {
+  display: inline-block;
+  margin: 6px 0 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003412}}
+.wizard-steps {
+  float: left;
+  margin: 1em 0 0;
+  padding: 0 0 5px;
+  list-style: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003420}}
+.wizard-step {
+  display: block;
+  float: left;
+  position: relative;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003425}}
+.steps-3 > .wizard-step {
+  width: 33%;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003429}}
+.steps-4 > .wizard-step {
+  width: 25%;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003433}}
+.steps-5 > .wizard-step {
+  width: 20%;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003437}}
+.steps-6 > .wizard-step {
+  width: 16.66%;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003441}}
+.steps-7 > .wizard-step {
+  width: 14.28%;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003445}}
+.wizard-step:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 6px;
+  left: -50%;
+  height: 3px;
+  width: 100%;
+  background: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003456}}
+.wizard-step.current ~ .wizard-step:after {
+  background: #dadee0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003460}}
+.wizard-step.first:after {
+  content: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003465}}
+.wizard-step-link {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  z-index: 1;
+  vertical-align: top;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003474}}
+.wizard-step-link, .wizard-step-link:link, .wizard-step-link:visited {
+  color: #99a;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003478}}
+.wizard-step-link:before {
+  content: "";
+  display: block;
+  height: 15px;
+  width: 15px;
+  margin: auto;
+  border-radius: 50%;
+  background: #dadee0;
+  font-size: 10px;
+  line-height: 15px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003490}}
+.wizard-step-link.done:before, .wizard-step-intro > .wizard-step-link:before {
+  content: "\f00c";
+  padding-top: 1px;
+  background: #0090bf;
+  font-family: icomoon;
+  color: #fff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003498}}
+.current ~ .wizard-step > .wizard-step-link.done:before {
+  background: #dadee0;
+  color: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003503}}
+.wizard-step-link.current {
+  color: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003506}}
+.wizard-step-link.current:before {
+  content: "";
+  background: #fff;
+  border: solid 3px #0090bf;
+}
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003515}}
+  .wizard-step-link, .wizard-step-link:link, .wizard-step-link:visited {
+    color: transparent;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_nav\.scss}line{font-family:\00003519}}
+  .wizard-step-link.current {
+    color: #0090bf;
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\000033}}
+.badge {
+  display: inline-block;
+  min-width: 1.2em;
+  padding: 1px 3px;
+  padding: 1px\9;
+  background: #ccd6e0;
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1em;
+  color: #333;
+  vertical-align: text-top;
+  border-radius: 1em;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000319}}
+.badge.primary {
+  background: #0090bf;
+  color: #fff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000324}}
+.badge.warning {
+  background: #a02300;
+  color: #fff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000329}}
+.badge:before {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  width: 0;
+  vertical-align: middle;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000337}}
+.badge.multi {
+  position: relative;
+  margin-left: 1ex;
+  padding-top: 3px;
+  border: none;
+  background: none;
+  border-radius: 0;
+  z-index: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000346}}
+.badge.multi:before, .badge.multi:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 110%;
+  height: 110%;
+  border: solid 1px #aaa;
+  background: #eee;
+  border-radius: 2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000359}}
+.badge.multi:before {
+  -webkit-transform: rotate(-10deg);
+  z-index: -2;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000364}}
+.badge.multi:after {
+  z-index: -1;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000370}}
+.label {
+  color: #0090bf;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000374}}
+.label.green {
+  color: #53901f;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_badges\.scss}line{font-family:\0000378}}
+.label.orange {
+  color: #bf4225;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000354}}
+.btn-group {
+  display: inline-block;
+  position: relative;
+  margin-bottom: 1ex;
+  text-align: left;
+  overflow: visible;
+  border-radius: 7px;
+  outline: none;
+  vertical-align: middle;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000364}}
+.btn-group > .btn, .btn-group > button, .btn-group > input[type='submit'] {
+  display: block;
+  float: left;
+  margin-left: -1px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000372}}
+.btn-group > .btn:first-of-type, .btn-group > button:first-of-type, .btn-group > input[type='submit']:first-of-type {
+  margin-left: 0;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000378}}
+.btn-group > .btn:last-of-type, .btn-group > button:last-of-type, .btn-group > input[type='submit']:last-of-type {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000384}}
+.btn-group.btn-group-full {
+  display: block;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000387}}
+.btn-group.btn-group-full > .btn {
+  float: none;
+  text-align: left;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000398}}
+.btn, button, input[type='submit'] {
+  display: inline-block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 8px 25px;
+  outline: none;
+  border: solid 1px #dadee0;
+  border-radius: 2px;
+  box-shadow: none;
+  font-family: "proxima-nova", "HelveticaNeue", Helvetica, arial, verdana, sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  background-color: #c7ced4;
+  border: solid 1px #c7ced4;
+  border-bottom-color: #aab5be;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\000038}}
+.btn, .btn:link, .btn:visited, .btn:active, button, button:link, button:visited, button:active, input[type='submit'], input[type='submit']:link, input[type='submit']:visited, input[type='submit']:active {
+  color: #0a5679;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000314}}
+.btn:hover, .switch:hover > .btn:not(.selected), .btn:focus, button:hover, .switch:hover > button:not(.selected), button:focus, input[type='submit']:hover, .switch:hover > input[type='submit']:not(.selected), input[type='submit']:focus {
+  background-color: #e4e7ea;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000319}}
+.btn:active, button:active, input[type='submit']:active {
+  background-color: #f2f4f5;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000323}}
+.btn.selected, button.selected, input[type='submit'].selected {
+  border: solid 1px #aab5be;
+  background: #edfbff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000328}}
+.btn[disabled], .btn.disabled, button[disabled], button.disabled, input[type='submit'][disabled], input[type='submit'].disabled {
+  position: relative;
+  background: none;
+  border: solid 1px #aaa;
+  color: #6d6d6d;
+  border-radius: 3px;
+  box-shadow: none;
+  text-shadow: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000337}}
+.btn[disabled]:after, .btn.disabled:after, button[disabled]:after, button.disabled:after, input[type='submit'][disabled]:after, input[type='submit'].disabled:after {
+  content: '\005C';
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  margin-left: -8px;
+  font-size: 70px;
+  color: #6d6d6d;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003116}}
+label.btn {
+  margin: 0;
+  font-family: "proxima-nova", "HelveticaNeue", Helvetica, arial, verdana, sans-serif;
+  color: #454b50;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003121}}
+input[type=checkbox] + label.btn, input[type=radio] + label.btn {
+  border: solid 1px #dadee0;
+  padding: 5px 25px;
+  background: none;
+  box-shadow: inset 0 1px #fff, 0 1px #fff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003127}}
+input[type=checkbox] + label.btn:hover, input[type=radio] + label.btn:hover {
+  background: white;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003132}}
+input[type=checkbox] + label.btn {
+  width: 100%;
+  margin-bottom: 1ex;
+  text-align: left;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003138}}
+input[type=radio] + label.btn {
+  display: block;
+  float: left;
+  margin-left: -1px;
+  border-radius: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003144}}
+input[type=radio] + label.btn:first-of-type {
+  margin-left: 0;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003150}}
+input[type=radio] + label.btn:last-of-type {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003156}}
+input[type=checkbox] + label.btn:before, input[type=radio] + label.btn:before {
+  display: inline-block;
+  margin: 0 0.5ex 0 -0.5ex;
+  font-family: icomoon;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003162}}
+input[type=checkbox] + label.btn:before, input[type=radio] + label.btn:before {
+  color: #aaa;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003166}}
+input[type=checkbox] + label.btn:before {
+  content: "\f096";
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003170}}
+input[type=radio] + label.btn:before {
+  content: "\f10c";
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003174}}
+input.checked + label.btn {
+  border-color: #0090bf !important;
+  background: #f2fcff;
+  color: #0090bf !important;
+  z-index: 1;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003182}}
+input:checked + label.btn {
+  border-color: #0090bf !important;
+  background: #f2fcff;
+  color: #0090bf !important;
+  z-index: 1;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003189}}
+input[type=radio].checked + label.btn {
+  position: relative;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003193}}
+input[type=radio]:checked + label.btn {
+  position: relative;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003197}}
+input[type=checkbox].checked + label.btn:before {
+  content: "\f046";
+  color: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003202}}
+input[type=checkbox]:checked + label.btn:before {
+  content: "\f046";
+  color: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003207}}
+input[type=radio].checked + label.btn:before {
+  content: "\f111 ";
+  color: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003212}}
+input[type=radio]:checked + label.btn:before {
+  content: "\f111 ";
+  color: #0090bf;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003217}}
+input[type=checkbox]:focus + label.btn, input[type=radio]:focus + label.btn {
+  box-shadow: 0 0 3px #0090bf;
+  outline: solid 2px #00b6f2;
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003226}}
+input[type=checkbox], input[type=radio] {
+  position: absolute;
+  left: -9999em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003231}}
+.btn.primary, button.primary, input[type='submit'].primary {
+  background-color: #0090bf;
+  border: solid 1px #0090bf;
+  border-bottom-color: #006a8c;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\000038}}
+.btn.primary, .btn.primary:link, .btn.primary:visited, .btn.primary:active, button.primary, button.primary:link, button.primary:visited, button.primary:active, input[type='submit'].primary, input[type='submit'].primary:link, input[type='submit'].primary:visited, input[type='submit'].primary:active {
+  color: white;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000314}}
+.btn.primary:hover, .switch:hover > .btn.primary:not(.selected), .btn.primary:focus, button.primary:hover, .switch:hover > button.primary:not(.selected), button.primary:focus, input[type='submit'].primary:hover, .switch:hover > input[type='submit'].primary:not(.selected), input[type='submit'].primary:focus {
+  background-color: #00b6f2;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000319}}
+.btn.primary:active, button.primary:active, input[type='submit'].primary:active {
+  background-color: #0dc3ff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000323}}
+.btn.primary.selected, button.primary.selected, input[type='submit'].primary.selected {
+  border: solid 1px #006a8c;
+  background: #edfbff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000328}}
+.btn.primary[disabled], .btn.primary.disabled, button.primary[disabled], button.primary.disabled, input[type='submit'].primary[disabled], input[type='submit'].primary.disabled {
+  position: relative;
+  background: none;
+  border: solid 1px #aaa;
+  color: #6d6d6d;
+  border-radius: 3px;
+  box-shadow: none;
+  text-shadow: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000337}}
+.btn.primary[disabled]:after, .btn.primary.disabled:after, button.primary[disabled]:after, button.primary.disabled:after, input[type='submit'].primary[disabled]:after, input[type='submit'].primary.disabled:after {
+  content: '\005C';
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  margin-left: -8px;
+  font-size: 70px;
+  color: #6d6d6d;
+}
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003231}}
+  .btn.primary, button.primary, input[type='submit'].primary {
+    width: 100%;
+    margin-bottom: 1ex;
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003241}}
+.btn.warning, button.warning, input[type='submit'].warning {
+  background-color: #a02300;
+  border: solid 1px #a02300;
+  border-bottom-color: #6d1800;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\000038}}
+.btn.warning, .btn.warning:link, .btn.warning:visited, .btn.warning:active, button.warning, button.warning:link, button.warning:visited, button.warning:active, input[type='submit'].warning, input[type='submit'].warning:link, input[type='submit'].warning:visited, input[type='submit'].warning:active {
+  color: white;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000314}}
+.btn.warning:hover, .switch:hover > .btn.warning:not(.selected), .btn.warning:focus, button.warning:hover, .switch:hover > button.warning:not(.selected), button.warning:focus, input[type='submit'].warning:hover, .switch:hover > input[type='submit'].warning:not(.selected), input[type='submit'].warning:focus {
+  background-color: #d32e00;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000319}}
+.btn.warning:active, button.warning:active, input[type='submit'].warning:active {
+  background-color: #ed3400;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000323}}
+.btn.warning.selected, button.warning.selected, input[type='submit'].warning.selected {
+  border: solid 1px #6d1800;
+  background: #edfbff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000328}}
+.btn.warning[disabled], .btn.warning.disabled, button.warning[disabled], button.warning.disabled, input[type='submit'].warning[disabled], input[type='submit'].warning.disabled {
+  position: relative;
+  background: none;
+  border: solid 1px #aaa;
+  color: #6d6d6d;
+  border-radius: 3px;
+  box-shadow: none;
+  text-shadow: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000337}}
+.btn.warning[disabled]:after, .btn.warning.disabled:after, button.warning[disabled]:after, button.warning.disabled:after, input[type='submit'].warning[disabled]:after, input[type='submit'].warning.disabled:after {
+  content: '\005C';
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  margin-left: -8px;
+  font-size: 70px;
+  color: #6d6d6d;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003245}}
+.btn.subtle, button.subtle, input[type='submit'].subtle {
+  background-color: #5d656b;
+  border: solid 1px #5d656b;
+  border-bottom-color: #454b50;
+  border: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\000038}}
+.btn.subtle, .btn.subtle:link, .btn.subtle:visited, .btn.subtle:active, button.subtle, button.subtle:link, button.subtle:visited, button.subtle:active, input[type='submit'].subtle, input[type='submit'].subtle:link, input[type='submit'].subtle:visited, input[type='submit'].subtle:active {
+  color: white;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000314}}
+.btn.subtle:hover, .switch:hover > .btn.subtle:not(.selected), .btn.subtle:focus, button.subtle:hover, .switch:hover > button.subtle:not(.selected), button.subtle:focus, input[type='submit'].subtle:hover, .switch:hover > input[type='submit'].subtle:not(.selected), input[type='submit'].subtle:focus {
+  background-color: #747e87;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000319}}
+.btn.subtle:active, button.subtle:active, input[type='submit'].subtle:active {
+  background-color: #828b93;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000323}}
+.btn.subtle.selected, button.subtle.selected, input[type='submit'].subtle.selected {
+  border: solid 1px #454b50;
+  background: #edfbff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000328}}
+.btn.subtle[disabled], .btn.subtle.disabled, button.subtle[disabled], button.subtle.disabled, input[type='submit'].subtle[disabled], input[type='submit'].subtle.disabled {
+  position: relative;
+  background: none;
+  border: solid 1px #aaa;
+  color: #6d6d6d;
+  border-radius: 3px;
+  box-shadow: none;
+  text-shadow: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\0000337}}
+.btn.subtle[disabled]:after, .btn.subtle.disabled:after, button.subtle[disabled]:after, button.subtle.disabled:after, input[type='submit'].subtle[disabled]:after, input[type='submit'].subtle.disabled:after {
+  content: '\005C';
+  display: block;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  margin-left: -8px;
+  font-size: 70px;
+  color: #6d6d6d;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003255}}
+.dropdown-toggle:after {
+  content: " \f0d7";
+  font-family: icomoon;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003261}}
+.dropdown-list {
+  display: none;
+  clear: both;
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  background: #dadee0;
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  list-style: none;
+  z-index: 1;
+  overflow: hidden;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003278}}
+.dropdown-list > li {
+  margin: 0;
+  padding: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003282}}
+.dropdown-list > li:last-child {
+  border: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003286}}
+.dropdown-list > li > a {
+  display: block;
+  margin-top: 1px;
+  padding: 1ex;
+  background: #fff;
+  color: #0a5679;
+  text-decoration: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003294}}
+.dropdown-list > li > a:hover {
+  background: #fff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003299}}
+.dropdown-list > li:first-child > a {
+  box-shadow: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_buttons\.scss}line{font-family:\00003305}}
+.cancel-link {
+  display: inline-block;
+  margin-left: 1em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/bourbon\/addons\/_clearfix\.scss}line{font-family:\0000315}}
+form:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\000037}}
+.inline-form {
+  display: inline-block;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000311}}
+fieldset, .fieldset {
+  position: relative;
+  margin: 0 0 25px;
+  padding-bottom: 25px;
+  border: none;
+  background: #f2f1f0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000321}}
+legend {
+  position: relative;
+  top: 2em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000327}}
+fieldset fieldset {
+  float: none;
+  margin: 1em 0 0;
+  padding: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000332}}
+fieldset fieldset > legend {
+  position: static;
+  width: 100%;
+  font-weight: 400;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000339}}
+.control-group {
+  display: inline-block;
+  margin-right: 50px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000344}}
+label, .form-question {
+  margin-top: 1em;
+  font-weight: 400;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000349}}
+.questionnaire > label, .questionnaire .form-question, fieldset fieldset > legend {
+  border-top: solid 1px #dadee0;
+  padding: 1em 0 1ex;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000354}}
+label {
+  display: block;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000358}}
+input:not([type]), input[type="email"], input[type="number"], input[type="password"], input[type="search"], input[type="tel"], input[type="text"], input[type="url"], input[type="color"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="month"], input[type="time"], input[type="week"], textarea, .textarea, .input-placeholder {
+  padding: 8px 1ex;
+  border: solid 1px #dadee0;
+  border-radius: 2px;
+  background-color: #fff;
+  outline: solid 0 rgba(0, 0, 0, 0.25);
+  line-height: 1.5em;
+  vertical-align: middle;
+  -webkit-transition: box-shadow 0.25s, -webkit-box-shadow 0.25s;
+  -moz-transition: box-shadow 0.25s, -moz-box-shadow 0.25s;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000369}}
+input:not([type]):focus, input:not([type]).focus, input[type="email"]:focus, input[type="email"].focus, input[type="number"]:focus, input[type="number"].focus, input[type="password"]:focus, input[type="password"].focus, input[type="search"]:focus, input[type="search"].focus, input[type="tel"]:focus, input[type="tel"].focus, input[type="text"]:focus, input[type="text"].focus, input[type="url"]:focus, input[type="url"].focus, input[type="color"]:focus, input[type="color"].focus, input[type="date"]:focus, input[type="date"].focus, input[type="datetime"]:focus, input[type="datetime"].focus, input[type="datetime-local"]:focus, input[type="datetime-local"].focus, input[type="month"]:focus, input[type="month"].focus, input[type="time"]:focus, input[type="time"].focus, input[type="week"]:focus, input[type="week"].focus, textarea:focus, textarea.focus, .textarea:focus, .textarea.focus, .input-placeholder:focus, .input-placeholder.focus {
+  border-color: #59d6ff;
+  box-shadow: 0 0 3px 2px rgba(0, 144, 191, 0.5);
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000374}}
+input:not([type])[readonly], input[type="email"][readonly], input[type="number"][readonly], input[type="password"][readonly], input[type="search"][readonly], input[type="tel"][readonly], input[type="text"][readonly], input[type="url"][readonly], input[type="color"][readonly], input[type="date"][readonly], input[type="datetime"][readonly], input[type="datetime-local"][readonly], input[type="month"][readonly], input[type="time"][readonly], input[type="week"][readonly], textarea[readonly], .textarea[readonly], .input-placeholder[readonly] {
+  background: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000379}}
+.input-placeholder {
+  position: absolute;
+  z-index: 1;
+  width: 15em;
+  font-family: monospace;
+  font-weight: normal;
+  color: #aaa;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000388}}
+.chosen-container-active .chosen-single {
+  border-color: #59d6ff;
+  box-shadow: 0 0 3px 2px rgba(0, 144, 191, 0.5);
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000393}}
+input[type='number'] {
+  text-align: right;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\0000397}}
+input.itemized-input {
+  width: 6em;
+  text-align: right;
+  vertical-align: middle;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003103}}
+.itemized-dollar-sign {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+  color: #888;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003110}}
+.inline {
+  display: inline-block;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003114}}
+textarea, .textarea {
+  display: block;
+  width: 100%;
+  min-height: 5em;
+  margin-bottom: 1ex;
+  resize: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003122}}
+.document-reader {
+  margin: 0 0 1em;
+  border: solid 1px #dadee0;
+  padding: 0;
+  background: #fff;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003131}}
+.document-reader-scrolling {
+  height: 300px;
+  overflow-y: auto;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003136}}
+input[type=search] {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 27em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003142}}
+.street-input {
+  width: 100%;
+  max-width: 27em;
+  text-transform: capitalize;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003148}}
+.city-input {
+  width: 100%;
+  max-width: 10em;
+  text-transform: capitalize;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003154}}
+.state-input {
+  width: 3em;
+  text-transform: uppercase;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003159}}
+.zip-input, .cvv-input {
+  width: 100%;
+  max-width: 13ex;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003164}}
+.msg-header-field {
+  width: 100%;
+  max-width: 30em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003169}}
+label.btn {
+  cursor: pointer;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003173}}
+.image-uploader {
+  position: absolute;
+  left: -9999em;
+  visibility: hidden;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003179}}
+.image-preview-wrapper {
+  display: inline-block;
+  width: 200px;
+  height: 200px;
+  margin: 25px;
+  padding: 25px;
+  background: #333;
+  text-align: center;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003188}}
+.image-preview-wrapper:before {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  width: 0;
+  vertical-align: middle;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003197}}
+.image-preview {
+  display: inline-block;
+  max-width: 99%;
+  max-height: 99%;
+  vertical-align: middle;
+  cursor: alias;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003205}}
+.error {
+  color: #bf4225 !important;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003209}}
+dt.error, dd.error {
+  background: #ffd;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003213}}
+input.error, textarea.error {
+  border: solid 1px #bf4225;
+  background: #ffd;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003218}}
+.input-group {
+  display: inline-block;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003221}}
+.input-group > input {
+  display: block;
+  float: left;
+  margin: 0;
+  border-radius: 0;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003228}}
+.input-group > .btn, .input-group > button {
+  display: block;
+  float: left;
+  margin: 0;
+  padding: 4px 25px;
+  border: solid 1px #aaa;
+  border-radius: 0;
+  box-shadow: inset 1px 1px rgba(255, 255, 255, 0.4), 0 1px 1px white;
+  z-index: 1;
+  border-left: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003239}}
+.input-group > .btn:before, .input-group > button:before {
+  content: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003244}}
+.input-group > input:first-child, .input-group > .btn:first-child, .input-group > button:first-child {
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-top-left-radius: 3px;
+  -ms-border-top-left-radius: 3px;
+  -o-border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-bottom-left-radius: 3px;
+  -ms-border-bottom-left-radius: 3px;
+  -o-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003257}}
+.input-group > input:last-child, .input-group > .btn:last-child, .input-group > button:last-child {
+  border-left: none;
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-top-right-radius: 3px;
+  -ms-border-top-right-radius: 3px;
+  -o-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-bottom-right-radius: 3px;
+  -ms-border-bottom-right-radius: 3px;
+  -o-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-left: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003273}}
+.cc-icon {
+  display: inline-block;
+  background-image: url(../img/credit-cards.png);
+  background-repeat: no-repeat;
+  background-size: 240px 20px;
+  height: 20px;
+  width: 30px;
+  margin-top: -5px\9;
+  vertical-align: middle;
+  -webkit-transition: -webkit-transform 0.5s;
+  -moz-transition: -webkit-transform 0.5s;
+  transition: -webkit-transform 0.5s;
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min-device-pixel-ratio: 1.3), only screen and (min-resolution: 120dpi) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003273}}
+  .cc-icon {
+    background-image: url(../img/credit-cards@2x.png);
+  }
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003291}}
+.cc-icon.dim {
+  opacity: 0.5;
+  -ms-filter: "alpha(opacity=40)";
+  -webkit-filter: grayscale(100%);
+  -webkit-transform: scale(0.75);
+  -moz-transform: scale(0.75);
+  -ms-transform: scale(0.75);
+  -o-transform: scale(0.75);
+  transform: scale(0.75);
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003299}}
+.cc-visa {
+  background-position: 0 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003303}}
+.cc-mc {
+  background-position: -30px 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003307}}
+.cc-amex {
+  background-position: -60px 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003311}}
+.cc-discover {
+  background-position: -120px 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003315}}
+.cc-cvv {
+  margin: 0 0 0 -40px;
+  margin: -5px 0 0 0\9;
+  background-position: -180px 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003321}}
+.cc-amex-cvv {
+  background-position: -210px 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003326}}
+.search-group {
+  display: inline-block;
+  height: 35px;
+  min-width: 35px;
+  margin: 0 1ex;
+  padding: 0 8px;
+  border: solid 1px #dadee0;
+  border-radius: 17px;
+  background: #fff;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003336}}
+.search-group > input {
+  width: 0;
+  padding: 8px 1px 8px 0;
+  border: none;
+  background: none;
+  box-shadow: none !important;
+  -webkit-transition: width 0.25s, padding-left 0.25s, padding-right 0.25s;
+  -moz-transition: width 0.25s, padding-left 0.25s, padding-right 0.25s;
+  transition: width 0.25s, padding-left 0.25s, padding-right 0.25s;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_forms\.scss}line{font-family:\00003345}}
+.search-group > input:focus, .search-group > input:valid {
+  width: 27ex;
+  padding: 8px 1ex;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_datepicker\.scss}line{font-family:\000033}}
+.datepicker-textinput {
+  margin-right: 1em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_datepicker\.scss}line{font-family:\000037}}
+.picker__input {
+  height: 0 !important;
+  width: 0 !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_datepicker\.scss}line{font-family:\0000315}}
+.btn.datepicker-toggle {
+  display: inline-block;
+  float: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_datepicker\.scss}line{font-family:\0000321}}
+button[disabled].picker__button--today, button[disabled].picker__button--clear {
+  border: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_datepicker\.scss}line{font-family:\0000323}}
+button[disabled].picker__button--today:after, button[disabled].picker__button--clear:after {
+  content: "";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_datepicker\.scss}line{font-family:\0000330}}
+.picker__nav--prev, .picker__nav--next {
+  -webkit-box-sizing: initial;
+  -moz-box-sizing: initial;
+  box-sizing: initial;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000321}}
+.alert {
+  margin: 1em 0;
+  padding: 1em 25px;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+  border: 1px solid #91cfe3;
+  background: #e6f4f9;
+  color: #005875;
+  border-radius: 2px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\000038}}
+.alert > a {
+  color: #005875;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000312}}
+.alert > .close {
+  color: #005875;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000315}}
+.alert > .close:hover {
+  color: #333;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000330}}
+.alert .close {
+  display: block;
+  float: right;
+  padding-top: 4px;
+  font-size: ms(1);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000341}}
+.alert.success {
+  border: 1px solid #c4dcb1;
+  background: #fcfdfb;
+  color: #417e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\000038}}
+.alert.success > a {
+  color: #417e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000312}}
+.alert.success > .close {
+  color: #417e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000315}}
+.alert.success > .close:hover {
+  color: #333;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000345}}
+.alert.warning {
+  border: 1px solid #d0c6b3;
+  background: #f9f8f5;
+  color: #6c4f18;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\000038}}
+.alert.warning > a {
+  color: #6c4f18;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000312}}
+.alert.warning > .close {
+  color: #6c4f18;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000315}}
+.alert.warning > .close:hover {
+  color: #333;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000349}}
+.alert.error {
+  border: 1px solid #e1c8b9;
+  background: white;
+  color: #8b3e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\000038}}
+.alert.error > a {
+  color: #8b3e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000312}}
+.alert.error > .close {
+  color: #8b3e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000315}}
+.alert.error > .close:hover {
+  color: #333;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000353}}
+.alert-scroll {
+  position: fixed;
+  bottom: 0;
+  left: 50px;
+  right: 376px;
+  width: auto;
+  margin: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  z-index: 1;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000364}}
+.focus-help .alert-scroll {
+  visibility: hidden;
+}
+@media only screen and (min-width: 766px) and (max-width: 1100px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000353}}
+  .alert-scroll {
+    right: 52px;
+  }
+}
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000353}}
+  .alert-scroll {
+    visibility: hidden;
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\000033}}
+.modals {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2000;
+  background: #333;
+  background: rgba(0, 0, 0, 0.7);
+  overflow: auto;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000315}}
+.modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  height: 45%;
+  margin: auto;
+  outline: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000327}}
+.modal.modal-small {
+  width: 30%;
+  height: 30%;
+  min-width: 300px;
+  min-height: 200px;
+  text-align: center;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000335}}
+.modal.modal-full {
+  position: relative;
+  width: auto;
+  height: auto;
+  margin: 50px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000343}}
+.modal-header {
+  padding: 25px;
+  background: #fff;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000350}}
+.modal-heading {
+  float: left;
+  margin: 6px 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000355}}
+a.modal-close {
+  float: right;
+  color: #454b50;
+  text-decoration: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000361}}
+.modal-body {
+  left: 0;
+  padding: 0 25px;
+  background: #fff;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000369}}
+.modal-prompt {
+  text-align: center;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000373}}
+.modal-footer {
+  text-align: center;
+  padding: 25px;
+  background: #fff;
+}
+
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000383}}
+  .modals, .modal, .modal.modal-full {
+    position: absolute;
+    top: 0;
+    right: initial;
+    bottom: initial;
+    left: initial;
+    height: 100% !important;
+    width: 100% !important;
+    margin: initial;
+    min-width: initial;
+    min-height: initial;
+    background: white;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_modals\.scss}line{font-family:\0000397}}
+  .modals-bg {
+    display: none;
+  }
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\000031}}
+.pagination {
+  margin: 25px 0 50px;
+  text-align: center;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\000038}}
+.pagination-link {
+  display: inline-block;
+  padding: 1ex 1em;
+  border: solid 1px rgba(0, 144, 191, 0.2);
+  border-radius: 1px;
+  text-decoration: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000315}}
+.pagination-link:hover {
+  border-color: #00b6f2;
+  background: #00b6f2;
+  color: white;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000321}}
+.pagination-link.pagination-link--current {
+  border-color: #0090bf;
+  background: #0090bf;
+  color: #fff;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000328}}
+.pagination-link--first:before, .pagination-link--prev:before, .pagination-link--next:after, .pagination-link--last:after {
+  font-family: icomoon;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000332}}
+.pagination-link--first:before {
+  content: "\f104\f104  ";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000336}}
+.pagination-link--prev {
+  margin-right: 1em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000340}}
+.pagination-link--prev:before {
+  content: "\f104  ";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000344}}
+.pagination-link--next {
+  margin-left: 1em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000348}}
+.pagination-link--next:after {
+  content: " \f105";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_pagination\.scss}line{font-family:\0000352}}
+.pagination-link--last:after {
+  content: " \f105\f105";
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_tooltip\.scss}line{font-family:\000033}}
+.tooltip-tag {
+  position: absolute;
+  background: #333;
+  padding: 0.5ex 1ex;
+  color: #fff;
+  border-radius: 3px;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  border: 1px solid #91cfe3;
+  background: #e6f4f9;
+  color: #005875;
+  z-index: 100;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\000038}}
+.tooltip-tag > a {
+  color: #005875;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000312}}
+.tooltip-tag > .close {
+  color: #005875;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000315}}
+.tooltip-tag > .close:hover {
+  color: #333;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_tooltip\.scss}line{font-family:\0000313}}
+.tooltip-tag.error {
+  border: 1px solid #e1c8b9;
+  background: white;
+  color: #8b3e10;
+  display: inline-block;
+  position: relative;
+  margin: 1ex 0 1ex 1ex;
+  vertical-align: middle;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\000038}}
+.tooltip-tag.error > a {
+  color: #8b3e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000312}}
+.tooltip-tag.error > .close {
+  color: #8b3e10;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_alerts\.scss}line{font-family:\0000315}}
+.tooltip-tag.error > .close:hover {
+  color: #333;
+}
+
+@-webkit-keyframes spin {
+  /* line 2, ../../../../../../target/scss/modules/_loading-clock.scss */
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes spin {
+  /* line 2, ../../../../../../target/scss/modules/_loading-clock.scss */
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  /* line 2, ../../../../../../target/scss/modules/_loading-clock.scss */
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes appear {
+  /* line 8, ../../../../../../target/scss/modules/_loading-clock.scss */
+  from {
+    -webkit-transform: scale(0.5);
+  }
+}
+
+@-moz-keyframes appear {
+  /* line 8, ../../../../../../target/scss/modules/_loading-clock.scss */
+  from {
+    -moz-transform: scale(0.5);
+  }
+}
+
+@keyframes appear {
+  /* line 8, ../../../../../../target/scss/modules/_loading-clock.scss */
+  from {
+    transform: scale(0.5);
+  }
+}
+
+@-webkit-keyframes disappear {
+  /* line 14, ../../../../../../target/scss/modules/_loading-clock.scss */
+  to {
+    -webkit-transform: scale(0.5);
+  }
+}
+
+@-moz-keyframes disappear {
+  /* line 14, ../../../../../../target/scss/modules/_loading-clock.scss */
+  to {
+    -moz-transform: scale(0.5);
+  }
+}
+
+@keyframes disappear {
+  /* line 14, ../../../../../../target/scss/modules/_loading-clock.scss */
+  to {
+    transform: scale(0.5);
+  }
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_loading-clock\.scss}line{font-family:\0000319}}
+.loadingclock {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 24px;
+  height: 24px;
+  border: 1.8px solid #454b50;
+  border-radius: 100%;
+  text-indent: 30px;
+  white-space: nowrap;
+  -webkit-animation: appear 0.3s ease-in-out;
+  -moz-animation: appear 0.3s ease-in-out;
+  animation: appear 0.3s ease-in-out;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_loading-clock\.scss}line{font-family:\0000338}}
+.loadingclock.disappear {
+  -webkit-animation: disappear 0.3s ease-in-out;
+  -moz-animation: disappear 0.3s ease-in-out;
+  animation: disappear 0.3s ease-in-out;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_loading-clock\.scss}line{font-family:\0000342}}
+menu > .loadingclock {
+  display: block;
+  float: left;
+  margin-top: 1ex;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_loading-clock\.scss}line{font-family:\0000348}}
+.loadingclock:before {
+  display: block;
+  position: absolute;
+  left: 9.3px;
+  top: 1.02px;
+  width: 1.8px;
+  height: 10.08px;
+  background-color: #454b50;
+  border-radius: 0.9px;
+  -webkit-animation: spin 3s linear infinite;
+  -moz-animation: spin 3s linear infinite;
+  animation: spin 3s linear infinite;
+  content: "";
+  -webkit-transform-origin: center 9.18px;
+  -moz-transform-origin: center 9.18px;
+  -ms-transform-origin: center 9.18px;
+  -o-transform-origin: center 9.18px;
+  transform-origin: center 9.18px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/modules\/_loading-clock\.scss}line{font-family:\0000366}}
+.loadingclock:after {
+  display: block;
+  position: absolute;
+  left: 9.3px;
+  top: 4.08px;
+  width: 1.8px;
+  height: 7.02px;
+  background-color: #454b50;
+  border-radius: 0.9px;
+  -webkit-animation: spin 18s linear infinite;
+  -moz-animation: spin 18s linear infinite;
+  animation: spin 18s linear infinite;
+  content: "";
+  -webkit-transform-origin: center 6.12px;
+  -moz-transform-origin: center 6.12px;
+  -ms-transform-origin: center 6.12px;
+  -o-transform-origin: center 6.12px;
+  transform-origin: center 6.12px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\000033}}
+html {
+  height: 100%;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\000037}}
+body {
+  height: 100%;
+  background: #fbfbfb;
+  overflow-x: hidden;
+  overflow-x: auto\9;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000314}}
+#app {
+  position: relative;
+  min-height: 100%;
+  min-width: 1000px\9;
+  height: 50%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  overflow-x: visible\9;
+  overflow-y: visible\9;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000326}}
+.global {
+  display: table;
+  float: left;
+  height: 100%;
+  height: calc(100% - 150px);
+  background: #f3f3f3;
+  z-index: 2;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000336}}
+.page-content, .help {
+  display: table-cell;
+  vertical-align: top;
+  padding: 25px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000342}}
+.page-content {
+  background: #fbfbfb;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000345}}
+.page-content:focus {
+  outline: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000355}}
+.page-title {
+  display: inline-block;
+  margin: 0 0 12.5px;
+  padding: 0 25px;
+  vertical-align: middle;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000364}}
+.page-title.wizard-header > span {
+  text-transform: none;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000369}}
+a > .page-title:hover {
+  color: #00b6f2;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000374}}
+.nav-toggle {
+  display: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000379}}
+.global-user-indicator {
+  display: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000383}}
+.help-toggle {
+  display: none;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000387}}
+a.header-back {
+  margin-bottom: 1ex;
+  line-height: 1em;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #687279;
+  z-index: 20;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\0000399}}
+a.header-back:hover {
+  color: #0090bf;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003104}}
+.content {
+  padding-bottom: 25px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003110}}
+.help {
+  width: 320px;
+  border-left: solid 1px #dadee0;
+  background: #f3f3f3;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003115}}
+.help.empty {
+  border-left: none;
+  background: #fbfbfb;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003120}}
+.help > h1 {
+  margin-top: 0;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003126}}
+.help-content > img {
+  width: 270px;
+  height: auto;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003131}}
+.help-content > ul {
+  padding-left: 25px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003136}}
+.page-footer {
+  position: relative;
+  min-height: 100px;
+  padding: 25px;
+  background: #454b50;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003144}}
+.page-footer, .page-footer a:link, .page-footer a:visited, .page-footer label {
+  text-decoration: none;
+  color: #bbb;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003150}}
+.footer-hospital-link, .footer-links {
+  display: inline-block;
+  vertical-align: top;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003155}}
+.footer-hospital-link {
+  margin-right: 50px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003159}}
+.footer-hospital-img {
+  height: 3em;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003163}}
+.footer-vecna-img {
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+  width: 100px;
+  margin-top: 1em;
+}
+
+@media only screen and (min-width: 766px) and (max-width: 1100px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003173}}
+  .global {
+    position: relative;
+    left: 0;
+    width: 150%;
+    -webkit-transition: left 0.5s;
+    -moz-transition: left 0.5s;
+    transition: left 0.5s;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003179}}
+  .global.focus-help {
+    left: -50%;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003184}}
+  .help-toggle {
+    display: block;
+    position: absolute;
+    top: 75px;
+    right: 1px;
+    height: 100px;
+    width: 40px;
+    padding: 37px 0;
+    background: #f3f3f3;
+    border-top: solid 1px #dadee0;
+    border-left: solid 1px #dadee0;
+    border-bottom: solid 1px #dadee0;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    color: #454b50;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    z-index: 3;
+    -webkit-transition: right 0.5s;
+    -moz-transition: right 0.5s;
+    transition: right 0.5s;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003206}}
+  .help-toggle.focus-help {
+    right: 50%;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003210}}
+  .help-toggle:before {
+    content: "\f05a";
+    vertical-align: middle;
+    font-family: icomoon;
+    font-size: 25px;
+    color: #828b93;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003218}}
+  .help-toggle.focus-help:before {
+    content: "\f101";
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003222}}
+  .focus-nav .help-toggle {
+    display: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003227}}
+  .page-content {
+    position: relative;
+    width: 66.666%;
+    height: 100%;
+    z-index: 2;
+  }
+}
+@media only screen and (max-width: 765px) {
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003237}}
+  body {
+    background: #454b50;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003241}}
+  .global, .page-content, .help {
+    display: block;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003245}}
+  .page-content {
+    overflow-x: auto;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003249}}
+  .global {
+    position: relative;
+    left: 0;
+    height: auto;
+    min-height: initial;
+    -webkit-transition: left 0.25s;
+    -moz-transition: left 0.25s;
+    transition: left 0.25s;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003257}}
+  .help-toggle {
+    display: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003261}}
+  .topnav {
+    position: absolute;
+    left: -100%;
+    width: 90%;
+    width: calc(100% - 50px);
+    height: auto;
+    min-height: 100%;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003270}}
+  .nav-list, .nav-item {
+    width: 100%;
+    height: auto;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003275}}
+  .nav-link, li .dropdown-divider {
+    float: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003279}}
+  .nav-dropdown {
+    display: block;
+    position: static;
+    min-width: 100%;
+    margin-top: 0;
+    background: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003288}}
+  .focus-nav > .topnav {
+    left: 0;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003292}}
+  .focus-nav > .global, .focus-nav footer {
+    left: 66.66667%;
+    right: -66.66667%;
+    left: calc(100% - 50px);
+    right: calc(-100% + 50px);
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003300}}
+  .focus-nav > .page-content {
+    opacity: 0.5;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003305}}
+  .page-content, .help, footer {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-height: initial;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/vendor\/bourbon\/addons\/_clearfix\.scss}line{font-family:\0000315}}
+  .page-content:after, .help:after, footer:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003315}}
+  .page-content {
+    display: block;
+    margin-top: 50px;
+    padding: 1em 0 25px;
+    border-top: solid 1px #dadee0;
+    border-left: none;
+    border-right: none;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003324}}
+  .help {
+    display: block;
+    border-top: solid 1px #dadee0;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003330}}
+  a.nav-toggle {
+    display: block;
+    position: absolute;
+    top: 0;
+    height: 50px;
+    width: 50px;
+    z-index: 10;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003339}}
+  .nav-toggle {
+    left: 0;
+    padding: 13px;
+    font-size: 1.5em;
+    color: #454b50;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    z-index: 10;
+  }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003349}}
+  .nav-toggle:before {
+    color: #454b50;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003354}}
+  .global-user-indicator {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 40px;
+    right: 0;
+    overflow: hidden;
+    padding: 14px;
+    font-size: 1.5em;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    z-index: 1;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003369}}
+  .menu-toolbar > .btn, .menu-toolbar > button, .menu-toolbar > .btn.secondary, .menu-toolbar > button.secondary {
+    float: left;
+    margin: 5px 25px 5px 0;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003374}}
+  .page-footer {
+    -webkit-transition: left 0.25s;
+    -moz-transition: left 0.25s;
+    transition: left 0.25s;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003378}}
+  a.index-link {
+    border-radius: 0 !important;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003382}}
+  .register-info {
+    padding: 0;
+  }
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003387}}
+  .picker {
+    width: 90%;
+  }
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/target\/scss\/portal\/layout\/_portal\.scss}line{font-family:\00003392}}
+.print-only {
+  display: none;
+}
+
+/* vPortal-nexus scss */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\000031}}
+li .dropdown-divider {
+  float: left;
+  width: 89%;
+  left: 5%;
+  height: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  margin: auto;
+  margin-bottom: 5px;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000311}}
+li .dropdown-divider:hover {
+  background: #2d3135;
+  color: white;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000317}}
+li.nav-item.right-side-menu {
+  float: right;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000321}}
+li.right-side-menu > a, li.right-side-menu > .nav-dropdown {
+  text-align: right;
+  right: 0px;
+  left: auto;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000327}}
+ul.nav-list {
+  width: 100%;
+  right: 0px;
+  left: auto;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000333}}
+ul.nav-dropdown {
+  border: 1px solid rgba(250, 255, 255, 0.5);
+  background-color: #454b50;
+  padding-top: 5px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000339}}
+li.nav-item.non-link {
+  padding: 6px;
+  height: inherit;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000344}}
+.nav-dropdown > .nav-item .nav-link, .nav-dropdown > .nav-item li .dropdown-divider, li .nav-dropdown > .nav-item .dropdown-divider {
+  color: #fbfbfb;
+}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000346}}
+.nav-dropdown > .nav-item .nav-link:hover, .nav-dropdown > .nav-item li .dropdown-divider:hover, li .nav-dropdown > .nav-item .dropdown-divider:hover {
+  color: #00b6f2;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000351}}
+.nav-arrow {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #ddd;
+  position: absolute;
+  top: -10px;
+  left: 18px;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000362}}
+.nav-item > .item-title {
+  font-size: 16px;
+  color: #fff;
+  margin-left: 15px;
+  display: block;
+  line-height: initial;
+  font-weight: 600;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000371}}
+.nav-item > .item-info {
+  font-size: 16px;
+  color: #bbb;
+  margin-left: 30px;
+  display: block;
+  line-height: initial;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000379}}
+.nav-link > .link-title, li .dropdown-divider > .link-title, li .dropdown-divider > .link-title, li.nav-item.non-link > .link-title {
+  font-weight: 500;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/lucid\/other\/dev\/nexus\/vPortal\/src\/main\/resources\/app\/scss\/_vPortalNav\.scss}line{font-family:\0000383}}
+.topnav {
+  z-index: 10000;
+}

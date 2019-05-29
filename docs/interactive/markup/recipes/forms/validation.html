@@ -1,0 +1,106 @@
+<h3>
+  Validation
+</h3>
+<hr/>
+<p>Typically, the validity of a Backbone model should be determined before
+setting the data on the object model.  Since the Torso Form philosophy has
+already separated the view fields from the object model fields, there is no
+need to be hesitant anymore.  The Form View will write to the locally bound
+Form Model, and then validation will be run against the Form Model before
+pushing the form values back to the pertinent object models.</p>
+
+<div class="code-type demo"></div>
+<div class="demo-area" for="validate-form"></div>
+
+<div class="code-type hbs"></div>
+<pre><code class="html" for="validate-form"><script type="text/code">
+<form>
+  <!-- Form error-listing alert -->
+  \{{#if formErrors}}
+  <div class="alert error">
+    <strong>
+      <span class="fa fa-exclamation-triangle"></span>
+      Validation errors exist!
+    </strong>
+    <ul>
+    \{{#each formErrors}}
+      <li>\{{this}}</li>
+    \{{/each}}
+    </ul>
+  </div>
+  \{{/if}}
+
+  <!-- Form success alert -->
+  \{{#if formSuccess}}
+    <div class="alert success">
+      <strong>
+        <span class="fa fa-thumbs-o-up"></span>
+        Validation successful!
+      </strong>
+    </div>
+  \{{/if}}
+
+  <fieldset>
+    <label>Name:</label>
+    <input data-model="name" type="text" name="name"><br/>
+  </fieldset>
+
+  <fieldset>
+    <label>Gender:</label>
+    <input data-model="gender" type="radio" id="gender-male"
+           name="gender" value="male">
+    <label for="gender-male" class="btn">male</label>
+    <input data-model="gender" type="radio" id="gender-female"
+           name="gender" value="female">
+    <label for="gender-female" class="btn">female</label>
+  </fieldset>
+
+  <input class="primary" type="submit" value="Submit">
+</form>
+</script></code></pre>
+<div class="code-type javascript"> - MODEL</div>
+<pre><code class="javascript" for="validate-form"><script type="text/code">
+var ValidatingFormModel = Torso.FormModel.extend({
+  validation: {
+    name: {
+      required: true,
+      minLength: 5
+    },
+    gender: {
+      required: true
+    }
+  }
+});
+var formModel = new ValidatingFormModel();
+</script></code></pre>
+<div class="code-type javascript"> - VIEW</div>
+<pre><code class="javascript" for="validate-form"><script type="text/code">
+var ValidatingFormView = Torso.FormView.extend({
+  template: compiledTemplate,
+  events: {
+    'click [type="submit"]': 'submit'
+  },
+  render: function() {
+    this.$el.html(this.template(this.prepare()));
+    this.delegateEvents();
+  },
+  submit: function() {
+    var validationErrors = this.model.validate();
+    if (validationErrors) {
+      console.log('FORM HAS ERRORS!', validationErrors);
+    } else {
+      console.log('VALIDATION PASSED --> Save to Object Models now.');
+    }
+    this._errors = validationErrors;
+    this.render();
+    return false;
+  }
+});
+var formView = new ValidatingFormView({
+  el: $container,
+  model: formModel
+});
+formView.render();
+</script></code></pre>
+
+<p>For more details on validation, review the <a href="#modules.models.form">Form Model</a> API.</p>

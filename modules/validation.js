@@ -100,10 +100,11 @@
   /**
    * Validation object containing validation mixin.
    *
-   * @module    Torso
-   * @namespace Torso
-   * @class  validation
+   * @namespace Validation
+   *
    * @author ariel.wexler@vecna.com, kent.willis@mostlyepic.com
+   *
+   * @see <a href="../annotated/modules/validation.html">validation Annotated Source</a>
    */
   var Validation = (function(){
 
@@ -339,19 +340,22 @@
       }
     };
 
-    // Contains the methods that are mixed in on the model when binding
+    /**
+     * Contains the methods that are mixed in on the model when binding
+     *
+     * @mixin validationMixin
+     */
     var mixin = function(options) {
-      return {
+      return /** @lends validationMixin */ {
 
         /**
          * Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but
          * you can pass in different values to use in the validation process instead.
-         * @param attr {String or Object or Array} Either the name of the attribute, an array containing many attribute names, or
+         * @param {(string|Object|string[])} attr Either the name of the attribute, an array containing many attribute names, or
          * on object with attribute name to values
-         * @param [value] {Any} a value to use for the attribute value instead of using the model's value.
-         * @return undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
+         * @param {Any} [value] a value to use for the attribute value instead of using the model's value.
+         * @return {(undefined|string|Object)} undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
          * and the error as the value
-         * @method preValidate
          */
         preValidate: function(attr, value) {
           var self = this,
@@ -381,9 +385,11 @@
           }
         },
 
-        // Check to see if an attribute, an array of attributes or the
-        // entire model is valid. Passing true will force a validation
-        // of the model.
+        /**
+         * Check to see if an attribute, an array of attributes or the
+         * entire model is valid. Passing true will force a validation
+         * of the model.
+         */
         isValid: function(option) {
           var flattened, attrs, error, invalidAttrs;
 
@@ -420,9 +426,11 @@
           return attrs ? !invalidAttrs : this.validation ? this._isValid : true;
         },
 
-        // This is called by Backbone when it needs to perform validation.
-        // You can call it manually without any parameters to validate the
-        // entire model.
+        /**
+         * This is called by Backbone when it needs to perform validation.
+         * You can call it manually without any parameters to validate the
+         * entire model.
+         */
         validate: function(attrs, setOptions){
           var model = this;
           var opt = _.extend({}, options, setOptions);
@@ -452,18 +460,27 @@
     };
 
     // Returns the public methods on Backbone.Validation
-    return {
+    return /** @lends Validation */ {
 
-      // Current version of the library
+      /**
+       * Current version of the library
+       * @type {string}
+       */
       version: '0.11.3',
 
-      // Called to configure the default options
+      /**
+       * Called to augment configure the default options
+       * @param options
+       */
       configure: function(options) {
         _.extend(defaultOptions, options);
       },
 
-      // Used to extend the Backbone.Model.prototype
-      // with validation
+      /**
+       * Used to extend the Backbone.Model.prototype with validation
+       *
+       * @type {validationMixin}
+       */
       mixin: mixin(defaultOptions)
     };
   }());

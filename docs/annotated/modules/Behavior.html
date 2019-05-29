@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Behavior.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Behavior.html">
+                  modules/Behavior.js
+                </a>
+              
+                
+                <a class="source" href="Cell.html">
+                  modules/Cell.js
+                </a>
+              
+                
+                <a class="source" href="Collection.html">
+                  modules/Collection.js
+                </a>
+              
+                
+                <a class="source" href="Events.html">
+                  modules/Events.js
+                </a>
+              
+                
+                <a class="source" href="FormModel.html">
+                  modules/FormModel.js
+                </a>
+              
+                
+                <a class="source" href="FormView.html">
+                  modules/FormView.js
+                </a>
+              
+                
+                <a class="source" href="ListView.html">
+                  modules/ListView.js
+                </a>
+              
+                
+                <a class="source" href="Model.html">
+                  modules/Model.js
+                </a>
+              
+                
+                <a class="source" href="NestedCell.html">
+                  modules/NestedCell.js
+                </a>
+              
+                
+                <a class="source" href="NestedModel.html">
+                  modules/NestedModel.js
+                </a>
+              
+                
+                <a class="source" href="Router.html">
+                  modules/Router.js
+                </a>
+              
+                
+                <a class="source" href="ServiceCell.html">
+                  modules/ServiceCell.js
+                </a>
+              
+                
+                <a class="source" href="View.html">
+                  modules/View.js
+                </a>
+              
+                
+                <a class="source" href="behaviors/DataBehavior.html">
+                  modules/behaviors/DataBehavior.js
+                </a>
+              
+                
+                <a class="source" href="configure.html">
+                  modules/configure.js
+                </a>
+              
+                
+                <a class="source" href="handlebarsUtils.html">
+                  modules/handlebarsUtils.js
+                </a>
+              
+                
+                <a class="source" href="history.html">
+                  modules/history.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cacheMixin.html">
+                  modules/mixins/cacheMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/cellMixin.html">
+                  modules/mixins/cellMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/loadingMixin.html">
+                  modules/mixins/loadingMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/modelMixin.html">
+                  modules/mixins/modelMixin.js
+                </a>
+              
+                
+                <a class="source" href="mixins/pollingMixin.html">
+                  modules/mixins/pollingMixin.js
+                </a>
+              
+                
+                <a class="source" href="registry.html">
+                  modules/registry.js
+                </a>
+              
+                
+                <a class="source" href="stickitUtils.html">
+                  modules/stickitUtils.js
+                </a>
+              
+                
+                <a class="source" href="templateRenderer.html">
+                  modules/templateRenderer.js
+                </a>
+              
+                
+                <a class="source" href="torso.html">
+                  modules/torso.js
+                </a>
+              
+                
+                <a class="source" href="validation.html">
+                  modules/validation.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Behavior.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">root, factory</span>) </span>{
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> define === <span class="hljs-string">'function'</span> &amp;&amp; define.amd) {
+    define([<span class="hljs-string">'underscore'</span>, <span class="hljs-string">'./NestedCell'</span>], factory);
+  } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> exports === <span class="hljs-string">'object'</span>) {
+    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);
+    <span class="hljs-keyword">var</span> TorsoNestedCell = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./NestedCell'</span>);
+    <span class="hljs-built_in">module</span>.exports = factory(_, TorsoNestedCell);
+  } <span class="hljs-keyword">else</span> {
+    root.Torso = root.Torso || {};
+    root.Torso.Behavior = factory(root._, root.Torso.NestedCell);
+  }
+}(<span class="hljs-keyword">this</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_, NestedCell</span>) </span>{
+<span class="hljs-meta">  'use strict'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Map of eventName: lifecycleMethod</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> eventMap = {
+    <span class="hljs-string">'before-attached-callback'</span>: <span class="hljs-string">'_attached'</span>,
+    <span class="hljs-string">'before-detached-callback'</span>:  <span class="hljs-string">'_detached'</span>,
+    <span class="hljs-string">'before-activate-callback'</span>: <span class="hljs-string">'_activate'</span>,
+    <span class="hljs-string">'before-deactivate-callback'</span>: <span class="hljs-string">'_deactivate'</span>,
+    <span class="hljs-string">'before-dispose-callback'</span>: <span class="hljs-string">'_dispose'</span>,
+    <span class="hljs-string">'render:before-attach-tracked-views'</span>: <span class="hljs-string">'attachTrackedViews'</span>,
+    <span class="hljs-string">'render:begin'</span>: <span class="hljs-string">'prerender'</span>,
+    <span class="hljs-string">'render:complete'</span>: <span class="hljs-string">'postrender'</span>,
+    <span class="hljs-string">'initialize:begin'</span>:  <span class="hljs-string">'preinitialize'</span>,
+    <span class="hljs-string">'initialize:complete'</span>: <span class="hljs-string">'postinitialize'</span>
+  };
+
+  <span class="hljs-keyword">var</span> Behavior = NestedCell.extend(<span class="hljs-comment">/** @lends Behavior.prototype */</span>{
+    <span class="hljs-comment">/**
+     * Unique name of the behavior instance w/in a view.  More human readable than the cid.
+     * @name alias
+     * @type {string}
+     * @memberof Behavior.prototype
+     */</span>
+
+    <span class="hljs-comment">/**
+     * cidPrefix of Behaviors
+     * @type {string}
+     */</span>
+    cidPrefix: <span class="hljs-string">'b'</span>,
+
+    <span class="hljs-comment">/**
+     * Add functions to be added to the view's public API. They will be behavior-scoped.
+     * @type {Object}
+     */</span>
+    mixin: {},
+
+    <span class="hljs-comment">/**
+     * The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
+     * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
+     *
+     * @function
+     * @return {Object} a prepare context suitable to being added to the view's prepare result.
+     */</span>
+    prepare: _.noop,
+
+    <span class="hljs-comment">/**
+     * Allows abstraction of common view logic into separate object
+     *
+     * @class Behavior
+     *
+     * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
+     * @param {Object} behaviorOptions
+     *   @param {external:Backbone-View} behaviorOptions.view that Behavior is attached to
+     *   @param {string} behaviorOptions.alias the alias for the behavior in this view.
+     * @param {Object} [viewOptions] options passed to View's initialize
+     *
+     * @author  deena.wang@vecna.com
+     *
+     * @see &lt;a href="../annotated/modules/Behavior.html"&gt;Behavior Annotated Source&lt;/a&gt;
+     */</span>
+    <span class="hljs-keyword">constructor</span>: function(behaviorAttributes, behaviorOptions, viewOptions) {
+      behaviorOptions = behaviorOptions || {};
+      <span class="hljs-keyword">if</span> (!behaviorOptions.view) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Torso Behavior constructed without behaviorOptions.view'</span>);
+      }
+      <span class="hljs-keyword">this</span>.view = behaviorOptions.view;
+      <span class="hljs-keyword">if</span> (!behaviorOptions.alias) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Torso Behavior constructed without behaviorOptions.alias'</span>);
+      }
+      <span class="hljs-keyword">this</span>.alias = behaviorOptions.alias;
+      <span class="hljs-keyword">this</span>.cid = <span class="hljs-keyword">this</span>.cid || _.uniqueId(<span class="hljs-keyword">this</span>.cidPrefix);
+      <span class="hljs-keyword">this</span>.__bindLifecycleMethods();
+      NestedCell.apply(<span class="hljs-keyword">this</span>, <span class="hljs-built_in">arguments</span>);
+      <span class="hljs-keyword">this</span>.__bindEventCallbacks();
+    },
+
+    <span class="hljs-comment">/**
+     * This is called after the view's initialize method is called and will wrap the view's prepare()
+     * such that it returns the combination of the view's prepare result with the behavior's prepare result
+     * inside it under the behavior's alias.
+     * @private
+     */</span>
+    __augmentViewPrepare: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> originalViewPrepareFn = _.bind(<span class="hljs-keyword">this</span>.view.prepare, <span class="hljs-keyword">this</span>.view);
+      <span class="hljs-keyword">var</span> wrappedPrepareFn = _.wrap(originalViewPrepareFn, <span class="hljs-keyword">this</span>.__viewPrepareWrapper);
+      <span class="hljs-keyword">this</span>.view.prepare = _.bind(wrappedPrepareFn, <span class="hljs-keyword">this</span>);
+    },
+
+    <span class="hljs-comment">/**
+     * Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.
+     * @private
+     * @param {Function} viewPrepare the prepare method from the view.
+     * @return {Object} the combined view and behavior prepare() results.
+     * {
+     *   &lt;behavior alias&gt;: behavior.prepare(),
+     *   ... // view prepare properties.
+     * }
+     */</span>
+    __viewPrepareWrapper: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">viewPrepare</span>) </span>{
+      <span class="hljs-keyword">var</span> viewContext = viewPrepare() || {};
+      <span class="hljs-keyword">var</span> behaviorContext = _.omit(<span class="hljs-keyword">this</span>.toJSON(), <span class="hljs-string">'view'</span>);
+      _.extend(behaviorContext, <span class="hljs-keyword">this</span>.prepare());
+      viewContext[<span class="hljs-keyword">this</span>.alias] = behaviorContext;
+      <span class="hljs-keyword">return</span> viewContext;
+    },
+
+    <span class="hljs-comment">/**
+     * Registers defined lifecycle methods to be called at appropriate time in view's lifecycle
+     *
+     * @private
+     */</span>
+    __bindLifecycleMethods: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.view, <span class="hljs-string">'initialize:complete'</span>, <span class="hljs-keyword">this</span>.__augmentViewPrepare);
+      <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.view, <span class="hljs-string">'before-dispose-callback'</span>, <span class="hljs-keyword">this</span>.__dispose);
+      _.each(eventMap, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">callback, event</span>) </span>{
+        <span class="hljs-keyword">this</span>.listenTo(<span class="hljs-keyword">this</span>.view, event, <span class="hljs-keyword">this</span>[callback]);
+      }, <span class="hljs-keyword">this</span>);
+    },
+
+    <span class="hljs-comment">/**
+     * Adds behavior's event handlers to view
+     * Behavior's event handlers fire on view events but are run in the context of the behavior
+     *
+     * @private
+     */</span>
+    __bindEventCallbacks: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">var</span> behaviorEvents = _.result(<span class="hljs-keyword">this</span>, <span class="hljs-string">'events'</span>);
+      <span class="hljs-keyword">var</span> viewEvents = <span class="hljs-keyword">this</span>.view.events;
+
+      <span class="hljs-keyword">if</span> (!viewEvents) {
+        <span class="hljs-keyword">if</span> (!behaviorEvents) {
+          <span class="hljs-keyword">return</span>;
+        } <span class="hljs-keyword">else</span> {
+          viewEvents = {};
+        }
+      }
+
+      <span class="hljs-keyword">var</span> namespacedEvents = <span class="hljs-keyword">this</span>.__namespaceEvents(behaviorEvents);
+      <span class="hljs-keyword">var</span> boundBehaviorEvents = <span class="hljs-keyword">this</span>.__bindEventCallbacksToBehavior(namespacedEvents);
+
+      <span class="hljs-keyword">if</span> (_.isFunction(viewEvents)) {
+        <span class="hljs-keyword">this</span>.view.events = _.wrap(_.bind(viewEvents, <span class="hljs-keyword">this</span>.view), <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">viewEventFunction</span>) </span>{
+          <span class="hljs-keyword">return</span> _.extend(boundBehaviorEvents, viewEventFunction());
+        });
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isObject(viewEvents)) {
+        <span class="hljs-keyword">this</span>.view.events = _.extend(boundBehaviorEvents, viewEvents);
+      }
+    },
+
+    <span class="hljs-comment">/**
+     * Namespaces events in event hash
+     *
+     * @param {Object} eventHash to namespace
+     * @return {Object} with event namespaced with '.behavior' and the cid of the behavior
+     * @private
+     */</span>
+    __namespaceEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventHash</span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>coped from Backbone</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> delegateEventSplitter = <span class="hljs-regexp">/^(\S+)\s*(.*)$/</span>;
+      <span class="hljs-keyword">var</span> namespacedEvents = {};
+      <span class="hljs-keyword">var</span> behaviorId = <span class="hljs-keyword">this</span>.cid;
+      _.each(eventHash, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, key</span>) </span>{
+        <span class="hljs-keyword">var</span> splitEventKey = key.match(delegateEventSplitter);
+        <span class="hljs-keyword">var</span> eventName = splitEventKey[<span class="hljs-number">1</span>];
+        <span class="hljs-keyword">var</span> selector = splitEventKey[<span class="hljs-number">2</span>];
+        <span class="hljs-keyword">var</span> namespacedEventName = eventName + <span class="hljs-string">'.behavior.'</span> + behaviorId;
+        namespacedEvents[[namespacedEventName, selector].join(<span class="hljs-string">' '</span>)] = value;
+      });
+      <span class="hljs-keyword">return</span> namespacedEvents;
+    },
+
+    <span class="hljs-comment">/**
+     * @param {Object} eventHash keys are event descriptors, values are String method names or functions
+     * @return {Object} event hash with values as methods bound to view
+     * @private
+     */</span>
+    __bindEventCallbacksToBehavior: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventHash</span>) </span>{
+      <span class="hljs-keyword">return</span> _.mapObject(eventHash, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">method</span>) </span>{
+        <span class="hljs-keyword">if</span> (!_.isFunction(method)) {
+          method = <span class="hljs-keyword">this</span>[method];
+        }
+        <span class="hljs-keyword">return</span> _.bind(method, <span class="hljs-keyword">this</span>);
+      }, <span class="hljs-keyword">this</span>);
+    },
+
+    <span class="hljs-comment">/**
+     * Removes all listeners, stops listening to events.
+     * After dispose is called, the behavior can be safely garbage collected.
+     * Called when the owning view is disposed.
+     * @private
+     */</span>
+    __dispose: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'before-dispose-callback'</span>);
+      <span class="hljs-keyword">this</span>.stopListening();
+      <span class="hljs-keyword">this</span>.off();
+
+      <span class="hljs-keyword">this</span>.__isDisposed = <span class="hljs-literal">true</span>;
+    },
+
+    <span class="hljs-comment">/**
+     * Method to be invoked when dispose is called. By default calling dispose will remove the
+     * behavior's on's and listenTo's.
+     * Override this method to destruct any extra
+     * @function
+     */</span>
+    _dispose: _.noop,
+
+    <span class="hljs-comment">/**
+     * @return {boolean} true if the view was disposed
+     */</span>
+    isDisposed: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__isDisposed;
+    }
+  });
+
+  <span class="hljs-keyword">return</span> Behavior;
+}));</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

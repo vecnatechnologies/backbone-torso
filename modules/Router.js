@@ -1,3 +1,9 @@
+/**
+ * The backbone Router reference
+ * @external Backbone-Router
+ * @extends external:Backbone-Events
+ * @see {@link http://backbonejs.org/#Router|Backbone.Router}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['backbone'], factory);
@@ -11,9 +17,13 @@
   'use strict';
   /**
    * Backbone's router.
-   * @module Torso
+   *
    * @class  Router
+   * @extends external:Backbone-Router
+   *
    * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/Router.html">Router Annotated Source</a>
    */
-  return Backbone.Router.extend({});
+  return Backbone.Router.extend(/** @lends Router.prototype */{});
 }));

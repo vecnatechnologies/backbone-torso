@@ -26,48 +26,49 @@
     'initialize:complete': 'postinitialize'
   };
 
-  /**
-   * Allows abstraction of common view logic into separate object
-   *
-   * @module Torso
-   * @class  Behavior
-   * @method constructor
-   * @author  deena.wang@vecna.com
-   */
-  var Behavior = NestedCell.extend({
+  var Behavior = NestedCell.extend(/** @lends Behavior.prototype */{
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
-     * @property alias {String}
+     * @name alias
+     * @type {string}
+     * @memberof Behavior.prototype
      */
+
     /**
-     * @property cidPrefix of Behaviors
-     * @type {String}
+     * cidPrefix of Behaviors
+     * @type {string}
      */
     cidPrefix: 'b',
 
     /**
      * Add functions to be added to the view's public API. They will be behavior-scoped.
-     * @property mixin
      * @type {Object}
      */
     mixin: {},
 
     /**
      * The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.
-     * effectively: { <behaviorName>: behavior.prepare() } will be combined with the view's prepare result.
-     * @method prepare
-     * @return a prepare context suitable to being added to the view's prepare result.
+     * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
+     *
+     * @function
+     * @return {Object} a prepare context suitable to being added to the view's prepare result.
      */
     prepare: _.noop,
 
     /**
-     * @method constructor
-     * @override
-     * @param behaviorAttributes {Object} the initial value of the behavior's attributes.
-     * @param behaviorOptions {Object}
-     *   @param behaviorOptions.view {Backbone.View} that Behavior is attached to
-     *   @param behaviorOptions.alias {Backbone.View} the alias for the behavior in this view.
-     * @param [viewOptions] {Object} options passed to View's initialize
+     * Allows abstraction of common view logic into separate object
+     *
+     * @class Behavior
+     *
+     * @param {Object} behaviorAttributes the initial value of the behavior's attributes.
+     * @param {Object} behaviorOptions
+     *   @param {external:Backbone-View} behaviorOptions.view that Behavior is attached to
+     *   @param {string} behaviorOptions.alias the alias for the behavior in this view.
+     * @param {Object} [viewOptions] options passed to View's initialize
+     *
+     * @author  deena.wang@vecna.com
+     *
+     * @see <a href="../annotated/modules/Behavior.html">Behavior Annotated Source</a>
      */
     constructor: function(behaviorAttributes, behaviorOptions, viewOptions) {
       behaviorOptions = behaviorOptions || {};
@@ -89,7 +90,6 @@
      * This is called after the view's initialize method is called and will wrap the view's prepare()
      * such that it returns the combination of the view's prepare result with the behavior's prepare result
      * inside it under the behavior's alias.
-     * @method __augmentViewPrepare
      * @private
      */
     __augmentViewPrepare: function() {
@@ -100,9 +100,8 @@
 
     /**
      * Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.
-     * @method __viewPrepareWrapper
      * @private
-     * @param viewPrepare {Function} the prepare method from the view.
+     * @param {Function} viewPrepare the prepare method from the view.
      * @return {Object} the combined view and behavior prepare() results.
      * {
      *   <behavior alias>: behavior.prepare(),
@@ -120,7 +119,6 @@
     /**
      * Registers defined lifecycle methods to be called at appropriate time in view's lifecycle
      *
-     * @method __bindLifecycleMethods
      * @private
      */
     __bindLifecycleMethods: function() {
@@ -135,7 +133,6 @@
      * Adds behavior's event handlers to view
      * Behavior's event handlers fire on view events but are run in the context of the behavior
      *
-     * @method __bindEventCallbacks
      * @private
      */
     __bindEventCallbacks: function() {
@@ -165,8 +162,7 @@
     /**
      * Namespaces events in event hash
      *
-     * @method __namespaceEvents
-     * @param eventHash {Object} to namespace
+     * @param {Object} eventHash to namespace
      * @return {Object} with event namespaced with '.behavior' and the cid of the behavior
      * @private
      */
@@ -186,8 +182,7 @@
     },
 
     /**
-     * @method __bindEventCallbacksToBehavior
-     * @param eventHash {Object} keys are event descriptors, values are String method names or functions
+     * @param {Object} eventHash keys are event descriptors, values are String method names or functions
      * @return {Object} event hash with values as methods bound to view
      * @private
      */
@@ -204,7 +199,7 @@
      * Removes all listeners, stops listening to events.
      * After dispose is called, the behavior can be safely garbage collected.
      * Called when the owning view is disposed.
-     * @method __dispose
+     * @private
      */
     __dispose: function() {
       this.trigger('before-dispose-callback');
@@ -218,13 +213,12 @@
      * Method to be invoked when dispose is called. By default calling dispose will remove the
      * behavior's on's and listenTo's.
      * Override this method to destruct any extra
-     * @method _dispose
+     * @function
      */
     _dispose: _.noop,
 
     /**
-     * @return {Boolean} true if the view was disposed
-     * @method isDisposed
+     * @return {boolean} true if the view was disposed
      */
     isDisposed: function() {
       return this.__isDisposed;

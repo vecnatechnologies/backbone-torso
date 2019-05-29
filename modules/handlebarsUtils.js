@@ -1,3 +1,13 @@
+/**
+ * The handlebars reference
+ * @external Handlebars
+ * @see {@link https://handlebarsjs.com/|Handlebars}
+ */
+ /**
+ * The handlebars Template reference
+ * @external Handlebars-Template
+ * @see {@link https://handlebarsjs.com/|Handlebars}
+ */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['underscore'], factory);
@@ -11,32 +21,42 @@
 }(this, function(_) {
   'use strict';
 
+  /**
+   * Extensions to handlebars helpers.
+   *
+   * Adds additonal helpers to {@link external:Handlebars}
+   *
+   * @function handlebarsUtils
+   * @param {external:Handlebars} Handlebars Add the helpers to this Handlebars object.
+   *
+   * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+   *
+   * @see {@link HandlebarsHelper} for the added helpers.
+   * @see <a href="../annotated/modules/handlebarsUtils.html">handlebarsUtils Annotated Source</a>
+   */
+  /** @namespace HandlebarsHelper */
   return function(Handlebars) {
-
-    /**
-     * Extensions to handlebars helpers.
-     *
-     * @module    Torso
-     * @namespace Torso.Utils
-     * @class     handlebarsUtils
-     * @static
-     * @author ariel.wexler@vecna.com, kent.willis@vecna.com
-     */
-    var FEEDBACK_KEY = 'feedback',
-        MODEL_KEY = 'model';
+    var FEEDBACK_KEY = 'feedback';
+    var MODEL_KEY = 'model';
 
     /**
      * Usage: {{labelFor 'fieldName' value="suffix"}}
+     *
      * Generates: for="field-name-suffix"
+     *
      * Usage: {{labelFor 'fieldName[x].sub' value="demo" x=123}}
+     *
      * Generates: for="field-name-123_sub-demo"
+     *
      * Usage: {{labelFor 'fieldName[bar].sub' value="demo" bar="abc"}}
+     *
      * Generates: for="field-name_abc_sub-demo"
-     * @method Handlebars.helpers.labelFor
-     * @param field {String} The field name to convert to a compliant "for" attribute
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @param [option.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {String} Compliant HTML generating the "for" attribute
+     *
+     * @method HandlebarsHelper.labelFor
+     * @param {string} field The field name to convert to a compliant "for" attribute
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
+     * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {string} Compliant HTML generating the "for" attribute
      */
     Handlebars.registerHelper('labelFor', function(field, options) {
       options = _.extend(options, {noValueAttr: true});
@@ -45,18 +65,24 @@
 
     /**
      * Usage: {{bindModel 'fieldName' value='suffix'}}
+     *
      * Generates: id="field-name-suffix" name="field-name" data-model="fieldName" data-feedback="fieldName" value="demo"
+     *
      * Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}
+     *
      * Generates: data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub"
      *            id="field-name-123_sub-demo" value="demo"
+     *
      * Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}
+     *
      * Generates: data-model="fieldName.abc.sub" data-feedback="fieldName[abc].sub" name="field-name_abc_sub"
                   id="field-name_abc_sub-demo" value="demo"
-     * @method Handlebars.helpers.bindModel
-     * @param field {String} The field name to convert to compliant id, name, data-model, and data-feedback attributes
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {String} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     *
+     * @method HandlebarsHelper.bindModel
+     * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
      */
     Handlebars.registerHelper('bindModel', function(field, options) {
       return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
@@ -64,15 +90,21 @@
 
     /**
      * Usage: {{feedback 'fieldName'}}
+     *
      * Generates: data-feedback="fieldName"
+     *
      * Usage: {{feedback 'fieldName[x].sub' value='demo' x=123}}
+     *
      * Generates: data-feedback="fieldName[123].sub"
+     *
      * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     *
      * Generates: data-feedback="fieldName[abc].sub"
-     * @method Handlebars.helpers.feedback
-     * @param field {String} The field name to convert to a compliant data-feedback attribute
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @return {String} Compliant HTML generating the data-feedback attribute
+     *
+     * @method HandlebarsHelper.feedback
+     * @param {string} field The field name to convert to a compliant data-feedback attribute
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
+     * @return {string} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('feedback', function(field, options) {
       options = _.extend(options, {noValueAttr: true});
@@ -81,16 +113,20 @@
 
     /**
      * Usage: {{formAttr 'fieldName[x].sub' 'id, for' value='demo' x=123}}
+     *
      * Generates: id="field-name-123_sub-demo" for="field-name-123_sub-demo" value="demo"
+     *
      * Usage: {{feedback 'fieldName[bar].sub value='demo' bar='abc'}}
+     *
      * Generates: id="field-name_abc_sub-demo" for="field-name_abc_sub-demo" value="demo"
-     * @method Handlebars.helpers.formAttr
-     * @param field {String} The field name to convert to a compliant data-feedback attribute
-     * @param options {<Handlebars context>} Always passed in as final argument
-     * @param [options.hash.value] {String} The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @param [options.noValueAttr] {Boolean} when options.noValueAttr is set to true,
+     *
+     * @method HandlebarsHelper.formAttr
+     * @param {string} field The field name to convert to a compliant data-feedback attribute
+     * @param {Object} options The handlebars context.  Always passed in as the final argument.
+     * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
+     * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
                                               then it will not generate the "value" attribute in the DOM.
-     * @return {String} Compliant HTML generating the data-feedback attribute
+     * @return {string} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('formAttr', function(field, attrs, options) {
       var i, attrName,
@@ -131,10 +167,12 @@
 
     /**
      * Usage: {{feedback 'fieldName[x].sub'}}
+     *
      * Generates: field-name[x]_sub
-     * @method Handlebars.helpers.dasherize
-     * @param str {String} The input string to make HTML compliant (convert to dashes)
-     * @return {String} HTML complicant / dasherized string
+     *
+     * @method HandlebarsHelper.dasherize
+     * @param {string} str The input string to make HTML compliant (convert to dashes)
+     * @return {string} HTML complicant / dasherized string
      */
     Handlebars.registerHelper('dasherize', function(str) {
       var camelCaseRemoved, dotsRemoved, bracesRemoved;
@@ -152,15 +190,19 @@
 
     /**
      * Usage: injectFieldIndices('test[x]-thisIsRegular-y', {x: 123, y: 456} and 'foo[x].abc', x='bar');
+     *
      * Generates: 'test[123]-thisIsRegular-y' and 'foo.bar.abc'
+     *
      * if options.forceArrayNotation is set then:
+     *
      * Generates: 'test[123]-thisIsRegular-y' and 'foo[bar].abc'
-     * @method injectFieldIndices
-     * @param field {String} The field name
-     * @param indexMap {Object} A map of variables
-     * @param options {Object} named parameters
-     *   @param [options.forceArrayNotation=false] {Boolean} Force the usage of [] insetad of . for string values.
-     * @return {String} the field string with array variables substituted
+     *
+     * @method HandlebarsHelper.injectFieldIndices
+     * @param {string} field The field name
+     * @param {Object} indexMap A map of variables
+     * @param {Object} options named parameters
+     *   @param {boolean} [options.forceArrayNotation=false] Force the usage of [] insetad of . for string values.
+     * @return {string} the field string with array variables substituted
      */
     Handlebars.registerHelper('injectFieldIndices', function(field, indexMap, options) {
       if (indexMap) {
