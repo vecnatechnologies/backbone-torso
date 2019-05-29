@@ -30,6 +30,11 @@ describe('handlebarsUtils spec: ', function() {
       expect(output.string).toEqual('data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub" id="field-name-123_sub-demo" value="demo"');
     });
 
+    it('generates compliant "data-model", "data-feedback", "name", and "id" attributes for foo[x] where "x" is a numberic string', function() {
+      var output = Handlebars.helpers.bindModel('fieldName[x].sub', {hash: {value:"demo", x: "123"}});
+      expect(output.string).toEqual('data-model="fieldName[123].sub" data-feedback="fieldName[123].sub" name="field-name-123_sub" id="field-name-123_sub-demo" value="demo"');
+    });
+
     it('generates compliant "data-model", "data-feedback", "name", and "id" attributes for foo[bar] where "bar" is a string', function() {
       var output = Handlebars.helpers.bindModel('fieldName[bar].sub', {hash: {value:"demo", bar: "abc"}});
       expect(output.string).toEqual('data-model="fieldName.abc.sub" data-feedback="fieldName[abc].sub" name="field-name_abc_sub" id="field-name_abc_sub-demo" value="demo"');
