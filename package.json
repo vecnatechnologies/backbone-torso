@@ -116,7 +116,7 @@
     },
     "git": {
       "tagName": "v${version}",
-      "commitMessage": "Release v${version}"
+      "commitMessage": "Release v${version}",
       "tagAnnotation": "Release v${version}"
     }
   }
