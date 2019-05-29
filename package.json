@@ -30,7 +30,8 @@
     "doc-annotate:dev": "npm run doc-annotate && onchange $npm_package_paths_src -- docco {{changed}} -o $npm_package_paths_docs_annotated",
     "watch-import": "gulp watch-import & npm run doc:dev",
     "clean": "gulp clean",
-    "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev"
+    "watch": "gulp watch & npm run watch:test-func & npm run watch-import & npm run doc:dev",
+    "release": "release-it"
   },
   "main": "modules/torso.js",
   "dependencies": {
@@ -84,6 +85,7 @@
     "path": "0.11.14",
     "phantomjs-prebuilt": "^2.1.16",
     "promise": "6.1.0",
+    "release-it": "12.2.2",
     "require-dir": "^1.2.0",
     "requireify": "^0.2.1",
     "vinyl-buffer": "^1.0.1",
