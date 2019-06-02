@@ -304,14 +304,14 @@ without causing a browser error.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    currentAttributes = currentNode.attributes;
+    <span class="hljs-keyword">var</span> prevLength = currentAttributes.length;
     <span class="hljs-keyword">while</span> (idx &lt; currentAttributes.length) {
       currentAttr = currentAttributes[idx].name;
       <span class="hljs-keyword">if</span> (newNode.getAttribute(currentAttr)) {
         idx++;
       } <span class="hljs-keyword">else</span> {
         currentNode.removeAttribute(currentAttr);
-      }
-    }</pre></div></div>
+        <span class="hljs-keyword">if</span> (prevLength === currentAttributes.length) {</pre></div></div>
             
         </li>
         
@@ -321,6 +321,26 @@ without causing a browser error.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>bail since we can’t remove the attribute.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          $currentNode.replaceWith(newNode);
+          <span class="hljs-keyword">return</span>;
+        }
+        prevLength = currentAttributes.length;
+      }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>Set new attributes</p>
 
@@ -335,11 +355,11 @@ without causing a browser error.</p>
         </li>
         
         
-        <li id="section-5">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Quick check to see if we need to bother comparing sub-levels</p>
 
@@ -352,11 +372,11 @@ without causing a browser error.</p>
         </li>
         
         
-        <li id="section-6">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Include all child nodes, including text and comment nodes</p>
 
@@ -368,11 +388,11 @@ without causing a browser error.</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>If the DOM lists are different sizes, perform a hard refresh</p>
 
@@ -386,11 +406,11 @@ without causing a browser error.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Perform a recursive hotswap for all children nodes</p>
 
@@ -493,11 +513,11 @@ without causing a browser error.</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>See above function declaration for method-level documentation</p>
 
@@ -539,11 +559,11 @@ without causing a browser error.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>range {IE selection object}
 iCaretPos {Integer} will store the final caret position</p>
@@ -556,11 +576,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>IE Support</p>
 
@@ -571,11 +591,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Set focus on the element</p>
 
@@ -586,11 +606,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>To get cursor position, get empty selection range</p>
 
@@ -601,11 +621,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Move selection start to 0 position</p>
 
@@ -616,11 +636,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>The caret position is selection length</p>
 
@@ -632,11 +652,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Firefox support</p>
 
@@ -648,11 +668,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Return results</p>
 
@@ -676,11 +696,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>IE support</p>
 
@@ -694,11 +714,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Firefox support</p>
 
@@ -711,11 +731,11 @@ iCaretPos {Integer} will store the final caret position</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>At least focus the element if nothing else</p>
 
