@@ -63,6 +63,7 @@
     "path": "0.11.14",
     "phantomjs-prebuilt": "^2.1.4",
     "promise": "6.1.0",
+    "release-it": "12.2.2",
     "require-dir": "^0.1.0",
     "requireify": "^0.2.1",
     "vinyl-buffer": "^1.0.0",
@@ -96,6 +97,17 @@
       "paths": [
         "modules"
       ]
+    }
+  },
+  "release-it": {
+    "github": {
+      "release": true,
+      "releaseName": "Release v${version}"
+    },
+    "git": {
+      "tagName": "v${version}",
+      "commitMessage": "Release v${version}",
+      "tagAnnotation": "Release v${version}"
     }
   }
 }
