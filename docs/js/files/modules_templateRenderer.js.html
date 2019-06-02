@@ -17,7 +17,7 @@
                 <h1><img src="../assets/css/logo.png" title="backbone-torso" width="117" height="52"></h1>
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.8.12</em>
+            <em>API Docs for: 0.8.12-1</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -197,12 +197,19 @@
     // This is necessary, because some types of attributes cannot be removed
     // without causing a browser error.
     currentAttributes = currentNode.attributes;
+    var prevLength = currentAttributes.length;
     while (idx &lt; currentAttributes.length) {
       currentAttr = currentAttributes[idx].name;
       if (newNode.getAttribute(currentAttr)) {
         idx++;
       } else {
         currentNode.removeAttribute(currentAttr);
+        if (prevLength === currentAttributes.length) {
+          // bail since we can&#x27;t remove the attribute.
+          $currentNode.replaceWith(newNode);
+          return;
+        }
+        prevLength = currentAttributes.length;
       }
     }
 

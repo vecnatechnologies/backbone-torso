@@ -89,12 +89,19 @@
     // This is necessary, because some types of attributes cannot be removed
     // without causing a browser error.
     currentAttributes = currentNode.attributes;
+    var prevLength = currentAttributes.length;
     while (idx < currentAttributes.length) {
       currentAttr = currentAttributes[idx].name;
       if (newNode.getAttribute(currentAttr)) {
         idx++;
       } else {
         currentNode.removeAttribute(currentAttr);
+        if (prevLength === currentAttributes.length) {
+          // bail since we can't remove the attribute.
+          $currentNode.replaceWith(newNode);
+          return;
+        }
+        prevLength = currentAttributes.length;
       }
     }
 

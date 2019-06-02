@@ -2,7 +2,7 @@
     "project": {
         "name": "backbone-torso",
         "description": "backbone-torso",
-        "version": "0.8.12"
+        "version": "0.8.12-1"
     },
     "files": {
         "modules/behaviors/DataBehavior.js": {
@@ -629,7 +629,7 @@
             "module": "Torso",
             "namespace": "Torso.Utils",
             "file": "modules/templateRenderer.js",
-            "line": 156,
+            "line": 163,
             "description": "Static Template Engine.\nAll template renders should be piped through this method."
         },
         "Torso": {
@@ -6132,7 +6132,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 167,
+            "line": 174,
             "description": "Performs efficient re-rendering of a template.",
             "itemtype": "method",
             "name": "render",
@@ -6186,7 +6186,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 193,
+            "line": 200,
             "description": "Call this.hotswap but also keeps the caret position the same",
             "params": [
                 {
@@ -6213,7 +6213,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 224,
+            "line": 231,
             "description": "Produces a copy of the element tag with attributes but with no contents",
             "params": [
                 {
@@ -6234,7 +6234,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 238,
+            "line": 245,
             "description": "Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply\nselection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome",
             "params": [
                 {
@@ -6255,7 +6255,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 249,
+            "line": 256,
             "description": "Method that returns the current caret (cursor) position of a given element.\nSource: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field",
             "itemtype": "method",
             "name": "getCaretPosition",
@@ -6276,7 +6276,7 @@
         },
         {
             "file": "modules/templateRenderer.js",
-            "line": 279,
+            "line": 286,
             "description": "Method that returns sets the current caret (cursor) position of a given element and puts it in focus.\nSource: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox",
             "itemtype": "method",
             "name": "setCaretPosition",
