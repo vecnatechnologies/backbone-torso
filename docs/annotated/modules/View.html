@@ -1985,7 +1985,7 @@ then the map would look like: {x: 1, y: 4}</p>
             qualifiedFields = [whenField],
             useAtNotation = (whenField.charAt(<span class="hljs-number">0</span>) === <span class="hljs-string">'@'</span>);
 
-        <span class="hljs-keyword">if</span> (whenField !== <span class="hljs-string">'on'</span> || whenField !== <span class="hljs-string">'listenTo'</span>) {
+        <span class="hljs-keyword">if</span> (whenField !== <span class="hljs-string">'on'</span> &amp;&amp; whenField !== <span class="hljs-string">'listenTo'</span>) {
           <span class="hljs-keyword">if</span> (useAtNotation) {
             whenField = whenField.substring(<span class="hljs-number">1</span>);</pre></div></div>
             
