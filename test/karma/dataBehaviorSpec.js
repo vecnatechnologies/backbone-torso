@@ -43,21 +43,21 @@ var MOCKJAX_ROUTE_WITH_IDS_ERROR = {
   responseText: MOCKJAX_ERROR_RESPONSE_TEXT
 };
 
-var SUCCESS_EVENT_PAYLOAD = { status: TorsoDataBehavior.FETCHED_STATUSES.SUCCESS };
-var FAILURE_EVENT_PAYLOAD = { status: TorsoDataBehavior.FETCHED_STATUSES.FAILURE };
-
 function getBasicBehaviorConfiguration() {
   return {
     behavior: TorsoDataBehavior,
     cache: new TorsoTestCacheCollection(),
+    skipInitialLoad: true,
     ids: [1, 2]
   };
 }
+
 var ViewWithDataBehavior = TorsoView.extend({
   behaviors: {
     dataBehavior: getBasicBehaviorConfiguration()
   }
 });
+
 function getBasicBehaviorInstance() {
   return new TorsoDataBehavior(null, {
     alias: 'basicBehavior',
@@ -1274,11 +1274,11 @@ ids = {\n\
       defaultBehaviorConfiguration.ids = { property: 'id' };
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
-        initialize: function() {
-          this.set('id', 'oldId')
-        },
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
+        },
+        initialize: function() {
+          this.set('id', 'oldId');
         },
         // hack because isAttached() doesn't work in tests.
         isAttached: function() {
@@ -1311,11 +1311,11 @@ ids = {\n\
       defaultBehaviorConfiguration.ids = { property: 'id' };
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
-        initialize: function() {
-          this.set('id', 'oldId')
-        },
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
+        },
+        initialize: function() {
+          this.set('id', 'oldId');
         },
         // hack because isAttached() doesn't work in tests.
         isAttached: function() {
@@ -1348,11 +1348,11 @@ ids = {\n\
       defaultBehaviorConfiguration.ids = { property: 'id' };
       var ViewWithBehaviorAndRenderCount = TorsoView.extend({
         __renderCount: 0,
-        initialize: function() {
-          this.set('id', 'oldId')
-        },
         behaviors: {
           dataBehavior: defaultBehaviorConfiguration
+        },
+        initialize: function() {
+          this.set('id', 'oldId');
         },
         // hack because isAttached() doesn't work in tests.
         isAttached: function() {
@@ -1365,21 +1365,18 @@ ids = {\n\
       });
       var viewWithBehaviorAndRenderCount = new ViewWithBehaviorAndRenderCount();
       var dataBehavior = viewWithBehaviorAndRenderCount.getBehavior('dataBehavior');
-      // Wait for the initial render from initializing the view before testing.
-      dataBehavior.once('fetched', function() {
-        var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
-        dataBehavior.retrieve()
-          .then(function() {
-            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'oldId', count: 0 }]);
+      var expectedRenderCount = viewWithBehaviorAndRenderCount.__renderCount;
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.data.toJSON()).toEqual([{ id: 'oldId', count: 0 }]);
+          expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
+          dataBehavior.on('fetched', function() {
+            expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
             expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
-            dataBehavior.on('fetched', function() {
-              expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
-              expect(viewWithBehaviorAndRenderCount.__renderCount).toBe(++expectedRenderCount);
-              done();
-            });
-            viewWithBehaviorAndRenderCount.set('id', 'newId');
+            done();
           });
-      });
+          viewWithBehaviorAndRenderCount.set('id', 'newId');
+        });
     });
 
     it('exposes loading property on the data behavior\'s private collection', function(done) {
@@ -1399,15 +1396,11 @@ ids = {\n\
       dataBehavior.data.on('load-complete', function() {
         expect(dataBehavior.data.privateCollection.loading).toBe(false);
       });
-
-      // Wait for initial load to complete before testing.
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(dataBehavior.data.privateCollection.loading).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.data.privateCollection.loading).toBe(false);
+          done();
+        });
     });
 
     it('exposes isLoading() method on the data behavior\'s private collection', function(done) {
@@ -1428,13 +1421,11 @@ ids = {\n\
         expect(dataBehavior.data.privateCollection.isLoading()).toBe(false);
       });
 
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(dataBehavior.data.privateCollection.isLoading()).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(dataBehavior.data.privateCollection.isLoading()).toBe(false);
+          done();
+        });
     });
 
     it('exposes isLoading() method on the data behavior\'s data attribute', function(done) {
@@ -1455,14 +1446,11 @@ ids = {\n\
         expect(dataBehavior.data.isLoading()).toBe(false);
       });
 
-      // Wait for initial load to complete before testing.
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(dataBehavior.data.isLoading()).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.data.isLoading()).toBe(false);
+          done();
+        });
     });
 
     it('exposes isLoading() method on the data behavior', function(done) {
@@ -1474,7 +1462,7 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      expect(dataBehavior.isLoading()).toBe(true);
+      expect(dataBehavior.isLoading()).toBe(false);
 
       dataBehavior.data.on('load-begin', function() {
         expect(dataBehavior.isLoading()).toBe(true);
@@ -1484,14 +1472,11 @@ ids = {\n\
         expect(dataBehavior.isLoading()).toBe(false);
       });
 
-      // Wait for initial load to complete before testing.
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(dataBehavior.isLoading()).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.isLoading()).toBe(false);
+          done();
+        });
     });
 
     it('exposes isLoadingIds() that tracks the time it takes to load the ids', function(done) {
@@ -1515,24 +1500,21 @@ ids = {\n\
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
 
-      // Wait for initial load to complete before doing our actual test.
-      dataBehavior.data.once('load-complete', function() {
+      expect(dataBehavior.isLoadingIds()).toBe(false);
+
+      dataBehavior.data.on('load-begin', function() {
         expect(dataBehavior.isLoadingIds()).toBe(false);
-
-        dataBehavior.data.on('load-begin', function() {
-          expect(dataBehavior.isLoadingIds()).toBe(false);
-        });
-
-        dataBehavior.data.on('load-complete', function() {
-          expect(dataBehavior.isLoadingIds()).toBe(false);
-        });
-
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(dataBehavior.isLoadingIds()).toBe(false);
-            done();
-          });
       });
+
+      dataBehavior.data.on('load-complete', function() {
+        expect(dataBehavior.isLoadingIds()).toBe(false);
+      });
+
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.isLoadingIds()).toBe(false);
+          done();
+        });
     });
 
     it('and isLoadingIds() remains true when there are simultaneous requests for ids and one completes', function(done) {
@@ -1616,14 +1598,11 @@ ids = {\n\
         expect(dataBehavior.isLoadingObjects()).toBe(false);
       });
 
-      // Wait for initial load to complete before testing.
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(dataBehavior.isLoadingObjects()).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.isLoadingObjects()).toBe(false);
+          done();
+        });
     });
 
     it('and isLoadingObjects() remains true when there are simultaneous requests for objects and one completes', function(done) {
@@ -1634,16 +1613,16 @@ ids = {\n\
 
       defaultBehaviorConfiguration.ids = function() {
         var thisBehavior = this;
-        var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
-        expect(thisBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+        var idsBeforeHasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+        expect(thisBehavior.isLoadingObjects()).toBe(idsBeforeHasObjectsLoading);
         var deferred = $.Deferred();
         window.setTimeout(function() {
-          var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
-          expect(thisBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+          var timeoutHasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+          expect(thisBehavior.isLoadingObjects()).toBe(timeoutHasObjectsLoading);
           deferred.resolve([1]);
         }, 1);
-        var hasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
-        expect(thisBehavior.isLoadingObjects()).toBe(hasObjectsLoading);
+        var idsAfterHasObjectsLoading = retrieveObjectsStarted > retrieveObjectsCompleted;
+        expect(thisBehavior.isLoadingObjects()).toBe(idsAfterHasObjectsLoading);
         return deferred.promise();
       };
 
@@ -1704,8 +1683,7 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      // Initializing the view triggers the behavior to start pulling ids which is async due to the ids method above.
-      expect(dataBehavior.isLoading()).toBe(true);
+      expect(dataBehavior.isLoading()).toBe(false);
 
       dataBehavior.data.on('load-begin', function() {
         expect(dataBehavior.isLoading()).toBe(true);
@@ -1715,13 +1693,11 @@ ids = {\n\
         expect(dataBehavior.isLoading()).toBe(false);
       });
 
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(dataBehavior.isLoading()).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(dataBehavior.isLoading()).toBe(false);
+          done();
+        });
     });
 
     it('exposes loading of ids to the template\'s context', function(done) {
@@ -1744,26 +1720,21 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      // Initializing the view triggers the behavior to start pulling ids which is async due to the ids method above.
-      expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(true);
+      expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
 
       dataBehavior.data.on('load-begin', function() {
         expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
       });
 
-      // Need to make sure the initial load triggered when the view is initialized is complete before listening and
-      // triggering the retrieve we want to test.
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.data.on('load-complete', function() {
-          expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
-        });
-
-        dataBehavior.retrieve()
-          .then(function() {
-            expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
-            done();
-          });
+      dataBehavior.data.on('load-complete', function() {
+        expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
       });
+
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(viewWithBehavior.prepare().dataBehavior.loadingIds).toBe(false);
+          done();
+        });
     });
 
     it('exposes loading of objects to the template\'s context', function(done) {
@@ -1786,7 +1757,6 @@ ids = {\n\
       });
       var viewWithBehavior = new ViewWithBehavior();
       var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-      // Initializing the view triggers the behavior to start pulling ids which is async due to the ids method above.
       expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(false);
 
       dataBehavior.data.on('load-begin', function() {
@@ -1797,15 +1767,11 @@ ids = {\n\
         expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(false);
       });
 
-      // Need to make sure the initial load triggered when the view is initialized is complete before listening and
-      // triggering the retrieve we want to test.
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function() {
-            expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function() {
+          expect(viewWithBehavior.prepare().dataBehavior.loadingObjects).toBe(false);
+          done();
+        });
     });
 
     it('exposes loading of either ids or objects to the template\'s context', function(done) {
@@ -1837,13 +1803,11 @@ ids = {\n\
         expect(viewWithBehavior.prepare().dataBehavior.loading).toBe(false);
       });
 
-      dataBehavior.data.once('load-complete', function() {
-        dataBehavior.retrieve()
-          .then(function () {
-            expect(viewWithBehavior.prepare().dataBehavior.loading).toBe(false);
-            done();
-          });
-      });
+      dataBehavior.retrieve()
+        .then(function () {
+          expect(viewWithBehavior.prepare().dataBehavior.loading).toBe(false);
+          done();
+        });
     });
 
     it('will initially load the data behavior when the view completes initialization if skipInitialLoad is not set', function() {
@@ -1937,8 +1901,8 @@ ids = {\n\
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           initialContextModel.id = 'newId';
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
-          dataBehavior.once('fetched', function(result) {
-            expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+          dataBehavior.once('fetched', function(firstFetchResult) {
+            expect(firstFetchResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
             expect(dataBehavior.get('fetchSuccess')).toBe(true);
             expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
 
@@ -1949,8 +1913,8 @@ ids = {\n\
             idContainerContainer.idContainer = newContextModel;
             dataBehavior.trigger('id-container-updated');
 
-            dataBehavior.once('fetched', function(result) {
-              expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+            dataBehavior.once('fetched', function(secondFetchResult) {
+              expect(secondFetchResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
               expect(dataBehavior.get('fetchSuccess')).toBe(true);
               expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
 
@@ -1986,8 +1950,8 @@ ids = {\n\
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
           initialContextModel.id = 'newId';
           expect(dataBehavior.data.toJSON()).toEqual([{ id: 'initialId', count: 0 }]);
-          dataBehavior.once('fetched', function(result) {
-            expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+          dataBehavior.once('fetched', function(firstFetchResult) {
+            expect(firstFetchResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
             expect(dataBehavior.get('fetchSuccess')).toBe(true);
             expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
             expect(dataBehavior.data.toJSON()).toEqual([{ id: 'newId', count: 0 }]);
@@ -1997,16 +1961,16 @@ ids = {\n\
             idContainerContainer.idContainer = newContextModel;
             dataBehavior.trigger('id-container-updated');
 
-            dataBehavior.once('fetched', function(result) {
-              expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+            dataBehavior.once('fetched', function(secondFetchResult) {
+              expect(secondFetchResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
               expect(dataBehavior.get('fetchSuccess')).toBe(true);
               expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
               expect(dataBehavior.data.toJSON()).toEqual([{ id: 'anotherId', count: 0 }]);
 
               newContextModel.id = 'yetAnotherId';
               newContextModel.trigger('change:id');
-              dataBehavior.once('fetched', function(result) {
-                expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+              dataBehavior.once('fetched', function(thirdFetchResult) {
+                expect(thirdFetchResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
                 expect(dataBehavior.get('fetchSuccess')).toBe(true);
                 expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
                 expect(dataBehavior.data.toJSON()).toEqual([{ id: 'yetAnotherId', count: 0 }]);
@@ -2444,14 +2408,14 @@ dataBehavior.trigger(\'some:random:event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
@@ -2487,14 +2451,14 @@ viewWithBehavior.trigger(\'view-event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
@@ -2530,14 +2494,14 @@ viewWithBehavior.viewState.trigger(\'viewState-event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
@@ -2576,14 +2540,14 @@ viewWithBehavior.model.trigger(\'model-event\');\n\
       model: viewModel
     });
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
@@ -2622,14 +2586,14 @@ dataBehavior2.trigger(\'otherBehavior-event\');\n\
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
@@ -2666,14 +2630,14 @@ idContainer.trigger(\'arbitraryContextEvent\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
@@ -2718,14 +2682,14 @@ idContainer2.trigger(\'other-arbitrary-idContainer-event\');\n\
     });
     var viewWithBehavior = new ViewWithBehavior();
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
@@ -2795,44 +2759,44 @@ dataBehavior.trigger(\'this-event\');\n\
     });
     var dataBehavior = viewWithBehavior.getBehavior('dataBehavior');
     var dataBehavior2 = viewWithBehavior.getBehavior('dataBehavior2');
-    dataBehavior.once('fetched', function(result) {
-      expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+    dataBehavior.once('fetched', function(firstResult) {
+      expect(firstResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
       expect(dataBehavior.get('fetchSuccess')).toBe(true);
       expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
       expect(dataBehavior.data.toJSON()).toEqual({ id: 10, count: 0 });
 
-      dataBehavior.once('fetched', function(result) {
-        expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+      dataBehavior.once('fetched', function(secondResult) {
+        expect(secondResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
         expect(dataBehavior.get('fetchSuccess')).toBe(true);
         expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
         expect(dataBehavior.data.toJSON()).toEqual({ id: 100, count: 0 });
 
-        dataBehavior.once('fetched', function(result) {
-          expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+        dataBehavior.once('fetched', function(thirdResult) {
+          expect(thirdResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
           expect(dataBehavior.get('fetchSuccess')).toBe(true);
           expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
           expect(dataBehavior.data.toJSON()).toEqual({ id: 1000, count: 0 });
 
-          dataBehavior.once('fetched', function(result) {
-            expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+          dataBehavior.once('fetched', function(fourthResult) {
+            expect(fourthResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
             expect(dataBehavior.get('fetchSuccess')).toBe(true);
             expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
             expect(dataBehavior.data.toJSON()).toEqual({ id: 10000, count: 0 });
 
-            dataBehavior.once('fetched', function(result) {
-              expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+            dataBehavior.once('fetched', function(fifthResult) {
+              expect(fifthResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
               expect(dataBehavior.get('fetchSuccess')).toBe(true);
               expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
               expect(dataBehavior.data.toJSON()).toEqual({ id: 100000, count: 0 });
 
-              dataBehavior.once('fetched', function(result) {
-                expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+              dataBehavior.once('fetched', function(sixthResult) {
+                expect(sixthResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
                 expect(dataBehavior.get('fetchSuccess')).toBe(true);
                 expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
                 expect(dataBehavior.data.toJSON()).toEqual({ id: 1000000, count: 0 });
 
-                dataBehavior.once('fetched', function(result) {
-                  expect(result.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
+                dataBehavior.once('fetched', function(seventhResult) {
+                  expect(seventhResult.status).toEqual(TorsoDataBehavior.FETCHED_STATUSES.SUCCESS);
                   expect(dataBehavior.get('fetchSuccess')).toBe(true);
                   expect(viewWithBehavior.prepare().dataBehavior.fetchSuccess).toBe(true);
                   expect(dataBehavior.data.toJSON()).toEqual({ id: 10000000, count: 0 });
@@ -2920,7 +2884,7 @@ ids = function() {\n\
       expect(dataBehavior.data.toJSON().length).toEqual(0);
       done();
     });
-    viewWithBehavior.set('testId2', 10);
+    dataBehavior.retrieve();
   });
 
   it('can specify a function that returns an ids value that says it should skip retrieving objects for both fetch and pull:\n\
@@ -2948,11 +2912,11 @@ ids = function() {\n\
       done();
     });
     dataBehavior.fetch()
-      .then(function(response) {
-        expect(response).toEqual({ skipObjectRetrieval: true });
+      .then(function(firstResponse) {
+        expect(firstResponse).toEqual({ skipObjectRetrieval: true });
         dataBehavior.pull()
-          .then(function(response) {
-            expect(response).toEqual({ skipObjectRetrieval: true });
+          .then(function(secondResponse) {
+            expect(secondResponse).toEqual({ skipObjectRetrieval: true });
             done();
           }, function(error) {
             fail(error);
@@ -2997,11 +2961,11 @@ ids = function() {\n\
       done();
     });
     dataBehavior.fetch()
-      .then(function(response) {
-        expect(response).toEqual({ skipObjectRetrieval: true });
+      .then(function(firstResponse) {
+        expect(firstResponse).toEqual({ skipObjectRetrieval: true });
         dataBehavior.pull()
-          .then(function(response) {
-            expect(response).toEqual({ skipObjectRetrieval: true });
+          .then(function(secondResponse) {
+            expect(secondResponse).toEqual({ skipObjectRetrieval: true });
             done();
           }, function(error) {
             fail(error);
@@ -3036,11 +3000,11 @@ where view.ids = { skipObjectRetrieval: true }\n\
       done();
     });
     dataBehavior.fetch()
-      .then(function(response) {
-        expect(response).toEqual({ skipObjectRetrieval: true });
+      .then(function(firstResponse) {
+        expect(firstResponse).toEqual({ skipObjectRetrieval: true });
         dataBehavior.pull()
-          .then(function(response) {
-            expect(response).toEqual({ skipObjectRetrieval: true });
+          .then(function(secondResponse) {
+            expect(secondResponse).toEqual({ skipObjectRetrieval: true });
             done();
           }, function(error) {
             fail(error);
@@ -3069,11 +3033,11 @@ ids = []\n\
       done();
     });
     dataBehavior.fetch()
-      .then(function(response) {
-        expect(response).toEqual({ skipObjectRetrieval: true, forceFetchedEvent: true });
+      .then(function(firstResponse) {
+        expect(firstResponse).toEqual({ skipObjectRetrieval: true, forceFetchedEvent: true });
         dataBehavior.pull()
-          .then(function(response) {
-            expect(response).toEqual({ skipObjectRetrieval: true, forceFetchedEvent: true });
+          .then(function(secondResponse) {
+            expect(secondResponse).toEqual({ skipObjectRetrieval: true, forceFetchedEvent: true });
             done();
           }, function(error) {
             fail(error);
@@ -3128,7 +3092,11 @@ ids = []\n\
       })
       .then(done, done);
 
-    behavior.__fetchFailed();
+    try {
+      behavior.__fetchFailed();
+    } catch (error) {
+      // expected but not required.
+    }
   });
 
   it('will dispose of the private collection of the data behavior when the data behavior is disposed', function() {

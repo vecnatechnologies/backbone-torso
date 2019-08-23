@@ -280,7 +280,7 @@
     * [.getAllRequestedIds()](#Collection+getAllRequestedIds) ⇒ <code>Array</code>
     * [.createPrivateCollection(guid)](#Collection+createPrivateCollection) ⇒ [<code>PrivateCollection</code>](#PrivateCollection)
     * [.registerIds(newIds, guid)](#Collection+registerIds)
-    * [.fetchByIds([options])](#Collection+fetchByIds) ⇒ <code>Promise</code>
+    * [.fetchByIds([fetchByIdsOptions])](#Collection+fetchByIds) ⇒ <code>Promise</code>
 
 <a name="new_Collection_new"></a>
 
@@ -470,7 +470,7 @@
 
 <a name="Collection+fetchByIds"></a>
 
-### collection.fetchByIds([options]) ⇒ <code>Promise</code>
+### collection.fetchByIds([fetchByIdsOptions]) ⇒ <code>Promise</code>
 <p>A custom fetch operation to only fetch the requested Ids.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
@@ -479,9 +479,9 @@
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [options] |  |  | <p>argument options</p> |
-| [options.idsToFetch] | <code>Array</code> | <code>collection.collectionTrackedIds</code> | <p>A list of request Ids, will default to current tracked ids</p> |
-| [options.setOptions] | <code>Object</code> |  | <p>if a set is made, then the setOptions will be passed into the set method</p> |
+| [fetchByIdsOptions] |  |  | <p>argument fetchByIdsOptions</p> |
+| [fetchByIdsOptions.idsToFetch] | <code>Array</code> | <code>collection.collectionTrackedIds</code> | <p>A list of request Ids, will default to current tracked ids</p> |
+| [fetchByIdsOptions.setOptions] | <code>Object</code> |  | <p>if a set is made, then the setOptions will be passed into the set method</p> |
 
 <a name="Events"></a>
 
@@ -3864,7 +3864,7 @@ function(cache) {
     * [.createPrivateCollection(guid)](#cacheMixin.createPrivateCollection) ⇒ [<code>PrivateCollection</code>](#PrivateCollection)
     * [.registerIds(newIds, guid)](#cacheMixin.registerIds)
     * [.fetch(options)](#cacheMixin.fetch)
-    * [.fetchByIds([options])](#cacheMixin.fetchByIds) ⇒ <code>Promise</code>
+    * [.fetchByIds([fetchByIdsOptions])](#cacheMixin.fetchByIds) ⇒ <code>Promise</code>
     * [.constructor([options])](#cacheMixin.constructor)
 
 <a name="cacheMixin.getRequesterIds"></a>
@@ -3952,7 +3952,7 @@ function(cache) {
 
 <a name="cacheMixin.fetchByIds"></a>
 
-### cacheMixin.fetchByIds([options]) ⇒ <code>Promise</code>
+### cacheMixin.fetchByIds([fetchByIdsOptions]) ⇒ <code>Promise</code>
 <p>A custom fetch operation to only fetch the requested Ids.</p>
 
 **Kind**: static method of [<code>cacheMixin</code>](#cacheMixin)  
@@ -3960,9 +3960,9 @@ function(cache) {
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [options] |  |  | <p>argument options</p> |
-| [options.idsToFetch] | <code>Array</code> | <code>collection.collectionTrackedIds</code> | <p>A list of request Ids, will default to current tracked ids</p> |
-| [options.setOptions] | <code>Object</code> |  | <p>if a set is made, then the setOptions will be passed into the set method</p> |
+| [fetchByIdsOptions] |  |  | <p>argument fetchByIdsOptions</p> |
+| [fetchByIdsOptions.idsToFetch] | <code>Array</code> | <code>collection.collectionTrackedIds</code> | <p>A list of request Ids, will default to current tracked ids</p> |
+| [fetchByIdsOptions.setOptions] | <code>Object</code> |  | <p>if a set is made, then the setOptions will be passed into the set method</p> |
 
 <a name="cacheMixin.constructor"></a>
 

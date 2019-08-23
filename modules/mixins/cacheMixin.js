@@ -376,24 +376,24 @@
       /**
        * A custom fetch operation to only fetch the requested Ids.
        * @alias cacheMixin.fetchByIds
-       * @param [options] - argument options
-       * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
-       * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
+       * @param [fetchByIdsOptions] - argument fetchByIdsOptions
+       * @param {Array} [fetchByIdsOptions.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+       * @param {Object} [fetchByIdsOptions.setOptions] - if a set is made, then the setOptions will be passed into the set method
        * @return {Promise} the promise of the fetch
        */
-      collection.fetchByIds = function(options) {
-        options = options || {};
+      collection.fetchByIds = function(fetchByIdsOptions) {
+        fetchByIdsOptions = fetchByIdsOptions || {};
         // Fires a method from the loadingMixin that wraps the fetch with events that happen before and after
-        var requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+        var requestedIds = fetchByIdsOptions.idsToFetch || collection.collectionTrackedIds;
         var fetchComplete = false;
-        var fetchPromise = this.__loadWrapper(function(options) {
-          var contentType = options.fetchContentType || collection.fetchContentType;
+        var fetchPromise = this.__loadWrapper(function(loadWrapperOptions) {
+          var contentType = loadWrapperOptions.fetchContentType || collection.fetchContentType;
           var ajaxOpts = {
               type: collection.fetchHttpAction,
               url: _.result(collection, 'url') + collection.getByIdsUrl,
               data: {ids: requestedIds.join(',')}
             };
-          if (contentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() != 'GET')) {
+          if (contentType || (ajaxOpts.type && ajaxOpts.type.toUpperCase() !== 'GET')) {
             ajaxOpts.contentType = contentType || 'application/json; charset=utf-8';
             ajaxOpts.data = JSON.stringify(requestedIds);
           }
@@ -402,7 +402,7 @@
               var i, requesterIdx, requesterIdsAsDict, models, privateCollection,
                   requesterLength, requesters, model,
                   requestedIdsLength = requestedIds.length,
-                  setOptions = options.setOptions;
+                  setOptions = loadWrapperOptions.setOptions;
               collection.set(collection.parse(data), setOptions);
               // Set respective collection's models for requested ids only.
               requesters = collection.getRequesters();
@@ -429,7 +429,7 @@
                 }
               }
             });
-        }, options)
+        }, fetchByIdsOptions)
           .always(function() {
             // This happens once the promise is resolved, and removes the pending promise for that id.
 

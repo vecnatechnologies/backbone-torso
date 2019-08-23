@@ -727,13 +727,13 @@
       <span class="hljs-comment">/**
        * A custom fetch operation to only fetch the requested Ids.
        * @alias cacheMixin.fetchByIds
-       * @param [options] - argument options
-       * @param {Array} [options.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
-       * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
+       * @param [fetchByIdsOptions] - argument fetchByIdsOptions
+       * @param {Array} [fetchByIdsOptions.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
+       * @param {Object} [fetchByIdsOptions.setOptions] - if a set is made, then the setOptions will be passed into the set method
        * @return {Promise} the promise of the fetch
        */</span>
-      collection.fetchByIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-        options = options || {};</pre></div></div>
+      collection.fetchByIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fetchByIdsOptions</span>) </span>{
+        fetchByIdsOptions = fetchByIdsOptions || {};</pre></div></div>
             
         </li>
         
@@ -748,16 +748,16 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> requestedIds = options.idsToFetch || collection.collectionTrackedIds;
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">var</span> requestedIds = fetchByIdsOptions.idsToFetch || collection.collectionTrackedIds;
         <span class="hljs-keyword">var</span> fetchComplete = <span class="hljs-literal">false</span>;
-        <span class="hljs-keyword">var</span> fetchPromise = <span class="hljs-keyword">this</span>.__loadWrapper(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
-          <span class="hljs-keyword">var</span> contentType = options.fetchContentType || collection.fetchContentType;
+        <span class="hljs-keyword">var</span> fetchPromise = <span class="hljs-keyword">this</span>.__loadWrapper(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">loadWrapperOptions</span>) </span>{
+          <span class="hljs-keyword">var</span> contentType = loadWrapperOptions.fetchContentType || collection.fetchContentType;
           <span class="hljs-keyword">var</span> ajaxOpts = {
               <span class="hljs-attr">type</span>: collection.fetchHttpAction,
               <span class="hljs-attr">url</span>: _.result(collection, <span class="hljs-string">'url'</span>) + collection.getByIdsUrl,
               <span class="hljs-attr">data</span>: {<span class="hljs-attr">ids</span>: requestedIds.join(<span class="hljs-string">','</span>)}
             };
-          <span class="hljs-keyword">if</span> (contentType || (ajaxOpts.type &amp;&amp; ajaxOpts.type.toUpperCase() != <span class="hljs-string">'GET'</span>)) {
+          <span class="hljs-keyword">if</span> (contentType || (ajaxOpts.type &amp;&amp; ajaxOpts.type.toUpperCase() !== <span class="hljs-string">'GET'</span>)) {
             ajaxOpts.contentType = contentType || <span class="hljs-string">'application/json; charset=utf-8'</span>;
             ajaxOpts.data = <span class="hljs-built_in">JSON</span>.stringify(requestedIds);
           }
@@ -766,7 +766,7 @@
               <span class="hljs-keyword">var</span> i, requesterIdx, requesterIdsAsDict, models, privateCollection,
                   requesterLength, requesters, model,
                   requestedIdsLength = requestedIds.length,
-                  setOptions = options.setOptions;
+                  setOptions = loadWrapperOptions.setOptions;
               collection.set(collection.parse(data), setOptions);</pre></div></div>
             
         </li>
@@ -871,7 +871,7 @@
                 }
               }
             });
-        }, options)
+        }, fetchByIdsOptions)
           .always(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
             
         </li>
