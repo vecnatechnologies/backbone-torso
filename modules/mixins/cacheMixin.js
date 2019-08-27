@@ -47,7 +47,7 @@
         var requesterMixin = {
 
           /**
-           * @return {Array} array of ids that this collection is tracking
+           * @returns {Array} array of ids that this collection is tracking
            */
           getTrackedIds: function() {
             return this.trackedIds;
@@ -58,7 +58,7 @@
            * @param [options] - argument options
            * @param {Array} [options.idsToFetch=collectionTrackedIds] - A list of request Ids, will default to current tracked ids
            * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
-           * @return {Promise} promise that will resolve when the fetch is complete
+           * @returns {Promise} promise that will resolve when the fetch is complete
            */
           fetch: function(options) {
             options = options || {};
@@ -77,7 +77,7 @@
            * Will force the cache to fetch a subset of this collection's tracked ids
            * @param {Array} ids array of model ids
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
-           * @return {Promise} promise that will resolve when the fetch is complete
+           * @returns {Promise} promise that will resolve when the fetch is complete
            */
           fetchByIds: function(ids, options) {
             options = options || {};
@@ -117,7 +117,7 @@
           /**
            * Will begin tracking the new ids and then ask the cache to fetch them
            * This will reset any previous list of ids being tracked.
-           * @return the promise of the fetch by ids
+           * @returns the promise of the fetch by ids
            */
           trackAndFetch: function(newIds) {
             this.trackIds(newIds);
@@ -135,7 +135,7 @@
            * The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.
            *
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
-           * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
+           * @returns {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
            *                   Will only resolve once all ids have attempted to be fetched from the server.
            */
           pull: function(options) {
@@ -168,7 +168,7 @@
           /**
            * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
            * the difference between pull and fetch.
-           * @return the promise of the fetch by ids
+           * @returns the promise of the fetch by ids
            */
           trackAndPull: function(newIds) {
             this.trackIds(newIds);
@@ -230,7 +230,7 @@
       /**
        * @alias cacheMixin.getRequesterIds
        * @param {string} the global unique id of the requester
-       * @return {Array} an array of the ids the requester with the guid has requested
+       * @returns {Array} an array of the ids the requester with the guid has requested
        */
       collection.getRequesterIds = function(guid) {
         return this.requestMap[guid] && this.requestMap[guid].array;
@@ -240,7 +240,7 @@
        * This method is used for quick look up of a certain id within the list of requested ids
        * @alias cacheMixin.getRequesterIdsAsDictionary
        * @param {string} guid the global unique id of the requester
-       * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
+       * @returns {Object} an dictionary of id -> id of the requester ids for a given requester.
        */
       collection.getRequesterIdsAsDictionary = function(guid) {
         return this.requestMap[guid] && this.requestMap[guid].dict;
@@ -260,7 +260,7 @@
        * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
        * TODO: should this return just the knownPrivateCollections
        * @alias cacheMixin.getRequesters
-       * @return {Array} an array of the all requesters in the form of their GUID's
+       * @returns {Array} an array of the all requesters in the form of their GUID's
        */
       collection.getRequesters = function()  {
         return _.keys(this.requestMap);
@@ -269,7 +269,7 @@
       /**
        * Return the list of Ids requested by this collection
        * @alias cacheMixin.getAllRequestedIds
-       * @return {Array} the corresponding requested Ids
+       * @returns {Array} the corresponding requested Ids
        */
       collection.getAllRequestedIds = function() {
         return this.collectionTrackedIds;
@@ -282,7 +282,7 @@
        * Overrides the registerIds method to redirect to its parent collection.
        * @alias cacheMixin.createPrivateCollection
        * @param {string} guid Identifier for the requesting view
-       * @return {PrivateCollection} an new empty collection of the same type as "this"
+       * @returns {PrivateCollection} an new empty collection of the same type as "this"
        */
       collection.createPrivateCollection = function(guid, args) {
         args = args || {};
@@ -379,7 +379,7 @@
        * @param [fetchByIdsOptions] - argument fetchByIdsOptions
        * @param {Array} [fetchByIdsOptions.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
        * @param {Object} [fetchByIdsOptions.setOptions] - if a set is made, then the setOptions will be passed into the set method
-       * @return {Promise} the promise of the fetch
+       * @returns {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(fetchByIdsOptions) {
         fetchByIdsOptions = fetchByIdsOptions || {};

@@ -23,7 +23,7 @@
    *
    * @see <a href="../annotated/modules/FormModel.html">FormModel Annotated Source</a>
    */
-  var FormModel = NestedModel.extend(/** @lends FormModel.prototype */{
+  var FormModel = NestedModel.extend(/** @lends FormModel# */{
     /**
      * @private
      * @property __currentMappings
@@ -131,14 +131,14 @@
 
     /**
      * @param {string} alias the alias of the mapping - either a model mapping or a computed mapping
-     * @return the mapping config for that alias
+     * @returns the mapping config for that alias
      */
     getMapping: function(alias) {
       return this.__currentMappings[alias];
     },
 
     /**
-     * @return all the current mapping configs
+     * @returns all the current mapping configs
      */
     getMappings: function() {
       return this.__currentMappings;
@@ -263,7 +263,7 @@
     /**
      * Returns the object model currently bound to the given name/alias.
      * @param {string} alias the name/alias used by the mappings.
-     * @return {external:Backbone-Model} the model currently bound to the alias
+     * @returns {external:Backbone-Model} the model currently bound to the alias
      */
     getTrackedModel: function(alias) {
       return this.__currentObjectModels[alias];
@@ -271,7 +271,7 @@
 
     /**
      * Returns all the currently tracked object models
-     * @return all the currently tracked object models
+     * @returns all the currently tracked object models
      */
     getTrackedModels: function() {
       return _.values(this.__currentObjectModels);
@@ -410,7 +410,7 @@
      *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
-     * @return when using a "url", a promise is returned for the save on this form model.
+     * @returns when using a "url", a promise is returned for the save on this form model.
          If not using a "url", a promise that will either resolve when all the models have successfully saved in which case the context returned
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
@@ -455,14 +455,14 @@
     },
 
     /**
-     * @return true if this form model is backed by an Object model. That means that at least one object model was bound to an mapping alias.
+     * @returns true if this form model is backed by an Object model. That means that at least one object model was bound to an mapping alias.
      */
     isTrackingAnyObjectModel: function() {
       return _.size(this.__currentObjectModels) > 0;
     },
 
     /**
-     * @return true if any updates to an object model will immediately copy new values into this form model.
+     * @returns true if any updates to an object model will immediately copy new values into this form model.
      */
     isUpdating: function() {
       return this.__currentUpdateEvents.length > 0;
@@ -506,7 +506,7 @@
      * @param {Object} [staleModels] a hash that will be updated to contain this model if it is stale in the form: cid -> model.
      * @param {Object} [currentHashValues] If passed an object, it will look in this cache for the current value of the object model
      *   instead of calculating it. It should be key'ed by the model's cid
-     * @return {boolean} true if the model passed in has been changed since the last pull from the object model.
+     * @returns {boolean} true if the model passed in has been changed since the last pull from the object model.
      */
     isModelStale: function(model, staleModels, currentHashValues) {
       var hashValue;
@@ -527,7 +527,7 @@
     },
 
     /**
-     * @return {Array} an array of the object models that have been updated since the last pull from this form model
+     * @returns {Array} an array of the object models that have been updated since the last pull from this form model
      */
     checkIfModelsAreStale: function() {
       var staleModels = {},
@@ -588,7 +588,7 @@
      * Returns the models that a currently being tracked that are part of a computed mapping
      * If there is a missing model (a model alias is referenced but no model instance is bound to that alias), then it will return undefined.
      * @param {string} computedAlias the name/alias of the computed mapping
-     * @return {Object} a map from model name/alias to model instance. If there is a missing model (an model alias is referenced but no model
+     * @returns {Object} a map from model name/alias to model instance. If there is a missing model (an model alias is referenced but no model
      *   instance is bound to that alias), then it will return undefined.
      * @private
      */
@@ -610,7 +610,7 @@
      * Returns the aliases/names of models referenced in the computed mapping with the given alias
      * @param {(string|Object)} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
      *   an object if it hasn't been added as a mapping yet.
-     * @return {string[]} an array of the model names/aliases referenced inside the computed mapping
+     * @returns {string[]} an array of the model names/aliases referenced inside the computed mapping
      * @private
      */
     __getModelAliases: function(computedAliasOrConfig) {
@@ -632,7 +632,7 @@
      *
      * @private
      * @param {string} computedAlias the name/alias used for this computed
-     * @return {object[]} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
+     * @returns {object[]} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
      */
     __getComputedModelConfigs: function(computedAlias) {
       var hasAllModels = true,
@@ -658,7 +658,7 @@
      *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
-     * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
+     * @returns a promise that will either resolve when all the models have successfully saved in which case the context returned
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
@@ -834,7 +834,7 @@
     /**
      * Create a hash value of a simple object
      * @param {Object} obj simple object with no functions
-     * @return a hash value of the object
+     * @returns a hash value of the object
      * @private
      */
     __hashValue: function(obj) {
@@ -845,7 +845,7 @@
      * Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.
      * @param {string|external:Backbone-Model} aliasOrModel If string, just returns this string. If a model instance, then the alias
      *   that is bound to the tracked model passed in will be found and returned.
-     * @return {string} the alias
+     * @returns {string} the alias
      * @private
      */
     __findAlias: function(aliasOrModel) {
@@ -863,7 +863,7 @@
 
     /**
      * @param {external:Backbone-Model} model the model to create the hash value from
-     * @return {string} the hash value of the model making sure to only use the tracked fields
+     * @returns {string} the hash value of the model making sure to only use the tracked fields
      * @private
      */
     __generateHashValue: function(model) {
@@ -872,7 +872,7 @@
     },
 
     /**
-     * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
+     * @returns {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
      * @private
      */
     __generateAllHashValues: function() {
@@ -886,7 +886,7 @@
     /**
      * Deep clones the attributes. There should be no functions in the attributes
      * @param {(Object|Array|string|number|boolean)} val a non-function value
-     * @return the clone
+     * @returns the clone
      * @private
      */
     __cloneVal: function(val) {
@@ -982,7 +982,7 @@
      * Returns a map where the keys are the fields that are being tracked on tracked model and values are
      * the with current values of those fields.
      * @param {external:Backbone-Model} model the object model
-     * @return {Object} aa map where the keys are the fields that are being tracked on tracked model and
+     * @returns {Object} aa map where the keys are the fields that are being tracked on tracked model and
      *   values are the with current values of those fields.
      * @private
      */
@@ -1019,7 +1019,7 @@
      * @param modelAlias
      * @param {(string[]|undefined)} fields the fields that the model is tracking. Can be undefined if tracking all fields.
      *   When creating a model config for a computed mapping, the fields refers to the fields being tracked only for that computed value.
-     * @return {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
+     * @returns {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
      *   it will return undefined.
      * @private
      */
@@ -1037,7 +1037,7 @@
      * Returns an array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      * including model mappings inside computed mappings. There will be a model config for each tracked model on a computed mapping
      * meaning there can be multiple model configs for the same tracked model.
-     * @return {Array} array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
+     * @returns {Array} array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      *   including model mappings inside computed mappings.
      * @private
      */

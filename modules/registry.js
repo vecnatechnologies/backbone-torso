@@ -55,7 +55,7 @@
     this.views = {};
   };
 
-  _.extend(Registry.prototype, Backbone.Events, /** @lends registry.prototype */{
+  _.extend(Registry.prototype, Backbone.Events, /** @lends registry# */{
     /**
      * The prefix to use for this object's cid.
      * @type {string}

@@ -57,7 +57,7 @@
    *
    * @see <a href="../annotated/modules/Router.html">Router Annotated Source</a>
    */
-  return Backbone.Router.extend(/** @lends Router.prototype */{});
+  return Backbone.Router.extend(/** @lends Router# */{});
 }));
 
 (function(root, factory) {
@@ -131,7 +131,7 @@
      * @param {string} field The field name to convert to a compliant "for" attribute
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {string} Compliant HTML generating the "for" attribute
+     * @returns {string} Compliant HTML generating the "for" attribute
      */
     Handlebars.registerHelper('labelFor', function(field, options) {
       options = _.extend(options, {noValueAttr: true});
@@ -157,7 +157,7 @@
      * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     * @returns {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
      */
     Handlebars.registerHelper('bindModel', function(field, options) {
       return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
@@ -179,7 +179,7 @@
      * @method HandlebarsHelper.feedback
      * @param {string} field The field name to convert to a compliant data-feedback attribute
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
-     * @return {string} Compliant HTML generating the data-feedback attribute
+     * @returns {string} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('feedback', function(field, options) {
       options = _.extend(options, {noValueAttr: true});
@@ -201,7 +201,7 @@
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
                                               then it will not generate the "value" attribute in the DOM.
-     * @return {string} Compliant HTML generating the data-feedback attribute
+     * @returns {string} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('formAttr', function(field, attrs, options) {
       var i, attrName,
@@ -247,7 +247,7 @@
      *
      * @method HandlebarsHelper.dasherize
      * @param {string} str The input string to make HTML compliant (convert to dashes)
-     * @return {string} HTML complicant / dasherized string
+     * @returns {string} HTML complicant / dasherized string
      */
     Handlebars.registerHelper('dasherize', function(str) {
       var camelCaseRemoved, dotsRemoved, bracesRemoved;
@@ -277,7 +277,7 @@
      * @param {Object} indexMap A map of variables
      * @param {Object} options named parameters
      *   @param {boolean} [options.forceArrayNotation=false] Force the usage of [] insetad of . for string values.
-     * @return {string} the field string with array variables substituted
+     * @returns {string} the field string with array variables substituted
      */
     Handlebars.registerHelper('injectFieldIndices', function(field, indexMap, options) {
       if (indexMap) {
@@ -384,7 +384,7 @@
     this.views = {};
   };
 
-  _.extend(Registry.prototype, Backbone.Events, /** @lends registry.prototype */{
+  _.extend(Registry.prototype, Backbone.Events, /** @lends registry# */{
     /**
      * The prefix to use for this object's cid.
      * @type {string}
@@ -766,7 +766,7 @@
     /**
      * Produces a copy of the element tag with attributes but with no contents
      * @param {Element} el the DOM element to be copied
-     * @return {Element} a shallow copy of the element with no children but with attributes
+     * @returns {Element} a shallow copy of the element with no children but with attributes
      */
     copyTopElement: function(el) {
       var newDOM = document.createElement(el.tagName);
@@ -780,7 +780,7 @@
      * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
      * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
      * @param {Element} el the DOM element to check
-     * @return {boolean} boolean indicating whether or not the selection is allowed for {Element} el
+     * @returns {boolean} boolean indicating whether or not the selection is allowed for {Element} el
      */
     supportsSelection : function (el) {
       return (/text|password|search|tel|url/).test(el.type);
@@ -790,7 +790,7 @@
      * Method that returns the current caret (cursor) position of a given element.
      * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
      * @param {element} elem the DOM element to check caret position
-     * @return {Integer} the cursor index of the given element.
+     * @returns {Integer} the cursor index of the given element.
      */
     getCaretPosition: function(elem) {
       // range {IE selection object}
@@ -820,7 +820,7 @@
      * Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox
      * @param {element} elem
      * @param {Integer} caretPos The caret index to set
-     * @return {Integer} the cursor index of the given element.
+     * @returns {Integer} the cursor index of the given element.
      */
     setCaretPosition: function(elem, caretPos) {
       var range;
@@ -843,179 +843,6 @@
   };
 
   return templateRenderer;
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.cell = factory();
-  }
-}(this, function() {
-  'use strict';
-  /**
-   * An non-persistable object that can listen to and emit events like a models.
-   *
-   * @mixin cellMixin
-   * @author kent.willis@vecna.com
-   *
-   * @see <a href="../annotated/modules/mixins/cellMixin.html">cellMixin Annotated Source</a>
-   */
-  return /** @lends cellMixin */ {
-    /**
-     * Whether a cell can pass as a model or not.
-     * If true, the cell will not fail is persisted functions are invoked
-     * If false, the cell will throw exceptions if persisted function are invoked
-     * @property {boolean} isModelCompatible
-     * @default false
-     */
-    isModelCompatible: false,
-
-    /**
-     * Override and disable the save function
-     */
-    save: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have save';
-      }
-    },
-
-    /**
-     * Override and disable the fetch function
-     */
-    fetch: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have fetch';
-      }
-    },
-
-    /**
-     * Override and disable the sync function
-     */
-    sync: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have sync';
-      }
-    },
-
-    /**
-     * Override and disable the url
-     */
-    url: function() {
-      if (!this.isModelCompatible) {
-        throw 'Cell does not have url';
-      }
-    }
-  };
-}));
-
-(function(root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['backbone'], factory);
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('backbone'));
-  } else {
-    root.Torso = root.Torso || {};
-    root.Torso.Mixins = root.Torso.Mixins || {};
-    root.Torso.Mixins.loading = factory(root.Backbone);
-  }
-}(this, function(Backbone) {
-
-  var $ = Backbone.$;
-
-  /**
-   * Loading logic.
-   *
-   * @mixin loadingMixin
-   *
-   * @author kent.willis@vecna.com
-   *
-   * @see <a href="../annotated/modules/mixins/loadingMixin.html">loadingMixin Annotated Source</a>
-   */
-  var loadingMixin = function(base) {
-
-    return /** @lends loadingMixin */ {
-      /**
-       * Adds the loading mixin
-       * @param {Object} args the arguments to the base constructor method
-       */
-      constructor: function(args) {
-        base.call(this, args);
-        this.loadedOnceDeferred = new $.Deferred();
-        this.loadedOnce = false;
-        this.loadingCount = 0;
-        // Loading is a convenience flag that is the equivalent of loadingCount > 0
-        this.loading = false;
-      },
-
-      /**
-       * @return {boolean} true if this model/collection has ever loaded from a fetch call
-       */
-      hasLoadedOnce: function() {
-        return this.loadedOnce;
-      },
-
-      /**
-       * @return {boolean} true if this model/collection is currently loading new values from the server
-       */
-      isLoading: function() {
-        return this.loading;
-      },
-
-      /**
-       * @return {Promise} a promise that will resolve when the model/collection has loaded for the first time
-       */
-      getLoadedOncePromise: function() {
-        return this.loadedOnceDeferred.promise();
-      },
-
-      /**
-       * Wraps the base fetch in a wrapper that manages loaded states
-       * @param {Object} options - the object to hold the options needed by the base fetch method
-       * @return {Promise} The loadWrapper promise
-       */
-      fetch: function(options) {
-        return this.__loadWrapper(base.prototype.fetch, options);
-      },
-
-      /**
-       * Base load function that will trigger a "load-begin" and a "load-complete" as
-       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
-       *
-       * @private
-       * @param {Function} fetchMethod - the method to invoke a fetch
-       * @param {Object} options - the object to hold the options needed by the fetchMethod
-       * @return {Promise} a promise when the fetch method has completed and the events have been triggered
-       */
-      __loadWrapper: function(fetchMethod, options) {
-        var object = this;
-        this.loadingCount++;
-        this.loading = true;
-        this.trigger('load-begin');
-        return $.when(fetchMethod.call(object, options)).always(function() {
-          if (!object.loadedOnce) {
-            object.loadedOnce = true;
-            object.loadedOnceDeferred.resolve();
-          }
-          object.loadingCount--;
-          if (object.loadingCount <= 0) {
-            object.loadingCount = 0; // prevent going negative.
-            object.loading = false;
-          }
-        }).done(function(data, textStatus, jqXHR) {
-          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
-        });
-      }
-    };
-  };
-
-  return loadingMixin;
 }));
 
 (function(root, factory) {
@@ -1067,7 +894,7 @@
         var requesterMixin = {
 
           /**
-           * @return {Array} array of ids that this collection is tracking
+           * @returns {Array} array of ids that this collection is tracking
            */
           getTrackedIds: function() {
             return this.trackedIds;
@@ -1078,7 +905,7 @@
            * @param [options] - argument options
            * @param {Array} [options.idsToFetch=collectionTrackedIds] - A list of request Ids, will default to current tracked ids
            * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
-           * @return {Promise} promise that will resolve when the fetch is complete
+           * @returns {Promise} promise that will resolve when the fetch is complete
            */
           fetch: function(options) {
             options = options || {};
@@ -1097,7 +924,7 @@
            * Will force the cache to fetch a subset of this collection's tracked ids
            * @param {Array} ids array of model ids
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
-           * @return {Promise} promise that will resolve when the fetch is complete
+           * @returns {Promise} promise that will resolve when the fetch is complete
            */
           fetchByIds: function(ids, options) {
             options = options || {};
@@ -1137,7 +964,7 @@
           /**
            * Will begin tracking the new ids and then ask the cache to fetch them
            * This will reset any previous list of ids being tracked.
-           * @return the promise of the fetch by ids
+           * @returns the promise of the fetch by ids
            */
           trackAndFetch: function(newIds) {
             this.trackIds(newIds);
@@ -1155,7 +982,7 @@
            * The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.
            *
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
-           * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
+           * @returns {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
            *                   Will only resolve once all ids have attempted to be fetched from the server.
            */
           pull: function(options) {
@@ -1188,7 +1015,7 @@
           /**
            * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
            * the difference between pull and fetch.
-           * @return the promise of the fetch by ids
+           * @returns the promise of the fetch by ids
            */
           trackAndPull: function(newIds) {
             this.trackIds(newIds);
@@ -1250,7 +1077,7 @@
       /**
        * @alias cacheMixin.getRequesterIds
        * @param {string} the global unique id of the requester
-       * @return {Array} an array of the ids the requester with the guid has requested
+       * @returns {Array} an array of the ids the requester with the guid has requested
        */
       collection.getRequesterIds = function(guid) {
         return this.requestMap[guid] && this.requestMap[guid].array;
@@ -1260,7 +1087,7 @@
        * This method is used for quick look up of a certain id within the list of requested ids
        * @alias cacheMixin.getRequesterIdsAsDictionary
        * @param {string} guid the global unique id of the requester
-       * @return {Object} an dictionary of id -> id of the requester ids for a given requester.
+       * @returns {Object} an dictionary of id -> id of the requester ids for a given requester.
        */
       collection.getRequesterIdsAsDictionary = function(guid) {
         return this.requestMap[guid] && this.requestMap[guid].dict;
@@ -1280,7 +1107,7 @@
        * NOTE: this methods returns only the guids for requester collections that are currently tracking ids
        * TODO: should this return just the knownPrivateCollections
        * @alias cacheMixin.getRequesters
-       * @return {Array} an array of the all requesters in the form of their GUID's
+       * @returns {Array} an array of the all requesters in the form of their GUID's
        */
       collection.getRequesters = function()  {
         return _.keys(this.requestMap);
@@ -1289,7 +1116,7 @@
       /**
        * Return the list of Ids requested by this collection
        * @alias cacheMixin.getAllRequestedIds
-       * @return {Array} the corresponding requested Ids
+       * @returns {Array} the corresponding requested Ids
        */
       collection.getAllRequestedIds = function() {
         return this.collectionTrackedIds;
@@ -1302,7 +1129,7 @@
        * Overrides the registerIds method to redirect to its parent collection.
        * @alias cacheMixin.createPrivateCollection
        * @param {string} guid Identifier for the requesting view
-       * @return {PrivateCollection} an new empty collection of the same type as "this"
+       * @returns {PrivateCollection} an new empty collection of the same type as "this"
        */
       collection.createPrivateCollection = function(guid, args) {
         args = args || {};
@@ -1399,7 +1226,7 @@
        * @param [fetchByIdsOptions] - argument fetchByIdsOptions
        * @param {Array} [fetchByIdsOptions.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
        * @param {Object} [fetchByIdsOptions.setOptions] - if a set is made, then the setOptions will be passed into the set method
-       * @return {Promise} the promise of the fetch
+       * @returns {Promise} the promise of the fetch
        */
       collection.fetchByIds = function(fetchByIdsOptions) {
         fetchByIdsOptions = fetchByIdsOptions || {};
@@ -1541,6 +1368,179 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.cell = factory();
+  }
+}(this, function() {
+  'use strict';
+  /**
+   * An non-persistable object that can listen to and emit events like a models.
+   *
+   * @mixin cellMixin
+   * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/cellMixin.html">cellMixin Annotated Source</a>
+   */
+  return /** @lends cellMixin */ {
+    /**
+     * Whether a cell can pass as a model or not.
+     * If true, the cell will not fail is persisted functions are invoked
+     * If false, the cell will throw exceptions if persisted function are invoked
+     * @property {boolean} isModelCompatible
+     * @default false
+     */
+    isModelCompatible: false,
+
+    /**
+     * Override and disable the save function
+     */
+    save: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have save';
+      }
+    },
+
+    /**
+     * Override and disable the fetch function
+     */
+    fetch: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have fetch';
+      }
+    },
+
+    /**
+     * Override and disable the sync function
+     */
+    sync: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have sync';
+      }
+    },
+
+    /**
+     * Override and disable the url
+     */
+    url: function() {
+      if (!this.isModelCompatible) {
+        throw 'Cell does not have url';
+      }
+    }
+  };
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['backbone'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('backbone'));
+  } else {
+    root.Torso = root.Torso || {};
+    root.Torso.Mixins = root.Torso.Mixins || {};
+    root.Torso.Mixins.loading = factory(root.Backbone);
+  }
+}(this, function(Backbone) {
+
+  var $ = Backbone.$;
+
+  /**
+   * Loading logic.
+   *
+   * @mixin loadingMixin
+   *
+   * @author kent.willis@vecna.com
+   *
+   * @see <a href="../annotated/modules/mixins/loadingMixin.html">loadingMixin Annotated Source</a>
+   */
+  var loadingMixin = function(base) {
+
+    return /** @lends loadingMixin */ {
+      /**
+       * Adds the loading mixin
+       * @param {Object} args the arguments to the base constructor method
+       */
+      constructor: function(args) {
+        base.call(this, args);
+        this.loadedOnceDeferred = new $.Deferred();
+        this.loadedOnce = false;
+        this.loadingCount = 0;
+        // Loading is a convenience flag that is the equivalent of loadingCount > 0
+        this.loading = false;
+      },
+
+      /**
+       * @returns {boolean} true if this model/collection has ever loaded from a fetch call
+       */
+      hasLoadedOnce: function() {
+        return this.loadedOnce;
+      },
+
+      /**
+       * @returns {boolean} true if this model/collection is currently loading new values from the server
+       */
+      isLoading: function() {
+        return this.loading;
+      },
+
+      /**
+       * @returns {Promise} a promise that will resolve when the model/collection has loaded for the first time
+       */
+      getLoadedOncePromise: function() {
+        return this.loadedOnceDeferred.promise();
+      },
+
+      /**
+       * Wraps the base fetch in a wrapper that manages loaded states
+       * @param {Object} options - the object to hold the options needed by the base fetch method
+       * @returns {Promise} The loadWrapper promise
+       */
+      fetch: function(options) {
+        return this.__loadWrapper(base.prototype.fetch, options);
+      },
+
+      /**
+       * Base load function that will trigger a "load-begin" and a "load-complete" as
+       * the fetch happens. Use this method to wrap any method that returns a promise in loading events
+       *
+       * @private
+       * @param {Function} fetchMethod - the method to invoke a fetch
+       * @param {Object} options - the object to hold the options needed by the fetchMethod
+       * @returns {Promise} a promise when the fetch method has completed and the events have been triggered
+       */
+      __loadWrapper: function(fetchMethod, options) {
+        var object = this;
+        this.loadingCount++;
+        this.loading = true;
+        this.trigger('load-begin');
+        return $.when(fetchMethod.call(object, options)).always(function() {
+          if (!object.loadedOnce) {
+            object.loadedOnce = true;
+            object.loadedOnceDeferred.resolve();
+          }
+          object.loadingCount--;
+          if (object.loadingCount <= 0) {
+            object.loadingCount = 0; // prevent going negative.
+            object.loading = false;
+          }
+        }).done(function(data, textStatus, jqXHR) {
+          object.trigger('load-complete', {success: true, data: data, textStatus: textStatus, jqXHR: jqXHR});
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          object.trigger('load-complete', {success: false, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown});
+        });
+      }
+    };
+  };
+
+  return loadingMixin;
+}));
+
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
     define(['underscore', '../registry'], factory);
   } else if (typeof exports === 'object') {
     module.exports = factory(require('underscore'), require('../registry'));
@@ -1585,7 +1585,9 @@
      * Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.
      * @function
      */
-    _dispose: _.noop
+    _dispose: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    }
   };
 }));
 (function(root, factory) {
@@ -1706,7 +1708,7 @@
    *
    * @see <a href="../annotated/modules/Cell.html">Cell Annotated Source</a>
    */
-  var Cell = Model.extend(/** @lends Cell.prototype */{
+  var Cell = Model.extend(/** @lends Cell# */{
     /**
      * Register this item with the cell registry after initialize.
      * @private
@@ -1752,10 +1754,10 @@
    *
    * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
    */
-  var Collection = Backbone.Collection.extend(/** @lends Collection.prototype */{
+  var Collection = Backbone.Collection.extend(/** @lends Collection# */{
       /**
        * The default filter.  Always returns itself.
-       * @return {Collection} a new instance of this collection
+       * @returns {Collection} a new instance of this collection
        */
       filterDefault: function() {
         return this.constructor(this);
@@ -1819,7 +1821,7 @@
    *
    * @see <a href="../annotated/modules/Model.html">Model Annotated Source</a>
    */
-  var Model = Backbone.Model.extend(/** @lends Model.prototype */{
+  var Model = Backbone.Model.extend(/** @lends Model# */{
     constructor: function(attributes, options) {
       Backbone.Model.apply(this, arguments);
       options = options || {};
@@ -1863,7 +1865,7 @@
    *
    * @see <a href="../annotated/modules/NestedCell.html">NestedCell Annotated Source</a>
    */
-  var NestedCell = TorsoNestedModel.extend(/** @lends NestedCell.prototype */{
+  var NestedCell = TorsoNestedModel.extend(/** @lends NestedCell# */{
     /**
      * Register this item with the cell registry after initialize.
      * @private
@@ -1915,7 +1917,7 @@
    *
    * @see <a href="../annotated/modules/NestedModel.html">NestedModel Annotated Source</a>
    */
-  var NestedModel = Backbone.NestedModel.extend(/** @lends NestedModel.prototype */{
+  var NestedModel = Backbone.NestedModel.extend(/** @lends NestedModel# */{
     constructor: function(attributes, options) {
       Backbone.NestedModel.apply(this, arguments);
       options = options || {};
@@ -1958,7 +1960,7 @@
     'initialize:complete': 'postinitialize'
   };
 
-  var Behavior = NestedCell.extend(/** @lends Behavior.prototype */{
+  var Behavior = NestedCell.extend(/** @lends Behavior# */{
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
      * @name alias
@@ -1983,9 +1985,11 @@
      * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
      *
      * @function
-     * @return {Object} a prepare context suitable to being added to the view's prepare result.
+     * @returns {Object} a prepare context suitable to being added to the view's prepare result.
      */
-    prepare: _.noop,
+    prepare: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Allows abstraction of common view logic into separate object
@@ -2034,7 +2038,7 @@
      * Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.
      * @private
      * @param {Function} viewPrepare the prepare method from the view.
-     * @return {Object} the combined view and behavior prepare() results.
+     * @returns {Object} the combined view and behavior prepare() results.
      * {
      *   <behavior alias>: behavior.prepare(),
      *   ... // view prepare properties.
@@ -2095,7 +2099,7 @@
      * Namespaces events in event hash
      *
      * @param {Object} eventHash to namespace
-     * @return {Object} with event namespaced with '.behavior' and the cid of the behavior
+     * @returns {Object} with event namespaced with '.behavior' and the cid of the behavior
      * @private
      */
     __namespaceEvents: function(eventHash) {
@@ -2115,7 +2119,7 @@
 
     /**
      * @param {Object} eventHash keys are event descriptors, values are String method names or functions
-     * @return {Object} event hash with values as methods bound to view
+     * @returns {Object} event hash with values as methods bound to view
      * @private
      */
     __bindEventCallbacksToBehavior: function(eventHash) {
@@ -2147,10 +2151,12 @@
      * Override this method to destruct any extra
      * @function
      */
-    _dispose: _.noop,
+    _dispose: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
-     * @return {boolean} true if the view was disposed
+     * @returns {boolean} true if the view was disposed
      */
     isDisposed: function() {
       return this.__isDisposed;
@@ -2187,7 +2193,7 @@
    *
    * @see <a href="../annotated/modules/ServiceCell.html">ServiceCell Annotated Source</a>
    */
-  var ServiceCell = Cell.extend(/** @lends ServiceCell.prototype */{
+  var ServiceCell = Cell.extend(/** @lends ServiceCell# */{
     constructor: function() {
       var args = Array.prototype.slice.call(arguments);
       args[1] = args[1] || {};
@@ -2231,7 +2237,7 @@
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
-   * change events. These change events will propogate up and trigger on the view
+   * change events. These change events will propagate up and trigger on the view
    * as well.
    *
    * @class ViewStateCell
@@ -2243,7 +2249,13 @@
    *
    * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
    */
-  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
+  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell# */{
+    /**
+     * @constructs
+     * @param {Object} attrs the initial values to set on the cell - inherited from {@link NestedCell}.
+     * @param {Object} opts options for the cell.
+     *    @param {external:Backbone-View} opts.view the view that these options are tied to.
+     */
     initialize: function(attrs, opts) {
       opts = opts || {};
       this.view = opts.view;
@@ -2264,7 +2276,7 @@
     }
   });
 
-  var View = Backbone.View.extend(/** @lends View.prototype */{
+  var View = Backbone.View.extend(/** @lends View# */{
     /**
      * Cell that can be used to save state for rendering the view.
      * @type {ViewStateCell}
@@ -2307,6 +2319,7 @@
      * @class View
      * @extends {external:Backbone-View}
      * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+     * @constructs
      *
      * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
      */
@@ -2397,7 +2410,9 @@
      * @param context the context you can modify
      * @return {Object} [Optional] If you return an object, it will be merged with the context
      */
-    _prepare: _.noop,
+    _prepare: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
@@ -2446,7 +2461,9 @@
      * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
      * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
      */
-    prerender: _.noop,
+    prerender: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.
@@ -2480,7 +2497,9 @@
      * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
      * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
      */
-    postrender: _.noop,
+    postrender: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Hotswap rendering system reroute method.
@@ -2608,13 +2627,17 @@
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
      * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
      */
-    attachTrackedViews: _.noop,
+    attachTrackedViews: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
      * after the DOM has been attached to the document. The default implementation is a no-op.
      */
-    _attached: _.noop,
+    _attached: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * @return {boolean} true if the view is attached to a parent
@@ -2675,7 +2698,9 @@
      * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
      * after the view has been removed from the document. The default implementation is a no-op.
      */
-    _detached: _.noop,
+    _detached: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Resets listeners and events in order for the view to be reattached to the visible DOM
@@ -2693,7 +2718,9 @@
      * Method to be invoked when activate is called. Use this method to turn on any
      * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
      */
-    _activate: _.noop,
+    _activate: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * @return {boolean} true if the view is active
@@ -2719,7 +2746,9 @@
      * Method to be invoked when deactivate is called. Use this method to turn off any
      * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
      */
-    _deactivate: _.noop,
+    _deactivate: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Removes all listeners, disposes children views, stops listening to events, removes DOM.
@@ -2767,7 +2796,9 @@
      * view's element, its on's, listenTo's, and any registered children.
      * Override this method to destruct any extra
      */
-    _dispose: _.noop,
+    _dispose: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * @return {boolean} true if the view was disposed
@@ -4065,7 +4096,7 @@
          * @param {(string|Object|string[])} attr Either the name of the attribute, an array containing many attribute names, or
          * on object with attribute name to values
          * @param {Any} [value] a value to use for the attribute value instead of using the model's value.
-         * @return {(undefined|string|Object)} undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
+         * @returns {(undefined|string|Object)} undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
          * and the error as the value
          */
         preValidate: function(attr, value) {
@@ -4486,7 +4517,7 @@
    *
    * @see <a href="../annotated/modules/FormModel.html">FormModel Annotated Source</a>
    */
-  var FormModel = NestedModel.extend(/** @lends FormModel.prototype */{
+  var FormModel = NestedModel.extend(/** @lends FormModel# */{
     /**
      * @private
      * @property __currentMappings
@@ -4594,14 +4625,14 @@
 
     /**
      * @param {string} alias the alias of the mapping - either a model mapping or a computed mapping
-     * @return the mapping config for that alias
+     * @returns the mapping config for that alias
      */
     getMapping: function(alias) {
       return this.__currentMappings[alias];
     },
 
     /**
-     * @return all the current mapping configs
+     * @returns all the current mapping configs
      */
     getMappings: function() {
       return this.__currentMappings;
@@ -4726,7 +4757,7 @@
     /**
      * Returns the object model currently bound to the given name/alias.
      * @param {string} alias the name/alias used by the mappings.
-     * @return {external:Backbone-Model} the model currently bound to the alias
+     * @returns {external:Backbone-Model} the model currently bound to the alias
      */
     getTrackedModel: function(alias) {
       return this.__currentObjectModels[alias];
@@ -4734,7 +4765,7 @@
 
     /**
      * Returns all the currently tracked object models
-     * @return all the currently tracked object models
+     * @returns all the currently tracked object models
      */
     getTrackedModels: function() {
       return _.values(this.__currentObjectModels);
@@ -4873,7 +4904,7 @@
      *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
-     * @return when using a "url", a promise is returned for the save on this form model.
+     * @returns when using a "url", a promise is returned for the save on this form model.
          If not using a "url", a promise that will either resolve when all the models have successfully saved in which case the context returned
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
@@ -4918,14 +4949,14 @@
     },
 
     /**
-     * @return true if this form model is backed by an Object model. That means that at least one object model was bound to an mapping alias.
+     * @returns true if this form model is backed by an Object model. That means that at least one object model was bound to an mapping alias.
      */
     isTrackingAnyObjectModel: function() {
       return _.size(this.__currentObjectModels) > 0;
     },
 
     /**
-     * @return true if any updates to an object model will immediately copy new values into this form model.
+     * @returns true if any updates to an object model will immediately copy new values into this form model.
      */
     isUpdating: function() {
       return this.__currentUpdateEvents.length > 0;
@@ -4969,7 +5000,7 @@
      * @param {Object} [staleModels] a hash that will be updated to contain this model if it is stale in the form: cid -> model.
      * @param {Object} [currentHashValues] If passed an object, it will look in this cache for the current value of the object model
      *   instead of calculating it. It should be key'ed by the model's cid
-     * @return {boolean} true if the model passed in has been changed since the last pull from the object model.
+     * @returns {boolean} true if the model passed in has been changed since the last pull from the object model.
      */
     isModelStale: function(model, staleModels, currentHashValues) {
       var hashValue;
@@ -4990,7 +5021,7 @@
     },
 
     /**
-     * @return {Array} an array of the object models that have been updated since the last pull from this form model
+     * @returns {Array} an array of the object models that have been updated since the last pull from this form model
      */
     checkIfModelsAreStale: function() {
       var staleModels = {},
@@ -5051,7 +5082,7 @@
      * Returns the models that a currently being tracked that are part of a computed mapping
      * If there is a missing model (a model alias is referenced but no model instance is bound to that alias), then it will return undefined.
      * @param {string} computedAlias the name/alias of the computed mapping
-     * @return {Object} a map from model name/alias to model instance. If there is a missing model (an model alias is referenced but no model
+     * @returns {Object} a map from model name/alias to model instance. If there is a missing model (an model alias is referenced but no model
      *   instance is bound to that alias), then it will return undefined.
      * @private
      */
@@ -5073,7 +5104,7 @@
      * Returns the aliases/names of models referenced in the computed mapping with the given alias
      * @param {(string|Object)} computedAliasOrConfig the name/alias of the computed mapping or the computed mapping itself as
      *   an object if it hasn't been added as a mapping yet.
-     * @return {string[]} an array of the model names/aliases referenced inside the computed mapping
+     * @returns {string[]} an array of the model names/aliases referenced inside the computed mapping
      * @private
      */
     __getModelAliases: function(computedAliasOrConfig) {
@@ -5095,7 +5126,7 @@
      *
      * @private
      * @param {string} computedAlias the name/alias used for this computed
-     * @return {object[]} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
+     * @returns {object[]} a list of objects that contain the model instance under "model" and the mapping for that model under "fields".
      */
     __getComputedModelConfigs: function(computedAlias) {
       var hasAllModels = true,
@@ -5121,7 +5152,7 @@
      *   @param {boolean} [options.force=true] if false, the form model will check to see if an update has been made
      *     to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception
      *     with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}
-     * @return a promise that will either resolve when all the models have successfully saved in which case the context returned
+     * @returns a promise that will either resolve when all the models have successfully saved in which case the context returned
      *   is an array of the responses (order determined by first the array of models and then the array of models used by
      *   the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.
      *   Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when
@@ -5297,7 +5328,7 @@
     /**
      * Create a hash value of a simple object
      * @param {Object} obj simple object with no functions
-     * @return a hash value of the object
+     * @returns a hash value of the object
      * @private
      */
     __hashValue: function(obj) {
@@ -5308,7 +5339,7 @@
      * Returns the alias/name bound to the model passed in. If a string is passed in, it will just return this string.
      * @param {string|external:Backbone-Model} aliasOrModel If string, just returns this string. If a model instance, then the alias
      *   that is bound to the tracked model passed in will be found and returned.
-     * @return {string} the alias
+     * @returns {string} the alias
      * @private
      */
     __findAlias: function(aliasOrModel) {
@@ -5326,7 +5357,7 @@
 
     /**
      * @param {external:Backbone-Model} model the model to create the hash value from
-     * @return {string} the hash value of the model making sure to only use the tracked fields
+     * @returns {string} the hash value of the model making sure to only use the tracked fields
      * @private
      */
     __generateHashValue: function(model) {
@@ -5335,7 +5366,7 @@
     },
 
     /**
-     * @return {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
+     * @returns {Object} a map of model's cid to the hash value of the model making sure to only use the tracked fields
      * @private
      */
     __generateAllHashValues: function() {
@@ -5349,7 +5380,7 @@
     /**
      * Deep clones the attributes. There should be no functions in the attributes
      * @param {(Object|Array|string|number|boolean)} val a non-function value
-     * @return the clone
+     * @returns the clone
      * @private
      */
     __cloneVal: function(val) {
@@ -5445,7 +5476,7 @@
      * Returns a map where the keys are the fields that are being tracked on tracked model and values are
      * the with current values of those fields.
      * @param {external:Backbone-Model} model the object model
-     * @return {Object} aa map where the keys are the fields that are being tracked on tracked model and
+     * @returns {Object} aa map where the keys are the fields that are being tracked on tracked model and
      *   values are the with current values of those fields.
      * @private
      */
@@ -5482,7 +5513,7 @@
      * @param modelAlias
      * @param {(string[]|undefined)} fields the fields that the model is tracking. Can be undefined if tracking all fields.
      *   When creating a model config for a computed mapping, the fields refers to the fields being tracked only for that computed value.
-     * @return {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
+     * @returns {Object} a binding between a tracked model and the fields its tracking for a mapping. If no tracked model is bound to the modelAlias,
      *   it will return undefined.
      * @private
      */
@@ -5500,7 +5531,7 @@
      * Returns an array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      * including model mappings inside computed mappings. There will be a model config for each tracked model on a computed mapping
      * meaning there can be multiple model configs for the same tracked model.
-     * @return {Array} array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
+     * @returns {Array} array of convenience data structures that bind tracked models to the fields they are tracking for each mapping,
      *   including model mappings inside computed mappings.
      * @private
      */
@@ -5734,7 +5765,7 @@
    *
    * @see <a href="../annotated/modules/ListView.html">ListView Annotated Source</a>
    */
-  var ListView = View.extend(/** @lends ListView.prototype */{
+  var ListView = View.extend(/** @lends ListView# */{
     /**
      * The collection that holds the models that this list view will track
      * @property collection
@@ -5783,6 +5814,7 @@
 
     /**
      * Constructor for the list view object.
+     * @constructs
      * @param {Object} args - options argument
      *   @param {(external:Backbone-View|function)} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
      *   @param {external:Backbone-Collection} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
@@ -5853,7 +5885,6 @@
 
     /**
      * Builds a single DOM fragment from the item views and attaches it at once.
-     * @override
      */
     updateDOM: function() {
       var injectionSite,
@@ -6282,7 +6313,7 @@
    * This is a private helper method used internally by this behavior and is not exposed in any way.
    * @param {(string|number|string[]|number[]|Object)} ids the ids to convert.
    *   @param {boolean} [ids.skipObjectRetrieval] set if this is a meta-info object about the ids.
-   * @return {(string[]|number[]|Object)} an array of strings or numbers.
+   * @returns {(string[]|number[]|Object)} an array of strings or numbers.
    * @private
    */
   function normalizeIds(ids) {
@@ -6302,7 +6333,7 @@
   /**
    * Converts any undefined or null values to an empty array.  All other values are left unchanged.
    * @param valueToConvert the value to check for null or undefined.
-   * @return {Array|*} either the original value or [] if the valueToConvert is null or undefined.
+   * @returns {Array|*} either the original value or [] if the valueToConvert is null or undefined.
    */
   function undefinedOrNullToEmptyArray(valueToConvert) {
     if (_.isUndefined(valueToConvert) || _.isNull(valueToConvert)) {
@@ -6315,7 +6346,7 @@
    * Gets a nested property from an object, returning undefined if it doesn't exist on any level.
    * @param {Object} rootObject object containing the property to get.
    * @param {string} propertyString string identifying the nested object to retrieve.
-   * @return {*} either undefined or the property referenced from the rootObject.
+   * @returns {*} either undefined or the property referenced from the rootObject.
    */
   function getNestedProperty(rootObject, propertyString) {
     propertyString = propertyString.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
@@ -6329,7 +6360,7 @@
   /**
    * Determines if the stringDefinition contains a container definition (i.e. has a ':' in it).
    * @param stringDefinition to test.
-   * @return {boolean} true if the string definition contains a container definition, false otherwise.
+   * @returns {boolean} true if the string definition contains a container definition, false otherwise.
    */
   function containsContainerDefinition(stringDefinition) {
     return !!stringDefinition && stringDefinition.indexOf(CONTAINER_SEPARATOR) > -1;
@@ -6526,7 +6557,7 @@
     /**
      * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
      * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     * @returns {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     retrieve: function() {
       if (this.alwaysFetch) {
@@ -6538,7 +6569,7 @@
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     * @returns {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     pull: function() {
       var thisDataBehavior = this;
@@ -6560,7 +6591,7 @@
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     * @returns {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     fetch: function() {
       var thisDataBehavior = this;
@@ -6595,7 +6626,7 @@
 
     /**
      * Determine if the behavior is loading objects or ids.
-     * @return {boolean} true - the behavior is currently loading objects or ids.
+     * @returns {boolean} true - the behavior is currently loading objects or ids.
      *                   false - the behavior is not currently loading objects or ids.
      */
     isLoading: function() {
@@ -6604,7 +6635,7 @@
 
     /**
      * Determine if the behavior is loading ids.
-     * @return {boolean} true - the behavior is currently loading ids.
+     * @returns {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
      */
     isLoadingIds: function() {
@@ -6613,7 +6644,7 @@
 
     /**
      * Determine if the behavior is loading objects.
-     * @return {boolean} true - the behavior is currently loading objects.
+     * @returns {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
      */
     isLoadingObjects: function() {
@@ -6667,7 +6698,7 @@
      * someDataBehavior.retrieveOncePromise()
      *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
      *
-     * @return {external:jQuery-Deferred} that resolves when the data is successfully fetched and rejects when the fetch fails.
+     * @returns {external:jQuery-Deferred} that resolves when the data is successfully fetched and rejects when the fetch fails.
      */
     retrieveOncePromise: function() {
       var retrieveOnceDeferred = $.Deferred();
@@ -6713,7 +6744,7 @@
 
     /**
      * Parses this.updateEvents configuration.
-     * @return {Object[]} {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
+     * @returns {Object[]} {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
      * @private
      */
     __parseUpdateEvents: function() {
@@ -6726,7 +6757,7 @@
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
-     * @return {(Object[]|undefined)} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     * @returns {(Object[]|undefined)} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */
@@ -6847,7 +6878,7 @@
     },
 
     /**
-     * @return {$.Deferred.Promise} A jquery deferred promise that resolves to the ids to track in the private collection
+     * @returns {$.Deferred.Promise} A jquery deferred promise that resolves to the ids to track in the private collection
      *                              or rejects with the error message.
      *                              It can also return an object that prevents object retrieval ({ skipObjectRetrieval: true }).
      * @private
@@ -6902,7 +6933,7 @@
 
     /**
      * Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.
-     * @return {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
+     * @returns {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
      * @private
      */
     __parseIdsPropertyNameAndIdContainer: function() {
@@ -6933,7 +6964,7 @@
 
     /**
      * Parses the idContainer property of ids.
-     * @return {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
+     * @returns {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
      * @private
      */
     __parseIdContainer: function() {
@@ -6956,7 +6987,7 @@
      * Parses a string that contains a container and details for that container (event name or property name).
      * Strings are expected to be of the form '<some container path>:<detail>'.
      * @param fullContainerAndDetail
-     * @return {{detail: String, idContainer: *}} the idContainer is the actual object containing the ids.
+     * @returns {{detail: String, idContainer: *}} the idContainer is the actual object containing the ids.
      *         details is the rest of the idContainer string without the idContainer definition.
      * @private
      */
@@ -7008,7 +7039,7 @@
      *   model (maps to the behavior's view's model),
      *   <*> any others are assumed to be the names of behaviors on this behavior's view.
      * @param {string} updateEventConfiguration a string representation of the event.
-     * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
+     * @returns {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
      * @private
      */
     __parseStringUpdateEvent: function(updateEventConfiguration) {
@@ -7023,7 +7054,7 @@
 
     /**
      * Rejects the promise chain if this behavior is already disposed.
-     * @return {external:jQuery-Deferred} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @returns {external:jQuery-Deferred} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
      * @private
      */
     __abortIfDisposed: function() {
@@ -7100,7 +7131,7 @@
      * @param {Object} response to use to determine if the fetched event should be triggered.
      *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
      *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
-     * @return {boolean} true if the fetched event should be triggered, false otherwise.
+     * @returns {boolean} true if the fetched event should be triggered, false otherwise.
      * @private
      */
     __shouldTriggerFetchedEvent: function(response) {
@@ -7110,7 +7141,7 @@
     /**
      * Skip retrieving objects if new ids list is empty and existing ids list is empty.
      * @param {(Array|Object)} idsResult
-     * @return {(Array|Object)} either the original idsResult
+     * @returns {(Array|Object)} either the original idsResult
      *                        or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
      *                        and the current ids are empty.
      * @private
@@ -7183,7 +7214,7 @@
 
     /**
      * Determine if behavior is loading ids or objects.
-     * @return {boolean} true - the behavior is loading objects or ids.
+     * @returns {boolean} true - the behavior is loading objects or ids.
      *                   false - the behavior is not loading objects or ids.
      */
     isLoading: function() {
@@ -7192,7 +7223,7 @@
 
     /**
      * Determine if the behavior is loading ids.
-     * @return {boolean} true - the behavior is currently loading ids.
+     * @returns {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
      */
     isLoadingIds: function() {
@@ -7201,7 +7232,7 @@
 
     /**
      * Determine if the behavior is loading objects.
-     * @return {boolean} true - the behavior is currently loading objects.
+     * @returns {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
      */
     isLoadingObjects: function() {
@@ -7210,7 +7241,7 @@
 
     /**
      * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
-     * @return {(Object|Object[])} containing the full contents of either the collection or model.
+     * @returns {(Object|Object[])} containing the full contents of either the collection or model.
      */
     toJSON: function() {
       var privateCollection = this.privateCollection;
@@ -7235,7 +7266,7 @@
      * If returnSingleResult is true then this will return the given property from the model (if that model exists).
      * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
      * @param {string} [propertyName] the property to get from the model(s).
-     * @return {(Object|Object[])} containing the full contents of either the collection or model.
+     * @returns {(Object|Object[])} containing the full contents of either the collection or model.
      */
     get: function(propertyName) {
       var privateCollection = this.privateCollection;
@@ -7258,7 +7289,7 @@
 
     /**
      * @param {(number|string)} modelId The id of the model to get from the collection.
-     * @return {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
+     * @returns {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
      * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
      */
     getModel: function(modelId) {
@@ -7281,7 +7312,7 @@
     },
 
     /**
-     * @return {Backbone.Model[]} new array containing all the models in the data's private collection.
+     * @returns {Backbone.Model[]} new array containing all the models in the data's private collection.
      */
     getModels: function() {
       return this.privateCollection.models.slice(0);
@@ -7352,7 +7383,7 @@
    *
    * @see <a href="../annotated/modules/FormView.html">FormView Annotated Source</a>
    */
-  var FormView = View.extend(/** @lends FormView.prototype */{
+  var FormView = View.extend(/** @lends FormView# */{
     /**
      * Validation error hash
      * @private
@@ -7433,7 +7464,7 @@
 
     /**
      * Prepare the formview's default render context
-     * @return {Object}
+     * @returns {Object}
      *         {Object.errors} A hash of field names mapped to error messages
      *         {Object.success} A boolean value of true if validation has succeeded
      */
@@ -7574,7 +7605,7 @@
     /**
      * @private
      * @param {string} attr An attribute of the model
-     * @return {Object} Any settings that are associates with that attribute
+     * @returns {Object} Any settings that are associates with that attribute
      */
     __getFieldOptions: function(attr) {
       attr = this.__stripAllAttribute(attr);
@@ -7588,7 +7619,7 @@
      * @param {Object} [options.viewFormat] The function called before setting view values
      * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
-     * @return {Object} Stickit Binding Hash
+     * @returns {Object} Stickit Binding Hash
      */
     __generateModelFieldBinding: function(field, options) {
       var indices = this.__getAllIndexTokens(field);
@@ -7620,7 +7651,7 @@
      * @param {Object} [opts.modelFormat] The function called before setting model values
      * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
-     * @return {Object} Stickit options hash
+     * @returns {Object} Stickit options hash
      */
     __generateSelectOptions: function(element, opts) {
       var collection = [],

@@ -209,10 +209,10 @@
    *
    * @see &lt;a href="../annotated/modules/Collection.html"&gt;Collection Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> Collection = Backbone.Collection.extend(<span class="hljs-comment">/** @lends Collection.prototype */</span>{
+  <span class="hljs-keyword">var</span> Collection = Backbone.Collection.extend(<span class="hljs-comment">/** @lends Collection# */</span>{
       <span class="hljs-comment">/**
        * The default filter.  Always returns itself.
-       * @return {Collection} a new instance of this collection
+       * @returns {Collection} a new instance of this collection
        */</span>
       filterDefault: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.constructor(<span class="hljs-keyword">this</span>);

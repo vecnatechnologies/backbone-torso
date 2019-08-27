@@ -44,6 +44,8 @@
      * Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.
      * @function
      */
-    _dispose: _.noop
+    _dispose: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    }
   };
 }));

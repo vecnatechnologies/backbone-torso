@@ -33,7 +33,7 @@
    *
    * @see <a href="../annotated/modules/FormView.html">FormView Annotated Source</a>
    */
-  var FormView = View.extend(/** @lends FormView.prototype */{
+  var FormView = View.extend(/** @lends FormView# */{
     /**
      * Validation error hash
      * @private
@@ -114,7 +114,7 @@
 
     /**
      * Prepare the formview's default render context
-     * @return {Object}
+     * @returns {Object}
      *         {Object.errors} A hash of field names mapped to error messages
      *         {Object.success} A boolean value of true if validation has succeeded
      */
@@ -255,7 +255,7 @@
     /**
      * @private
      * @param {string} attr An attribute of the model
-     * @return {Object} Any settings that are associates with that attribute
+     * @returns {Object} Any settings that are associates with that attribute
      */
     __getFieldOptions: function(attr) {
       attr = this.__stripAllAttribute(attr);
@@ -269,7 +269,7 @@
      * @param {Object} [options.viewFormat] The function called before setting view values
      * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
-     * @return {Object} Stickit Binding Hash
+     * @returns {Object} Stickit Binding Hash
      */
     __generateModelFieldBinding: function(field, options) {
       var indices = this.__getAllIndexTokens(field);
@@ -301,7 +301,7 @@
      * @param {Object} [opts.modelFormat] The function called before setting model values
      * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
-     * @return {Object} Stickit options hash
+     * @returns {Object} Stickit options hash
      */
     __generateSelectOptions: function(element, opts) {
       var collection = [],

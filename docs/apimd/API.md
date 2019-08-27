@@ -15,6 +15,8 @@
 <dd></dd>
 <dt><a href="#ListView">ListView</a> ⇐ <code><a href="#View">View</a></code></dt>
 <dd></dd>
+<dt><a href="#ListView">ListView</a></dt>
+<dd></dd>
 <dt><a href="#Model">Model</a> ⇐ <code><a href="#external_Backbone-Model">Backbone-Model</a></code></dt>
 <dd></dd>
 <dt><a href="#NestedCell">NestedCell</a> ⇐ <code><a href="#NestedModel">NestedModel</a></code></dt>
@@ -27,8 +29,10 @@
 <dd></dd>
 <dt><a href="#ViewStateCell">ViewStateCell</a> ⇐ <code><a href="#NestedCell">NestedCell</a></code></dt>
 <dd></dd>
-<dt><a href="#View">View</a> ⇐ <code><a href="#external_Backbone-View">Backbone-View</a></code></dt>
+<dt><a href="#ViewStateCell">ViewStateCell</a></dt>
 <dd></dd>
+<dt><a href="#View">View</a> ⇐ <code><a href="#external_Backbone-View">Backbone-View</a></code></dt>
+<dd><p>View</p></dd>
 <dt><a href="#history">history</a> ⇐ <code><a href="#external_Backbone-History">Backbone-History</a></code></dt>
 <dd></dd>
 <dt><a href="#registry">registry</a> ⇐ <code><a href="#external_Backbone-Events">Backbone-Events</a></code></dt>
@@ -45,7 +49,7 @@
 <dt><a href="#validationMixin">validationMixin</a></dt>
 <dd><p>Contains the methods that are mixed in on the model when binding</p></dd>
 <dt><a href="#cacheMixin">cacheMixin</a></dt>
-<dd><p><p>Custom additions to the Backbone Collection object.</p></p>
+<dd><p>Custom additions to the Backbone Collection object.</p>
 <ul>
 <li>safe disposal methods for memory + event management</li>
 <li>special functional overrides to support ID registration for different views</li>
@@ -58,7 +62,8 @@
 <dd><p>The base for a model</p></dd>
 <dt><a href="#pollingMixin">pollingMixin</a></dt>
 <dd><p>Periodic Polling Object to be mixed into Backbone Collections and Models.</p>
-<p>The polling functionality should only be used for collections and for models that are not<br>part of any collections. It should not be used for a model that is a part of a collection.</p></dd>
+<p>The polling functionality should only be used for collections and for models that are not<br>
+part of any collections. It should not be used for a model that is a part of a collection.</p></dd>
 </dl>
 
 ## Objects
@@ -67,7 +72,8 @@
 <dt><a href="#HandlebarsHelper">HandlebarsHelper</a> : <code>object</code></dt>
 <dd></dd>
 <dt><a href="#templateRenderer">templateRenderer</a> : <code>object</code></dt>
-<dd><p>Static Template Engine.<br>All template renders should be piped through this method.</p></dd>
+<dd><p>Static Template Engine.<br>
+All template renders should be piped through this method.</p></dd>
 <dt><a href="#torso">torso</a> : <code>object</code></dt>
 <dd><p>Module containing all dependencies that exports a single object with everything attached (same format as the global).</p></dd>
 <dt><a href="#Validation">Validation</a> : <code>object</code></dt>
@@ -79,7 +85,7 @@
 <dl>
 <dt><a href="#handlebarsUtils">handlebarsUtils(Handlebars)</a></dt>
 <dd><p>Extensions to handlebars helpers.</p>
-<p>Adds additonal helpers to <a href="#external_Handlebars">Handlebars</a></p></dd>
+<p>Adds additonal helpers to [Handlebars](#external_Handlebars)</p></dd>
 <dt><a href="#stickitUtils">stickitUtils()</a></dt>
 <dd><p>Extensions to stickit handlers.</p></dd>
 </dl>
@@ -164,14 +170,17 @@
 <a name="Behavior+prepare"></a>
 
 ### behavior.prepare() ⇒ <code>Object</code>
-<p>The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.<br>effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.</p>
+<p>The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.<br>
+effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.</p>
 
 **Kind**: instance method of [<code>Behavior</code>](#Behavior)  
 **Returns**: <code>Object</code> - <p>a prepare context suitable to being added to the view's prepare result.</p>  
 <a name="Behavior+_dispose"></a>
 
 ### behavior.\_dispose()
-<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>behavior's on's and listenTo's.<br>Override this method to destruct any extra</p>
+<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>
+behavior's on's and listenTo's.<br>
+Override this method to destruct any extra</p>
 
 **Kind**: instance method of [<code>Behavior</code>](#Behavior)  
 <a name="Behavior+isDisposed"></a>
@@ -206,12 +215,14 @@
 | --- | --- | --- | --- |
 | attributes | <code>Object</code> |  | <p>the initial attributes to use for this cell.</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>the options for setting up this cell.</p> |
-| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this cell in the app-level registry.<br>                                            By default this will NOT add it to the registry unless set to true because<br>                                            we have not mechanism that will make sure the cells get removed from the registry<br>                                            at the appropriate times.</p> |
+| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this cell in the app-level registry.<br> By default this will NOT add it to the registry unless set to true because<br> we have not mechanism that will make sure the cells get removed from the registry<br> at the appropriate times.</p> |
 
 <a name="Cell+isModelCompatible"></a>
 
 ### cell.isModelCompatible
-<p>Whether a cell can pass as a model or not.<br>If true, the cell will not fail is persisted functions are invoked<br>If false, the cell will throw exceptions if persisted function are invoked</p>
+<p>Whether a cell can pass as a model or not.<br>
+If true, the cell will not fail is persisted functions are invoked<br>
+If false, the cell will throw exceptions if persisted function are invoked</p>
 
 **Kind**: instance property of [<code>Cell</code>](#Cell)  
 **Mixes**: [<code>isModelCompatible</code>](#cellMixin.isModelCompatible)  
@@ -308,7 +319,8 @@
 <a name="Collection+dispose"></a>
 
 ### collection.dispose()
-<p>Will abolish all listeners and events that are hooked<br>to this collection.</p>
+<p>Will abolish all listeners and events that are hooked<br>
+to this collection.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 <a name="Collection+isPolling"></a>
@@ -321,7 +333,9 @@
 <a name="Collection+startPolling"></a>
 
 ### collection.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 **Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
@@ -340,14 +354,17 @@
 <a name="Collection+polledFetch"></a>
 
 ### collection.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 **Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
 <a name="Collection+constructor"></a>
 
 ### collection.constructor([options])
-<p>The constructor constructor / initialize method for collections.<br>Allocate new memory for the local references if they<br>were null when this method was called.</p>
+<p>The constructor constructor / initialize method for collections.<br>
+Allocate new memory for the local references if they<br>
+were null when this method was called.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 **Mixes**: [<code>constructor</code>](#cacheMixin.constructor)  
@@ -357,7 +374,7 @@
 | [options] | <code>Object</code> |  | <p>optional options object</p> |
 | [options.fetchHttpAction] | <code>string</code> | <code>&quot;&#x27;POST&#x27;&quot;</code> | <p>http action used to get objects by ids</p> |
 | [options.getByIdsUrl] | <code>string</code> | <code>&quot;&#x27;/ids&#x27;&quot;</code> | <p>path appended to collection.url to get objects by a list of ids</p> |
-| [options.fetchUsingTrackedIds] | <code>boolean</code> | <code>true</code> | <p>if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids<br>                                                      but will rather call the default fetch method.</p> |
+| [options.fetchUsingTrackedIds] | <code>boolean</code> | <code>true</code> | <p>if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids<br> but will rather call the default fetch method.</p> |
 
 <a name="Collection+hasLoadedOnce"></a>
 
@@ -380,7 +397,9 @@
 <a name="Collection+fetch"></a>
 
 ### collection.fetch(options)
-<p>Overrides the base fetch call if this.fetchUsingTrackedIds is true<br>Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise<br>it will pass through to the default fetch.</p>
+<p>Overrides the base fetch call if this.fetchUsingTrackedIds is true<br>
+Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise<br>
+it will pass through to the default fetch.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 **Mixes**: [<code>fetch</code>](#cacheMixin.fetch)  
@@ -428,7 +447,8 @@
 <a name="Collection+getRequesters"></a>
 
 ### collection.getRequesters() ⇒ <code>Array</code>
-<p>NOTE: this methods returns only the guids for requester collections that are currently tracking ids<br>TODO: should this return just the knownPrivateCollections</p>
+<p>NOTE: this methods returns only the guids for requester collections that are currently tracking ids<br>
+TODO: should this return just the knownPrivateCollections</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 **Mixes**: [<code>getRequesters</code>](#cacheMixin.getRequesters)  
@@ -444,7 +464,10 @@
 <a name="Collection+createPrivateCollection"></a>
 
 ### collection.createPrivateCollection(guid) ⇒ [<code>PrivateCollection</code>](#PrivateCollection)
-<p>Used to return a collection of desired models given the requester object.<br>Binds a custom &quot;resized&quot; event to the private collections.<br>Overrides the fetch method to call the parent collection's fetchByIds method.<br>Overrides the registerIds method to redirect to its parent collection.</p>
+<p>Used to return a collection of desired models given the requester object.<br>
+Binds a custom &quot;resized&quot; event to the private collections.<br>
+Overrides the fetch method to call the parent collection's fetchByIds method.<br>
+Overrides the registerIds method to redirect to its parent collection.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 **Mixes**: [<code>createPrivateCollection</code>](#cacheMixin.createPrivateCollection)  
@@ -457,8 +480,12 @@
 <a name="Collection+registerIds"></a>
 
 ### collection.registerIds(newIds, guid)
-<p>Registers a list of Ids that a particular object cares about and pushes<br>any cached models its way.</p>
-<p>This method intelligently updates the &quot;_requestedIds&quot; field to contain all unique<br>requests for Ids to be fetched.  Furthermore, the &quot;polledFetch&quot; method<br>is overriden such that it no longer routes through Backbone's fetch all,<br>but rather a custom &quot;fetchByIds&quot; method.</p>
+<p>Registers a list of Ids that a particular object cares about and pushes<br>
+any cached models its way.</p>
+<p>This method intelligently updates the &quot;_requestedIds&quot; field to contain all unique<br>
+requests for Ids to be fetched.  Furthermore, the &quot;polledFetch&quot; method<br>
+is overriden such that it no longer routes through Backbone's fetch all,<br>
+but rather a custom &quot;fetchByIds&quot; method.</p>
 
 **Kind**: instance method of [<code>Collection</code>](#Collection)  
 **Mixes**: [<code>registerIds</code>](#cacheMixin.registerIds)  
@@ -554,7 +581,8 @@
 <a name="FormModel+mapping"></a>
 
 ### formModel.mapping : <code>Object</code>
-<p>Map from aliases (either model names or computed value names) to mappings.<br>Please refer to the documentation on the constructor about the form and options for this field.</p>
+<p>Map from aliases (either model names or computed value names) to mappings.<br>
+Please refer to the documentation on the constructor about the form and options for this field.</p>
 
 **Kind**: instance property of [<code>FormModel</code>](#FormModel)  
 **Properties**
@@ -566,7 +594,8 @@
 <a name="FormModel+models"></a>
 
 ### formModel.models : <code>Object</code>
-<p>Map from model aliases to model instances.<br>Please refer to the documentation on the constructor about the form and options for this field.</p>
+<p>Map from model aliases to model instances.<br>
+Please refer to the documentation on the constructor about the form and options for this field.</p>
 
 **Kind**: instance property of [<code>FormModel</code>](#FormModel)  
 **Properties**
@@ -589,16 +618,33 @@
 <a name="FormModel+constructor"></a>
 
 ### formModel.constructor([options])
-<p>Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models<br>on initialization. On initialization the object model's values will be pulled once.<br>For the options, here are needed definitions:<br>mapping: {<br>  modelName: 'foo bar baz' // track a model by providing an alias for a name and a space seperated list of fields to track as a String<br>  modelName2: true          // to track all fields<br>  ...                      // can have many model mappings<br>  computedName: {<br>    modelName: 'taz raz',  // mappings for models that will be used for this computed mapping.<br>    ...                    // can have many model mappings for a computed<br>    pull: function(models) {}, // a callback that will be invoked when pulling data from the Object model. Passes in a map of model alias/name to shallow copies of fields being tracked on that model.<br>    push: function(models) {}  // a callback that will be invoked when pushing data to the Object model. Passes in a map of model alias/name to object model being tracked under that alias.<br>  }<br>},<br>models: {<br>  modelName: modelInstance,  // optionally, provide a set of model instance to model name (aliases) to start tracking<br>  modelName2: modelInstance2 // provide as many aliases to model instances as you'd like<br>}</p>
+<p>Constructor the form model. Can take in attributes to set initially. These will override any pulled values from object models<br>
+on initialization. On initialization the object model's values will be pulled once.<br>
+For the options, here are needed definitions:<br>
+mapping: {<br>
+modelName: 'foo bar baz' // track a model by providing an alias for a name and a space seperated list of fields to track as a String<br>
+modelName2: true          // to track all fields<br>
+...                      // can have many model mappings<br>
+computedName: {<br>
+modelName: 'taz raz',  // mappings for models that will be used for this computed mapping.<br>
+...                    // can have many model mappings for a computed<br>
+pull: function(models) {}, // a callback that will be invoked when pulling data from the Object model. Passes in a map of model alias/name to shallow copies of fields being tracked on that model.<br>
+push: function(models) {}  // a callback that will be invoked when pushing data to the Object model. Passes in a map of model alias/name to object model being tracked under that alias.<br>
+}<br>
+},<br>
+models: {<br>
+modelName: modelInstance,  // optionally, provide a set of model instance to model name (aliases) to start tracking<br>
+modelName2: modelInstance2 // provide as many aliases to model instances as you'd like<br>
+}</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> |  |  |
-| [options.mapping] | <code>Object</code> |  | <p>map from aliases (either model names or computed value names) to mappings.<br>    A model mapping can bind an alias to a space seperated list of fields to track as a String  r the boolean true if it is mapping all the<br>    fields. A computed mapping can bind an alias to a set of model mappings required for this computed value and both a pull and/or push method<br>    that are used to compute different values to or from object model(s).</p> |
-| [options.models] | <code>Object</code> |  | <p>Because the options.mapping parameter only allows you to define the mappings to aliases, this options allows<br>    you to bind model instances to aliases. Setting model instances to aliases are required to actually begin pulling/pushing values.</p> |
-| [options.startUpdating] | <code>boolean</code> | <code>false</code> | <p>set to true if you want to immediately set up listeners to update this form<br>    model as the object model updates. You can always toggle this state with startUpdating() and stopUpdating().</p> |
+| [options.mapping] | <code>Object</code> |  | <p>map from aliases (either model names or computed value names) to mappings.<br> A model mapping can bind an alias to a space seperated list of fields to track as a String  r the boolean true if it is mapping all the<br> fields. A computed mapping can bind an alias to a set of model mappings required for this computed value and both a pull and/or push method<br> that are used to compute different values to or from object model(s).</p> |
+| [options.models] | <code>Object</code> |  | <p>Because the options.mapping parameter only allows you to define the mappings to aliases, this options allows<br> you to bind model instances to aliases. Setting model instances to aliases are required to actually begin pulling/pushing values.</p> |
+| [options.startUpdating] | <code>boolean</code> | <code>false</code> | <p>set to true if you want to immediately set up listeners to update this form<br> model as the object model updates. You can always toggle this state with startUpdating() and stopUpdating().</p> |
 | [options.validation] | <code>Object</code> |  | <p>A Backbone.Validation plugin hash to dictate the validation rules</p> |
 | [options.labels] | <code>Object</code> |  | <p>A Backbone.Validation plugin hash to dictate the attribute labels</p> |
 
@@ -620,7 +666,21 @@
 <a name="FormModel+setMapping"></a>
 
 ### formModel.setMapping(alias, mapping, [models], [copy])
-<p>Define or redefine how the form model pull/pushes or otherwise tracks properties between an object model(s).<br>Examples:<br>this.setMapping('modelAlias', true, optional model instance);<br>this.setMapping('modelAlias, 'foo bar baz', optional model instance);<br>this.setMapping('computedAlias', {<br>  model1: 'foo',<br>  model2: 'bar',<br>  push: function(models) {<br>    models.model1.set('foo', this.get('foobar')[0]);<br>    models.model2.set('bar', this.get('foobar')[1]);<br>  },<br>  pull: function(models) {<br>    this.set('foobar', [models.model1.foo, models.model2.bar]);<br>  },<br>}, optional model map)</p>
+<p>Define or redefine how the form model pull/pushes or otherwise tracks properties between an object model(s).<br>
+Examples:<br>
+this.setMapping('modelAlias', true, optional model instance);<br>
+this.setMapping('modelAlias, 'foo bar baz', optional model instance);<br>
+this.setMapping('computedAlias', {<br>
+model1: 'foo',<br>
+model2: 'bar',<br>
+push: function(models) {<br>
+models.model1.set('foo', this.get('foobar')[0]);<br>
+models.model2.set('bar', this.get('foobar')[1]);<br>
+},<br>
+pull: function(models) {<br>
+this.set('foobar', [models.model1.foo, models.model2.bar]);<br>
+},<br>
+}, optional model map)</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 
@@ -628,13 +688,25 @@
 | --- | --- | --- | --- |
 | alias | <code>string</code> |  | <p>the name for the mapping - either a model mapping or a computed mapping</p> |
 | mapping | <code>string</code> \| <code>boolean</code> \| <code>Object</code> |  | <p>Provides the mapping for this alias. If trying to map to a model, then either provide<br> a space delimited list of fields to track as a String or the boolean true to track all the model's fields. If the mapping is for<br> a computed value, then provide a map from model alias to model mapping for all the fields needed for the computed and a pull method<br> if you want to change/combine/split object model properties before bringing them into the form model and a push method if you want to<br> change/combine/split form model properties before pushing them to the object models.</p> |
-| [models] | <code>Object</code> \| [<code>Backbone-Model</code>](#external_Backbone-Model) |  | <p>Provides instances to use for this mapping. If mapping is a computed,<br>  provide a map from alias to model instance. If mapping is for a single model, just provide the model instance for that alias.</p> |
+| [models] | <code>Object</code> \| [<code>Backbone-Model</code>](#external_Backbone-Model) |  | <p>Provides instances to use for this mapping. If mapping is a computed,<br> provide a map from alias to model instance. If mapping is for a single model, just provide the model instance for that alias.</p> |
 | [copy] |  | <code>false</code> | <p>if true, will pull values definined by this mapping after setting the mapping. Requires models to be passed in.</p> |
 
 <a name="FormModel+setMappings"></a>
 
 ### formModel.setMappings(mappings, [models], [copy])
-<p>Sets multiple mappings (both model mappings and computed value mappings) with one call.<br>Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.<br>Here is an example:<br>this.setMappings({<br>  model1: 'foo bar',<br>  model2: 'baz',<br>  ssn: {<br>    model1: 'ssn',<br>    model2: 'lastssn'<br>    push: function(models) {},<br>    pull: function(models) {},<br>  }<br>}, optional model map)</p>
+<p>Sets multiple mappings (both model mappings and computed value mappings) with one call.<br>
+Uses the same style of mapping syntax as the constructor. Please refer to the documentation on the constructor.<br>
+Here is an example:<br>
+this.setMappings({<br>
+model1: 'foo bar',<br>
+model2: 'baz',<br>
+ssn: {<br>
+model1: 'ssn',<br>
+model2: 'lastssn'<br>
+push: function(models) {},<br>
+pull: function(models) {},<br>
+}<br>
+}, optional model map)</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 
@@ -653,13 +725,14 @@
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| aliasOrModel | <code>string</code> \| [<code>Backbone-Model</code>](#external_Backbone-Model) |  | <p>if a String is provided, it will unset the mapping with that alias.<br>  If a external:Backbone-Model is provided, it will remove the model mapping that was bound to that model.</p> |
-| [removeModelIfUntracked] | <code>boolean</code> | <code>false</code> | <p>If true, after the mapping is removed, the model will also be unset but only if<br>  no other mappings reference it. Note, setting this to true will not remove any computed mappings that also use that model.</p> |
+| aliasOrModel | <code>string</code> \| [<code>Backbone-Model</code>](#external_Backbone-Model) |  | <p>if a String is provided, it will unset the mapping with that alias.<br> If a external:Backbone-Model is provided, it will remove the model mapping that was bound to that model.</p> |
+| [removeModelIfUntracked] | <code>boolean</code> | <code>false</code> | <p>If true, after the mapping is removed, the model will also be unset but only if<br> no other mappings reference it. Note, setting this to true will not remove any computed mappings that also use that model.</p> |
 
 <a name="FormModel+unsetMappings"></a>
 
 ### formModel.unsetMappings()
-<p>Removes all current mappings<br>Does NOT remove current model being tracked. Call this.untrackModels afterwards if you wish this behavior.</p>
+<p>Removes all current mappings<br>
+Does NOT remove current model being tracked. Call this.untrackModels afterwards if you wish this behavior.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 <a name="FormModel+getTrackedModel"></a>
@@ -742,7 +815,7 @@
 
 | Param | Type | Description |
 | --- | --- | --- |
-| aliasOrModel | <code>string</code> \| [<code>Backbone-Model</code>](#external_Backbone-Model) | <p>If a string is given, it will unset the model using that alias. If a model instance<br>  is given, it will unbind whatever alias is currently bound to it.</p> |
+| aliasOrModel | <code>string</code> \| [<code>Backbone-Model</code>](#external_Backbone-Model) | <p>If a string is given, it will unset the model using that alias. If a model instance<br> is given, it will unbind whatever alias is currently bound to it.</p> |
 
 <a name="FormModel+unsetTrackedModels"></a>
 
@@ -762,28 +835,39 @@
 <a name="FormModel+push"></a>
 
 ### formModel.push()
-<p>Pushes values from this form model back to the object models it is tracking. This includes invoking the push callbacks from<br>computed values</p>
+<p>Pushes values from this form model back to the object models it is tracking. This includes invoking the push callbacks from<br>
+computed values</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 <a name="FormModel+pull"></a>
 
 ### formModel.pull()
-<p>Pulls the most recent values of every object model that this form model tracks including computed values<br>NOTE: using this method can override user-submitted data from an HTML form. Use caution.</p>
+<p>Pulls the most recent values of every object model that this form model tracks including computed values<br>
+NOTE: using this method can override user-submitted data from an HTML form. Use caution.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 <a name="FormModel+save"></a>
 
 ### formModel.save([options]) ⇒
-<p>If FormModel has a &quot;url&quot; property defined, it will invoke a save on the form model, and after successfully<br>saving, will perform a push.<br>If no &quot;url&quot; property is defined then the following behavior is used:<br>Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.<br>NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise<br>with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}</p>
+<p>If FormModel has a &quot;url&quot; property defined, it will invoke a save on the form model, and after successfully<br>
+saving, will perform a push.<br>
+If no &quot;url&quot; property is defined then the following behavior is used:<br>
+Pushes the form model values to the object models it is tracking and invokes save on each one. Returns a promise.<br>
+NOTE: if no url is specified and no models are being tracked, it will instead trigger a 'save-fail' event and reject the returned promise<br>
+with a payload that mimics a server response: {none: { success: false, response: [{ responseJSON: { generalReasons: [{messageKey: 'no.models.were.bound.to.form'}] }}] }}</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
-**Returns**: <p>when using a &quot;url&quot;, a promise is returned for the save on this form model.<br>         If not using a &quot;url&quot;, a promise that will either resolve when all the models have successfully saved in which case the context returned<br>  is an array of the responses (order determined by first the array of models and then the array of models used by<br>  the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.<br>  Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when</p>  
+**Returns**: <p>when using a &quot;url&quot;, a promise is returned for the save on this form model.<br>
+If not using a &quot;url&quot;, a promise that will either resolve when all the models have successfully saved in which case the context returned<br>
+is an array of the responses (order determined by first the array of models and then the array of models used by<br>
+the computed values, normalized), or if any of the saves fail, the promise will be rejected with an array of responses.<br>
+Note: the size of the failure array will always be one - the first model that failed. This is a side-effect of $.when</p>  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> |  |  |
-| [options.rollback] | <code>boolean</code> | <code>true</code> | <p>if true, when any object model fails to save, it will revert the object<br>    model attributes to the state they were before calling save. NOTE: if there are updates that happen<br>    to object models within the timing of this save method, the updates could be lost.</p> |
-| [options.force] | <code>boolean</code> | <code>true</code> | <p>if false, the form model will check to see if an update has been made<br>    to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception<br>    with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}</p> |
+| [options.rollback] | <code>boolean</code> | <code>true</code> | <p>if true, when any object model fails to save, it will revert the object<br> model attributes to the state they were before calling save. NOTE: if there are updates that happen<br> to object models within the timing of this save method, the updates could be lost.</p> |
+| [options.force] | <code>boolean</code> | <code>true</code> | <p>if false, the form model will check to see if an update has been made<br> to any object models it is tracking since it's last pull. If any stale data is found, save with throw an exception<br> with attributes: {name: 'Stale data', staleModels: [Array of model cid's]}</p> |
 
 <a name="FormModel+isTrackingAnyObjectModel"></a>
 
@@ -828,7 +912,7 @@
 | --- | --- | --- |
 | model | <code>Backbone.Model</code> | <p>the backbone model that is being checked</p> |
 | [staleModels] | <code>Object</code> | <p>a hash that will be updated to contain this model if it is stale in the form: cid -&gt; model.</p> |
-| [currentHashValues] | <code>Object</code> | <p>If passed an object, it will look in this cache for the current value of the object model<br>  instead of calculating it. It should be key'ed by the model's cid</p> |
+| [currentHashValues] | <code>Object</code> | <p>If passed an object, it will look in this cache for the current value of the object model<br> instead of calculating it. It should be key'ed by the model's cid</p> |
 
 <a name="FormModel+checkIfModelsAreStale"></a>
 
@@ -838,28 +922,34 @@
 <a name="FormModel+preValidate"></a>
 
 ### formModel.preValidate(attr, [value]) ⇒ <code>undefined</code> \| <code>string</code> \| <code>Object</code>
-<p>Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but<br>you can pass in different values to use in the validation process instead.</p>
+<p>Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but<br>
+you can pass in different values to use in the validation process instead.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 **Mixes**: [<code>preValidate</code>](#validationMixin.preValidate)  
-**Returns**: <code>undefined</code> \| <code>string</code> \| <code>Object</code> - <p>undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key<br>and the error as the value</p>  
+**Returns**: <code>undefined</code> \| <code>string</code> \| <code>Object</code> - <p>undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key<br>
+and the error as the value</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| attr | <code>string</code> \| <code>Object</code> \| <code>Array.&lt;string&gt;</code> | <p>Either the name of the attribute, an array containing many attribute names, or<br>on object with attribute name to values</p> |
+| attr | <code>string</code> \| <code>Object</code> \| <code>Array.&lt;string&gt;</code> | <p>Either the name of the attribute, an array containing many attribute names, or<br> on object with attribute name to values</p> |
 | [value] | <code>Any</code> | <p>a value to use for the attribute value instead of using the model's value.</p> |
 
 <a name="FormModel+isValid"></a>
 
 ### formModel.isValid()
-<p>Check to see if an attribute, an array of attributes or the<br>entire model is valid. Passing true will force a validation<br>of the model.</p>
+<p>Check to see if an attribute, an array of attributes or the<br>
+entire model is valid. Passing true will force a validation<br>
+of the model.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 **Mixes**: [<code>isValid</code>](#validationMixin.isValid)  
 <a name="FormModel+validate"></a>
 
 ### formModel.validate()
-<p>This is called by Backbone when it needs to perform validation.<br>You can call it manually without any parameters to validate the<br>entire model.</p>
+<p>This is called by Backbone when it needs to perform validation.<br>
+You can call it manually without any parameters to validate the<br>
+entire model.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 **Mixes**: [<code>validate</code>](#validationMixin.validate)  
@@ -873,7 +963,9 @@
 <a name="NestedModel+startPolling"></a>
 
 ### formModel.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 **Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
@@ -892,14 +984,17 @@
 <a name="NestedModel+polledFetch"></a>
 
 ### formModel.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 **Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
 <a name="NestedModel+dispose"></a>
 
 ### formModel.dispose()
-<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>Removes listeners and calls out to _dispose() for child specific dispose logic.<br>Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>
+Removes listeners and calls out to _dispose() for child specific dispose logic.<br>
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
 
 **Kind**: instance method of [<code>FormModel</code>](#FormModel)  
 **Mixes**: [<code>dispose</code>](#modelMixin.dispose)  
@@ -926,14 +1021,6 @@
     * [.bindings](#FormView+bindings) : <code>Object</code>
     * [.FormModelClass](#FormView+FormModelClass) : <code>FormModel.prototype</code>
     * [.viewState](#View+viewState) : [<code>ViewStateCell</code>](#ViewStateCell)
-    * [.prerender](#View+prerender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [.postrender](#View+postrender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [.attachTrackedViews](#View+attachTrackedViews) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [._attached](#View+_attached)
-    * [._detached](#View+_detached)
-    * [._activate](#View+_activate)
-    * [._deactivate](#View+_deactivate)
-    * [._dispose](#View+_dispose)
     * [.prepare()](#FormView+prepare) ⇒ <code>Object</code>
     * [.delegateEvents()](#FormView+delegateEvents)
     * [.resetModelListeners(model, [stopListening])](#FormView+resetModelListeners)
@@ -948,19 +1035,27 @@
     * [.getBehavior(alias)](#View+getBehavior) ⇒ <code>Torso.Behavior</code>
     * [._prepare(context)](#View+_prepare) ⇒ <code>Object</code>
     * [.render()](#View+render) ⇒ <code>Promise</code>
+    * [.prerender()](#View+prerender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
     * [.updateDOM()](#View+updateDOM)
     * [.updateClassName(newClassName)](#View+updateClassName)
+    * [.postrender()](#View+postrender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
     * [.templateRender()](#View+templateRender)
     * [.undelegateEvents()](#View+undelegateEvents)
     * [.attachTo([$el], [options])](#View+attachTo) ⇒ <code>Promise</code>
     * [.attachView($el, view, [options])](#View+attachView) ⇒ <code>Promise</code>
+    * [.attachTrackedViews()](#View+attachTrackedViews) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+    * [._attached()](#View+_attached)
     * [.isAttachedToParent()](#View+isAttachedToParent) ⇒ <code>boolean</code>
     * [.isAttached()](#View+isAttached) ⇒ <code>boolean</code>
     * [.detach()](#View+detach)
     * [.detachTrackedViews([options])](#View+detachTrackedViews)
+    * [._detached()](#View+_detached)
     * [.activate()](#View+activate)
+    * [._activate()](#View+_activate)
     * [.isActive()](#View+isActive) ⇒ <code>boolean</code>
+    * [._deactivate()](#View+_deactivate)
     * [.dispose()](#View+dispose)
+    * [._dispose()](#View+_dispose)
     * [.isDisposed()](#View+isDisposed) ⇒ <code>boolean</code>
     * [.hasTrackedViews([options])](#View+hasTrackedViews) ⇒ <code>boolean</code>
     * [.getTrackedViews([options])](#View+getTrackedViews) ⇒ [<code>List.&lt;View&gt;</code>](#View)
@@ -981,8 +1076,8 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | args | <code>Object</code> |  | <p>options argument</p> |
-| [args.model] | [<code>FormModel</code>](#FormModel) | <code>new this.FormModelClass()</code> | <p>a form model for binding that defaults to class-level<br>                                                                  model or instantiates a FormModelClass</p> |
-| [args.FormModelClass] | <code>function</code> | <code>FormModel</code> | <p>the class (that extends [FormModel](#FormModel)) that will be used as the FormModel. Defaults to a class-level<br>                                                    definition or [FormModel](#FormModel) if none is provided</p> |
+| [args.model] | [<code>FormModel</code>](#FormModel) | <code>new this.FormModelClass()</code> | <p>a form model for binding that defaults to class-level<br> model or instantiates a FormModelClass</p> |
+| [args.FormModelClass] | <code>function</code> | <code>FormModel</code> | <p>the class (that extends [FormModel](#FormModel)) that will be used as the FormModel. Defaults to a class-level<br> definition or [FormModel](#FormModel) if none is provided</p> |
 | [args.template] | [<code>Handlebars-Template</code>](#external_Handlebars-Template) |  | <p>overrides the template used by this view</p> |
 | [args.events] | <code>Object</code> |  | <p>events hash: merge + override the events hash used by this view</p> |
 | [args.fields] | <code>Object</code> |  | <p>field hash: merge + override automated two-way binding field hash used by this view</p> |
@@ -1024,57 +1119,6 @@
 <p>Cell that can be used to save state for rendering the view.</p>
 
 **Kind**: instance property of [<code>FormView</code>](#FormView)  
-<a name="View+prerender"></a>
-
-### formView.prerender ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook during render that is invoked before any DOM rendering is performed.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);<br>NOTE: if you require the view to be detached from the DOM, consider using _detach callback</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.</p>  
-<a name="View+postrender"></a>
-
-### formView.postrender ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook during render that is invoked after all DOM rendering is done and tracked views attached.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);<br>NOTE: if you require the view to be attached to the DOM, consider using _attach callback</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.</p>  
-<a name="View+attachTrackedViews"></a>
-
-### formView.attachTrackedViews ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.</p>  
-<a name="View+_attached"></a>
-
-### formView.\_attached
-<p>Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view<br>after the DOM has been attached to the document. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
-<a name="View+_detached"></a>
-
-### formView.\_detached
-<p>Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state<br>after the view has been removed from the document. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
-<a name="View+_activate"></a>
-
-### formView.\_activate
-<p>Method to be invoked when activate is called. Use this method to turn on any<br>custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
-<a name="View+_deactivate"></a>
-
-### formView.\_deactivate
-<p>Method to be invoked when deactivate is called. Use this method to turn off any<br>custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
-<a name="View+_dispose"></a>
-
-### formView.\_dispose
-<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>view's element, its on's, listenTo's, and any registered children.<br>Override this method to destruct any extra</p>
-
-**Kind**: instance property of [<code>FormView</code>](#FormView)  
 <a name="FormView+prepare"></a>
 
 ### formView.prepare() ⇒ <code>Object</code>
@@ -1082,7 +1126,8 @@
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 **Overrides**: [<code>prepare</code>](#View+prepare)  
-**Returns**: <code>Object</code> - <p>{Object.errors} A hash of field names mapped to error messages<br>        {Object.success} A boolean value of true if validation has succeeded</p>  
+**Returns**: <code>Object</code> - <p>{Object.errors} A hash of field names mapped to error messages<br>
+{Object.success} A boolean value of true if validation has succeeded</p>  
 <a name="FormView+delegateEvents"></a>
 
 ### formView.delegateEvents()
@@ -1093,7 +1138,8 @@
 <a name="FormView+resetModelListeners"></a>
 
 ### formView.resetModelListeners(model, [stopListening])
-<p>Resets the form model with the passed in model. Stops listening to current form model<br>and sets up listeners on the new one.</p>
+<p>Resets the form model with the passed in model. Stops listening to current form model<br>
+and sets up listeners on the new one.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 
@@ -1117,7 +1163,8 @@
 <a name="FormView+deactivate"></a>
 
 ### formView.deactivate()
-<p>Deactivate callback that removes bindings and other resources<br>that shouldn't exist in a dactivated state</p>
+<p>Deactivate callback that removes bindings and other resources<br>
+that shouldn't exist in a dactivated state</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 **Overrides**: [<code>deactivate</code>](#View+deactivate)  
@@ -1176,20 +1223,38 @@
 <a name="View+render"></a>
 
 ### formView.render() ⇒ <code>Promise</code>
-<p>Rebuilds the html for this view's element. Should be able to be called at any time.<br>Defaults to using this.templateRender. Assumes that this.template is a javascript<br>function that accepted a single JSON context.<br>The render method returns a promise that resolves when rendering is complete. Typically render<br>is synchronous and the rendering is complete upon completion of the method. However, when utilizing<br>transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.</p>
+<p>Rebuilds the html for this view's element. Should be able to be called at any time.<br>
+Defaults to using this.templateRender. Assumes that this.template is a javascript<br>
+function that accepted a single JSON context.<br>
+The render method returns a promise that resolves when rendering is complete. Typically render<br>
+is synchronous and the rendering is complete upon completion of the method. However, when utilizing<br>
+transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 **Returns**: <code>Promise</code> - <p>a promise that when resolved signifies that the rendering process is complete.</p>  
+<a name="View+prerender"></a>
+
+### formView.prerender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked before any DOM rendering is performed.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);<br>
+NOTE: if you require the view to be detached from the DOM, consider using _detach callback</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.</p>  
 <a name="View+updateDOM"></a>
 
 ### formView.updateDOM()
-<p>Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.<br>Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);<br>this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.<br>Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.</p>
+<p>Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.<br>
+Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);<br>
+this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.<br>
+Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+updateClassName"></a>
 
 ### formView.updateClassName(newClassName)
-<p>Updates this view element's class attribute with the value provided.<br>If no value provided, removes the class attribute of this view element.</p>
+<p>Updates this view element's class attribute with the value provided.<br>
+If no value provided, removes the class attribute of this view element.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 
@@ -1197,16 +1262,27 @@
 | --- | --- | --- |
 | newClassName | <code>string</code> | <p>the new value of the class attribute</p> |
 
+<a name="View+postrender"></a>
+
+### formView.postrender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked after all DOM rendering is done and tracked views attached.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);<br>
+NOTE: if you require the view to be attached to the DOM, consider using _attach callback</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.</p>  
 <a name="View+templateRender"></a>
 
 ### formView.templateRender()
-<p>Hotswap rendering system reroute method.<br>See Torso.templateRenderer#render for params</p>
+<p>Hotswap rendering system reroute method.<br>
+See Torso.templateRenderer#render for params</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+undelegateEvents"></a>
 
 ### formView.undelegateEvents()
-<p>Overrides undelegateEvents<br>Unbinds DOM events from the view.</p>
+<p>Overrides undelegateEvents<br>
+Unbinds DOM events from the view.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+attachTo"></a>
@@ -1215,19 +1291,35 @@
 <p>If detached, will replace the element passed in with this view's element and activate the view.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
-**Returns**: <code>Promise</code> - <p>promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can<br>                  make it asynchronous.</p>  
+**Returns**: <code>Promise</code> - <p>promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can<br>
+make it asynchronous.</p>  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [$el] | [<code>jQuery</code>](#external_jQuery) |  | <p>the element to attach to. This element will be replaced with this view.<br>                      If options.replaceMethod is provided, then this parameter is ignored.</p> |
+| [$el] | [<code>jQuery</code>](#external_jQuery) |  | <p>the element to attach to. This element will be replaced with this view.<br> If options.replaceMethod is provided, then this parameter is ignored.</p> |
 | [options] | <code>Object</code> |  | <p>optional options</p> |
-| [options.replaceMethod] | <code>Fucntion</code> |  | <p>if given, this view will invoke replaceMethod function<br>                                            in order to attach the view's DOM to the parent instead of calling $el.replaceWith</p> |
+| [options.replaceMethod] | <code>Fucntion</code> |  | <p>if given, this view will invoke replaceMethod function<br> in order to attach the view's DOM to the parent instead of calling $el.replaceWith</p> |
 | [options.discardInjectionSite] | <code>Booleon</code> | <code>false</code> | <p>if set to true, the injection site is not saved.</p> |
 
 <a name="View+attachView"></a>
 
 ### formView.attachView($el, view, [options]) ⇒ <code>Promise</code>
-<p>Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument<br>The element argument can be a String that references an element with the corresponding &quot;inject&quot; attribute.<br>When using attachView with options.useTransition:<br>  Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view<br>  previously had another view at this injections site, this previous view will be removed with that view's transitionOut.<br>  If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even<br>  though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.<br>  If the previous view is the same as the new view, it is injected normally without transitioning in.<br>  The previous view must has used an injection site with the standard &quot;inject=<name of injection site>&quot; attribute to be found.<br>  When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields<br>  will be added to the options parameter to allow better handling of the transitions. These include:<br>  {<br>    newView: the new view<br>    previousView: the previous view (can be undefined)<br>    parentView: the parent view transitioning in or out the tracked view<br>  }</p>
+<p>Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument<br>
+The element argument can be a String that references an element with the corresponding &quot;inject&quot; attribute.<br>
+When using attachView with options.useTransition:<br>
+Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view<br>
+previously had another view at this injections site, this previous view will be removed with that view's transitionOut.<br>
+If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even<br>
+though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.<br>
+If the previous view is the same as the new view, it is injected normally without transitioning in.<br>
+The previous view must has used an injection site with the standard &quot;inject=<name of injection site>&quot; attribute to be found.<br>
+When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields<br>
+will be added to the options parameter to allow better handling of the transitions. These include:<br>
+{<br>
+newView: the new view<br>
+previousView: the previous view (can be undefined)<br>
+parentView: the parent view transitioning in or out the tracked view<br>
+}</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 **Returns**: <code>Promise</code> - <p>resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.</p>  
@@ -1241,8 +1333,23 @@
 | [options.shared] | <code>boolean</code> | <code>false</code> | <p>if set to true, the view will be treated as a shared view and not disposed during parent view disposing.</p> |
 | [options.useTransition] | <code>boolean</code> | <code>false</code> | <p>if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite</p> |
 | [options.addBefore] | <code>boolean</code> | <code>false</code> | <p>if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.</p> |
-| [options.previousView] | [<code>View</code>](#View) |  | <p>if using options.useTransition, then you can explicitly define the view that should be transitioned out.<br>                                       If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.</p> |
+| [options.previousView] | [<code>View</code>](#View) |  | <p>if using options.useTransition, then you can explicitly define the view that should be transitioned out.<br> If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.</p> |
 
+<a name="View+attachTrackedViews"></a>
+
+### formView.attachTrackedViews() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.</p>  
+<a name="View+_attached"></a>
+
+### formView.\_attached()
+<p>Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view<br>
+after the DOM has been attached to the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+isAttachedToParent"></a>
 
 ### formView.isAttachedToParent() ⇒ <code>boolean</code>
@@ -1258,26 +1365,43 @@
 <a name="View+detach"></a>
 
 ### formView.detach()
-<p>If attached, will detach the view from the DOM.<br>This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach<br>callback on each tracked view recursively.</p>
+<p>If attached, will detach the view from the DOM.<br>
+This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach<br>
+callback on each tracked view recursively.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+detachTrackedViews"></a>
 
 ### formView.detachTrackedViews([options])
-<p>Detach all tracked views or a subset of them based on the options parameter.<br>NOTE: this is not recursive - it will not separate the entire view tree.</p>
+<p>Detach all tracked views or a subset of them based on the options parameter.<br>
+NOTE: this is not recursive - it will not separate the entire view tree.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, detach only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, detach only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
+<a name="View+_detached"></a>
+
+### formView.\_detached()
+<p>Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state<br>
+after the view has been removed from the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+activate"></a>
 
 ### formView.activate()
 <p>Resets listeners and events in order for the view to be reattached to the visible DOM</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
+<a name="View+_activate"></a>
+
+### formView.\_activate()
+<p>Method to be invoked when activate is called. Use this method to turn on any<br>
+custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+isActive"></a>
@@ -1285,10 +1409,27 @@
 ### formView.isActive() ⇒ <code>boolean</code>
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 **Returns**: <code>boolean</code> - <p>true if the view is active</p>  
+<a name="View+_deactivate"></a>
+
+### formView.\_deactivate()
+<p>Method to be invoked when deactivate is called. Use this method to turn off any<br>
+custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+dispose"></a>
 
 ### formView.dispose()
-<p>Removes all listeners, disposes children views, stops listening to events, removes DOM.<br>After dispose is called, the view can be safely garbage collected. Called while<br>recursively removing views from the hierarchy.</p>
+<p>Removes all listeners, disposes children views, stops listening to events, removes DOM.<br>
+After dispose is called, the view can be safely garbage collected. Called while<br>
+recursively removing views from the hierarchy.</p>
+
+**Kind**: instance method of [<code>FormView</code>](#FormView)  
+<a name="View+_dispose"></a>
+
+### formView.\_dispose()
+<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>
+view's element, its on's, listenTo's, and any registered children.<br>
+Override this method to destruct any extra</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 <a name="View+isDisposed"></a>
@@ -1305,7 +1446,7 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, only check the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, only check the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+getTrackedViews"></a>
@@ -1319,7 +1460,7 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, get only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, get only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+getTrackedView"></a>
@@ -1335,7 +1476,9 @@
 <a name="View+registerTrackedView"></a>
 
 ### formView.registerTrackedView(view, [options]) ⇒ [<code>View</code>](#View)
-<p>Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will<br>be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the<br>view as a child view unless specified by options.shared.</p>
+<p>Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will<br>
+be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the<br>
+view as a child view unless specified by options.shared.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 **Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
@@ -1344,7 +1487,7 @@
 | --- | --- | --- | --- |
 | view | [<code>View</code>](#View) |  | <p>the tracked view</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.</p> |
 
 <a name="View+unregisterTrackedView"></a>
 
@@ -1361,7 +1504,8 @@
 <a name="View+unregisterTrackedViews"></a>
 
 ### formView.unregisterTrackedViews([options]) ⇒ [<code>View</code>](#View)
-<p>Unbinds all tracked view - no recursive calls will be made to this shared view<br>You can limit the types of views that will be unregistered by using the options parameter.</p>
+<p>Unbinds all tracked view - no recursive calls will be made to this shared view<br>
+You can limit the types of views that will be unregistered by using the options parameter.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 **Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
@@ -1369,13 +1513,14 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+transitionOut"></a>
 
 ### formView.transitionOut(done, options)
-<p>Override to provide your own transition out logic. Default logic is to just detach from the page.<br>The method is passed a callback that should be invoked when the transition out has fully completed.</p>
+<p>Override to provide your own transition out logic. Default logic is to just detach from the page.<br>
+The method is passed a callback that should be invoked when the transition out has fully completed.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 
@@ -1390,13 +1535,14 @@
 <a name="View+transitionIn"></a>
 
 ### formView.transitionIn(attach, done, options)
-<p>Override to provide your own transition in logic. Default logic is to just attach to the page.<br>The method is passed a callback that should be invoked when the transition in has fully completed.</p>
+<p>Override to provide your own transition in logic. Default logic is to just attach to the page.<br>
+The method is passed a callback that should be invoked when the transition in has fully completed.</p>
 
 **Kind**: instance method of [<code>FormView</code>](#FormView)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| attach | <code>function</code> | <p>callback to be invoked when you want this view to be attached to the dom.<br>                                If you are trying to transition in a tracked view, consider using this.transitionInView()</p> |
+| attach | <code>function</code> | <p>callback to be invoked when you want this view to be attached to the dom.<br> If you are trying to transition in a tracked view, consider using this.transitionInView()</p> |
 | done | <code>function</code> | <p>callback that MUST be invoked when the transition is complete.</p> |
 | options |  | <p>optionals options object</p> |
 | options.currentView | [<code>View</code>](#View) | <p>the view that is being transitioned in.</p> |
@@ -1426,22 +1572,15 @@
 
 * [ListView](#ListView) ⇐ [<code>View</code>](#View)
     * [new ListView()](#new_ListView_new)
+    * [new constructor(args)](#new_ListView_new)
     * [.collection](#ListView+collection) : [<code>Collection</code>](#Collection)
     * [.itemView](#ListView+itemView) : [<code>View</code>](#View) \| <code>function</code>
     * [.template](#ListView+template) : [<code>Handlebars-Template</code>](#external_Handlebars-Template)
     * [.emptyTemplate](#ListView+emptyTemplate) : [<code>Handlebars-Template</code>](#external_Handlebars-Template)
     * [.itemContainer](#ListView+itemContainer) : <code>String</code>
     * [.viewState](#View+viewState) : [<code>ViewStateCell</code>](#ViewStateCell)
-    * [.prerender](#View+prerender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [.postrender](#View+postrender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [.attachTrackedViews](#View+attachTrackedViews) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [._attached](#View+_attached)
-    * [._detached](#View+_detached)
-    * [._activate](#View+_activate)
-    * [._deactivate](#View+_deactivate)
-    * [._dispose](#View+_dispose)
-    * [.constructor(args)](#ListView+constructor)
     * [.setCollection(collection, preventUpdate)](#ListView+setCollection)
+    * [.updateDOM()](#ListView+updateDOM)
     * [.renderChildViews()](#ListView+renderChildViews)
     * [.reorder()](#ListView+reorder)
     * [.prepareEmpty()](#ListView+prepareEmpty) ⇒
@@ -1459,21 +1598,28 @@
     * [.prepare()](#View+prepare) ⇒ <code>Object</code>
     * [._prepare(context)](#View+_prepare) ⇒ <code>Object</code>
     * [.render()](#View+render) ⇒ <code>Promise</code>
-    * [.updateDOM()](#View+updateDOM)
+    * [.prerender()](#View+prerender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
     * [.updateClassName(newClassName)](#View+updateClassName)
+    * [.postrender()](#View+postrender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
     * [.templateRender()](#View+templateRender)
     * [.delegateEvents()](#View+delegateEvents)
     * [.undelegateEvents()](#View+undelegateEvents)
     * [.attachTo([$el], [options])](#View+attachTo) ⇒ <code>Promise</code>
     * [.attachView($el, view, [options])](#View+attachView) ⇒ <code>Promise</code>
+    * [.attachTrackedViews()](#View+attachTrackedViews) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+    * [._attached()](#View+_attached)
     * [.isAttachedToParent()](#View+isAttachedToParent) ⇒ <code>boolean</code>
     * [.isAttached()](#View+isAttached) ⇒ <code>boolean</code>
     * [.detach()](#View+detach)
     * [.detachTrackedViews([options])](#View+detachTrackedViews)
+    * [._detached()](#View+_detached)
     * [.activate()](#View+activate)
+    * [._activate()](#View+_activate)
     * [.isActive()](#View+isActive) ⇒ <code>boolean</code>
     * [.deactivate()](#View+deactivate)
+    * [._deactivate()](#View+_deactivate)
     * [.dispose()](#View+dispose)
+    * [._dispose()](#View+_dispose)
     * [.isDisposed()](#View+isDisposed) ⇒ <code>boolean</code>
     * [.hasTrackedViews([options])](#View+hasTrackedViews) ⇒ <code>boolean</code>
     * [.getTrackedViews([options])](#View+getTrackedViews) ⇒ [<code>List.&lt;View&gt;</code>](#View)
@@ -1490,6 +1636,26 @@
 ### new ListView()
 <p>A view that is backed by a collection that managers views per model in the collection.</p>
 
+<a name="new_ListView_new"></a>
+
+### new constructor(args)
+<p>Constructor for the list view object.</p>
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| args | <code>Object</code> |  | <p>options argument</p> |
+| args.itemView | [<code>Backbone-View</code>](#external_Backbone-View) \| <code>function</code> |  | <p>the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.</p> |
+| args.collection | [<code>Backbone-Collection</code>](#external_Backbone-Collection) |  | <p>The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection</p> |
+| [args.itemContext] | <code>Object</code> \| <code>function</code> |  | <p>object or function that's passed to the item view's during initialization under the name &quot;context&quot;. Can be used by the item view during their prepare method.</p> |
+| [args.template] | [<code>Handlebars-Template</code>](#external_Handlebars-Template) |  | <p>allows a list view to hold it's own HTML like filter buttons, etc.</p> |
+| [args.itemContainer] | <code>string</code> |  | <p>(Required if 'template' is provided, ignored otherwise) name of injection site for list of item views</p> |
+| [args.emptyTemplate] | [<code>Handlebars-Template</code>](#external_Handlebars-Template) |  | <p>if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.</p> |
+| [args.modelsToRender] | <code>function</code> |  | <p>If provided, this function will override the modelsToRender() method with custom functionality.</p> |
+| [args.renderWait] | <code>number</code> | <code>0</code> | <p>If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.</p> |
+| [args.modelId] | <code>string</code> | <code>&quot;&#x27;cid&#x27;&quot;</code> | <p>one of ('cid' or 'id'): model property used as identifier for a given model. This property is saved and used to find the corresponding view.</p> |
+| [args.modelName] | <code>string</code> | <code>&quot;&#x27;model&#x27;&quot;</code> | <p>name of the model argument passed to the item view during initialization</p> |
+
 <a name="ListView+collection"></a>
 
 ### listView.collection : [<code>Collection</code>](#Collection)
@@ -1505,7 +1671,9 @@
 <a name="ListView+itemView"></a>
 
 ### listView.itemView : [<code>View</code>](#View) \| <code>function</code>
-<p>The item view class definition that will be instantiated for each model in the list.<br>itemView can also be a function that takes a model and returns a view class. This allows<br>for different view classes depending on the model.</p>
+<p>The item view class definition that will be instantiated for each model in the list.<br>
+itemView can also be a function that takes a model and returns a view class. This allows<br>
+for different view classes depending on the model.</p>
 
 **Kind**: instance property of [<code>ListView</code>](#ListView)  
 **Properties**
@@ -1529,7 +1697,8 @@
 <a name="ListView+emptyTemplate"></a>
 
 ### listView.emptyTemplate : [<code>Handlebars-Template</code>](#external_Handlebars-Template)
-<p>If provided, this template that will be shown if the modelsToRender() method returns<br>an empty list. If an itemContainer is provided, the empty template will be rendered there.</p>
+<p>If provided, this template that will be shown if the modelsToRender() method returns<br>
+an empty list. If an itemContainer is provided, the empty template will be rendered there.</p>
 
 **Kind**: instance property of [<code>ListView</code>](#ListView)  
 **Properties**
@@ -1556,82 +1725,13 @@
 <p>Cell that can be used to save state for rendering the view.</p>
 
 **Kind**: instance property of [<code>ListView</code>](#ListView)  
-<a name="View+prerender"></a>
-
-### listView.prerender ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook during render that is invoked before any DOM rendering is performed.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);<br>NOTE: if you require the view to be detached from the DOM, consider using _detach callback</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.</p>  
-<a name="View+postrender"></a>
-
-### listView.postrender ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook during render that is invoked after all DOM rendering is done and tracked views attached.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);<br>NOTE: if you require the view to be attached to the DOM, consider using _attach callback</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.</p>  
-<a name="View+attachTrackedViews"></a>
-
-### listView.attachTrackedViews ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.</p>  
-<a name="View+_attached"></a>
-
-### listView.\_attached
-<p>Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view<br>after the DOM has been attached to the document. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-<a name="View+_detached"></a>
-
-### listView.\_detached
-<p>Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state<br>after the view has been removed from the document. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-<a name="View+_activate"></a>
-
-### listView.\_activate
-<p>Method to be invoked when activate is called. Use this method to turn on any<br>custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-<a name="View+_deactivate"></a>
-
-### listView.\_deactivate
-<p>Method to be invoked when deactivate is called. Use this method to turn off any<br>custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-<a name="View+_dispose"></a>
-
-### listView.\_dispose
-<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>view's element, its on's, listenTo's, and any registered children.<br>Override this method to destruct any extra</p>
-
-**Kind**: instance property of [<code>ListView</code>](#ListView)  
-<a name="ListView+constructor"></a>
-
-### listView.constructor(args)
-<p>Constructor for the list view object.</p>
-
-**Kind**: instance method of [<code>ListView</code>](#ListView)  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| args | <code>Object</code> |  | <p>options argument</p> |
-| args.itemView | [<code>Backbone-View</code>](#external_Backbone-View) \| <code>function</code> |  | <p>the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.</p> |
-| args.collection | [<code>Backbone-Collection</code>](#external_Backbone-Collection) |  | <p>The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection</p> |
-| [args.itemContext] | <code>Object</code> \| <code>function</code> |  | <p>object or function that's passed to the item view's during initialization under the name &quot;context&quot;. Can be used by the item view during their prepare method.</p> |
-| [args.template] | [<code>Handlebars-Template</code>](#external_Handlebars-Template) |  | <p>allows a list view to hold it's own HTML like filter buttons, etc.</p> |
-| [args.itemContainer] | <code>string</code> |  | <p>(Required if 'template' is provided, ignored otherwise) name of injection site for list of item views</p> |
-| [args.emptyTemplate] | [<code>Handlebars-Template</code>](#external_Handlebars-Template) |  | <p>if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.</p> |
-| [args.modelsToRender] | <code>function</code> |  | <p>If provided, this function will override the modelsToRender() method with custom functionality.</p> |
-| [args.renderWait] | <code>number</code> | <code>0</code> | <p>If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.</p> |
-| [args.modelId] | <code>string</code> | <code>&quot;&#x27;cid&#x27;&quot;</code> | <p>one of ('cid' or 'id'): model property used as identifier for a given model. This property is saved and used to find the corresponding view.</p> |
-| [args.modelName] | <code>string</code> | <code>&quot;&#x27;model&#x27;&quot;</code> | <p>name of the model argument passed to the item view during initialization</p> |
-
 <a name="ListView+setCollection"></a>
 
 ### listView.setCollection(collection, preventUpdate)
-<p>Sets the collection from which this view generates item views.<br>This method will attach all necessary event listeners to the new collection to auto-generate item views<br>and has the option of removing listeners on a previous collection. It will immediately update child<br>views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument</p>
+<p>Sets the collection from which this view generates item views.<br>
+This method will attach all necessary event listeners to the new collection to auto-generate item views<br>
+and has the option of removing listeners on a previous collection. It will immediately update child<br>
+views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 
@@ -1640,6 +1740,13 @@
 | collection | [<code>Backbone-Collection</code>](#external_Backbone-Collection) | <p>the new collection that this list view should use.</p> |
 | preventUpdate | <code>boolean</code> | <p>if true, the list view will not update the child views nor rerender.</p> |
 
+<a name="ListView+updateDOM"></a>
+
+### listView.updateDOM()
+<p>Builds a single DOM fragment from the item views and attaches it at once.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Overrides**: [<code>updateDOM</code>](#View+updateDOM)  
 <a name="ListView+renderChildViews"></a>
 
 ### listView.renderChildViews()
@@ -1649,7 +1756,9 @@
 <a name="ListView+reorder"></a>
 
 ### listView.reorder()
-<p>Takes existing item views and moves them into correct order defined by<br>this.modelsToRender(). NOTE: As this method doesn't generate or remove views,<br>this method takes advantage of jquery's ability to move elements already attached to the DOM.</p>
+<p>Takes existing item views and moves them into correct order defined by<br>
+this.modelsToRender(). NOTE: As this method doesn't generate or remove views,<br>
+this method takes advantage of jquery's ability to move elements already attached to the DOM.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="ListView+prepareEmpty"></a>
@@ -1662,7 +1771,10 @@
 <a name="ListView+modelsToRender"></a>
 
 ### listView.modelsToRender()
-<p>Returns an array of which models should be rendered.<br>By default, all models in the input collection will be<br>shown.  Extensions of this class may override this<br>method to apply collection filters.</p>
+<p>Returns an array of which models should be rendered.<br>
+By default, all models in the input collection will be<br>
+shown.  Extensions of this class may override this<br>
+method to apply collection filters.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="ListView+update"></a>
@@ -1736,10 +1848,12 @@
 <a name="View+prepare"></a>
 
 ### listView.prepare() ⇒ <code>Object</code>
-<p>prepareFields can be used to augment the default render method contents.<br>See __getPrepareFieldsContext() for more details on how to configure them.</p>
+<p>prepareFields can be used to augment the default render method contents.<br>
+See __getPrepareFieldsContext() for more details on how to configure them.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
-**Returns**: <code>Object</code> - <p>context for a render method. Defaults to:<br>   {view: this.viewState.toJSON(), model: this.model.toJSON()}</p>  
+**Returns**: <code>Object</code> - <p>context for a render method. Defaults to:<br>
+{view: this.viewState.toJSON(), model: this.model.toJSON()}</p>  
 <a name="View+_prepare"></a>
 
 ### listView.\_prepare(context) ⇒ <code>Object</code>
@@ -1755,21 +1869,29 @@
 <a name="View+render"></a>
 
 ### listView.render() ⇒ <code>Promise</code>
-<p>Rebuilds the html for this view's element. Should be able to be called at any time.<br>Defaults to using this.templateRender. Assumes that this.template is a javascript<br>function that accepted a single JSON context.<br>The render method returns a promise that resolves when rendering is complete. Typically render<br>is synchronous and the rendering is complete upon completion of the method. However, when utilizing<br>transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.</p>
+<p>Rebuilds the html for this view's element. Should be able to be called at any time.<br>
+Defaults to using this.templateRender. Assumes that this.template is a javascript<br>
+function that accepted a single JSON context.<br>
+The render method returns a promise that resolves when rendering is complete. Typically render<br>
+is synchronous and the rendering is complete upon completion of the method. However, when utilizing<br>
+transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 **Returns**: <code>Promise</code> - <p>a promise that when resolved signifies that the rendering process is complete.</p>  
-<a name="View+updateDOM"></a>
+<a name="View+prerender"></a>
 
-### listView.updateDOM()
-<p>Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.<br>Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);<br>this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.<br>Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.</p>
+### listView.prerender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked before any DOM rendering is performed.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);<br>
+NOTE: if you require the view to be detached from the DOM, consider using _detach callback</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
-**Overrides**: [<code>updateDOM</code>](#View+updateDOM)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.</p>  
 <a name="View+updateClassName"></a>
 
 ### listView.updateClassName(newClassName)
-<p>Updates this view element's class attribute with the value provided.<br>If no value provided, removes the class attribute of this view element.</p>
+<p>Updates this view element's class attribute with the value provided.<br>
+If no value provided, removes the class attribute of this view element.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 
@@ -1777,22 +1899,34 @@
 | --- | --- | --- |
 | newClassName | <code>string</code> | <p>the new value of the class attribute</p> |
 
+<a name="View+postrender"></a>
+
+### listView.postrender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked after all DOM rendering is done and tracked views attached.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);<br>
+NOTE: if you require the view to be attached to the DOM, consider using _attach callback</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.</p>  
 <a name="View+templateRender"></a>
 
 ### listView.templateRender()
-<p>Hotswap rendering system reroute method.<br>See Torso.templateRenderer#render for params</p>
+<p>Hotswap rendering system reroute method.<br>
+See Torso.templateRenderer#render for params</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+delegateEvents"></a>
 
 ### listView.delegateEvents()
-<p>Overrides the base delegateEvents<br>Binds DOM events with the view using events hash while also adding feedback event bindings</p>
+<p>Overrides the base delegateEvents<br>
+Binds DOM events with the view using events hash while also adding feedback event bindings</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+undelegateEvents"></a>
 
 ### listView.undelegateEvents()
-<p>Overrides undelegateEvents<br>Unbinds DOM events from the view.</p>
+<p>Overrides undelegateEvents<br>
+Unbinds DOM events from the view.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+attachTo"></a>
@@ -1801,19 +1935,35 @@
 <p>If detached, will replace the element passed in with this view's element and activate the view.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
-**Returns**: <code>Promise</code> - <p>promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can<br>                  make it asynchronous.</p>  
+**Returns**: <code>Promise</code> - <p>promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can<br>
+make it asynchronous.</p>  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [$el] | [<code>jQuery</code>](#external_jQuery) |  | <p>the element to attach to. This element will be replaced with this view.<br>                      If options.replaceMethod is provided, then this parameter is ignored.</p> |
+| [$el] | [<code>jQuery</code>](#external_jQuery) |  | <p>the element to attach to. This element will be replaced with this view.<br> If options.replaceMethod is provided, then this parameter is ignored.</p> |
 | [options] | <code>Object</code> |  | <p>optional options</p> |
-| [options.replaceMethod] | <code>Fucntion</code> |  | <p>if given, this view will invoke replaceMethod function<br>                                            in order to attach the view's DOM to the parent instead of calling $el.replaceWith</p> |
+| [options.replaceMethod] | <code>Fucntion</code> |  | <p>if given, this view will invoke replaceMethod function<br> in order to attach the view's DOM to the parent instead of calling $el.replaceWith</p> |
 | [options.discardInjectionSite] | <code>Booleon</code> | <code>false</code> | <p>if set to true, the injection site is not saved.</p> |
 
 <a name="View+attachView"></a>
 
 ### listView.attachView($el, view, [options]) ⇒ <code>Promise</code>
-<p>Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument<br>The element argument can be a String that references an element with the corresponding &quot;inject&quot; attribute.<br>When using attachView with options.useTransition:<br>  Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view<br>  previously had another view at this injections site, this previous view will be removed with that view's transitionOut.<br>  If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even<br>  though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.<br>  If the previous view is the same as the new view, it is injected normally without transitioning in.<br>  The previous view must has used an injection site with the standard &quot;inject=<name of injection site>&quot; attribute to be found.<br>  When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields<br>  will be added to the options parameter to allow better handling of the transitions. These include:<br>  {<br>    newView: the new view<br>    previousView: the previous view (can be undefined)<br>    parentView: the parent view transitioning in or out the tracked view<br>  }</p>
+<p>Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument<br>
+The element argument can be a String that references an element with the corresponding &quot;inject&quot; attribute.<br>
+When using attachView with options.useTransition:<br>
+Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view<br>
+previously had another view at this injections site, this previous view will be removed with that view's transitionOut.<br>
+If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even<br>
+though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.<br>
+If the previous view is the same as the new view, it is injected normally without transitioning in.<br>
+The previous view must has used an injection site with the standard &quot;inject=<name of injection site>&quot; attribute to be found.<br>
+When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields<br>
+will be added to the options parameter to allow better handling of the transitions. These include:<br>
+{<br>
+newView: the new view<br>
+previousView: the previous view (can be undefined)<br>
+parentView: the parent view transitioning in or out the tracked view<br>
+}</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 **Returns**: <code>Promise</code> - <p>resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.</p>  
@@ -1827,8 +1977,23 @@
 | [options.shared] | <code>boolean</code> | <code>false</code> | <p>if set to true, the view will be treated as a shared view and not disposed during parent view disposing.</p> |
 | [options.useTransition] | <code>boolean</code> | <code>false</code> | <p>if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite</p> |
 | [options.addBefore] | <code>boolean</code> | <code>false</code> | <p>if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.</p> |
-| [options.previousView] | [<code>View</code>](#View) |  | <p>if using options.useTransition, then you can explicitly define the view that should be transitioned out.<br>                                       If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.</p> |
+| [options.previousView] | [<code>View</code>](#View) |  | <p>if using options.useTransition, then you can explicitly define the view that should be transitioned out.<br> If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.</p> |
 
+<a name="View+attachTrackedViews"></a>
+
+### listView.attachTrackedViews() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.</p>  
+<a name="View+_attached"></a>
+
+### listView.\_attached()
+<p>Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view<br>
+after the DOM has been attached to the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+isAttachedToParent"></a>
 
 ### listView.isAttachedToParent() ⇒ <code>boolean</code>
@@ -1844,26 +2009,43 @@
 <a name="View+detach"></a>
 
 ### listView.detach()
-<p>If attached, will detach the view from the DOM.<br>This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach<br>callback on each tracked view recursively.</p>
+<p>If attached, will detach the view from the DOM.<br>
+This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach<br>
+callback on each tracked view recursively.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+detachTrackedViews"></a>
 
 ### listView.detachTrackedViews([options])
-<p>Detach all tracked views or a subset of them based on the options parameter.<br>NOTE: this is not recursive - it will not separate the entire view tree.</p>
+<p>Detach all tracked views or a subset of them based on the options parameter.<br>
+NOTE: this is not recursive - it will not separate the entire view tree.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, detach only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, detach only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
+<a name="View+_detached"></a>
+
+### listView.\_detached()
+<p>Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state<br>
+after the view has been removed from the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+activate"></a>
 
 ### listView.activate()
 <p>Resets listeners and events in order for the view to be reattached to the visible DOM</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+_activate"></a>
+
+### listView.\_activate()
+<p>Method to be invoked when activate is called. Use this method to turn on any<br>
+custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+isActive"></a>
@@ -1874,13 +2056,31 @@
 <a name="View+deactivate"></a>
 
 ### listView.deactivate()
-<p>Maintains view state and DOM but prevents view from becoming a zombie by removing listeners<br>and events that may affect user experience. Recursively invokes deactivate on child views</p>
+<p>Maintains view state and DOM but prevents view from becoming a zombie by removing listeners<br>
+and events that may affect user experience. Recursively invokes deactivate on child views</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+_deactivate"></a>
+
+### listView.\_deactivate()
+<p>Method to be invoked when deactivate is called. Use this method to turn off any<br>
+custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+dispose"></a>
 
 ### listView.dispose()
-<p>Removes all listeners, disposes children views, stops listening to events, removes DOM.<br>After dispose is called, the view can be safely garbage collected. Called while<br>recursively removing views from the hierarchy.</p>
+<p>Removes all listeners, disposes children views, stops listening to events, removes DOM.<br>
+After dispose is called, the view can be safely garbage collected. Called while<br>
+recursively removing views from the hierarchy.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+_dispose"></a>
+
+### listView.\_dispose()
+<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>
+view's element, its on's, listenTo's, and any registered children.<br>
+Override this method to destruct any extra</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 <a name="View+isDisposed"></a>
@@ -1897,7 +2097,7 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, only check the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, only check the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+getTrackedViews"></a>
@@ -1911,7 +2111,7 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, get only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, get only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+getTrackedView"></a>
@@ -1927,7 +2127,9 @@
 <a name="View+registerTrackedView"></a>
 
 ### listView.registerTrackedView(view, [options]) ⇒ [<code>View</code>](#View)
-<p>Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will<br>be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the<br>view as a child view unless specified by options.shared.</p>
+<p>Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will<br>
+be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the<br>
+view as a child view unless specified by options.shared.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 **Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
@@ -1936,7 +2138,7 @@
 | --- | --- | --- | --- |
 | view | [<code>View</code>](#View) |  | <p>the tracked view</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.</p> |
 
 <a name="View+unregisterTrackedView"></a>
 
@@ -1953,7 +2155,8 @@
 <a name="View+unregisterTrackedViews"></a>
 
 ### listView.unregisterTrackedViews([options]) ⇒ [<code>View</code>](#View)
-<p>Unbinds all tracked view - no recursive calls will be made to this shared view<br>You can limit the types of views that will be unregistered by using the options parameter.</p>
+<p>Unbinds all tracked view - no recursive calls will be made to this shared view<br>
+You can limit the types of views that will be unregistered by using the options parameter.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 **Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
@@ -1961,13 +2164,14 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+transitionOut"></a>
 
 ### listView.transitionOut(done, options)
-<p>Override to provide your own transition out logic. Default logic is to just detach from the page.<br>The method is passed a callback that should be invoked when the transition out has fully completed.</p>
+<p>Override to provide your own transition out logic. Default logic is to just detach from the page.<br>
+The method is passed a callback that should be invoked when the transition out has fully completed.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 
@@ -1982,13 +2186,662 @@
 <a name="View+transitionIn"></a>
 
 ### listView.transitionIn(attach, done, options)
-<p>Override to provide your own transition in logic. Default logic is to just attach to the page.<br>The method is passed a callback that should be invoked when the transition in has fully completed.</p>
+<p>Override to provide your own transition in logic. Default logic is to just attach to the page.<br>
+The method is passed a callback that should be invoked when the transition in has fully completed.</p>
 
 **Kind**: instance method of [<code>ListView</code>](#ListView)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| attach | <code>function</code> | <p>callback to be invoked when you want this view to be attached to the dom.<br>                                If you are trying to transition in a tracked view, consider using this.transitionInView()</p> |
+| attach | <code>function</code> | <p>callback to be invoked when you want this view to be attached to the dom.<br> If you are trying to transition in a tracked view, consider using this.transitionInView()</p> |
+| done | <code>function</code> | <p>callback that MUST be invoked when the transition is complete.</p> |
+| options |  | <p>optionals options object</p> |
+| options.currentView | [<code>View</code>](#View) | <p>the view that is being transitioned in.</p> |
+| options.previousView | [<code>View</code>](#View) | <p>the view that is being transitioned out. Typically this view.</p> |
+| options.parentView | [<code>View</code>](#View) | <p>the view that is invoking the transition.</p> |
+
+<a name="View+invokeFeedback"></a>
+
+### listView.invokeFeedback(to, [evt], [indexMap])
+<p>Invokes a feedback entry's &quot;then&quot; method</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| to | <code>string</code> | <p>the &quot;to&quot; field corresponding to the feedback entry to be invoked.</p> |
+| [evt] | <code>Event</code> | <p>the event to be passed to the &quot;then&quot; method</p> |
+| [indexMap] | <code>Object</code> | <p>a map from index variable name to index value. Needed for &quot;to&quot; fields with array notation.</p> |
+
+<a name="ListView"></a>
+
+## ListView
+**Kind**: global class  
+
+* [ListView](#ListView)
+    * [new ListView()](#new_ListView_new)
+    * [new constructor(args)](#new_ListView_new)
+    * [.collection](#ListView+collection) : [<code>Collection</code>](#Collection)
+    * [.itemView](#ListView+itemView) : [<code>View</code>](#View) \| <code>function</code>
+    * [.template](#ListView+template) : [<code>Handlebars-Template</code>](#external_Handlebars-Template)
+    * [.emptyTemplate](#ListView+emptyTemplate) : [<code>Handlebars-Template</code>](#external_Handlebars-Template)
+    * [.itemContainer](#ListView+itemContainer) : <code>String</code>
+    * [.viewState](#View+viewState) : [<code>ViewStateCell</code>](#ViewStateCell)
+    * [.setCollection(collection, preventUpdate)](#ListView+setCollection)
+    * [.updateDOM()](#ListView+updateDOM)
+    * [.renderChildViews()](#ListView+renderChildViews)
+    * [.reorder()](#ListView+reorder)
+    * [.prepareEmpty()](#ListView+prepareEmpty) ⇒
+    * [.modelsToRender()](#ListView+modelsToRender)
+    * [.update()](#ListView+update)
+    * [.getItemViewFromModel(model)](#ListView+getItemViewFromModel) ⇒
+    * [.hasItemViews()](#ListView+hasItemViews) ⇒ <code>boolean</code>
+    * [.getItemViews()](#ListView+getItemViews) ⇒ [<code>Array.&lt;View&gt;</code>](#View)
+    * [.get()](#View+get)
+    * [.set()](#View+set)
+    * [.has()](#View+has)
+    * [.unset()](#View+unset)
+    * [.toJSON()](#View+toJSON)
+    * [.getBehavior(alias)](#View+getBehavior) ⇒ <code>Torso.Behavior</code>
+    * [.prepare()](#View+prepare) ⇒ <code>Object</code>
+    * [._prepare(context)](#View+_prepare) ⇒ <code>Object</code>
+    * [.render()](#View+render) ⇒ <code>Promise</code>
+    * [.prerender()](#View+prerender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+    * [.updateClassName(newClassName)](#View+updateClassName)
+    * [.postrender()](#View+postrender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+    * [.templateRender()](#View+templateRender)
+    * [.delegateEvents()](#View+delegateEvents)
+    * [.undelegateEvents()](#View+undelegateEvents)
+    * [.attachTo([$el], [options])](#View+attachTo) ⇒ <code>Promise</code>
+    * [.attachView($el, view, [options])](#View+attachView) ⇒ <code>Promise</code>
+    * [.attachTrackedViews()](#View+attachTrackedViews) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+    * [._attached()](#View+_attached)
+    * [.isAttachedToParent()](#View+isAttachedToParent) ⇒ <code>boolean</code>
+    * [.isAttached()](#View+isAttached) ⇒ <code>boolean</code>
+    * [.detach()](#View+detach)
+    * [.detachTrackedViews([options])](#View+detachTrackedViews)
+    * [._detached()](#View+_detached)
+    * [.activate()](#View+activate)
+    * [._activate()](#View+_activate)
+    * [.isActive()](#View+isActive) ⇒ <code>boolean</code>
+    * [.deactivate()](#View+deactivate)
+    * [._deactivate()](#View+_deactivate)
+    * [.dispose()](#View+dispose)
+    * [._dispose()](#View+_dispose)
+    * [.isDisposed()](#View+isDisposed) ⇒ <code>boolean</code>
+    * [.hasTrackedViews([options])](#View+hasTrackedViews) ⇒ <code>boolean</code>
+    * [.getTrackedViews([options])](#View+getTrackedViews) ⇒ [<code>List.&lt;View&gt;</code>](#View)
+    * [.getTrackedView(viewCID)](#View+getTrackedView) ⇒
+    * [.registerTrackedView(view, [options])](#View+registerTrackedView) ⇒ [<code>View</code>](#View)
+    * [.unregisterTrackedView(view)](#View+unregisterTrackedView) ⇒ [<code>View</code>](#View)
+    * [.unregisterTrackedViews([options])](#View+unregisterTrackedViews) ⇒ [<code>View</code>](#View)
+    * [.transitionOut(done, options)](#View+transitionOut)
+    * [.transitionIn(attach, done, options)](#View+transitionIn)
+    * [.invokeFeedback(to, [evt], [indexMap])](#View+invokeFeedback)
+
+<a name="new_ListView_new"></a>
+
+### new ListView()
+<p>A view that is backed by a collection that managers views per model in the collection.</p>
+
+<a name="new_ListView_new"></a>
+
+### new constructor(args)
+<p>Constructor for the list view object.</p>
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| args | <code>Object</code> |  | <p>options argument</p> |
+| args.itemView | [<code>Backbone-View</code>](#external_Backbone-View) \| <code>function</code> |  | <p>the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.</p> |
+| args.collection | [<code>Backbone-Collection</code>](#external_Backbone-Collection) |  | <p>The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection</p> |
+| [args.itemContext] | <code>Object</code> \| <code>function</code> |  | <p>object or function that's passed to the item view's during initialization under the name &quot;context&quot;. Can be used by the item view during their prepare method.</p> |
+| [args.template] | [<code>Handlebars-Template</code>](#external_Handlebars-Template) |  | <p>allows a list view to hold it's own HTML like filter buttons, etc.</p> |
+| [args.itemContainer] | <code>string</code> |  | <p>(Required if 'template' is provided, ignored otherwise) name of injection site for list of item views</p> |
+| [args.emptyTemplate] | [<code>Handlebars-Template</code>](#external_Handlebars-Template) |  | <p>if provided, this template will be shown if the modelsToRender() method returns an empty list. If a itemContainer is provided, the empty template will be rendered there.</p> |
+| [args.modelsToRender] | <code>function</code> |  | <p>If provided, this function will override the modelsToRender() method with custom functionality.</p> |
+| [args.renderWait] | <code>number</code> | <code>0</code> | <p>If provided, will collect any internally invoked renders (typically through collection events like reset) for a duration specified by renderWait in milliseconds and then calls a single render instead. Helps to remove unnecessary render calls when modifying the collection often.</p> |
+| [args.modelId] | <code>string</code> | <code>&quot;&#x27;cid&#x27;&quot;</code> | <p>one of ('cid' or 'id'): model property used as identifier for a given model. This property is saved and used to find the corresponding view.</p> |
+| [args.modelName] | <code>string</code> | <code>&quot;&#x27;model&#x27;&quot;</code> | <p>name of the model argument passed to the item view during initialization</p> |
+
+<a name="ListView+collection"></a>
+
+### listView.collection : [<code>Collection</code>](#Collection)
+<p>The collection that holds the models that this list view will track</p>
+
+**Kind**: instance property of [<code>ListView</code>](#ListView)  
+**Properties**
+
+| Name |
+| --- |
+| collection | 
+
+<a name="ListView+itemView"></a>
+
+### listView.itemView : [<code>View</code>](#View) \| <code>function</code>
+<p>The item view class definition that will be instantiated for each model in the list.<br>
+itemView can also be a function that takes a model and returns a view class. This allows<br>
+for different view classes depending on the model.</p>
+
+**Kind**: instance property of [<code>ListView</code>](#ListView)  
+**Properties**
+
+| Name |
+| --- |
+| itemView | 
+
+<a name="ListView+template"></a>
+
+### listView.template : [<code>Handlebars-Template</code>](#external_Handlebars-Template)
+<p>The template that allows a list view to hold it's own HTML like filter buttons, etc.</p>
+
+**Kind**: instance property of [<code>ListView</code>](#ListView)  
+**Properties**
+
+| Name |
+| --- |
+| template | 
+
+<a name="ListView+emptyTemplate"></a>
+
+### listView.emptyTemplate : [<code>Handlebars-Template</code>](#external_Handlebars-Template)
+<p>If provided, this template that will be shown if the modelsToRender() method returns<br>
+an empty list. If an itemContainer is provided, the empty template will be rendered there.</p>
+
+**Kind**: instance property of [<code>ListView</code>](#ListView)  
+**Properties**
+
+| Name |
+| --- |
+| emptyTemplate | 
+
+<a name="ListView+itemContainer"></a>
+
+### listView.itemContainer : <code>String</code>
+<p>(Required if 'template' is provided, ignored otherwise) name of injection site for list of item views</p>
+
+**Kind**: instance property of [<code>ListView</code>](#ListView)  
+**Properties**
+
+| Name |
+| --- |
+| itemContainer | 
+
+<a name="View+viewState"></a>
+
+### listView.viewState : [<code>ViewStateCell</code>](#ViewStateCell)
+<p>Cell that can be used to save state for rendering the view.</p>
+
+**Kind**: instance property of [<code>ListView</code>](#ListView)  
+<a name="ListView+setCollection"></a>
+
+### listView.setCollection(collection, preventUpdate)
+<p>Sets the collection from which this view generates item views.<br>
+This method will attach all necessary event listeners to the new collection to auto-generate item views<br>
+and has the option of removing listeners on a previous collection. It will immediately update child<br>
+views and re-render if it is necessary - this behavior can be prevented with preventUpdate argument</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| collection | [<code>Backbone-Collection</code>](#external_Backbone-Collection) | <p>the new collection that this list view should use.</p> |
+| preventUpdate | <code>boolean</code> | <p>if true, the list view will not update the child views nor rerender.</p> |
+
+<a name="ListView+updateDOM"></a>
+
+### listView.updateDOM()
+<p>Builds a single DOM fragment from the item views and attaches it at once.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Overrides**: [<code>updateDOM</code>](#View+updateDOM)  
+<a name="ListView+renderChildViews"></a>
+
+### listView.renderChildViews()
+<p>Loops through children views and renders them</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="ListView+reorder"></a>
+
+### listView.reorder()
+<p>Takes existing item views and moves them into correct order defined by<br>
+this.modelsToRender(). NOTE: As this method doesn't generate or remove views,<br>
+this method takes advantage of jquery's ability to move elements already attached to the DOM.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="ListView+prepareEmpty"></a>
+
+### listView.prepareEmpty() ⇒
+<p>Override if you want a different context for your empty template. Defaults to this.prepare()</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <p>a context that can be used by the empty list template</p>  
+<a name="ListView+modelsToRender"></a>
+
+### listView.modelsToRender()
+<p>Returns an array of which models should be rendered.<br>
+By default, all models in the input collection will be<br>
+shown.  Extensions of this class may override this<br>
+method to apply collection filters.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="ListView+update"></a>
+
+### listView.update()
+<p>Builds any new views, removes stale ones, and re-renders</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="ListView+getItemViewFromModel"></a>
+
+### listView.getItemViewFromModel(model) ⇒
+<p>Returns the view that corresponds to the model if one exists</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <p>the item view corresponding to the model</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| model | [<code>Model</code>](#Model) | <p>the model</p> |
+
+<a name="ListView+hasItemViews"></a>
+
+### listView.hasItemViews() ⇒ <code>boolean</code>
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>boolean</code> - <p>returns true if there exists any generated item views</p>  
+<a name="ListView+getItemViews"></a>
+
+### listView.getItemViews() ⇒ [<code>Array.&lt;View&gt;</code>](#View)
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: [<code>Array.&lt;View&gt;</code>](#View) - <p>Returns unordered list of views generated by this list view</p>  
+<a name="View+get"></a>
+
+### listView.get()
+<p>Alias to this.viewState.get()</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+set"></a>
+
+### listView.set()
+<p>Alias to this.viewState.set()</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+has"></a>
+
+### listView.has()
+<p>Alias to this.viewState.has()</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+unset"></a>
+
+### listView.unset()
+<p>Alias to this.viewState.unset()</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+toJSON"></a>
+
+### listView.toJSON()
+<p>Alias to this.viewState.toJSON()</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+getBehavior"></a>
+
+### listView.getBehavior(alias) ⇒ <code>Torso.Behavior</code>
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Torso.Behavior</code> - <p>the behavior instance if one exists with that alias</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| alias | <code>string</code> | <p>the name/alias of the behavior</p> |
+
+<a name="View+prepare"></a>
+
+### listView.prepare() ⇒ <code>Object</code>
+<p>prepareFields can be used to augment the default render method contents.<br>
+See __getPrepareFieldsContext() for more details on how to configure them.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Object</code> - <p>context for a render method. Defaults to:<br>
+{view: this.viewState.toJSON(), model: this.model.toJSON()}</p>  
+<a name="View+_prepare"></a>
+
+### listView.\_prepare(context) ⇒ <code>Object</code>
+<p>Extension point to augment the template context with custom content.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Object</code> - <p>[Optional] If you return an object, it will be merged with the context</p>  
+
+| Param | Description |
+| --- | --- |
+| context | <p>the context you can modify</p> |
+
+<a name="View+render"></a>
+
+### listView.render() ⇒ <code>Promise</code>
+<p>Rebuilds the html for this view's element. Should be able to be called at any time.<br>
+Defaults to using this.templateRender. Assumes that this.template is a javascript<br>
+function that accepted a single JSON context.<br>
+The render method returns a promise that resolves when rendering is complete. Typically render<br>
+is synchronous and the rendering is complete upon completion of the method. However, when utilizing<br>
+transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> - <p>a promise that when resolved signifies that the rendering process is complete.</p>  
+<a name="View+prerender"></a>
+
+### listView.prerender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked before any DOM rendering is performed.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);<br>
+NOTE: if you require the view to be detached from the DOM, consider using _detach callback</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.</p>  
+<a name="View+updateClassName"></a>
+
+### listView.updateClassName(newClassName)
+<p>Updates this view element's class attribute with the value provided.<br>
+If no value provided, removes the class attribute of this view element.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newClassName | <code>string</code> | <p>the new value of the class attribute</p> |
+
+<a name="View+postrender"></a>
+
+### listView.postrender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked after all DOM rendering is done and tracked views attached.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);<br>
+NOTE: if you require the view to be attached to the DOM, consider using _attach callback</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.</p>  
+<a name="View+templateRender"></a>
+
+### listView.templateRender()
+<p>Hotswap rendering system reroute method.<br>
+See Torso.templateRenderer#render for params</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+delegateEvents"></a>
+
+### listView.delegateEvents()
+<p>Overrides the base delegateEvents<br>
+Binds DOM events with the view using events hash while also adding feedback event bindings</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+undelegateEvents"></a>
+
+### listView.undelegateEvents()
+<p>Overrides undelegateEvents<br>
+Unbinds DOM events from the view.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+attachTo"></a>
+
+### listView.attachTo([$el], [options]) ⇒ <code>Promise</code>
+<p>If detached, will replace the element passed in with this view's element and activate the view.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> - <p>promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can<br>
+make it asynchronous.</p>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [$el] | [<code>jQuery</code>](#external_jQuery) |  | <p>the element to attach to. This element will be replaced with this view.<br> If options.replaceMethod is provided, then this parameter is ignored.</p> |
+| [options] | <code>Object</code> |  | <p>optional options</p> |
+| [options.replaceMethod] | <code>Fucntion</code> |  | <p>if given, this view will invoke replaceMethod function<br> in order to attach the view's DOM to the parent instead of calling $el.replaceWith</p> |
+| [options.discardInjectionSite] | <code>Booleon</code> | <code>false</code> | <p>if set to true, the injection site is not saved.</p> |
+
+<a name="View+attachView"></a>
+
+### listView.attachView($el, view, [options]) ⇒ <code>Promise</code>
+<p>Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument<br>
+The element argument can be a String that references an element with the corresponding &quot;inject&quot; attribute.<br>
+When using attachView with options.useTransition:<br>
+Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view<br>
+previously had another view at this injections site, this previous view will be removed with that view's transitionOut.<br>
+If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even<br>
+though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.<br>
+If the previous view is the same as the new view, it is injected normally without transitioning in.<br>
+The previous view must has used an injection site with the standard &quot;inject=<name of injection site>&quot; attribute to be found.<br>
+When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields<br>
+will be added to the options parameter to allow better handling of the transitions. These include:<br>
+{<br>
+newView: the new view<br>
+previousView: the previous view (can be undefined)<br>
+parentView: the parent view transitioning in or out the tracked view<br>
+}</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> - <p>resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.</p>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| $el | [<code>jQuery</code>](#external_jQuery) \| <code>string</code> |  | <p>the element to attach to OR the name of the injection site. The element with the attribute &quot;inject=<name of injection site>&quot; will be used.</p> |
+| view | [<code>View</code>](#View) |  | <p>The instantiated view object to be attached</p> |
+| [options] | <code>Object</code> |  | <p>optionals options object. If using transitions, this options object will be passed on to the transitionIn and transitionOut methods as well.</p> |
+| [options.noActivate] | <code>boolean</code> | <code>false</code> | <p>if set to true, the view will not be activated upon attaching.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>if set to true, the view will be treated as a shared view and not disposed during parent view disposing.</p> |
+| [options.useTransition] | <code>boolean</code> | <code>false</code> | <p>if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite</p> |
+| [options.addBefore] | <code>boolean</code> | <code>false</code> | <p>if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.</p> |
+| [options.previousView] | [<code>View</code>](#View) |  | <p>if using options.useTransition, then you can explicitly define the view that should be transitioned out.<br> If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.</p> |
+
+<a name="View+attachTrackedViews"></a>
+
+### listView.attachTrackedViews() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.</p>  
+<a name="View+_attached"></a>
+
+### listView.\_attached()
+<p>Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view<br>
+after the DOM has been attached to the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+isAttachedToParent"></a>
+
+### listView.isAttachedToParent() ⇒ <code>boolean</code>
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>boolean</code> - <p>true if the view is attached to a parent</p>  
+<a name="View+isAttached"></a>
+
+### listView.isAttached() ⇒ <code>boolean</code>
+<p>NOTE: depends on a global variable &quot;document&quot;</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>boolean</code> - <p>true if the view is attached to the DOM</p>  
+<a name="View+detach"></a>
+
+### listView.detach()
+<p>If attached, will detach the view from the DOM.<br>
+This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach<br>
+callback on each tracked view recursively.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+detachTrackedViews"></a>
+
+### listView.detachTrackedViews([options])
+<p>Detach all tracked views or a subset of them based on the options parameter.<br>
+NOTE: this is not recursive - it will not separate the entire view tree.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, detach only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
+| [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
+
+<a name="View+_detached"></a>
+
+### listView.\_detached()
+<p>Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state<br>
+after the view has been removed from the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+activate"></a>
+
+### listView.activate()
+<p>Resets listeners and events in order for the view to be reattached to the visible DOM</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+_activate"></a>
+
+### listView.\_activate()
+<p>Method to be invoked when activate is called. Use this method to turn on any<br>
+custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+isActive"></a>
+
+### listView.isActive() ⇒ <code>boolean</code>
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>boolean</code> - <p>true if the view is active</p>  
+<a name="View+deactivate"></a>
+
+### listView.deactivate()
+<p>Maintains view state and DOM but prevents view from becoming a zombie by removing listeners<br>
+and events that may affect user experience. Recursively invokes deactivate on child views</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+_deactivate"></a>
+
+### listView.\_deactivate()
+<p>Method to be invoked when deactivate is called. Use this method to turn off any<br>
+custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+dispose"></a>
+
+### listView.dispose()
+<p>Removes all listeners, disposes children views, stops listening to events, removes DOM.<br>
+After dispose is called, the view can be safely garbage collected. Called while<br>
+recursively removing views from the hierarchy.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+_dispose"></a>
+
+### listView.\_dispose()
+<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>
+view's element, its on's, listenTo's, and any registered children.<br>
+Override this method to destruct any extra</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+<a name="View+isDisposed"></a>
+
+### listView.isDisposed() ⇒ <code>boolean</code>
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>boolean</code> - <p>true if the view was disposed</p>  
+<a name="View+hasTrackedViews"></a>
+
+### listView.hasTrackedViews([options]) ⇒ <code>boolean</code>
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <code>boolean</code> - <p>true if this view has tracked views (limited by the options parameter)</p>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, only check the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
+| [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
+
+<a name="View+getTrackedViews"></a>
+
+### listView.getTrackedViews([options]) ⇒ [<code>List.&lt;View&gt;</code>](#View)
+<p>Returns all tracked views, both child views and shared views.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: [<code>List.&lt;View&gt;</code>](#View) - <p>all tracked views (filtered by options parameter)</p>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, get only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
+| [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
+
+<a name="View+getTrackedView"></a>
+
+### listView.getTrackedView(viewCID) ⇒
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: <p>the view with the given cid.  Will look in both shared and child views.</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| viewCID | <code>string</code> | <p>the cid of the view</p> |
+
+<a name="View+registerTrackedView"></a>
+
+### listView.registerTrackedView(view, [options]) ⇒ [<code>View</code>](#View)
+<p>Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will<br>
+be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the<br>
+view as a child view unless specified by options.shared.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| view | [<code>View</code>](#View) |  | <p>the tracked view</p> |
+| [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.</p> |
+
+<a name="View+unregisterTrackedView"></a>
+
+### listView.unregisterTrackedView(view) ⇒ [<code>View</code>](#View)
+<p>Unbinds the tracked view - no recursive calls will be made to this shared view</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| view | [<code>View</code>](#View) | <p>the shared view</p> |
+
+<a name="View+unregisterTrackedViews"></a>
+
+### listView.unregisterTrackedViews([options]) ⇒ [<code>View</code>](#View)
+<p>Unbinds all tracked view - no recursive calls will be made to this shared view<br>
+You can limit the types of views that will be unregistered by using the options parameter.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+**Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
+| [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
+
+<a name="View+transitionOut"></a>
+
+### listView.transitionOut(done, options)
+<p>Override to provide your own transition out logic. Default logic is to just detach from the page.<br>
+The method is passed a callback that should be invoked when the transition out has fully completed.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| done | <code>function</code> | <p>callback that MUST be invoked when the transition is complete.</p> |
+| options |  | <p>optionals options object</p> |
+| options.currentView | [<code>View</code>](#View) | <p>the view that is being transitioned in.</p> |
+| options.previousView | [<code>View</code>](#View) | <p>the view that is being transitioned out. Typically this view.</p> |
+| options.parentView | [<code>View</code>](#View) | <p>the view that is invoking the transition.</p> |
+
+<a name="View+transitionIn"></a>
+
+### listView.transitionIn(attach, done, options)
+<p>Override to provide your own transition in logic. Default logic is to just attach to the page.<br>
+The method is passed a callback that should be invoked when the transition in has fully completed.</p>
+
+**Kind**: instance method of [<code>ListView</code>](#ListView)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attach | <code>function</code> | <p>callback to be invoked when you want this view to be attached to the dom.<br> If you are trying to transition in a tracked view, consider using this.transitionInView()</p> |
 | done | <code>function</code> | <p>callback that MUST be invoked when the transition is complete.</p> |
 | options |  | <p>optionals options object</p> |
 | options.currentView | [<code>View</code>](#View) | <p>the view that is being transitioned in.</p> |
@@ -2037,7 +2890,7 @@
 | --- | --- | --- | --- |
 | attributes | <code>Object</code> |  | <p>the initial attributes to use for this model.</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>the options for setting up this model.</p> |
-| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this model in the app-level registry.<br>                                            By default this will NOT add it to the registry unless set to true because<br>                                            we have not mechanism that will make sure the models get removed from the registry<br>                                            at the appropriate times.</p> |
+| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this model in the app-level registry.<br> By default this will NOT add it to the registry unless set to true because<br> we have not mechanism that will make sure the models get removed from the registry<br> at the appropriate times.</p> |
 
 <a name="Model+pollTimeoutId"></a>
 
@@ -2060,7 +2913,9 @@
 <a name="Model+startPolling"></a>
 
 ### model.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: instance method of [<code>Model</code>](#Model)  
 **Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
@@ -2079,14 +2934,17 @@
 <a name="Model+polledFetch"></a>
 
 ### model.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: instance method of [<code>Model</code>](#Model)  
 **Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
 <a name="Model+dispose"></a>
 
 ### model.dispose()
-<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>Removes listeners and calls out to _dispose() for child specific dispose logic.<br>Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>
+Removes listeners and calls out to _dispose() for child specific dispose logic.<br>
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
 
 **Kind**: instance method of [<code>Model</code>](#Model)  
 **Mixes**: [<code>dispose</code>](#modelMixin.dispose)  
@@ -2131,12 +2989,14 @@
 | --- | --- | --- | --- |
 | attributes | <code>Object</code> |  | <p>the initial attributes to use for this cell.</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>the options for setting up this cell.</p> |
-| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this cell in the app-level registry.<br>                                            By default this will NOT add it to the registry unless set to true because<br>                                            we have not mechanism that will make sure the models get removed from the registry<br>                                            at the appropriate times.</p> |
+| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this cell in the app-level registry.<br> By default this will NOT add it to the registry unless set to true because<br> we have not mechanism that will make sure the models get removed from the registry<br> at the appropriate times.</p> |
 
 <a name="NestedCell+isModelCompatible"></a>
 
 ### nestedCell.isModelCompatible
-<p>Whether a cell can pass as a model or not.<br>If true, the cell will not fail is persisted functions are invoked<br>If false, the cell will throw exceptions if persisted function are invoked</p>
+<p>Whether a cell can pass as a model or not.<br>
+If true, the cell will not fail is persisted functions are invoked<br>
+If false, the cell will throw exceptions if persisted function are invoked</p>
 
 **Kind**: instance property of [<code>NestedCell</code>](#NestedCell)  
 **Mixes**: [<code>isModelCompatible</code>](#cellMixin.isModelCompatible)  
@@ -2196,7 +3056,9 @@
 <a name="NestedModel+startPolling"></a>
 
 ### nestedCell.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: instance method of [<code>NestedCell</code>](#NestedCell)  
 **Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
@@ -2215,14 +3077,17 @@
 <a name="NestedModel+polledFetch"></a>
 
 ### nestedCell.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: instance method of [<code>NestedCell</code>](#NestedCell)  
 **Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
 <a name="NestedModel+dispose"></a>
 
 ### nestedCell.dispose()
-<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>Removes listeners and calls out to _dispose() for child specific dispose logic.<br>Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>
+Removes listeners and calls out to _dispose() for child specific dispose logic.<br>
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
 
 **Kind**: instance method of [<code>NestedCell</code>](#NestedCell)  
 **Mixes**: [<code>dispose</code>](#modelMixin.dispose)  
@@ -2262,7 +3127,7 @@
 | --- | --- | --- | --- |
 | attributes | <code>Object</code> |  | <p>the initial attributes to use for this model.</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>the options for setting up this model.</p> |
-| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this model in the app-level registry.<br>                                            By default this will NOT add it to the registry unless set to true because<br>                                            we have not mechanism that will make sure the models get removed from the registry<br>                                            at the appropriate times.</p> |
+| [options.register] | <code>boolean</code> | <code>false</code> | <p>whether to register this model in the app-level registry.<br> By default this will NOT add it to the registry unless set to true because<br> we have not mechanism that will make sure the models get removed from the registry<br> at the appropriate times.</p> |
 
 <a name="NestedModel+pollTimeoutId"></a>
 
@@ -2285,7 +3150,9 @@
 <a name="NestedModel+startPolling"></a>
 
 ### nestedModel.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: instance method of [<code>NestedModel</code>](#NestedModel)  
 **Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
@@ -2304,14 +3171,17 @@
 <a name="NestedModel+polledFetch"></a>
 
 ### nestedModel.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: instance method of [<code>NestedModel</code>](#NestedModel)  
 **Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
 <a name="NestedModel+dispose"></a>
 
 ### nestedModel.dispose()
-<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>Removes listeners and calls out to _dispose() for child specific dispose logic.<br>Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>
+Removes listeners and calls out to _dispose() for child specific dispose logic.<br>
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
 
 **Kind**: instance method of [<code>NestedModel</code>](#NestedModel)  
 **Mixes**: [<code>dispose</code>](#modelMixin.dispose)  
@@ -2360,12 +3230,14 @@
 | --- | --- | --- | --- |
 | attributes | <code>Object</code> |  | <p>the initial attributes to use for this service.</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>the options for setting up this service.</p> |
-| [options.register] | <code>boolean</code> | <code>true</code> | <p>whether to register this service in the app-level registry.<br>                                           By default this WILL add it to the registry unless set to false because<br>                                           most services are global so holding on to them beyond</p> |
+| [options.register] | <code>boolean</code> | <code>true</code> | <p>whether to register this service in the app-level registry.<br> By default this WILL add it to the registry unless set to false because<br> most services are global so holding on to them beyond</p> |
 
 <a name="Cell+isModelCompatible"></a>
 
 ### serviceCell.isModelCompatible
-<p>Whether a cell can pass as a model or not.<br>If true, the cell will not fail is persisted functions are invoked<br>If false, the cell will throw exceptions if persisted function are invoked</p>
+<p>Whether a cell can pass as a model or not.<br>
+If true, the cell will not fail is persisted functions are invoked<br>
+If false, the cell will throw exceptions if persisted function are invoked</p>
 
 **Kind**: instance property of [<code>ServiceCell</code>](#ServiceCell)  
 **Mixes**: [<code>isModelCompatible</code>](#cellMixin.isModelCompatible)  
@@ -2413,6 +3285,7 @@
 
 * [ViewStateCell](#ViewStateCell) ⇐ [<code>NestedCell</code>](#NestedCell)
     * [new ViewStateCell(attrs, opts)](#new_ViewStateCell_new)
+    * [new initialize(attrs, opts)](#new_ViewStateCell_new)
     * [.isModelCompatible](#NestedCell+isModelCompatible)
     * [.pollTimeoutId](#NestedModel+pollTimeoutId)
     * [.trigger()](#ViewStateCell+trigger)
@@ -2430,8 +3303,20 @@
 <a name="new_ViewStateCell_new"></a>
 
 ### new ViewStateCell(attrs, opts)
-<p>ViewStateCell is a NestedCell that holds view state data and can trigger<br>change events. These change events will propogate up and trigger on the view<br>as well.</p>
+<p>ViewStateCell is a NestedCell that holds view state data and can trigger<br>
+change events. These change events will propagate up and trigger on the view<br>
+as well.</p>
 
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attrs | <code>Object</code> | <p>the initial values to set on the cell - inherited from [NestedCell](#NestedCell).</p> |
+| opts | <code>Object</code> | <p>options for the cell.</p> |
+| opts.view | [<code>Backbone-View</code>](#external_Backbone-View) | <p>the view that these options are tied to.</p> |
+
+<a name="new_ViewStateCell_new"></a>
+
+### new initialize(attrs, opts)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -2442,7 +3327,9 @@
 <a name="NestedCell+isModelCompatible"></a>
 
 ### viewStateCell.isModelCompatible
-<p>Whether a cell can pass as a model or not.<br>If true, the cell will not fail is persisted functions are invoked<br>If false, the cell will throw exceptions if persisted function are invoked</p>
+<p>Whether a cell can pass as a model or not.<br>
+If true, the cell will not fail is persisted functions are invoked<br>
+If false, the cell will throw exceptions if persisted function are invoked</p>
 
 **Kind**: instance property of [<code>ViewStateCell</code>](#ViewStateCell)  
 **Mixes**: [<code>isModelCompatible</code>](#cellMixin.isModelCompatible)  
@@ -2508,7 +3395,9 @@
 <a name="NestedModel+startPolling"></a>
 
 ### viewStateCell.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
 **Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
@@ -2527,14 +3416,176 @@
 <a name="NestedModel+polledFetch"></a>
 
 ### viewStateCell.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
 **Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
 <a name="NestedModel+dispose"></a>
 
 ### viewStateCell.dispose()
-<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>Removes listeners and calls out to _dispose() for child specific dispose logic.<br>Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>
+Removes listeners and calls out to _dispose() for child specific dispose logic.<br>
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>dispose</code>](#modelMixin.dispose)  
+<a name="NestedModel+_dispose"></a>
+
+### viewStateCell.\_dispose()
+<p>Dispose hook meant to be used by prototypes that extend this one that need to provide their own dispose logic.</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>\_dispose</code>](#modelMixin._dispose)  
+<a name="ViewStateCell"></a>
+
+## ViewStateCell
+**Kind**: global class  
+
+* [ViewStateCell](#ViewStateCell)
+    * [new ViewStateCell(attrs, opts)](#new_ViewStateCell_new)
+    * [new initialize(attrs, opts)](#new_ViewStateCell_new)
+    * [.isModelCompatible](#NestedCell+isModelCompatible)
+    * [.pollTimeoutId](#NestedModel+pollTimeoutId)
+    * [.trigger()](#ViewStateCell+trigger)
+    * [.save()](#NestedCell+save)
+    * [.fetch()](#NestedCell+fetch)
+    * [.sync()](#NestedCell+sync)
+    * [.url()](#NestedCell+url)
+    * [.isPolling()](#NestedModel+isPolling)
+    * [.startPolling(pollInterval)](#NestedModel+startPolling)
+    * [.stopPolling()](#NestedModel+stopPolling)
+    * [.polledFetch()](#NestedModel+polledFetch)
+    * [.dispose()](#NestedModel+dispose)
+    * [._dispose()](#NestedModel+_dispose)
+
+<a name="new_ViewStateCell_new"></a>
+
+### new ViewStateCell(attrs, opts)
+<p>ViewStateCell is a NestedCell that holds view state data and can trigger<br>
+change events. These change events will propagate up and trigger on the view<br>
+as well.</p>
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attrs | <code>Object</code> | <p>the initial values to set on the cell - inherited from [NestedCell](#NestedCell).</p> |
+| opts | <code>Object</code> | <p>options for the cell.</p> |
+| opts.view | [<code>Backbone-View</code>](#external_Backbone-View) | <p>the view that these options are tied to.</p> |
+
+<a name="new_ViewStateCell_new"></a>
+
+### new initialize(attrs, opts)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| attrs | <code>Object</code> | <p>the initial values to set on the cell - inherited from [NestedCell](#NestedCell).</p> |
+| opts | <code>Object</code> | <p>options for the cell.</p> |
+| opts.view | [<code>Backbone-View</code>](#external_Backbone-View) | <p>the view that these options are tied to.</p> |
+
+<a name="NestedCell+isModelCompatible"></a>
+
+### viewStateCell.isModelCompatible
+<p>Whether a cell can pass as a model or not.<br>
+If true, the cell will not fail is persisted functions are invoked<br>
+If false, the cell will throw exceptions if persisted function are invoked</p>
+
+**Kind**: instance property of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>isModelCompatible</code>](#cellMixin.isModelCompatible)  
+**Default**: <code>false</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| isModelCompatible | <code>boolean</code> | 
+
+<a name="NestedModel+pollTimeoutId"></a>
+
+### viewStateCell.pollTimeoutId
+**Kind**: instance property of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>pollTimeoutId</code>](#pollingMixin.pollTimeoutId)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| pollTimeoutId | <code>number</code> | <p>The id from when setTimeout was called to start polling.</p> |
+
+<a name="ViewStateCell+trigger"></a>
+
+### viewStateCell.trigger()
+<p>Retrigger view state change events on the view as well.</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+<a name="NestedCell+save"></a>
+
+### viewStateCell.save()
+<p>Override and disable the save function</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>save</code>](#cellMixin.save)  
+<a name="NestedCell+fetch"></a>
+
+### viewStateCell.fetch()
+<p>Override and disable the fetch function</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>fetch</code>](#cellMixin.fetch)  
+<a name="NestedCell+sync"></a>
+
+### viewStateCell.sync()
+<p>Override and disable the sync function</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>sync</code>](#cellMixin.sync)  
+<a name="NestedCell+url"></a>
+
+### viewStateCell.url()
+<p>Override and disable the url</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>url</code>](#cellMixin.url)  
+<a name="NestedModel+isPolling"></a>
+
+### viewStateCell.isPolling()
+<p>Returns true if the poll is active</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>isPolling</code>](#pollingMixin.isPolling)  
+<a name="NestedModel+startPolling"></a>
+
+### viewStateCell.startPolling(pollInterval)
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| pollInterval | <code>Integer</code> | <p>interval between each poll in ms.</p> |
+
+<a name="NestedModel+stopPolling"></a>
+
+### viewStateCell.stopPolling()
+<p>Stops polling Model and clears all Timeouts.</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>stopPolling</code>](#pollingMixin.stopPolling)  
+<a name="NestedModel+polledFetch"></a>
+
+### viewStateCell.polledFetch()
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
+
+**Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
+**Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
+<a name="NestedModel+dispose"></a>
+
+### viewStateCell.dispose()
+<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>
+Removes listeners and calls out to _dispose() for child specific dispose logic.<br>
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
 
 **Kind**: instance method of [<code>ViewStateCell</code>](#ViewStateCell)  
 **Mixes**: [<code>dispose</code>](#modelMixin.dispose)  
@@ -2548,22 +3599,16 @@
 <a name="View"></a>
 
 ## View ⇐ [<code>Backbone-View</code>](#external_Backbone-View)
+<p>View</p>
+
 **Kind**: global class  
 **Extends**: [<code>Backbone-View</code>](#external_Backbone-View)  
 **See**: <a href="../annotated/modules/View.html">View Annotated Source</a>  
 **Author**: ariel.wexler@vecna.com, kent.willis@vecna.com  
 
 * [View](#View) ⇐ [<code>Backbone-View</code>](#external_Backbone-View)
-    * [new View()](#new_View_new)
+    * [new constructor()](#new_View_new)
     * [.viewState](#View+viewState) : [<code>ViewStateCell</code>](#ViewStateCell)
-    * [.prerender](#View+prerender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [.postrender](#View+postrender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [.attachTrackedViews](#View+attachTrackedViews) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-    * [._attached](#View+_attached)
-    * [._detached](#View+_detached)
-    * [._activate](#View+_activate)
-    * [._deactivate](#View+_deactivate)
-    * [._dispose](#View+_dispose)
     * [.get()](#View+get)
     * [.set()](#View+set)
     * [.has()](#View+has)
@@ -2573,21 +3618,29 @@
     * [.prepare()](#View+prepare) ⇒ <code>Object</code>
     * [._prepare(context)](#View+_prepare) ⇒ <code>Object</code>
     * [.render()](#View+render) ⇒ <code>Promise</code>
+    * [.prerender()](#View+prerender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
     * [.updateDOM()](#View+updateDOM)
     * [.updateClassName(newClassName)](#View+updateClassName)
+    * [.postrender()](#View+postrender) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
     * [.templateRender()](#View+templateRender)
     * [.delegateEvents()](#View+delegateEvents)
     * [.undelegateEvents()](#View+undelegateEvents)
     * [.attachTo([$el], [options])](#View+attachTo) ⇒ <code>Promise</code>
     * [.attachView($el, view, [options])](#View+attachView) ⇒ <code>Promise</code>
+    * [.attachTrackedViews()](#View+attachTrackedViews) ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+    * [._attached()](#View+_attached)
     * [.isAttachedToParent()](#View+isAttachedToParent) ⇒ <code>boolean</code>
     * [.isAttached()](#View+isAttached) ⇒ <code>boolean</code>
     * [.detach()](#View+detach)
     * [.detachTrackedViews([options])](#View+detachTrackedViews)
+    * [._detached()](#View+_detached)
     * [.activate()](#View+activate)
+    * [._activate()](#View+_activate)
     * [.isActive()](#View+isActive) ⇒ <code>boolean</code>
     * [.deactivate()](#View+deactivate)
+    * [._deactivate()](#View+_deactivate)
     * [.dispose()](#View+dispose)
+    * [._dispose()](#View+_dispose)
     * [.isDisposed()](#View+isDisposed) ⇒ <code>boolean</code>
     * [.hasTrackedViews([options])](#View+hasTrackedViews) ⇒ <code>boolean</code>
     * [.getTrackedViews([options])](#View+getTrackedViews) ⇒ [<code>List.&lt;View&gt;</code>](#View)
@@ -2601,7 +3654,7 @@
 
 <a name="new_View_new"></a>
 
-### new View()
+### new constructor()
 <p>Overrides constructor to create needed fields and invoke activate/render after initialization</p>
 <p>Generic View that deals with:</p>
 <ul>
@@ -2613,57 +3666,6 @@
 
 ### view.viewState : [<code>ViewStateCell</code>](#ViewStateCell)
 <p>Cell that can be used to save state for rendering the view.</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-<a name="View+prerender"></a>
-
-### view.prerender ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook during render that is invoked before any DOM rendering is performed.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);<br>NOTE: if you require the view to be detached from the DOM, consider using _detach callback</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.</p>  
-<a name="View+postrender"></a>
-
-### view.postrender ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook during render that is invoked after all DOM rendering is done and tracked views attached.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);<br>NOTE: if you require the view to be attached to the DOM, consider using _attach callback</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.</p>  
-<a name="View+attachTrackedViews"></a>
-
-### view.attachTrackedViews ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
-<p>Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.<br>This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.</p>  
-<a name="View+_attached"></a>
-
-### view.\_attached
-<p>Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view<br>after the DOM has been attached to the document. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-<a name="View+_detached"></a>
-
-### view.\_detached
-<p>Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state<br>after the view has been removed from the document. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-<a name="View+_activate"></a>
-
-### view.\_activate
-<p>Method to be invoked when activate is called. Use this method to turn on any<br>custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-<a name="View+_deactivate"></a>
-
-### view.\_deactivate
-<p>Method to be invoked when deactivate is called. Use this method to turn off any<br>custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.</p>
-
-**Kind**: instance property of [<code>View</code>](#View)  
-<a name="View+_dispose"></a>
-
-### view.\_dispose
-<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>view's element, its on's, listenTo's, and any registered children.<br>Override this method to destruct any extra</p>
 
 **Kind**: instance property of [<code>View</code>](#View)  
 <a name="View+get"></a>
@@ -2709,10 +3711,12 @@
 <a name="View+prepare"></a>
 
 ### view.prepare() ⇒ <code>Object</code>
-<p>prepareFields can be used to augment the default render method contents.<br>See __getPrepareFieldsContext() for more details on how to configure them.</p>
+<p>prepareFields can be used to augment the default render method contents.<br>
+See __getPrepareFieldsContext() for more details on how to configure them.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
-**Returns**: <code>Object</code> - <p>context for a render method. Defaults to:<br>   {view: this.viewState.toJSON(), model: this.model.toJSON()}</p>  
+**Returns**: <code>Object</code> - <p>context for a render method. Defaults to:<br>
+{view: this.viewState.toJSON(), model: this.model.toJSON()}</p>  
 <a name="View+_prepare"></a>
 
 ### view.\_prepare(context) ⇒ <code>Object</code>
@@ -2728,20 +3732,38 @@
 <a name="View+render"></a>
 
 ### view.render() ⇒ <code>Promise</code>
-<p>Rebuilds the html for this view's element. Should be able to be called at any time.<br>Defaults to using this.templateRender. Assumes that this.template is a javascript<br>function that accepted a single JSON context.<br>The render method returns a promise that resolves when rendering is complete. Typically render<br>is synchronous and the rendering is complete upon completion of the method. However, when utilizing<br>transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.</p>
+<p>Rebuilds the html for this view's element. Should be able to be called at any time.<br>
+Defaults to using this.templateRender. Assumes that this.template is a javascript<br>
+function that accepted a single JSON context.<br>
+The render method returns a promise that resolves when rendering is complete. Typically render<br>
+is synchronous and the rendering is complete upon completion of the method. However, when utilizing<br>
+transitions/animations, the render process can be asynchronous and the promise is useful to know when it has finished.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 **Returns**: <code>Promise</code> - <p>a promise that when resolved signifies that the rendering process is complete.</p>  
+<a name="View+prerender"></a>
+
+### view.prerender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked before any DOM rendering is performed.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.prerender.apply(this, arguments);<br>
+NOTE: if you require the view to be detached from the DOM, consider using _detach callback</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.</p>  
 <a name="View+updateDOM"></a>
 
 ### view.updateDOM()
-<p>Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.<br>Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);<br>this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.<br>Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.</p>
+<p>Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.<br>
+Defaults to using the stanrdard: this.templateRender(this.$el, this.template, this.prepare(), templateRendererOptions);<br>
+this.templateRendererOptions is an object or function defined on the view that is passed into the renderer.<br>
+Examples include: views with no template or multiple templates, or if you wish to use a different rendering engine than the templateRenderer or wish to pass options to it.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+updateClassName"></a>
 
 ### view.updateClassName(newClassName)
-<p>Updates this view element's class attribute with the value provided.<br>If no value provided, removes the class attribute of this view element.</p>
+<p>Updates this view element's class attribute with the value provided.<br>
+If no value provided, removes the class attribute of this view element.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
@@ -2749,22 +3771,34 @@
 | --- | --- | --- |
 | newClassName | <code>string</code> | <p>the new value of the class attribute</p> |
 
+<a name="View+postrender"></a>
+
+### view.postrender() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook during render that is invoked after all DOM rendering is done and tracked views attached.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.postrender.apply(this, arguments);<br>
+NOTE: if you require the view to be attached to the DOM, consider using _attach callback</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.</p>  
 <a name="View+templateRender"></a>
 
 ### view.templateRender()
-<p>Hotswap rendering system reroute method.<br>See Torso.templateRenderer#render for params</p>
+<p>Hotswap rendering system reroute method.<br>
+See Torso.templateRenderer#render for params</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+delegateEvents"></a>
 
 ### view.delegateEvents()
-<p>Overrides the base delegateEvents<br>Binds DOM events with the view using events hash while also adding feedback event bindings</p>
+<p>Overrides the base delegateEvents<br>
+Binds DOM events with the view using events hash while also adding feedback event bindings</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+undelegateEvents"></a>
 
 ### view.undelegateEvents()
-<p>Overrides undelegateEvents<br>Unbinds DOM events from the view.</p>
+<p>Overrides undelegateEvents<br>
+Unbinds DOM events from the view.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+attachTo"></a>
@@ -2773,19 +3807,35 @@
 <p>If detached, will replace the element passed in with this view's element and activate the view.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
-**Returns**: <code>Promise</code> - <p>promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can<br>                  make it asynchronous.</p>  
+**Returns**: <code>Promise</code> - <p>promise that when resolved, the attach process is complete. Normally this method is synchronous. Transition effects can<br>
+make it asynchronous.</p>  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [$el] | [<code>jQuery</code>](#external_jQuery) |  | <p>the element to attach to. This element will be replaced with this view.<br>                      If options.replaceMethod is provided, then this parameter is ignored.</p> |
+| [$el] | [<code>jQuery</code>](#external_jQuery) |  | <p>the element to attach to. This element will be replaced with this view.<br> If options.replaceMethod is provided, then this parameter is ignored.</p> |
 | [options] | <code>Object</code> |  | <p>optional options</p> |
-| [options.replaceMethod] | <code>Fucntion</code> |  | <p>if given, this view will invoke replaceMethod function<br>                                            in order to attach the view's DOM to the parent instead of calling $el.replaceWith</p> |
+| [options.replaceMethod] | <code>Fucntion</code> |  | <p>if given, this view will invoke replaceMethod function<br> in order to attach the view's DOM to the parent instead of calling $el.replaceWith</p> |
 | [options.discardInjectionSite] | <code>Booleon</code> | <code>false</code> | <p>if set to true, the injection site is not saved.</p> |
 
 <a name="View+attachView"></a>
 
 ### view.attachView($el, view, [options]) ⇒ <code>Promise</code>
-<p>Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument<br>The element argument can be a String that references an element with the corresponding &quot;inject&quot; attribute.<br>When using attachView with options.useTransition:<br>  Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view<br>  previously had another view at this injections site, this previous view will be removed with that view's transitionOut.<br>  If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even<br>  though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.<br>  If the previous view is the same as the new view, it is injected normally without transitioning in.<br>  The previous view must has used an injection site with the standard &quot;inject=<name of injection site>&quot; attribute to be found.<br>  When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields<br>  will be added to the options parameter to allow better handling of the transitions. These include:<br>  {<br>    newView: the new view<br>    previousView: the previous view (can be undefined)<br>    parentView: the parent view transitioning in or out the tracked view<br>  }</p>
+<p>Registers the view as a tracked view (defaulting as a child view), then calls view.attachTo with the element argument<br>
+The element argument can be a String that references an element with the corresponding &quot;inject&quot; attribute.<br>
+When using attachView with options.useTransition:<br>
+Will inject a new view into an injection site by using the new view's transitionIn method. If the parent view<br>
+previously had another view at this injections site, this previous view will be removed with that view's transitionOut.<br>
+If this method is used within a render, the current views' injection sites will be cached so they can be transitioned out even<br>
+though they are detached in the process of re-rendering. If no previous view is given and none can be found, the new view is transitioned in regardless.<br>
+If the previous view is the same as the new view, it is injected normally without transitioning in.<br>
+The previous view must has used an injection site with the standard &quot;inject=<name of injection site>&quot; attribute to be found.<br>
+When the transitionIn and transitionOut methods are invoked on the new and previous views, the options parameter will be passed on to them. Other fields<br>
+will be added to the options parameter to allow better handling of the transitions. These include:<br>
+{<br>
+newView: the new view<br>
+previousView: the previous view (can be undefined)<br>
+parentView: the parent view transitioning in or out the tracked view<br>
+}</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 **Returns**: <code>Promise</code> - <p>resolved when all transitions are complete. No payload is provided upon resolution. If no transitions, then returns a resolved promise.</p>  
@@ -2799,8 +3849,23 @@
 | [options.shared] | <code>boolean</code> | <code>false</code> | <p>if set to true, the view will be treated as a shared view and not disposed during parent view disposing.</p> |
 | [options.useTransition] | <code>boolean</code> | <code>false</code> | <p>if set to true, this method will delegate attach logic to this.__transitionNewViewIntoSite</p> |
 | [options.addBefore] | <code>boolean</code> | <code>false</code> | <p>if true, and options.useTransition is true, the new view's element will be added before the previous view's element. Defaults to after.</p> |
-| [options.previousView] | [<code>View</code>](#View) |  | <p>if using options.useTransition, then you can explicitly define the view that should be transitioned out.<br>                                       If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.</p> |
+| [options.previousView] | [<code>View</code>](#View) |  | <p>if using options.useTransition, then you can explicitly define the view that should be transitioned out.<br> If using transitions and no previousView is provided, it will look to see if a view already is at this injection site and uses that by default.</p> |
 
+<a name="View+attachTrackedViews"></a>
+
+### view.attachTrackedViews() ⇒ <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code>
+<p>Hook to attach all your tracked views. This hook will be called after all DOM rendering is done so injection sites should be available.<br>
+This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
+**Returns**: <code>Promise</code> \| <code>Array.&lt;Promise&gt;</code> - <p>you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.</p>  
+<a name="View+_attached"></a>
+
+### view.\_attached()
+<p>Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view<br>
+after the DOM has been attached to the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+isAttachedToParent"></a>
 
 ### view.isAttachedToParent() ⇒ <code>boolean</code>
@@ -2816,26 +3881,43 @@
 <a name="View+detach"></a>
 
 ### view.detach()
-<p>If attached, will detach the view from the DOM.<br>This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach<br>callback on each tracked view recursively.</p>
+<p>If attached, will detach the view from the DOM.<br>
+This method will only separate this view from the DOM it was attached to, but it WILL invoke the _detach<br>
+callback on each tracked view recursively.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+detachTrackedViews"></a>
 
 ### view.detachTrackedViews([options])
-<p>Detach all tracked views or a subset of them based on the options parameter.<br>NOTE: this is not recursive - it will not separate the entire view tree.</p>
+<p>Detach all tracked views or a subset of them based on the options parameter.<br>
+NOTE: this is not recursive - it will not separate the entire view tree.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, detach only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, detach only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, detach only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
+<a name="View+_detached"></a>
+
+### view.\_detached()
+<p>Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state<br>
+after the view has been removed from the document. The default implementation is a no-op.</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+activate"></a>
 
 ### view.activate()
 <p>Resets listeners and events in order for the view to be reattached to the visible DOM</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
+<a name="View+_activate"></a>
+
+### view.\_activate()
+<p>Method to be invoked when activate is called. Use this method to turn on any<br>
+custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+isActive"></a>
@@ -2846,13 +3928,31 @@
 <a name="View+deactivate"></a>
 
 ### view.deactivate()
-<p>Maintains view state and DOM but prevents view from becoming a zombie by removing listeners<br>and events that may affect user experience. Recursively invokes deactivate on child views</p>
+<p>Maintains view state and DOM but prevents view from becoming a zombie by removing listeners<br>
+and events that may affect user experience. Recursively invokes deactivate on child views</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
+<a name="View+_deactivate"></a>
+
+### view.\_deactivate()
+<p>Method to be invoked when deactivate is called. Use this method to turn off any<br>
+custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+dispose"></a>
 
 ### view.dispose()
-<p>Removes all listeners, disposes children views, stops listening to events, removes DOM.<br>After dispose is called, the view can be safely garbage collected. Called while<br>recursively removing views from the hierarchy.</p>
+<p>Removes all listeners, disposes children views, stops listening to events, removes DOM.<br>
+After dispose is called, the view can be safely garbage collected. Called while<br>
+recursively removing views from the hierarchy.</p>
+
+**Kind**: instance method of [<code>View</code>](#View)  
+<a name="View+_dispose"></a>
+
+### view.\_dispose()
+<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>
+view's element, its on's, listenTo's, and any registered children.<br>
+Override this method to destruct any extra</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+isDisposed"></a>
@@ -2869,7 +3969,7 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, only check the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, only check the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, only check the child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+getTrackedViews"></a>
@@ -2883,7 +3983,7 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, get only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, get only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, get only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+getTrackedView"></a>
@@ -2899,7 +3999,9 @@
 <a name="View+registerTrackedView"></a>
 
 ### view.registerTrackedView(view, [options]) ⇒ [<code>View</code>](#View)
-<p>Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will<br>be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the<br>view as a child view unless specified by options.shared.</p>
+<p>Binds the view as a tracked view - any recursive calls like activate, deactivate, or dispose will<br>
+be done to the tracked view as well.  Except dispose for shared views. This method defaults to register the<br>
+view as a child view unless specified by options.shared.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 **Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
@@ -2908,7 +4010,7 @@
 | --- | --- | --- | --- |
 | view | [<code>View</code>](#View) |  | <p>the tracked view</p> |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, registers view as a shared view. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed. If false, registers view as a child view which are disposed when the parent is disposed.</p> |
 
 <a name="View+unregisterTrackedView"></a>
 
@@ -2925,7 +4027,8 @@
 <a name="View+unregisterTrackedViews"></a>
 
 ### view.unregisterTrackedViews([options]) ⇒ [<code>View</code>](#View)
-<p>Unbinds all tracked view - no recursive calls will be made to this shared view<br>You can limit the types of views that will be unregistered by using the options parameter.</p>
+<p>Unbinds all tracked view - no recursive calls will be made to this shared view<br>
+You can limit the types of views that will be unregistered by using the options parameter.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 **Returns**: [<code>View</code>](#View) - <p>the tracked view</p>  
@@ -2933,13 +4036,14 @@
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>Object</code> | <code>{}</code> | <p>Optional options.</p> |
-| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view<br>                                          which are disposed when the parent is disposed.</p> |
+| [options.shared] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only the shared views. These are views not owned by this parent. As compared to a child view<br> which are disposed when the parent is disposed.</p> |
 | [options.child] | <code>boolean</code> | <code>false</code> | <p>If true, unregister only child views. These are views that are owned by the parent and dispose of them if the parent is disposed.</p> |
 
 <a name="View+transitionOut"></a>
 
 ### view.transitionOut(done, options)
-<p>Override to provide your own transition out logic. Default logic is to just detach from the page.<br>The method is passed a callback that should be invoked when the transition out has fully completed.</p>
+<p>Override to provide your own transition out logic. Default logic is to just detach from the page.<br>
+The method is passed a callback that should be invoked when the transition out has fully completed.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
@@ -2954,13 +4058,14 @@
 <a name="View+transitionIn"></a>
 
 ### view.transitionIn(attach, done, options)
-<p>Override to provide your own transition in logic. Default logic is to just attach to the page.<br>The method is passed a callback that should be invoked when the transition in has fully completed.</p>
+<p>Override to provide your own transition in logic. Default logic is to just attach to the page.<br>
+The method is passed a callback that should be invoked when the transition in has fully completed.</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| attach | <code>function</code> | <p>callback to be invoked when you want this view to be attached to the dom.<br>                                If you are trying to transition in a tracked view, consider using this.transitionInView()</p> |
+| attach | <code>function</code> | <p>callback to be invoked when you want this view to be attached to the dom.<br> If you are trying to transition in a tracked view, consider using this.transitionInView()</p> |
 | done | <code>function</code> | <p>callback that MUST be invoked when the transition is complete.</p> |
 | options |  | <p>optionals options object</p> |
 | options.currentView | [<code>View</code>](#View) | <p>the view that is being transitioned in.</p> |
@@ -3175,7 +4280,9 @@
 <a name="new_DataBehavior_new"></a>
 
 ### new DataBehavior()
-<p>This behavior implements simplified interaction with data sources (i.e. TorsoCollection).<br>This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.<br>This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.</p>
+<p>This behavior implements simplified interaction with data sources (i.e. TorsoCollection).<br>
+This behavior manages re-rendering when data changes and automatically adding the returned data to the view's context.<br>
+This behavior also manages dependencies between data and other objects to allow intelligent re-fetching when data changes.</p>
 
 <a name="Behavior+alias"></a>
 
@@ -3198,14 +4305,17 @@
 <a name="Behavior+prepare"></a>
 
 ### dataBehavior.prepare() ⇒ <code>Object</code>
-<p>The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.<br>effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.</p>
+<p>The behavior's prepare result will be combined with the view's prepare with the behavior's alias as the namespace.<br>
+effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.</p>
 
 **Kind**: instance method of [<code>DataBehavior</code>](#DataBehavior)  
 **Returns**: <code>Object</code> - <p>a prepare context suitable to being added to the view's prepare result.</p>  
 <a name="Behavior+_dispose"></a>
 
 ### dataBehavior.\_dispose()
-<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>behavior's on's and listenTo's.<br>Override this method to destruct any extra</p>
+<p>Method to be invoked when dispose is called. By default calling dispose will remove the<br>
+behavior's on's and listenTo's.<br>
+Override this method to destruct any extra</p>
 
 **Kind**: instance method of [<code>DataBehavior</code>](#DataBehavior)  
 <a name="Behavior+isDisposed"></a>
@@ -3216,7 +4326,8 @@
 <a name="DataBehavior.cache"></a>
 
 ### DataBehavior.cache
-<p>The torso collection that is acting as a cache used to create the private collections.<br>This property/option is required.  Instantiation will fail if it is not set.</p>
+<p>The torso collection that is acting as a cache used to create the private collections.<br>
+This property/option is required.  Instantiation will fail if it is not set.</p>
 
 **Kind**: static property of [<code>DataBehavior</code>](#DataBehavior)  
 **Properties**
@@ -3228,7 +4339,9 @@
 <a name="DataBehavior.renderOnFetch"></a>
 
 ### DataBehavior.renderOnFetch
-<p>Adds a listener on the Behavior for the <code>fetched</code> event that triggers a render on the view.<br>true - A listener is added to the behavior that re-renders the view when a 'fetched' event is triggered.<br>false (default) - no listeners are added.</p>
+<p>Adds a listener on the Behavior for the <code>fetched</code> event that triggers a render on the view.<br>
+true - A listener is added to the behavior that re-renders the view when a 'fetched' event is triggered.<br>
+false (default) - no listeners are added.</p>
 
 **Kind**: static property of [<code>DataBehavior</code>](#DataBehavior)  
 **Default**: <code>false</code>  
@@ -3241,7 +4354,9 @@
 <a name="DataBehavior.skipInitialLoad"></a>
 
 ### DataBehavior.skipInitialLoad
-<p>Skip triggering a load of this data behavior when the view completes initializing.<br>true - no load after the view is initialized.<br>false (default) - trigger a .retrieve() on this data behavior when the view completes initialization.</p>
+<p>Skip triggering a load of this data behavior when the view completes initializing.<br>
+true - no load after the view is initialized.<br>
+false (default) - trigger a .retrieve() on this data behavior when the view completes initialization.</p>
 
 **Kind**: static property of [<code>DataBehavior</code>](#DataBehavior)  
 **Default**: <code>false</code>  
@@ -3254,7 +4369,9 @@
 <a name="DataBehavior.returnSingleResult"></a>
 
 ### DataBehavior.returnSingleResult
-<p>Determines the result of <code>view.getBehavior('thisBehaviorAlias').toJSON()</code>.<br>true - a single model result is returned.<br>false (default) - an array of model results are returned.</p>
+<p>Determines the result of <code>view.getBehavior('thisBehaviorAlias').toJSON()</code>.<br>
+true - a single model result is returned.<br>
+false (default) - an array of model results are returned.</p>
 
 **Kind**: static property of [<code>DataBehavior</code>](#DataBehavior)  
 **Default**: <code>false</code>  
@@ -3267,7 +4384,12 @@
 <a name="DataBehavior.alwaysFetch"></a>
 
 ### DataBehavior.alwaysFetch
-<p>Determines whether <code>pull()</code> or <code>fetch()</code> is called when using <code>retrieve()</code>.<br>true - Use fetch() by default on the private collection.<br>false (default) - Use pull() by default on the private collection.<br>True will query the server more often, but will provide more up-to-date data.<br>False will only query the server if the model hasn't already been retrieved.<br>This property will be ignored if <code>fetch()</code> or <code>pull()</code> is called directly.</p>
+<p>Determines whether <code>pull()</code> or <code>fetch()</code> is called when using <code>retrieve()</code>.<br>
+true - Use fetch() by default on the private collection.<br>
+false (default) - Use pull() by default on the private collection.<br>
+True will query the server more often, but will provide more up-to-date data.<br>
+False will only query the server if the model hasn't already been retrieved.<br>
+This property will be ignored if <code>fetch()</code> or <code>pull()</code> is called directly.</p>
 
 **Kind**: static property of [<code>DataBehavior</code>](#DataBehavior)  
 **Default**: <code>false</code>  
@@ -3282,24 +4404,35 @@
 ### DataBehavior.ids
 <p>Duck-typed property that identifies the ids to use. id or ids is required (either by behavior options or as properties).</p>
 <ul>
-<li>{(string|number)} - the id to use directly (equivalent to an array of a single id).</li>
-<li>{(string[]|number[])} - the ids to use directly.</li>
-<li>{Object} - more complex configuration that identifies a model-like object that fires a change event and the<pre class="prettyprint source"><code>       property on that object to use. The object can fire the change event for the given property
-       and have a .get('propertyName') method, or it can define the property directly on the idContainer.
-       Only one property can be identified as supplying the id for this data model.
-       If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.
-       The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids
-       have been fetched for the first time.  Then a 'change:&lt;propertyName>' event can be used to notify this
-       data behavior that the property has been modified.</code></pre><ul>
-<li>property {string} - the name of the property that defines the ids. The root object is assumed to be the view unless<pre class="prettyprint source"><code>                idContainer is defined. The idContainer is the object that fires a change event for the given property name.
-                Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).
-                Will get the property before the first '.' from the view and if it is an object will try to use a
-                .get('&lt;propertyName>') on it and set a 'change:&lt;propertyName>' listener on it.
-                If it is a string/number or array of string/number, then it will use that as the ids.
-                Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the
-                old idContainer and start listening to the new one defined by this property.</code></pre></li>
-<li>idContainer {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change<pre class="prettyprint source"><code>                events and has a .get('propertyName') function. It isn't required to fire events -
-                the change event is only required if it needs to re-fetch when the id property value changes.</code></pre>Examples:<ul>
+<li>
+<p>{(string|number)} - the id to use directly (equivalent to an array of a single id).</p>
+</li>
+<li>
+<p>{(string[]|number[])} - the ids to use directly.</p>
+</li>
+<li>
+<p>{Object} - more complex configuration that identifies a model-like object that fires a change event and the<br>
+property on that object to use. The object can fire the change event for the given property<br>
+and have a .get('propertyName') method, or it can define the property directly on the idContainer.<br>
+Only one property can be identified as supplying the id for this data model.<br>
+If the identified object does not fire a change event then the id(s) will never be refreshed for this behavior.<br>
+The idContainer can also fire a 'fetched:ids' event on itself to signal to this data behavior that the ids<br>
+have been fetched for the first time.  Then a 'change:<propertyName>' event can be used to notify this<br>
+data behavior that the property has been modified.</p>
+<ul>
+<li>property {string} - the name of the property that defines the ids. The root object is assumed to be the view unless<br>
+idContainer is defined. The idContainer is the object that fires a change event for the given property name.<br>
+Uses the view or the idContainer as the root to get the identified property (i.e. 'viewState.', 'model.', etc).<br>
+Will get the property before the first '.' from the view and if it is an object will try to use a<br>
+.get('<propertyName>') on it and set a 'change:<propertyName>' listener on it.<br>
+If it is a string/number or array of string/number, then it will use that as the ids.<br>
+Triggering a 'id-container-updated' event on the behavior will cause it to stop listing to the<br>
+old idContainer and start listening to the new one defined by this property.</li>
+<li>idContainer {Cell|Backbone.Model|Function} - object (or a function that returns an object) that fires change<br>
+events and has a .get('propertyName') function. It isn't required to fire events -<br>
+the change event is only required if it needs to re-fetch when the id property value changes.<br>
+Examples:
+<ul>
 <li>{ property: '_patientId' }</li>
 <li>{ property: 'viewState.appointmentId' }</li>
 <li>{ property: 'model.type' }</li>
@@ -3310,18 +4443,19 @@
 </li>
 </ul>
 </li>
-<li><p>{Function(cache)} - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)</p>
-<pre class="prettyprint source"><code>                to track with the private collection. Cache is passed in as the first argument so that the behavior
-                can be defined and the cache can be overridden later.
-                'this' is the behavior (from which you can get the view if needed).
-                What was criteria should use this instead:
-
-function(cache) {
+<li>
+<p>{Function(cache)} - expected to return the ids (either array, jquery deferred that resolves to the ids or single primitive)<br>
+to track with the private collection. Cache is passed in as the first argument so that the behavior<br>
+can be defined and the cache can be overridden later.<br>
+'this' is the behavior (from which you can get the view if needed).<br>
+What was criteria should use this instead:</p>
+<pre><code>function(cache) {
   var thisBehaviorInstance = this;
   var view = this.view;
   var criteria = { ... some criteria ... };
   return cache.fetchIdsByCriteria(criteria);
-}</code></pre></li>
+}</code></pre>
+</li>
 </ul>
 
 **Kind**: static property of [<code>DataBehavior</code>](#DataBehavior)  
@@ -3334,7 +4468,8 @@ function(cache) {
 <a name="DataBehavior.updateEvents"></a>
 
 ### DataBehavior.updateEvents
-<p>cause this behavior to re-calculate its ids and refetch them from the server if the given events are triggered<br>(space separated if string, single item is equivalent to array of single item).</p>
+<p>cause this behavior to re-calculate its ids and refetch them from the server if the given events are triggered<br>
+(space separated if string, single item is equivalent to array of single item).</p>
 <ul>
 <li>'view:eventName' - arbitrary event triggered on the view (eventName can be a change:propertyName event).</li>
 <li>'viewState:eventName' - arbitrary event triggered on the viewState (eventName can be a change:propertyName event).</li>
@@ -3355,7 +4490,8 @@ function(cache) {
 <a name="DataBehavior.data"></a>
 
 ### DataBehavior.data
-<p>Object that manages interaction with the data.  Contains the privateCollection, proxies all events from the privateCollection,<br>and has get('...') and .toJSON() methods that access the private collection data.</p>
+<p>Object that manages interaction with the data.  Contains the privateCollection, proxies all events from the privateCollection,<br>
+and has get('...') and .toJSON() methods that access the private collection data.</p>
 
 **Kind**: static property of [<code>DataBehavior</code>](#DataBehavior)  
 **Properties**
@@ -3398,7 +4534,8 @@ function(cache) {
 <a name="DataBehavior.retrieve"></a>
 
 ### DataBehavior.retrieve() ⇒ <code>$.Deferred.Promise</code>
-<p>Retrieves the ids for this data object and passes them off to the private collection to track and then does a<br>pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).</p>
+<p>Retrieves the ids for this data object and passes them off to the private collection to track and then does a<br>
+pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).</p>
 
 **Kind**: static method of [<code>DataBehavior</code>](#DataBehavior)  
 **Returns**: <code>$.Deferred.Promise</code> - <p>a jquery deferred promise that resolves to the retrieved models.</p>  
@@ -3428,21 +4565,24 @@ function(cache) {
 <p>Determine if the behavior is loading objects or ids.</p>
 
 **Kind**: static method of [<code>DataBehavior</code>](#DataBehavior)  
-**Returns**: <code>boolean</code> - <p>true - the behavior is currently loading objects or ids.<br>                  false - the behavior is not currently loading objects or ids.</p>  
+**Returns**: <code>boolean</code> - <p>true - the behavior is currently loading objects or ids.<br>
+false - the behavior is not currently loading objects or ids.</p>  
 <a name="DataBehavior.isLoadingIds"></a>
 
 ### DataBehavior.isLoadingIds() ⇒ <code>boolean</code>
 <p>Determine if the behavior is loading ids.</p>
 
 **Kind**: static method of [<code>DataBehavior</code>](#DataBehavior)  
-**Returns**: <code>boolean</code> - <p>true - the behavior is currently loading ids.<br>                  false - the behavior is not currently loading ids.</p>  
+**Returns**: <code>boolean</code> - <p>true - the behavior is currently loading ids.<br>
+false - the behavior is not currently loading ids.</p>  
 <a name="DataBehavior.isLoadingObjects"></a>
 
 ### DataBehavior.isLoadingObjects() ⇒ <code>boolean</code>
 <p>Determine if the behavior is loading objects.</p>
 
 **Kind**: static method of [<code>DataBehavior</code>](#DataBehavior)  
-**Returns**: <code>boolean</code> - <p>true - the behavior is currently loading objects.<br>                  false - the behavior is not currently loading objects.</p>  
+**Returns**: <code>boolean</code> - <p>true - the behavior is currently loading objects.<br>
+false - the behavior is not currently loading objects.</p>  
 <a name="DataBehavior.listenToIdsPropertyChangeEvent"></a>
 
 ### DataBehavior.listenToIdsPropertyChangeEvent()
@@ -3458,11 +4598,17 @@ function(cache) {
 <a name="DataBehavior.retrieveOncePromise"></a>
 
 ### DataBehavior.retrieveOncePromise() ⇒ [<code>jQuery-Deferred</code>](#external_jQuery-Deferred)
-<p>This is a good way to have something be called after at least one retrieve (pull or fetch) has completed.<br>This is especially useful if you don't care if the fetch has already happen you just want to do something once<br>the data is loaded.</p>
-<p>This can also be done purely by listening for the 'fetched' event, but you might miss the event if it is fired<br>before you start listening.  This gives a structure for handling that case so that your methods are called<br>if the event is fired and if it is not fired.</p>
-<p>This also gives the ability to distinguish between a successful and failed fetch easily using the promises<br>resolve/reject handlers.</p>
+<p>This is a good way to have something be called after at least one retrieve (pull or fetch) has completed.<br>
+This is especially useful if you don't care if the fetch has already happen you just want to do something once<br>
+the data is loaded.</p>
+<p>This can also be done purely by listening for the 'fetched' event, but you might miss the event if it is fired<br>
+before you start listening.  This gives a structure for handling that case so that your methods are called<br>
+if the event is fired and if it is not fired.</p>
+<p>This also gives the ability to distinguish between a successful and failed fetch easily using the promises<br>
+resolve/reject handlers.</p>
 <p>Usage:</p>
-<p>someDataBehavior.retrieveOncePromise()<br>  .then(view.doSomethingWithTheData, view.handleFiledFetch);</p>
+<p>someDataBehavior.retrieveOncePromise()<br>
+.then(view.doSomethingWithTheData, view.handleFiledFetch);</p>
 
 **Kind**: static method of [<code>DataBehavior</code>](#DataBehavior)  
 **Returns**: [<code>jQuery-Deferred</code>](#external_jQuery-Deferred) - <p>that resolves when the data is successfully fetched and rejects when the fetch fails.</p>  
@@ -3501,7 +4647,7 @@ function(cache) {
     * [.startPolling(pollInterval)](#Collection+startPolling)
     * [.stopPolling()](#Collection+stopPolling)
     * [.polledFetch()](#Collection+polledFetch)
-    * [.constructor([options])](#Collection+constructor)
+    * [.constructor(args)](#Collection+constructor)
     * [.hasLoadedOnce()](#Collection+hasLoadedOnce) ⇒ <code>boolean</code>
     * [.isLoading()](#Collection+isLoading) ⇒ <code>boolean</code>
     * [.getLoadedOncePromise()](#Collection+getLoadedOncePromise) ⇒ <code>Promise</code>
@@ -3516,7 +4662,8 @@ function(cache) {
 <a name="new_PrivateCollection_new"></a>
 
 ### new PrivateCollection(parent, guid)
-<p>Returns a new class of collection that inherits from the parent but not the cacheMixin<br>and adds a requesterMixin that connects this cache to it's parent</p>
+<p>Returns a new class of collection that inherits from the parent but not the cacheMixin<br>
+and adds a requesterMixin that connects this cache to it's parent</p>
 
 
 | Param | Type | Description |
@@ -3572,7 +4719,8 @@ function(cache) {
 <a name="PrivateCollection+trackIds"></a>
 
 ### privateCollection.trackIds(ids)
-<p>Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.<br>Overrides the Id registration system to route via the parent collection</p>
+<p>Pass a list of ids to begin tracking. This will reset any previous list of ids being tracked.<br>
+Overrides the Id registration system to route via the parent collection</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 
@@ -3605,19 +4753,24 @@ function(cache) {
 <a name="PrivateCollection+trackAndFetch"></a>
 
 ### privateCollection.trackAndFetch() ⇒
-<p>Will begin tracking the new ids and then ask the cache to fetch them<br>This will reset any previous list of ids being tracked.</p>
+<p>Will begin tracking the new ids and then ask the cache to fetch them<br>
+This will reset any previous list of ids being tracked.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 **Returns**: <p>the promise of the fetch by ids</p>  
 <a name="PrivateCollection+pull"></a>
 
 ### privateCollection.pull([options]) ⇒ <code>Promise</code>
-<p>Will force the cache to fetch any of this collection's tracked models that are not in the cache<br>while not fetching models that are already in the cache. Useful when you want the effeciency of<br>pulling models from the cache and don't need all the models to be up-to-date.</p>
+<p>Will force the cache to fetch any of this collection's tracked models that are not in the cache<br>
+while not fetching models that are already in the cache. Useful when you want the effeciency of<br>
+pulling models from the cache and don't need all the models to be up-to-date.</p>
 <p>If the ids being fetched are already being fetched by the cache, then they will not be re-fetched.</p>
-<p>The resulting promise is resolved when ALL items in the process of being fetched have completed.<br>The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.</p>
+<p>The resulting promise is resolved when ALL items in the process of being fetched have completed.<br>
+The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
-**Returns**: <code>Promise</code> - <p>promise that will resolve when the fetch is complete with all of the data that was fetched from the server.<br>                  Will only resolve once all ids have attempted to be fetched from the server.</p>  
+**Returns**: <code>Promise</code> - <p>promise that will resolve when the fetch is complete with all of the data that was fetched from the server.<br>
+Will only resolve once all ids have attempted to be fetched from the server.</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -3626,7 +4779,8 @@ function(cache) {
 <a name="PrivateCollection+trackAndPull"></a>
 
 ### privateCollection.trackAndPull() ⇒
-<p>Will register the new ids and then pull in any models not stored in the cache. See this.pull() for<br>the difference between pull and fetch.</p>
+<p>Will register the new ids and then pull in any models not stored in the cache. See this.pull() for<br>
+the difference between pull and fetch.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 **Returns**: <p>the promise of the fetch by ids</p>  
@@ -3645,7 +4799,7 @@ function(cache) {
 
 | Param | Type | Description |
 | --- | --- | --- |
-| modelIdentifier | <code>\*</code> | <p>same duck-typing as Backbone.Collection.get():<br>                             by id, cid, model object with id or cid properties,<br>                             or an attributes object that is transformed through modelId</p> |
+| modelIdentifier | <code>\*</code> | <p>same duck-typing as Backbone.Collection.get():<br> by id, cid, model object with id or cid properties,<br> or an attributes object that is transformed through modelId</p> |
 
 <a name="Collection+filterDefault"></a>
 
@@ -3657,7 +4811,8 @@ function(cache) {
 <a name="Collection+dispose"></a>
 
 ### privateCollection.dispose()
-<p>Will abolish all listeners and events that are hooked<br>to this collection.</p>
+<p>Will abolish all listeners and events that are hooked<br>
+to this collection.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 <a name="Collection+isPolling"></a>
@@ -3670,7 +4825,9 @@ function(cache) {
 <a name="Collection+startPolling"></a>
 
 ### privateCollection.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 **Mixes**: [<code>startPolling</code>](#pollingMixin.startPolling)  
@@ -3689,24 +4846,23 @@ function(cache) {
 <a name="Collection+polledFetch"></a>
 
 ### privateCollection.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 **Mixes**: [<code>polledFetch</code>](#pollingMixin.polledFetch)  
 <a name="Collection+constructor"></a>
 
-### privateCollection.constructor([options])
-<p>The constructor constructor / initialize method for collections.<br>Allocate new memory for the local references if they<br>were null when this method was called.</p>
+### privateCollection.constructor(args)
+<p>Adds the loading mixin</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
-**Mixes**: [<code>constructor</code>](#cacheMixin.constructor)  
+**Mixes**: [<code>constructor</code>](#loadingMixin.constructor)  
+**Overrides**: [<code>constructor</code>](#Collection+constructor)  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| [options] | <code>Object</code> |  | <p>optional options object</p> |
-| [options.fetchHttpAction] | <code>string</code> | <code>&quot;&#x27;POST&#x27;&quot;</code> | <p>http action used to get objects by ids</p> |
-| [options.getByIdsUrl] | <code>string</code> | <code>&quot;&#x27;/ids&#x27;&quot;</code> | <p>path appended to collection.url to get objects by a list of ids</p> |
-| [options.fetchUsingTrackedIds] | <code>boolean</code> | <code>true</code> | <p>if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids<br>                                                      but will rather call the default fetch method.</p> |
+| Param | Type | Description |
+| --- | --- | --- |
+| args | <code>Object</code> | <p>the arguments to the base constructor method</p> |
 
 <a name="Collection+hasLoadedOnce"></a>
 
@@ -3765,7 +4921,8 @@ function(cache) {
 <a name="Collection+getRequesters"></a>
 
 ### privateCollection.getRequesters() ⇒ <code>Array</code>
-<p>NOTE: this methods returns only the guids for requester collections that are currently tracking ids<br>TODO: should this return just the knownPrivateCollections</p>
+<p>NOTE: this methods returns only the guids for requester collections that are currently tracking ids<br>
+TODO: should this return just the knownPrivateCollections</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 **Mixes**: [<code>getRequesters</code>](#cacheMixin.getRequesters)  
@@ -3781,7 +4938,10 @@ function(cache) {
 <a name="Collection+createPrivateCollection"></a>
 
 ### privateCollection.createPrivateCollection(guid) ⇒ [<code>PrivateCollection</code>](#PrivateCollection)
-<p>Used to return a collection of desired models given the requester object.<br>Binds a custom &quot;resized&quot; event to the private collections.<br>Overrides the fetch method to call the parent collection's fetchByIds method.<br>Overrides the registerIds method to redirect to its parent collection.</p>
+<p>Used to return a collection of desired models given the requester object.<br>
+Binds a custom &quot;resized&quot; event to the private collections.<br>
+Overrides the fetch method to call the parent collection's fetchByIds method.<br>
+Overrides the registerIds method to redirect to its parent collection.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 **Mixes**: [<code>createPrivateCollection</code>](#cacheMixin.createPrivateCollection)  
@@ -3794,8 +4954,12 @@ function(cache) {
 <a name="Collection+registerIds"></a>
 
 ### privateCollection.registerIds(newIds, guid)
-<p>Registers a list of Ids that a particular object cares about and pushes<br>any cached models its way.</p>
-<p>This method intelligently updates the &quot;_requestedIds&quot; field to contain all unique<br>requests for Ids to be fetched.  Furthermore, the &quot;polledFetch&quot; method<br>is overriden such that it no longer routes through Backbone's fetch all,<br>but rather a custom &quot;fetchByIds&quot; method.</p>
+<p>Registers a list of Ids that a particular object cares about and pushes<br>
+any cached models its way.</p>
+<p>This method intelligently updates the &quot;_requestedIds&quot; field to contain all unique<br>
+requests for Ids to be fetched.  Furthermore, the &quot;polledFetch&quot; method<br>
+is overriden such that it no longer routes through Backbone's fetch all,<br>
+but rather a custom &quot;fetchByIds&quot; method.</p>
 
 **Kind**: instance method of [<code>PrivateCollection</code>](#PrivateCollection)  
 **Mixes**: [<code>registerIds</code>](#cacheMixin.registerIds)  
@@ -3820,26 +4984,32 @@ function(cache) {
 <a name="validationMixin.preValidate"></a>
 
 ### validationMixin.preValidate(attr, [value]) ⇒ <code>undefined</code> \| <code>string</code> \| <code>Object</code>
-<p>Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but<br>you can pass in different values to use in the validation process instead.</p>
+<p>Check whether an attribute or a set of attributes are valid. It will default to use the model's current values but<br>
+you can pass in different values to use in the validation process instead.</p>
 
 **Kind**: static method of [<code>validationMixin</code>](#validationMixin)  
-**Returns**: <code>undefined</code> \| <code>string</code> \| <code>Object</code> - <p>undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key<br>and the error as the value</p>  
+**Returns**: <code>undefined</code> \| <code>string</code> \| <code>Object</code> - <p>undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key<br>
+and the error as the value</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| attr | <code>string</code> \| <code>Object</code> \| <code>Array.&lt;string&gt;</code> | <p>Either the name of the attribute, an array containing many attribute names, or<br>on object with attribute name to values</p> |
+| attr | <code>string</code> \| <code>Object</code> \| <code>Array.&lt;string&gt;</code> | <p>Either the name of the attribute, an array containing many attribute names, or<br> on object with attribute name to values</p> |
 | [value] | <code>Any</code> | <p>a value to use for the attribute value instead of using the model's value.</p> |
 
 <a name="validationMixin.isValid"></a>
 
 ### validationMixin.isValid()
-<p>Check to see if an attribute, an array of attributes or the<br>entire model is valid. Passing true will force a validation<br>of the model.</p>
+<p>Check to see if an attribute, an array of attributes or the<br>
+entire model is valid. Passing true will force a validation<br>
+of the model.</p>
 
 **Kind**: static method of [<code>validationMixin</code>](#validationMixin)  
 <a name="validationMixin.validate"></a>
 
 ### validationMixin.validate()
-<p>This is called by Backbone when it needs to perform validation.<br>You can call it manually without any parameters to validate the<br>entire model.</p>
+<p>This is called by Backbone when it needs to perform validation.<br>
+You can call it manually without any parameters to validate the<br>
+entire model.</p>
 
 **Kind**: static method of [<code>validationMixin</code>](#validationMixin)  
 <a name="cacheMixin"></a>
@@ -3903,7 +5073,8 @@ function(cache) {
 <a name="cacheMixin.getRequesters"></a>
 
 ### cacheMixin.getRequesters() ⇒ <code>Array</code>
-<p>NOTE: this methods returns only the guids for requester collections that are currently tracking ids<br>TODO: should this return just the knownPrivateCollections</p>
+<p>NOTE: this methods returns only the guids for requester collections that are currently tracking ids<br>
+TODO: should this return just the knownPrivateCollections</p>
 
 **Kind**: static method of [<code>cacheMixin</code>](#cacheMixin)  
 **Returns**: <code>Array</code> - <p>an array of the all requesters in the form of their GUID's</p>  
@@ -3917,7 +5088,10 @@ function(cache) {
 <a name="cacheMixin.createPrivateCollection"></a>
 
 ### cacheMixin.createPrivateCollection(guid) ⇒ [<code>PrivateCollection</code>](#PrivateCollection)
-<p>Used to return a collection of desired models given the requester object.<br>Binds a custom &quot;resized&quot; event to the private collections.<br>Overrides the fetch method to call the parent collection's fetchByIds method.<br>Overrides the registerIds method to redirect to its parent collection.</p>
+<p>Used to return a collection of desired models given the requester object.<br>
+Binds a custom &quot;resized&quot; event to the private collections.<br>
+Overrides the fetch method to call the parent collection's fetchByIds method.<br>
+Overrides the registerIds method to redirect to its parent collection.</p>
 
 **Kind**: static method of [<code>cacheMixin</code>](#cacheMixin)  
 **Returns**: [<code>PrivateCollection</code>](#PrivateCollection) - <p>an new empty collection of the same type as &quot;this&quot;</p>  
@@ -3929,8 +5103,12 @@ function(cache) {
 <a name="cacheMixin.registerIds"></a>
 
 ### cacheMixin.registerIds(newIds, guid)
-<p>Registers a list of Ids that a particular object cares about and pushes<br>any cached models its way.</p>
-<p>This method intelligently updates the &quot;_requestedIds&quot; field to contain all unique<br>requests for Ids to be fetched.  Furthermore, the &quot;polledFetch&quot; method<br>is overriden such that it no longer routes through Backbone's fetch all,<br>but rather a custom &quot;fetchByIds&quot; method.</p>
+<p>Registers a list of Ids that a particular object cares about and pushes<br>
+any cached models its way.</p>
+<p>This method intelligently updates the &quot;_requestedIds&quot; field to contain all unique<br>
+requests for Ids to be fetched.  Furthermore, the &quot;polledFetch&quot; method<br>
+is overriden such that it no longer routes through Backbone's fetch all,<br>
+but rather a custom &quot;fetchByIds&quot; method.</p>
 
 **Kind**: static method of [<code>cacheMixin</code>](#cacheMixin)  
 
@@ -3942,7 +5120,9 @@ function(cache) {
 <a name="cacheMixin.fetch"></a>
 
 ### cacheMixin.fetch(options)
-<p>Overrides the base fetch call if this.fetchUsingTrackedIds is true<br>Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise<br>it will pass through to the default fetch.</p>
+<p>Overrides the base fetch call if this.fetchUsingTrackedIds is true<br>
+Calling fetch from the cache will fetch the tracked ids if fetchUsingTrackedIds is set to true, otherwise<br>
+it will pass through to the default fetch.</p>
 
 **Kind**: static method of [<code>cacheMixin</code>](#cacheMixin)  
 
@@ -3967,7 +5147,9 @@ function(cache) {
 <a name="cacheMixin.constructor"></a>
 
 ### cacheMixin.constructor([options])
-<p>The constructor constructor / initialize method for collections.<br>Allocate new memory for the local references if they<br>were null when this method was called.</p>
+<p>The constructor constructor / initialize method for collections.<br>
+Allocate new memory for the local references if they<br>
+were null when this method was called.</p>
 
 **Kind**: static method of [<code>cacheMixin</code>](#cacheMixin)  
 
@@ -3976,7 +5158,7 @@ function(cache) {
 | [options] | <code>Object</code> |  | <p>optional options object</p> |
 | [options.fetchHttpAction] | <code>string</code> | <code>&quot;&#x27;POST&#x27;&quot;</code> | <p>http action used to get objects by ids</p> |
 | [options.getByIdsUrl] | <code>string</code> | <code>&quot;&#x27;/ids&#x27;&quot;</code> | <p>path appended to collection.url to get objects by a list of ids</p> |
-| [options.fetchUsingTrackedIds] | <code>boolean</code> | <code>true</code> | <p>if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids<br>                                                      but will rather call the default fetch method.</p> |
+| [options.fetchUsingTrackedIds] | <code>boolean</code> | <code>true</code> | <p>if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids<br> but will rather call the default fetch method.</p> |
 
 <a name="cellMixin"></a>
 
@@ -3997,7 +5179,9 @@ function(cache) {
 <a name="cellMixin.isModelCompatible"></a>
 
 ### cellMixin.isModelCompatible
-<p>Whether a cell can pass as a model or not.<br>If true, the cell will not fail is persisted functions are invoked<br>If false, the cell will throw exceptions if persisted function are invoked</p>
+<p>Whether a cell can pass as a model or not.<br>
+If true, the cell will not fail is persisted functions are invoked<br>
+If false, the cell will throw exceptions if persisted function are invoked</p>
 
 **Kind**: static property of [<code>cellMixin</code>](#cellMixin)  
 **Default**: <code>false</code>  
@@ -4101,7 +5285,9 @@ function(cache) {
 <a name="modelMixin.dispose"></a>
 
 ### modelMixin.dispose()
-<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>Removes listeners and calls out to _dispose() for child specific dispose logic.<br>Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
+<p>Default dispose for model-like objects (Models, Cells, and ServiceCells).<br>
+Removes listeners and calls out to _dispose() for child specific dispose logic.<br>
+Triggers 2 events - &quot;before-dispose&quot; and &quot;after-dispose&quot;.</p>
 
 **Kind**: static method of [<code>modelMixin</code>](#modelMixin)  
 <a name="modelMixin._dispose"></a>
@@ -4114,7 +5300,8 @@ function(cache) {
 
 ## pollingMixin
 <p>Periodic Polling Object to be mixed into Backbone Collections and Models.</p>
-<p>The polling functionality should only be used for collections and for models that are not<br>part of any collections. It should not be used for a model that is a part of a collection.</p>
+<p>The polling functionality should only be used for collections and for models that are not<br>
+part of any collections. It should not be used for a model that is a part of a collection.</p>
 
 **Kind**: global mixin  
 **See**: <a href="../annotated/modules/mixins/pollingMixin.html">pollingMixin Annotated Source</a>  
@@ -4146,7 +5333,9 @@ function(cache) {
 <a name="pollingMixin.startPolling"></a>
 
 ### pollingMixin.startPolling(pollInterval)
-<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>Note: Each Model/Collection will only allow a singleton of polling to occur so<br>as not to have duplicate threads updating Model/Collection.</p>
+<p>Starts polling Model/Collection by calling fetch every pollInterval.<br>
+Note: Each Model/Collection will only allow a singleton of polling to occur so<br>
+as not to have duplicate threads updating Model/Collection.</p>
 
 **Kind**: static method of [<code>pollingMixin</code>](#pollingMixin)  
 
@@ -4163,7 +5352,8 @@ function(cache) {
 <a name="pollingMixin.polledFetch"></a>
 
 ### pollingMixin.polledFetch()
-<p>By default, the polled fetching operation is routed directly<br>to backbone's fetch all.</p>
+<p>By default, the polled fetching operation is routed directly<br>
+to backbone's fetch all.</p>
 
 **Kind**: static method of [<code>pollingMixin</code>](#pollingMixin)  
 <a name="HandlebarsHelper"></a>
@@ -4204,9 +5394,11 @@ function(cache) {
 <p>Usage: {{bindModel 'fieldName' value='suffix'}}</p>
 <p>Generates: id=&quot;field-name-suffix&quot; name=&quot;field-name&quot; data-model=&quot;fieldName&quot; data-feedback=&quot;fieldName&quot; value=&quot;demo&quot;</p>
 <p>Usage: {{bindModel 'fieldName[x].sub' value='demo' x=123}}</p>
-<p>Generates: data-model=&quot;fieldName[123].sub&quot; data-feedback=&quot;fieldName[123].sub&quot; name=&quot;field-name-123_sub&quot;<br>           id=&quot;field-name-123_sub-demo&quot; value=&quot;demo&quot;</p>
+<p>Generates: data-model=&quot;fieldName[123].sub&quot; data-feedback=&quot;fieldName[123].sub&quot; name=&quot;field-name-123_sub&quot;<br>
+id=&quot;field-name-123_sub-demo&quot; value=&quot;demo&quot;</p>
 <p>Usage: {{bindModel 'fieldName[bar].sub' value='demo' bar='abc'}}</p>
-<p>Generates: data-model=&quot;fieldName.abc.sub&quot; data-feedback=&quot;fieldName[abc].sub&quot; name=&quot;field-name_abc_sub&quot;<br>                  id=&quot;field-name_abc_sub-demo&quot; value=&quot;demo&quot;</p>
+<p>Generates: data-model=&quot;fieldName.abc.sub&quot; data-feedback=&quot;fieldName[abc].sub&quot; name=&quot;field-name_abc_sub&quot;<br>
+id=&quot;field-name_abc_sub-demo&quot; value=&quot;demo&quot;</p>
 
 **Kind**: static method of [<code>HandlebarsHelper</code>](#HandlebarsHelper)  
 **Returns**: <code>string</code> - <p>Compliant HTML generating the id, name, data-model, and data-feedback attributes</p>  
@@ -4251,7 +5443,7 @@ function(cache) {
 | field | <code>string</code> | <p>The field name to convert to a compliant data-feedback attribute</p> |
 | options | <code>Object</code> | <p>The handlebars context.  Always passed in as the final argument.</p> |
 | [options.hash.value] | <code>string</code> | <p>The value tacked on to the end of the field string (useful for radio and checkbox)</p> |
-| [options.noValueAttr] | <code>boolean</code> | <p>when options.noValueAttr is set to true,<br>                                              then it will not generate the &quot;value&quot; attribute in the DOM.</p> |
+| [options.noValueAttr] | <code>boolean</code> | <p>when options.noValueAttr is set to true,<br> then it will not generate the &quot;value&quot; attribute in the DOM.</p> |
 
 <a name="HandlebarsHelper.dasherize"></a>
 
@@ -4287,7 +5479,8 @@ function(cache) {
 <a name="templateRenderer"></a>
 
 ## templateRenderer : <code>object</code>
-<p>Static Template Engine.<br>All template renders should be piped through this method.</p>
+<p>Static Template Engine.<br>
+All template renders should be piped through this method.</p>
 
 **Kind**: global namespace  
 **See**: <a href="../annotated/modules/templateRenderer.html">templateRenderer Annotated Source</a>  
@@ -4306,7 +5499,10 @@ function(cache) {
 
 ### templateRenderer.hotswap(currentNode, newNode, ignoreElements)
 <p>Changes DOM Nodes that are different, and leaves others untouched.</p>
-<p>Algorithm:<br>Delegates to a particular swapMethod, depending on the Node type.<br>Recurses for nested Element Nodes only.<br>There is always room for optimizing this method.</p>
+<p>Algorithm:<br>
+Delegates to a particular swapMethod, depending on the Node type.<br>
+Recurses for nested Element Nodes only.<br>
+There is always room for optimizing this method.</p>
 
 **Kind**: static method of [<code>templateRenderer</code>](#templateRenderer)  
 
@@ -4361,7 +5557,8 @@ function(cache) {
 <a name="templateRenderer.supportsSelection"></a>
 
 ### templateRenderer.supportsSelection(el) ⇒ <code>boolean</code>
-<p>Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply<br>selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome</p>
+<p>Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply<br>
+selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome</p>
 
 **Kind**: static method of [<code>templateRenderer</code>](#templateRenderer)  
 **Returns**: <code>boolean</code> - <p>boolean indicating whether or not the selection is allowed for {Element} el</p>  
@@ -4373,7 +5570,8 @@ function(cache) {
 <a name="templateRenderer.getCaretPosition"></a>
 
 ### templateRenderer.getCaretPosition(elem) ⇒ <code>Integer</code>
-<p>Method that returns the current caret (cursor) position of a given element.<br>Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field</p>
+<p>Method that returns the current caret (cursor) position of a given element.<br>
+Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field</p>
 
 **Kind**: static method of [<code>templateRenderer</code>](#templateRenderer)  
 **Returns**: <code>Integer</code> - <p>the cursor index of the given element.</p>  
@@ -4385,7 +5583,8 @@ function(cache) {
 <a name="templateRenderer.setCaretPosition"></a>
 
 ### templateRenderer.setCaretPosition(elem, caretPos) ⇒ <code>Integer</code>
-<p>Method that returns sets the current caret (cursor) position of a given element and puts it in focus.<br>Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox</p>
+<p>Method that returns sets the current caret (cursor) position of a given element and puts it in focus.<br>
+Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox</p>
 
 **Kind**: static method of [<code>templateRenderer</code>](#templateRenderer)  
 **Returns**: <code>Integer</code> - <p>the cursor index of the given element.</p>  

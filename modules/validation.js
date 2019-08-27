@@ -354,7 +354,7 @@
          * @param {(string|Object|string[])} attr Either the name of the attribute, an array containing many attribute names, or
          * on object with attribute name to values
          * @param {Any} [value] a value to use for the attribute value instead of using the model's value.
-         * @return {(undefined|string|Object)} undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
+         * @returns {(undefined|string|Object)} undefined if no errors, a validation exception if a single attribute, or an object with attribute name as key
          * and the error as the value
          */
         preValidate: function(attr, value) {

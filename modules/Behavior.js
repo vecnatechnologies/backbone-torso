@@ -26,7 +26,7 @@
     'initialize:complete': 'postinitialize'
   };
 
-  var Behavior = NestedCell.extend(/** @lends Behavior.prototype */{
+  var Behavior = NestedCell.extend(/** @lends Behavior# */{
     /**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
      * @name alias
@@ -51,9 +51,11 @@
      * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
      *
      * @function
-     * @return {Object} a prepare context suitable to being added to the view's prepare result.
+     * @returns {Object} a prepare context suitable to being added to the view's prepare result.
      */
-    prepare: _.noop,
+    prepare: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Allows abstraction of common view logic into separate object
@@ -102,7 +104,7 @@
      * Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.
      * @private
      * @param {Function} viewPrepare the prepare method from the view.
-     * @return {Object} the combined view and behavior prepare() results.
+     * @returns {Object} the combined view and behavior prepare() results.
      * {
      *   <behavior alias>: behavior.prepare(),
      *   ... // view prepare properties.
@@ -163,7 +165,7 @@
      * Namespaces events in event hash
      *
      * @param {Object} eventHash to namespace
-     * @return {Object} with event namespaced with '.behavior' and the cid of the behavior
+     * @returns {Object} with event namespaced with '.behavior' and the cid of the behavior
      * @private
      */
     __namespaceEvents: function(eventHash) {
@@ -183,7 +185,7 @@
 
     /**
      * @param {Object} eventHash keys are event descriptors, values are String method names or functions
-     * @return {Object} event hash with values as methods bound to view
+     * @returns {Object} event hash with values as methods bound to view
      * @private
      */
     __bindEventCallbacksToBehavior: function(eventHash) {
@@ -215,10 +217,12 @@
      * Override this method to destruct any extra
      * @function
      */
-    _dispose: _.noop,
+    _dispose: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
-     * @return {boolean} true if the view was disposed
+     * @returns {boolean} true if the view was disposed
      */
     isDisposed: function() {
       return this.__isDisposed;

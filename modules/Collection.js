@@ -29,10 +29,10 @@
    *
    * @see <a href="../annotated/modules/Collection.html">Collection Annotated Source</a>
    */
-  var Collection = Backbone.Collection.extend(/** @lends Collection.prototype */{
+  var Collection = Backbone.Collection.extend(/** @lends Collection# */{
       /**
        * The default filter.  Always returns itself.
-       * @return {Collection} a new instance of this collection
+       * @returns {Collection} a new instance of this collection
        */
       filterDefault: function() {
         return this.constructor(this);

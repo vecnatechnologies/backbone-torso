@@ -56,7 +56,7 @@
      * @param {string} field The field name to convert to a compliant "for" attribute
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {string} Compliant HTML generating the "for" attribute
+     * @returns {string} Compliant HTML generating the "for" attribute
      */
     Handlebars.registerHelper('labelFor', function(field, options) {
       options = _.extend(options, {noValueAttr: true});
@@ -82,7 +82,7 @@
      * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     * @returns {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
      */
     Handlebars.registerHelper('bindModel', function(field, options) {
       return Handlebars.helpers.formAttr(field, MODEL_KEY + ', ' + FEEDBACK_KEY + ', name, id', options);
@@ -104,7 +104,7 @@
      * @method HandlebarsHelper.feedback
      * @param {string} field The field name to convert to a compliant data-feedback attribute
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
-     * @return {string} Compliant HTML generating the data-feedback attribute
+     * @returns {string} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('feedback', function(field, options) {
       options = _.extend(options, {noValueAttr: true});
@@ -126,7 +126,7 @@
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
                                               then it will not generate the "value" attribute in the DOM.
-     * @return {string} Compliant HTML generating the data-feedback attribute
+     * @returns {string} Compliant HTML generating the data-feedback attribute
      */
     Handlebars.registerHelper('formAttr', function(field, attrs, options) {
       var i, attrName,
@@ -172,7 +172,7 @@
      *
      * @method HandlebarsHelper.dasherize
      * @param {string} str The input string to make HTML compliant (convert to dashes)
-     * @return {string} HTML complicant / dasherized string
+     * @returns {string} HTML complicant / dasherized string
      */
     Handlebars.registerHelper('dasherize', function(str) {
       var camelCaseRemoved, dotsRemoved, bracesRemoved;
@@ -202,7 +202,7 @@
      * @param {Object} indexMap A map of variables
      * @param {Object} options named parameters
      *   @param {boolean} [options.forceArrayNotation=false] Force the usage of [] insetad of . for string values.
-     * @return {string} the field string with array variables substituted
+     * @returns {string} the field string with array variables substituted
      */
     Handlebars.registerHelper('injectFieldIndices', function(field, indexMap, options) {
       if (indexMap) {

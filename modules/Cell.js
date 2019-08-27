@@ -26,7 +26,7 @@
    *
    * @see <a href="../annotated/modules/Cell.html">Cell Annotated Source</a>
    */
-  var Cell = Model.extend(/** @lends Cell.prototype */{
+  var Cell = Model.extend(/** @lends Cell# */{
     /**
      * Register this item with the cell registry after initialize.
      * @private

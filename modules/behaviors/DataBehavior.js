@@ -32,7 +32,7 @@
    * This is a private helper method used internally by this behavior and is not exposed in any way.
    * @param {(string|number|string[]|number[]|Object)} ids the ids to convert.
    *   @param {boolean} [ids.skipObjectRetrieval] set if this is a meta-info object about the ids.
-   * @return {(string[]|number[]|Object)} an array of strings or numbers.
+   * @returns {(string[]|number[]|Object)} an array of strings or numbers.
    * @private
    */
   function normalizeIds(ids) {
@@ -52,7 +52,7 @@
   /**
    * Converts any undefined or null values to an empty array.  All other values are left unchanged.
    * @param valueToConvert the value to check for null or undefined.
-   * @return {Array|*} either the original value or [] if the valueToConvert is null or undefined.
+   * @returns {Array|*} either the original value or [] if the valueToConvert is null or undefined.
    */
   function undefinedOrNullToEmptyArray(valueToConvert) {
     if (_.isUndefined(valueToConvert) || _.isNull(valueToConvert)) {
@@ -65,7 +65,7 @@
    * Gets a nested property from an object, returning undefined if it doesn't exist on any level.
    * @param {Object} rootObject object containing the property to get.
    * @param {string} propertyString string identifying the nested object to retrieve.
-   * @return {*} either undefined or the property referenced from the rootObject.
+   * @returns {*} either undefined or the property referenced from the rootObject.
    */
   function getNestedProperty(rootObject, propertyString) {
     propertyString = propertyString.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
@@ -79,7 +79,7 @@
   /**
    * Determines if the stringDefinition contains a container definition (i.e. has a ':' in it).
    * @param stringDefinition to test.
-   * @return {boolean} true if the string definition contains a container definition, false otherwise.
+   * @returns {boolean} true if the string definition contains a container definition, false otherwise.
    */
   function containsContainerDefinition(stringDefinition) {
     return !!stringDefinition && stringDefinition.indexOf(CONTAINER_SEPARATOR) > -1;
@@ -276,7 +276,7 @@
     /**
      * Retrieves the ids for this data object and passes them off to the private collection to track and then does a
      * pull or a fetch based on the alwaysFetch property.  (pull is default if always fetch is true then it fetches instead).
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     * @returns {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     retrieve: function() {
       if (this.alwaysFetch) {
@@ -288,7 +288,7 @@
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndPull() method.
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     * @returns {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     pull: function() {
       var thisDataBehavior = this;
@@ -310,7 +310,7 @@
 
     /**
      * Retrieves the ids for this data object and passes them off to the private collection's trackAndFetch() method.
-     * @return {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
+     * @returns {$.Deferred.Promise} a jquery deferred promise that resolves to the retrieved models.
      */
     fetch: function() {
       var thisDataBehavior = this;
@@ -345,7 +345,7 @@
 
     /**
      * Determine if the behavior is loading objects or ids.
-     * @return {boolean} true - the behavior is currently loading objects or ids.
+     * @returns {boolean} true - the behavior is currently loading objects or ids.
      *                   false - the behavior is not currently loading objects or ids.
      */
     isLoading: function() {
@@ -354,7 +354,7 @@
 
     /**
      * Determine if the behavior is loading ids.
-     * @return {boolean} true - the behavior is currently loading ids.
+     * @returns {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
      */
     isLoadingIds: function() {
@@ -363,7 +363,7 @@
 
     /**
      * Determine if the behavior is loading objects.
-     * @return {boolean} true - the behavior is currently loading objects.
+     * @returns {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
      */
     isLoadingObjects: function() {
@@ -417,7 +417,7 @@
      * someDataBehavior.retrieveOncePromise()
      *   .then(view.doSomethingWithTheData, view.handleFiledFetch);
      *
-     * @return {external:jQuery-Deferred} that resolves when the data is successfully fetched and rejects when the fetch fails.
+     * @returns {external:jQuery-Deferred} that resolves when the data is successfully fetched and rejects when the fetch fails.
      */
     retrieveOncePromise: function() {
       var retrieveOnceDeferred = $.Deferred();
@@ -463,7 +463,7 @@
 
     /**
      * Parses this.updateEvents configuration.
-     * @return {Object[]} {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
+     * @returns {Object[]} {[{ eventName: String, idContainer: Object }]} an array of objects with the event name and idContainer included.
      * @private
      */
     __parseUpdateEvents: function() {
@@ -476,7 +476,7 @@
      * Parses an individual event configuration.
      * Note: events defined using objects can have more than one event defined w/in the object.
      * @param {string | Object} updateEventConfiguration the configuration for an individual event configuration.
-     * @return {(Object[]|undefined)} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
+     * @returns {(Object[]|undefined)} {[{ eventName: String, idContainer: Object }] | undefined} an array of objects with the event name and idContainer included.
      *                                                                If the event could not be parsed, undefined is returned.
      * @private
      */
@@ -597,7 +597,7 @@
     },
 
     /**
-     * @return {$.Deferred.Promise} A jquery deferred promise that resolves to the ids to track in the private collection
+     * @returns {$.Deferred.Promise} A jquery deferred promise that resolves to the ids to track in the private collection
      *                              or rejects with the error message.
      *                              It can also return an object that prevents object retrieval ({ skipObjectRetrieval: true }).
      * @private
@@ -652,7 +652,7 @@
 
     /**
      * Converts the definition into the actual idContainer object and property name to retrieve off of that idContainer.
-     * @return {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
+     * @returns {{idsPropertyName: String, idContainer: Object}} the name of the ids property and the actual object to use as the idContainer.
      * @private
      */
     __parseIdsPropertyNameAndIdContainer: function() {
@@ -683,7 +683,7 @@
 
     /**
      * Parses the idContainer property of ids.
-     * @return {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
+     * @returns {Object} the idContainer object to apply the properties value to (may not be the final idContainer depending on the property definition).
      * @private
      */
     __parseIdContainer: function() {
@@ -706,7 +706,7 @@
      * Parses a string that contains a container and details for that container (event name or property name).
      * Strings are expected to be of the form '<some container path>:<detail>'.
      * @param fullContainerAndDetail
-     * @return {{detail: String, idContainer: *}} the idContainer is the actual object containing the ids.
+     * @returns {{detail: String, idContainer: *}} the idContainer is the actual object containing the ids.
      *         details is the rest of the idContainer string without the idContainer definition.
      * @private
      */
@@ -758,7 +758,7 @@
      *   model (maps to the behavior's view's model),
      *   <*> any others are assumed to be the names of behaviors on this behavior's view.
      * @param {string} updateEventConfiguration a string representation of the event.
-     * @return {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
+     * @returns {{eventName: String, idContainer: Backbone.Events}} the parsed configuration with the event name and idContainer object.
      * @private
      */
     __parseStringUpdateEvent: function(updateEventConfiguration) {
@@ -773,7 +773,7 @@
 
     /**
      * Rejects the promise chain if this behavior is already disposed.
-     * @return {external:jQuery-Deferred} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
+     * @returns {external:jQuery-Deferred} that is resolved if the behavior is not disposed and rejects if the behavior is disposed.
      * @private
      */
     __abortIfDisposed: function() {
@@ -850,7 +850,7 @@
      * @param {Object} response to use to determine if the fetched event should be triggered.
      *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
      *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
-     * @return {boolean} true if the fetched event should be triggered, false otherwise.
+     * @returns {boolean} true if the fetched event should be triggered, false otherwise.
      * @private
      */
     __shouldTriggerFetchedEvent: function(response) {
@@ -860,7 +860,7 @@
     /**
      * Skip retrieving objects if new ids list is empty and existing ids list is empty.
      * @param {(Array|Object)} idsResult
-     * @return {(Array|Object)} either the original idsResult
+     * @returns {(Array|Object)} either the original idsResult
      *                        or { skipObjectRetrieval: true, forceFetchedEvent: true } if both the ids retrieved
      *                        and the current ids are empty.
      * @private
@@ -933,7 +933,7 @@
 
     /**
      * Determine if behavior is loading ids or objects.
-     * @return {boolean} true - the behavior is loading objects or ids.
+     * @returns {boolean} true - the behavior is loading objects or ids.
      *                   false - the behavior is not loading objects or ids.
      */
     isLoading: function() {
@@ -942,7 +942,7 @@
 
     /**
      * Determine if the behavior is loading ids.
-     * @return {boolean} true - the behavior is currently loading ids.
+     * @returns {boolean} true - the behavior is currently loading ids.
      *                   false - the behavior is not currently loading ids.
      */
     isLoadingIds: function() {
@@ -951,7 +951,7 @@
 
     /**
      * Determine if the behavior is loading objects.
-     * @return {boolean} true - the behavior is currently loading objects.
+     * @returns {boolean} true - the behavior is currently loading objects.
      *                   false - the behavior is not currently loading objects.
      */
     isLoadingObjects: function() {
@@ -960,7 +960,7 @@
 
     /**
      * Get the full data object contents.  Either an array if returnSingleResult is false or a single object if it is true.
-     * @return {(Object|Object[])} containing the full contents of either the collection or model.
+     * @returns {(Object|Object[])} containing the full contents of either the collection or model.
      */
     toJSON: function() {
       var privateCollection = this.privateCollection;
@@ -985,7 +985,7 @@
      * If returnSingleResult is true then this will return the given property from the model (if that model exists).
      * If returnSingleResult is false then this will return an array containing that property from all of the retrieved models.
      * @param {string} [propertyName] the property to get from the model(s).
-     * @return {(Object|Object[])} containing the full contents of either the collection or model.
+     * @returns {(Object|Object[])} containing the full contents of either the collection or model.
      */
     get: function(propertyName) {
       var privateCollection = this.privateCollection;
@@ -1008,7 +1008,7 @@
 
     /**
      * @param {(number|string)} modelId The id of the model to get from the collection.
-     * @return {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
+     * @returns {Backbone.Model} either the model with the given id or the only model on this behavior (if model id is undefined).
      * @throws an error if there are more than 1 result or the configuration of the behavior specifies returnSingleResult === false.
      */
     getModel: function(modelId) {
@@ -1031,7 +1031,7 @@
     },
 
     /**
-     * @return {Backbone.Model[]} new array containing all the models in the data's private collection.
+     * @returns {Backbone.Model[]} new array containing all the models in the data's private collection.
      */
     getModels: function() {
       return this.privateCollection.models.slice(0);

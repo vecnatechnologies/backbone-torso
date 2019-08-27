@@ -236,7 +236,7 @@
      * @param {string} field The field name to convert to a compliant "for" attribute
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [option.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {string} Compliant HTML generating the "for" attribute
+     * @returns {string} Compliant HTML generating the "for" attribute
      */</span>
     Handlebars.registerHelper(<span class="hljs-string">'labelFor'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
       options = _.extend(options, {<span class="hljs-attr">noValueAttr</span>: <span class="hljs-literal">true</span>});
@@ -262,7 +262,7 @@
      * @param {string} field The field name to convert to compliant id, name, data-model, and data-feedback attributes
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
-     * @return {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
+     * @returns {string} Compliant HTML generating the id, name, data-model, and data-feedback attributes
      */</span>
     Handlebars.registerHelper(<span class="hljs-string">'bindModel'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
       <span class="hljs-keyword">return</span> Handlebars.helpers.formAttr(field, MODEL_KEY + <span class="hljs-string">', '</span> + FEEDBACK_KEY + <span class="hljs-string">', name, id'</span>, options);
@@ -284,7 +284,7 @@
      * @method HandlebarsHelper.feedback
      * @param {string} field The field name to convert to a compliant data-feedback attribute
      * @param {Object} options The handlebars context.  Always passed in as the final argument.
-     * @return {string} Compliant HTML generating the data-feedback attribute
+     * @returns {string} Compliant HTML generating the data-feedback attribute
      */</span>
     Handlebars.registerHelper(<span class="hljs-string">'feedback'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
       options = _.extend(options, {<span class="hljs-attr">noValueAttr</span>: <span class="hljs-literal">true</span>});
@@ -306,7 +306,7 @@
      * @param {string} [options.hash.value] The value tacked on to the end of the field string (useful for radio and checkbox)
      * @param {boolean} [options.noValueAttr] when options.noValueAttr is set to true,
                                               then it will not generate the "value" attribute in the DOM.
-     * @return {string} Compliant HTML generating the data-feedback attribute
+     * @returns {string} Compliant HTML generating the data-feedback attribute
      */</span>
     Handlebars.registerHelper(<span class="hljs-string">'formAttr'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, attrs, options</span>) </span>{
       <span class="hljs-keyword">var</span> i, attrName,
@@ -365,7 +365,7 @@
      *
      * @method HandlebarsHelper.dasherize
      * @param {string} str The input string to make HTML compliant (convert to dashes)
-     * @return {string} HTML complicant / dasherized string
+     * @returns {string} HTML complicant / dasherized string
      */</span>
     Handlebars.registerHelper(<span class="hljs-string">'dasherize'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">str</span>) </span>{
       <span class="hljs-keyword">var</span> camelCaseRemoved, dotsRemoved, bracesRemoved;
@@ -395,7 +395,7 @@
      * @param {Object} indexMap A map of variables
      * @param {Object} options named parameters
      *   @param {boolean} [options.forceArrayNotation=false] Force the usage of [] insetad of . for string values.
-     * @return {string} the field string with array variables substituted
+     * @returns {string} the field string with array variables substituted
      */</span>
     Handlebars.registerHelper(<span class="hljs-string">'injectFieldIndices'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, indexMap, options</span>) </span>{
       <span class="hljs-keyword">if</span> (indexMap) {

@@ -213,7 +213,7 @@
    *
    * @see &lt;a href="../annotated/modules/FormView.html"&gt;FormView Annotated Source&lt;/a&gt;
    */</span>
-  <span class="hljs-keyword">var</span> FormView = View.extend(<span class="hljs-comment">/** @lends FormView.prototype */</span>{
+  <span class="hljs-keyword">var</span> FormView = View.extend(<span class="hljs-comment">/** @lends FormView# */</span>{
     <span class="hljs-comment">/**
      * Validation error hash
      * @private
@@ -307,7 +307,7 @@
 
     <span class="hljs-comment">/**
      * Prepare the formview's default render context
-     * @return {Object}
+     * @returns {Object}
      *         {Object.errors} A hash of field names mapped to error messages
      *         {Object.success} A boolean value of true if validation has succeeded
      */</span>
@@ -510,7 +510,7 @@
     <span class="hljs-comment">/**
      * @private
      * @param {string} attr An attribute of the model
-     * @return {Object} Any settings that are associates with that attribute
+     * @returns {Object} Any settings that are associates with that attribute
      */</span>
     __getFieldOptions: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">attr</span>) </span>{
       attr = <span class="hljs-keyword">this</span>.__stripAllAttribute(attr);
@@ -524,7 +524,7 @@
      * @param {Object} [options.viewFormat] The function called before setting view values
      * @param {Object} [options.stickit] Any options fields that stickit accepts
      * @private
-     * @return {Object} Stickit Binding Hash
+     * @returns {Object} Stickit Binding Hash
      */</span>
     __generateModelFieldBinding: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">field, options</span>) </span>{
       <span class="hljs-keyword">var</span> indices = <span class="hljs-keyword">this</span>.__getAllIndexTokens(field);
@@ -556,7 +556,7 @@
      * @param {Object} [opts.modelFormat] The function called before setting model values
      * @param {Object} [opts.stickit.selectOptions] stickit's selectOptions fields. Overrides what Torso does by default
      * @private
-     * @return {Object} Stickit options hash
+     * @returns {Object} Stickit options hash
      */</span>
     __generateSelectOptions: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">element, opts</span>) </span>{
       <span class="hljs-keyword">var</span> collection = [],

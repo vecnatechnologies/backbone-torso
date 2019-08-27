@@ -27,7 +27,7 @@
    *
    * @see <a href="../annotated/modules/NestedCell.html">NestedCell Annotated Source</a>
    */
-  var NestedCell = TorsoNestedModel.extend(/** @lends NestedCell.prototype */{
+  var NestedCell = TorsoNestedModel.extend(/** @lends NestedCell# */{
     /**
      * Register this item with the cell registry after initialize.
      * @private

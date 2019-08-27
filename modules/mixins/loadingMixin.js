@@ -38,21 +38,21 @@
       },
 
       /**
-       * @return {boolean} true if this model/collection has ever loaded from a fetch call
+       * @returns {boolean} true if this model/collection has ever loaded from a fetch call
        */
       hasLoadedOnce: function() {
         return this.loadedOnce;
       },
 
       /**
-       * @return {boolean} true if this model/collection is currently loading new values from the server
+       * @returns {boolean} true if this model/collection is currently loading new values from the server
        */
       isLoading: function() {
         return this.loading;
       },
 
       /**
-       * @return {Promise} a promise that will resolve when the model/collection has loaded for the first time
+       * @returns {Promise} a promise that will resolve when the model/collection has loaded for the first time
        */
       getLoadedOncePromise: function() {
         return this.loadedOnceDeferred.promise();
@@ -61,7 +61,7 @@
       /**
        * Wraps the base fetch in a wrapper that manages loaded states
        * @param {Object} options - the object to hold the options needed by the base fetch method
-       * @return {Promise} The loadWrapper promise
+       * @returns {Promise} The loadWrapper promise
        */
       fetch: function(options) {
         return this.__loadWrapper(base.prototype.fetch, options);
@@ -74,7 +74,7 @@
        * @private
        * @param {Function} fetchMethod - the method to invoke a fetch
        * @param {Object} options - the object to hold the options needed by the fetchMethod
-       * @return {Promise} a promise when the fetch method has completed and the events have been triggered
+       * @returns {Promise} a promise when the fetch method has completed and the events have been triggered
        */
       __loadWrapper: function(fetchMethod, options) {
         var object = this;

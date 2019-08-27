@@ -218,7 +218,7 @@
     <span class="hljs-string">'initialize:complete'</span>: <span class="hljs-string">'postinitialize'</span>
   };
 
-  <span class="hljs-keyword">var</span> Behavior = NestedCell.extend(<span class="hljs-comment">/** @lends Behavior.prototype */</span>{
+  <span class="hljs-keyword">var</span> Behavior = NestedCell.extend(<span class="hljs-comment">/** @lends Behavior# */</span>{
     <span class="hljs-comment">/**
      * Unique name of the behavior instance w/in a view.  More human readable than the cid.
      * @name alias
@@ -243,9 +243,24 @@
      * effectively: { [behaviorName]: behavior.prepare() } will be combined with the view's prepare result.
      *
      * @function
-     * @return {Object} a prepare context suitable to being added to the view's prepare result.
+     * @returns {Object} a prepare context suitable to being added to the view's prepare result.
      */</span>
-    prepare: _.noop,
+    prepare: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>do nothing, here for overrides and to properly inform jsdoc that this is a method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    },
 
     <span class="hljs-comment">/**
      * Allows abstraction of common view logic into separate object
@@ -294,7 +309,7 @@
      * Wraps the view's prepare such that it returns the combination of the view and behavior's prepare results.
      * @private
      * @param {Function} viewPrepare the prepare method from the view.
-     * @return {Object} the combined view and behavior prepare() results.
+     * @returns {Object} the combined view and behavior prepare() results.
      * {
      *   &lt;behavior alias&gt;: behavior.prepare(),
      *   ... // view prepare properties.
@@ -355,7 +370,7 @@
      * Namespaces events in event hash
      *
      * @param {Object} eventHash to namespace
-     * @return {Object} with event namespaced with '.behavior' and the cid of the behavior
+     * @returns {Object} with event namespaced with '.behavior' and the cid of the behavior
      * @private
      */</span>
     __namespaceEvents: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventHash</span>) </span>{</pre></div></div>
@@ -363,11 +378,11 @@
         </li>
         
         
-        <li id="section-3">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>coped from Backbone</p>
 
@@ -388,7 +403,7 @@
 
     <span class="hljs-comment">/**
      * @param {Object} eventHash keys are event descriptors, values are String method names or functions
-     * @return {Object} event hash with values as methods bound to view
+     * @returns {Object} event hash with values as methods bound to view
      * @private
      */</span>
     __bindEventCallbacksToBehavior: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">eventHash</span>) </span>{
@@ -420,10 +435,25 @@
      * Override this method to destruct any extra
      * @function
      */</span>
-    _dispose: _.noop,
+    _dispose: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>do nothing, here for overrides and to properly inform jsdoc that this is a method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    },
 
     <span class="hljs-comment">/**
-     * @return {boolean} true if the view was disposed
+     * @returns {boolean} true if the view was disposed
      */</span>
     isDisposed: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.__isDisposed;

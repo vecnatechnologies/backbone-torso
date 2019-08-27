@@ -24,7 +24,7 @@
    *
    * @see <a href="../annotated/modules/ServiceCell.html">ServiceCell Annotated Source</a>
    */
-  var ServiceCell = Cell.extend(/** @lends ServiceCell.prototype */{
+  var ServiceCell = Cell.extend(/** @lends ServiceCell# */{
     constructor: function() {
       var args = Array.prototype.slice.call(arguments);
       args[1] = args[1] || {};

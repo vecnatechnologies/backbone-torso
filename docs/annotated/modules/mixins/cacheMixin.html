@@ -227,7 +227,7 @@
         <span class="hljs-keyword">var</span> requesterMixin = {
 
           <span class="hljs-comment">/**
-           * @return {Array} array of ids that this collection is tracking
+           * @returns {Array} array of ids that this collection is tracking
            */</span>
           getTrackedIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
             <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.trackedIds;
@@ -238,7 +238,7 @@
            * @param [options] - argument options
            * @param {Array} [options.idsToFetch=collectionTrackedIds] - A list of request Ids, will default to current tracked ids
            * @param {Object} [options.setOptions] - if a set is made, then the setOptions will be passed into the set method
-           * @return {Promise} promise that will resolve when the fetch is complete
+           * @returns {Promise} promise that will resolve when the fetch is complete
            */</span>
           fetch: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
             options = options || {};
@@ -257,7 +257,7 @@
            * Will force the cache to fetch a subset of this collection's tracked ids
            * @param {Array} ids array of model ids
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
-           * @return {Promise} promise that will resolve when the fetch is complete
+           * @returns {Promise} promise that will resolve when the fetch is complete
            */</span>
           fetchByIds: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">ids, options</span>) </span>{
             options = options || {};
@@ -297,7 +297,7 @@
           <span class="hljs-comment">/**
            * Will begin tracking the new ids and then ask the cache to fetch them
            * This will reset any previous list of ids being tracked.
-           * @return the promise of the fetch by ids
+           * @returns the promise of the fetch by ids
            */</span>
           trackAndFetch: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newIds</span>) </span>{
             <span class="hljs-keyword">this</span>.trackIds(newIds);
@@ -315,7 +315,7 @@
            * The promise will resolve to a unified data property that is a combination of the completion of all of the fetches.
            *
            * @param {Object} [options] if given, will pass the options argument to this.fetch. Note, will not affect options.idsToFetch
-           * @return {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
+           * @returns {Promise} promise that will resolve when the fetch is complete with all of the data that was fetched from the server.
            *                   Will only resolve once all ids have attempted to be fetched from the server.
            */</span>
           pull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">options</span>) </span>{
@@ -423,7 +423,7 @@
           <span class="hljs-comment">/**
            * Will register the new ids and then pull in any models not stored in the cache. See this.pull() for
            * the difference between pull and fetch.
-           * @return the promise of the fetch by ids
+           * @returns the promise of the fetch by ids
            */</span>
           trackAndPull: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">newIds</span>) </span>{
             <span class="hljs-keyword">this</span>.trackIds(newIds);
@@ -509,7 +509,7 @@
       <span class="hljs-comment">/**
        * @alias cacheMixin.getRequesterIds
        * @param {string} the global unique id of the requester
-       * @return {Array} an array of the ids the requester with the guid has requested
+       * @returns {Array} an array of the ids the requester with the guid has requested
        */</span>
       collection.getRequesterIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.requestMap[guid] &amp;&amp; <span class="hljs-keyword">this</span>.requestMap[guid].array;
@@ -519,7 +519,7 @@
        * This method is used for quick look up of a certain id within the list of requested ids
        * @alias cacheMixin.getRequesterIdsAsDictionary
        * @param {string} guid the global unique id of the requester
-       * @return {Object} an dictionary of id -&gt; id of the requester ids for a given requester.
+       * @returns {Object} an dictionary of id -&gt; id of the requester ids for a given requester.
        */</span>
       collection.getRequesterIdsAsDictionary = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid</span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.requestMap[guid] &amp;&amp; <span class="hljs-keyword">this</span>.requestMap[guid].dict;
@@ -539,7 +539,7 @@
        * <span class="hljs-doctag">NOTE:</span> this methods returns only the guids for requester collections that are currently tracking ids
        * <span class="hljs-doctag">TODO:</span> should this return just the knownPrivateCollections
        * @alias cacheMixin.getRequesters
-       * @return {Array} an array of the all requesters in the form of their GUID's
+       * @returns {Array} an array of the all requesters in the form of their GUID's
        */</span>
       collection.getRequesters = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)  </span>{
         <span class="hljs-keyword">return</span> _.keys(<span class="hljs-keyword">this</span>.requestMap);
@@ -548,7 +548,7 @@
       <span class="hljs-comment">/**
        * Return the list of Ids requested by this collection
        * @alias cacheMixin.getAllRequestedIds
-       * @return {Array} the corresponding requested Ids
+       * @returns {Array} the corresponding requested Ids
        */</span>
       collection.getAllRequestedIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.collectionTrackedIds;
@@ -561,7 +561,7 @@
        * Overrides the registerIds method to redirect to its parent collection.
        * @alias cacheMixin.createPrivateCollection
        * @param {string} guid Identifier for the requesting view
-       * @return {PrivateCollection} an new empty collection of the same type as "this"
+       * @returns {PrivateCollection} an new empty collection of the same type as "this"
        */</span>
       collection.createPrivateCollection = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">guid, args</span>) </span>{
         args = args || {};
@@ -730,7 +730,7 @@
        * @param [fetchByIdsOptions] - argument fetchByIdsOptions
        * @param {Array} [fetchByIdsOptions.idsToFetch=collection.collectionTrackedIds] - A list of request Ids, will default to current tracked ids
        * @param {Object} [fetchByIdsOptions.setOptions] - if a set is made, then the setOptions will be passed into the set method
-       * @return {Promise} the promise of the fetch
+       * @returns {Promise} the promise of the fetch
        */</span>
       collection.fetchByIds = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fetchByIdsOptions</span>) </span>{
         fetchByIdsOptions = fetchByIdsOptions || {};</pre></div></div>

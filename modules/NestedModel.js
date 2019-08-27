@@ -35,7 +35,7 @@
    *
    * @see <a href="../annotated/modules/NestedModel.html">NestedModel Annotated Source</a>
    */
-  var NestedModel = Backbone.NestedModel.extend(/** @lends NestedModel.prototype */{
+  var NestedModel = Backbone.NestedModel.extend(/** @lends NestedModel# */{
     constructor: function(attributes, options) {
       Backbone.NestedModel.apply(this, arguments);
       options = options || {};

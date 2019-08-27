@@ -20,7 +20,7 @@
 
   /**
    * ViewStateCell is a NestedCell that holds view state data and can trigger
-   * change events. These change events will propogate up and trigger on the view
+   * change events. These change events will propagate up and trigger on the view
    * as well.
    *
    * @class ViewStateCell
@@ -32,7 +32,13 @@
    *
    * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
    */
-  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell.prototype */{
+  var ViewStateCell = NestedCell.extend(/** @lends ViewStateCell# */{
+    /**
+     * @constructs
+     * @param {Object} attrs the initial values to set on the cell - inherited from {@link NestedCell}.
+     * @param {Object} opts options for the cell.
+     *    @param {external:Backbone-View} opts.view the view that these options are tied to.
+     */
     initialize: function(attrs, opts) {
       opts = opts || {};
       this.view = opts.view;
@@ -53,7 +59,7 @@
     }
   });
 
-  var View = Backbone.View.extend(/** @lends View.prototype */{
+  var View = Backbone.View.extend(/** @lends View# */{
     /**
      * Cell that can be used to save state for rendering the view.
      * @type {ViewStateCell}
@@ -96,6 +102,7 @@
      * @class View
      * @extends {external:Backbone-View}
      * @author ariel.wexler@vecna.com, kent.willis@vecna.com
+     * @constructs
      *
      * @see <a href="../annotated/modules/View.html">View Annotated Source</a>
      */
@@ -186,7 +193,9 @@
      * @param context the context you can modify
      * @return {Object} [Optional] If you return an object, it will be merged with the context
      */
-    _prepare: _.noop,
+    _prepare: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Rebuilds the html for this view's element. Should be able to be called at any time.
@@ -235,7 +244,9 @@
      * NOTE: if you require the view to be detached from the DOM, consider using _detach callback
      * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, prerender is finished. Note: render logic will not wait until promises are resolved.
      */
-    prerender: _.noop,
+    prerender: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Produces and sets this view's elements DOM. Used during the rendering process. Override if you have custom DOM update logic.
@@ -269,7 +280,9 @@
      * NOTE: if you require the view to be attached to the DOM, consider using _attach callback
      * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, postrender is finished. Note: render logic will not wait until promises are resolved.
      */
-    postrender: _.noop,
+    postrender: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Hotswap rendering system reroute method.
@@ -397,13 +410,17 @@
      * This method can be overwritten as usual OR extended using <baseClass>.prototype.attachTrackedViews.apply(this, arguments);
      * @return {Promise|Array<Promise>} you can optionally return one or more promises that when all are resolved, all tracked views are attached. Useful when using this.attachView with useTransition=true.
      */
-    attachTrackedViews: _.noop,
+    attachTrackedViews: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Method to be invoked when the view is fully attached to the DOM (NOT just the parent). Use this method to manipulate the view
      * after the DOM has been attached to the document. The default implementation is a no-op.
      */
-    _attached: _.noop,
+    _attached: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * @return {boolean} true if the view is attached to a parent
@@ -464,7 +481,9 @@
      * Method to be invoked when the view is detached from the DOM (NOT just the parent). Use this method to clean up state
      * after the view has been removed from the document. The default implementation is a no-op.
      */
-    _detached: _.noop,
+    _detached: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Resets listeners and events in order for the view to be reattached to the visible DOM
@@ -482,7 +501,9 @@
      * Method to be invoked when activate is called. Use this method to turn on any
      * custom timers, listenTo's or on's that should be activatable. The default implementation is a no-op.
      */
-    _activate: _.noop,
+    _activate: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * @return {boolean} true if the view is active
@@ -508,7 +529,9 @@
      * Method to be invoked when deactivate is called. Use this method to turn off any
      * custom timers, listenTo's or on's that should be deactivatable. The default implementation is a no-op.
      */
-    _deactivate: _.noop,
+    _deactivate: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * Removes all listeners, disposes children views, stops listening to events, removes DOM.
@@ -556,7 +579,9 @@
      * view's element, its on's, listenTo's, and any registered children.
      * Override this method to destruct any extra
      */
-    _dispose: _.noop,
+    _dispose: function() {
+      // do nothing, here for overrides and to properly inform jsdoc that this is a method.
+    },
 
     /**
      * @return {boolean} true if the view was disposed

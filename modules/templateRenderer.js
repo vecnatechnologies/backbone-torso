@@ -239,7 +239,7 @@
     /**
      * Produces a copy of the element tag with attributes but with no contents
      * @param {Element} el the DOM element to be copied
-     * @return {Element} a shallow copy of the element with no children but with attributes
+     * @returns {Element} a shallow copy of the element with no children but with attributes
      */
     copyTopElement: function(el) {
       var newDOM = document.createElement(el.tagName);
@@ -253,7 +253,7 @@
      * Determines if the element supports selection. As per spec, https://html.spec.whatwg.org/multipage/forms.html#do-not-apply
      * selection is only allowed for text, search, tel, url, password. Other input types will throw an exception in chrome
      * @param {Element} el the DOM element to check
-     * @return {boolean} boolean indicating whether or not the selection is allowed for {Element} el
+     * @returns {boolean} boolean indicating whether or not the selection is allowed for {Element} el
      */
     supportsSelection : function (el) {
       return (/text|password|search|tel|url/).test(el.type);
@@ -263,7 +263,7 @@
      * Method that returns the current caret (cursor) position of a given element.
      * Source: http://stackoverflow.com/questions/2897155/get-cursor-position-in-characters-within-a-text-input-field
      * @param {element} elem the DOM element to check caret position
-     * @return {Integer} the cursor index of the given element.
+     * @returns {Integer} the cursor index of the given element.
      */
     getCaretPosition: function(elem) {
       // range {IE selection object}
@@ -293,7 +293,7 @@
      * Source: http://stackoverflow.com/questions/512528/set-cursor-position-in-html-textbox
      * @param {element} elem
      * @param {Integer} caretPos The caret index to set
-     * @return {Integer} the cursor index of the given element.
+     * @returns {Integer} the cursor index of the given element.
      */
     setCaretPosition: function(elem, caretPos) {
       var range;

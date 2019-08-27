@@ -144,7 +144,7 @@
    *
    * @see <a href="../annotated/modules/ListView.html">ListView Annotated Source</a>
    */
-  var ListView = View.extend(/** @lends ListView.prototype */{
+  var ListView = View.extend(/** @lends ListView# */{
     /**
      * The collection that holds the models that this list view will track
      * @property collection
@@ -193,6 +193,7 @@
 
     /**
      * Constructor for the list view object.
+     * @constructs
      * @param {Object} args - options argument
      *   @param {(external:Backbone-View|function)} args.itemView - the class definition of the item view. This view will be instantiated for every model returned by modelsToRender(). If a function is passed in, then for each model, this function will be invoked to find the appropriate view class. It takes the model as the only parameter.
      *   @param {external:Backbone-Collection} args.collection - The collection that will back this list view. A subclass of list view might provide a default collection. Can be private or public collection
@@ -263,7 +264,6 @@
 
     /**
      * Builds a single DOM fragment from the item views and attaches it at once.
-     * @override
      */
     updateDOM: function() {
       var injectionSite,

@@ -25,5 +25,5 @@
    *
    * @see <a href="../annotated/modules/Router.html">Router Annotated Source</a>
    */
-  return Backbone.Router.extend(/** @lends Router.prototype */{});
+  return Backbone.Router.extend(/** @lends Router# */{});
 }));

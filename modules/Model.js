@@ -35,7 +35,7 @@
    *
    * @see <a href="../annotated/modules/Model.html">Model Annotated Source</a>
    */
-  var Model = Backbone.Model.extend(/** @lends Model.prototype */{
+  var Model = Backbone.Model.extend(/** @lends Model# */{
     constructor: function(attributes, options) {
       Backbone.Model.apply(this, arguments);
       options = options || {};
