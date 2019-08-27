@@ -545,8 +545,22 @@ When a view is attached it is rendered anyway.</p>
           }
           <span class="hljs-keyword">return</span> idsResult;
         }, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">errorResponse</span>) </span>{
-          errorResponse.failedOnIds = <span class="hljs-literal">true</span>;
-          <span class="hljs-keyword">return</span> errorResponse;
+          errorResponse.failedOnIds = <span class="hljs-literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Deferred reject is more reliable than throwing an exception since it works in both jQuery 2 and 3.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> $.Deferred().reject(errorResponse).promise();
         })
         .then(<span class="hljs-keyword">this</span>.__fetchSuccess, <span class="hljs-keyword">this</span>.__fetchFailed);
     },
@@ -566,8 +580,22 @@ When a view is attached it is rendered anyway.</p>
           }
           <span class="hljs-keyword">return</span> idsResult;
         }, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">errorResponse</span>) </span>{
-          errorResponse.failedOnIds = <span class="hljs-literal">true</span>;
-          <span class="hljs-keyword">return</span> errorResponse;
+          errorResponse.failedOnIds = <span class="hljs-literal">true</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Deferred reject is more reliable than throwing an exception since it works in both jQuery 2 and 3.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> $.Deferred().reject(errorResponse).promise();
         })
         .then(<span class="hljs-keyword">this</span>.__fetchSuccess, <span class="hljs-keyword">this</span>.__fetchFailed);
     },
@@ -670,8 +698,7 @@ When a view is attached it is rendered anyway.</p>
         retrieveOnceDeferred.reject();
       } <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">this</span>.once(<span class="hljs-string">'fetched'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-          <span class="hljs-keyword">var</span> demographicsFetchSuccess = <span class="hljs-keyword">this</span>.get(<span class="hljs-string">'fetchSuccess'</span>);
-          <span class="hljs-keyword">if</span> (demographicsFetchSuccess) {
+          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.get(<span class="hljs-string">'fetchSuccess'</span>)) {
             retrieveOnceDeferred.resolve();
           } <span class="hljs-keyword">else</span> {
             retrieveOnceDeferred.reject();
@@ -825,11 +852,11 @@ When a view is attached it is rendered anyway.</p>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Remove any random falsey values (mostly to get rid of undefined events).</p>
 
@@ -994,11 +1021,11 @@ When a view is attached it is rendered anyway.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>remove leading .</p>
 
@@ -1061,6 +1088,7 @@ When a view is attached it is rendered anyway.</p>
      * @param {Object} response the response from the server.
      *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
      *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
+     * @returns {Object} response - returns the response to match promise spec that converts returned values into resolves.
      * @private
      */</span>
     __fetchSuccess: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
@@ -1087,6 +1115,7 @@ When a view is attached it is rendered anyway.</p>
      *   @param {boolean} [response.skipObjectRetrieval=false] if we retrieved objects, then trigger fetch event.
      *   @param {boolean} [response.forceFetchedEvent=false] if true then trigger fetch no matter what.
      *   @param {boolean} [response.emptyIds=false] true if were are no ids retrieved.  False otherwise.
+     * @throws {Object} response - throws an error to match promise spec that converts thrown errors into rejects.
      * @private
      */</span>
     __fetchFailed: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">response</span>) </span>{
@@ -1106,8 +1135,22 @@ When a view is attached it is rendered anyway.</p>
         }
       }
       <span class="hljs-keyword">this</span>.trigger(<span class="hljs-string">'fetched:ids'</span>);
-      <span class="hljs-keyword">this</span>.data.trigger(<span class="hljs-string">'fetched:ids'</span>);
-      <span class="hljs-keyword">return</span> response;
+      <span class="hljs-keyword">this</span>.data.trigger(<span class="hljs-string">'fetched:ids'</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Deferred reject is more reliable than throwing an exception since it works in both jQuery 2 and 3.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> $.Deferred().reject(response).promise();
     },
 
     <span class="hljs-comment">/**
