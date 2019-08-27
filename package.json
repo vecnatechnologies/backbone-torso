@@ -82,6 +82,7 @@
     "karma-mocha-reporter": "2.2.5",
     "karma-phantomjs-launcher": "^1.0.0",
     "lazypipe": "^1.0.2",
+    "lodash.template": "^4.5.0",
     "merge-stream": "^0.1.7",
     "minimist": "1.1.0",
     "node-dir": "0.1.8 ",

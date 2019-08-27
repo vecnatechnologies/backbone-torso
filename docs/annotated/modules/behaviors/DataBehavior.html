@@ -1295,7 +1295,7 @@ When a view is attached it is rendered anyway.</p>
      * @param {string} [propertyName] the property to get from the model(s).
      * @returns {(Object|Object[])} containing the full contents of either the collection or model.
      */</span>
-    get: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">propertyName</span>) </span>{
+    <span class="hljs-keyword">get</span>: function(propertyName) {
       <span class="hljs-keyword">var</span> privateCollection = <span class="hljs-keyword">this</span>.privateCollection;
       <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.parentBehavior.returnSingleResult) {
         <span class="hljs-keyword">if</span> (_.isString(propertyName)) {
