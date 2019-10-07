@@ -62,7 +62,7 @@
     "gulp-uglify": "^3.0.1",
     "gulp-util": "^3.0.8",
     "gulp-wrap": "^0.14.0",
-    "handlebars": "^4.1.2",
+    "handlebars": "^4.4.2",
     "hbsfy": "^2.6.0",
     "jasmine": "2.5.3",
     "jasmine-core": "^2.4.1",
