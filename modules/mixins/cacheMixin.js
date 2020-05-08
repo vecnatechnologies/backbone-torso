@@ -477,7 +477,7 @@
        * were null when this method was called.
        *
        * @param {Object} [options] - optional options object
-       * @param   [options.fetchHttpAction='POST'] {string} http action used to get objects by ids
+       * @param   [options.fetchHttpAction='GET'] {string} http action used to get objects by ids
        * @param   [options.getByIdsUrl='/ids'] {string} path appended to collection.url to get objects by a list of ids
        * @param   {boolean} [options.fetchUsingTrackedIds=true] if set to false, cache.fetch() will not pass to fetchByIds with current tracked ids
        *                                                       but will rather call the default fetch method.
