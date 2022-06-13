@@ -1,4 +1,4 @@
-var Torso = require('torso');
+// Created by Hina Zahid
 
 /* PERSPECTIVE VIEW
   This is a perspective view. It acts kind of like a web page in
